@@ -1671,7 +1671,7 @@ shape = SubResource("BoxShape3D_yi0j3")
 debug_color = Color(0.99215686, 0, 0.2627451, 1)
 
 [node name="Sketchfab_Scene9" parent="Map 02/Asset New/Cars" unique_id=1274274870 instance=ExtResource("31_b02jd")]
-transform = Transform3D(1.299825, 0, -0.021326922, 0, 1.2999998, 0, 0.021326922, 0, 1.299825, 33.76255, 0, 436.36127)
+transform = Transform3D(1.299825, 0, -0.021326922, 0, 1.2999998, 0, 0.021326922, 0, 1.299825, 30.680038, 0, 436.36127)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Map 02/Asset New/Cars/Sketchfab_Scene9" unique_id=2018053902]
 
