@@ -4,6 +4,10 @@ A short first-person walking game set on a midnight city street. PSX-era low-pol
 
 > Taylor's Mental Wellness Campaign — October 2026 (GDD v0.7 on file, held outside the repo)
 
+## Development Article
+
+Read the complete project retrospective: [YAKO — Final Game and Development](https://furikura07.blogspot.com/2026/08/yako-final-game-and-development.html)
+
 ## Requirements
 
 - Godot 4.6 (Forward+, Direct3D 12 on Windows, Jolt Physics)
