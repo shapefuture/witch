@@ -18,6 +18,8 @@ var engine: MirrorEngine
 var context: MirrorDialogueContext
 var manager: Node
 var _resources: Dictionary = {}
+# The character id of the line currently handed to the sink ("" for narration).
+var current_speaker_id := ""
 
 func _init(p_engine: MirrorEngine, p_manager: Node = null) -> void:
 	engine = p_engine
@@ -50,6 +52,7 @@ func run(title: String, sink: Callable, resource: Resource = null, npc_id: Strin
 	var line = await manager.get_next_dialogue_line(script, title, states)
 	while line != null:
 		var speaker := speaker_name(line.character)
+		current_speaker_id = line.character
 		var options: Array[Dictionary] = []
 		for response in line.responses:
 			options.append({"id": choice_id(response), "text": response.text, "allowed": response.is_allowed})

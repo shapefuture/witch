@@ -28,6 +28,10 @@ func handle_event(event: InputEvent) -> PlayerIntent:
 	var now: float = clock.call()
 	if event is InputEventMouseButton:
 		var mouse := event as InputEventMouseButton
+		# A touch also arrives as an emulated mouse click (for UI controls). The touch event is
+		# handled natively below; counting the emulated click too would double every tap.
+		if mouse.device == InputEvent.DEVICE_ID_EMULATION:
+			return null
 		if mouse.button_index == MOUSE_BUTTON_LEFT:
 			if mouse.pressed:
 				tracker.press(MOUSE_ID, mouse.position, now)
