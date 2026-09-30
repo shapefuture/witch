@@ -83,3 +83,7 @@ precision_multiplier={
 "type": "float",
 "value": 0.5
 }
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/mirror_engine/plugin.cfg")
