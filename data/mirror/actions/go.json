@@ -1,0 +1,265 @@
+[
+	{
+		"id": "go_assist",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.go_assist",
+		"valid_targets": [
+			"machine"
+		],
+		"preconditions": {
+			"npc.tomas.stance": "inviting",
+			"npc.tomas.invited": true
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_RECIPROCITY"
+		],
+		"prediction_candidates": [
+			{
+				"id": "p.helps",
+				"when": {},
+				"expected": {
+					"outcome": "repaired_together"
+				}
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "go_assist.component",
+				"priority": 10,
+				"when": {
+					"machine.state": "jammed"
+				},
+				"observed": {
+					"outcome": "repaired_together",
+					"motive": "shared_work",
+					"relationship_signature": "EXPECT_RECIPROCITY",
+					"npc_expected": "EXPECT_RECIPROCITY"
+				},
+				"effects": {
+					"world": {
+						"machine": {
+							"state": "running_together",
+							"in_tune": true
+						}
+					},
+					"npc_state": {
+						"tomas": {
+							"stance": "partnered",
+							"expects": "EXPECT_RECIPROCITY"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "machine_runs",
+						"proposition": {
+							"machine": "runs"
+						},
+						"status": "ESTABLISHED",
+						"scope": "clearing"
+					},
+					{
+						"id": "help_respected_authorship",
+						"proposition": {
+							"help": "respected_authorship"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					}
+				],
+				"model_effects": [
+					{
+						"type": "support",
+						"rule_id": "m.help_needs_authorship",
+						"delta": 0.2
+					}
+				],
+				"operator_effects": [
+					{
+						"type": "acquire",
+						"operator_id": "op.ask_before_acting"
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "machine_ran_true_under_two_pairs_of_hands"
+						}
+					}
+				],
+				"relationship_target": "tomas",
+				"relationship_tags": [
+					"COMMITMENT"
+				],
+				"relationship_payload": {
+					"commitment_id": "hold_steady",
+					"kept": true
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"machine",
+							"tomas"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_thanks_together"
+					},
+					{
+						"kind": "camera",
+						"mode": "consequence",
+						"focus": [
+							"machine"
+						]
+					}
+				]
+			},
+			{
+				"id": "go_assist.lantern",
+				"priority": 10,
+				"when": {
+					"machine.state": "running_by_magic"
+				},
+				"observed": {
+					"outcome": "tuned_together",
+					"motive": "shared_work",
+					"relationship_signature": "EXPECT_RECIPROCITY",
+					"npc_expected": "EXPECT_RECIPROCITY"
+				},
+				"effects": {
+					"world": {
+						"machine": {
+							"state": "running_together",
+							"in_tune": true
+						}
+					},
+					"npc_state": {
+						"tomas": {
+							"stance": "partnered",
+							"expects": "EXPECT_RECIPROCITY"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "help_respected_authorship",
+						"proposition": {
+							"help": "respected_authorship"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					}
+				],
+				"model_effects": [
+					{
+						"type": "support",
+						"rule_id": "m.help_needs_authorship",
+						"delta": 0.2
+					}
+				],
+				"operator_effects": [
+					{
+						"type": "acquire",
+						"operator_id": "op.ask_before_acting"
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "machine_brought_in_tune_by_tomas_under_the_witchs_light"
+						}
+					}
+				],
+				"relationship_target": "tomas",
+				"relationship_tags": [
+					"COMMITMENT"
+				],
+				"relationship_payload": {
+					"commitment_id": "hold_the_light",
+					"kept": true
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"machine",
+							"tomas"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_thanks_tuned"
+					},
+					{
+						"kind": "camera",
+						"mode": "consequence",
+						"focus": [
+							"machine"
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "go_path_out",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.go_path_out",
+		"valid_targets": [
+			"path_out"
+		],
+		"preconditions": {
+			"clearing.departed": false
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "go_path_out.depart",
+				"observed": {
+					"outcome": "departed",
+					"ending": "unresolved"
+				},
+				"effects": {
+					"world": {
+						"clearing": {
+							"departed": true
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "stay"
+					},
+					{
+						"kind": "leave_frame",
+						"actor": "player",
+						"via": "path_out"
+					}
+				]
+			}
+		]
+	}
+]

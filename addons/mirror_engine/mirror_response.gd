@@ -55,8 +55,12 @@ func _model_requirements(contract: Dictionary, models: MirrorModelStore, observe
         var required_id := str(requirement.get("id", ""))
         var min_confidence := float(requirement.get("min_confidence", 0.0))
         var min_status := int(requirement.get("min_status", MirrorDomain.ModelStatus.HYPOTHESIS))
+        # Claims and operators already honour a requirement's own holder/observer; model
+        # requirements ignored it and always queried the responding NPC's models, so a
+        # contract gated on the PLAYER's model could never match.
+        var model_observer := str(requirement.get("observer_id", observer))
         var found := false
-        for rule in models.query_rules(subject, scope, observer):
+        for rule in models.query_rules(subject, scope, model_observer):
             if not required_id.is_empty() and str(rule.get("id", "")) != required_id:
                 continue
             if float(rule.get("confidence", 0.0)) < min_confidence:

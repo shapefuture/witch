@@ -1,0 +1,33 @@
+{
+	"name": "The natural wrong hypothesis (he distrusts me), then its revision",
+	"steps": [
+		{
+			"action": "show_tomas_wand",
+			"target": "tomas"
+		},
+		{
+			"action": "wait_watch",
+			"target": "tomas"
+		},
+		{
+			"action": "wait_watch",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"target": "machine"
+		}
+	],
+	"expect": {
+		"state": {
+			"machine.state": "running_together"
+		},
+		"knows": [
+			"tomas_paused_at_wand",
+			"tomas_invited_help"
+		],
+		"model_status": {
+			"m.tomas_distrusts_witch": "REVISED"
+		}
+	}
+}

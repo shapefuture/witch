@@ -1,0 +1,268 @@
+[
+	{
+		"id": "ask_tomas_what",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.ask_tomas_what",
+		"valid_targets": [
+			"tomas"
+		],
+		"preconditions": {
+			"$neq": {
+				"npc.tomas.stance": "withdrawn"
+			}
+		},
+		"excludes_claims": [
+			{
+				"id": "tomas_explained_alignment"
+			}
+		],
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_PERMISSION"
+		],
+		"prediction_candidates": [
+			{
+				"id": "p.complete_answer",
+				"when": {},
+				"expected": {
+					"outcome": "complete_explanation"
+				}
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "ask_tomas_what.partial",
+				"observed": {
+					"outcome": "incomplete_explanation",
+					"motive": "guarded",
+					"npc_expected": "EXPECT_MAGIC"
+				},
+				"knowledge_effects": [
+					{
+						"id": "tomas_explained_alignment",
+						"proposition": {
+							"machine": "must_be_aligned_by_hand"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "tomas_never_looked_away_from_her_hands"
+						}
+					}
+				],
+				"relationship_tags": [
+					"NOTE"
+				],
+				"relationship_payload": {
+					"topic": "machine"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_ask_what"
+					}
+				]
+			}
+		],
+		"topic": "machine"
+	},
+	{
+		"id": "ask_tomas_help",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.ask_tomas_help",
+		"valid_targets": [
+			"tomas"
+		],
+		"preconditions": {
+			"npc.tomas.invited": false
+		},
+		"requires_models": [
+			{
+				"id": "m.help_needs_authorship",
+				"min_status": "SUPPORTED"
+			}
+		],
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_PERMISSION"
+		],
+		"prediction_candidates": [
+			{
+				"id": "p.help_accepted",
+				"when": {},
+				"expected": {
+					"outcome": "help_accepted"
+				}
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "ask_tomas_help.withdrawn",
+				"priority": 20,
+				"when": {
+					"npc.tomas.stance": "withdrawn"
+				},
+				"observed": {
+					"outcome": "disclosed",
+					"motive": "unknown",
+					"npc_expected": "EXPECT_MAGIC",
+					"expectation_violated": true
+				},
+				"effects": {
+					"npc_state": {
+						"tomas": {
+							"stance": "inviting",
+							"expects": "EXPECT_PERMISSION",
+							"invited": true,
+							"tense": false
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "tomas_invited_help",
+						"proposition": {
+							"tomas": "invited_help"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					},
+					{
+						"id": "tomas_wanted_the_last_turn",
+						"proposition": {
+							"tomas": "wanted_the_last_turn"
+						},
+						"status": "POSSIBLE",
+						"scope": "tomas"
+					}
+				],
+				"model_effects": [
+					{
+						"type": "support",
+						"rule_id": "m.help_needs_authorship",
+						"delta": 0.15
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "tomas_turned_around_when_asked"
+						}
+					}
+				],
+				"relationship_tags": [
+					"INVITATION"
+				],
+				"relationship_payload": {
+					"topic": "finish_tuning",
+					"after": "withdrawal"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "inviting"
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_ask_help_withdrawn"
+					}
+				]
+			},
+			{
+				"id": "ask_tomas_help.open",
+				"priority": 10,
+				"when": {
+					"$in": {
+						"npc.tomas.stance": [
+							"braced",
+							"working"
+						]
+					}
+				},
+				"observed": {
+					"outcome": "help_accepted",
+					"npc_expected": "EXPECT_MAGIC",
+					"expectation_violated": true
+				},
+				"effects": {
+					"npc_state": {
+						"tomas": {
+							"stance": "inviting",
+							"expects": "EXPECT_PERMISSION",
+							"invited": true,
+							"tense": false
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "tomas_invited_help",
+						"proposition": {
+							"tomas": "invited_help"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					}
+				],
+				"model_effects": [
+					{
+						"type": "support",
+						"rule_id": "m.help_needs_authorship",
+						"delta": 0.15
+					}
+				],
+				"relationship_tags": [
+					"INVITATION"
+				],
+				"relationship_payload": {
+					"topic": "finish_tuning"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "inviting"
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_ask_help_open"
+					}
+				]
+			}
+		],
+		"topic": "help"
+	}
+]

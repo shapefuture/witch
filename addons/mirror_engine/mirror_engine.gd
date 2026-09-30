@@ -29,6 +29,16 @@ var storylet_definitions: Dictionary = {}
 var operator_definitions: Dictionary = {}
 var causal_hypothesis_definitions: Dictionary = {}
 
+const SAVE_SHAPES := {
+    "event_store": {"events": TYPE_ARRAY},
+    "knowledge": {"claims": TYPE_DICTIONARY},
+    "models": {"rules": TYPE_DICTIONARY, "observations": TYPE_ARRAY, "history": TYPE_ARRAY},
+    "evidence": {"items": TYPE_DICTIONARY, "by_event": TYPE_DICTIONARY},
+    "relationships": {"relations": TYPE_DICTIONARY},
+    "prediction": {"seen_once": TYPE_DICTIONARY},
+    "operators": {"acquired": TYPE_DICTIONARY, "history": TYPE_ARRAY},
+}
+
 var max_transaction_events := 256
 var catalog_is_locked := false
 var catalog_revision := 0
@@ -219,6 +229,11 @@ func _claims_requirements_ok(definition: Dictionary, actor_id: String) -> Dictio
 
 func _action_context(action: MirrorAction) -> Dictionary:
     var context := world_state.duplicate(true)
+    # Every NPC's state is addressable as npc.<id>.<field> in action preconditions,
+    # prediction `when` clauses and response `when` clauses. Responses were previously
+    # limited to `npc_preconditions`, which only sees the TARGET's state, so an action
+    # aimed at an object (a machine) could not react to the person standing next to it.
+    context["npc"] = npc_state.duplicate(true)
     for key in action.context.keys():
         context[key] = action.context[key]
     context["action_id"] = action.id
@@ -230,6 +245,9 @@ func _action_context(action: MirrorAction) -> Dictionary:
 func explain_action(action: MirrorAction) -> Dictionary:
     if catalog_is_locked and compute_catalog_fingerprint() != catalog_fingerprint:
         return {"available": false, "reasons": [{"kind": "catalog", "reason": "catalog_fingerprint_mismatch"}]}
+    return _explain_action_unchecked(action)
+
+func _explain_action_unchecked(action: MirrorAction) -> Dictionary:
     if action == null:
         return {"available": false, "reasons": [{"kind": "action", "reason": "null_action"}]}
     var definition: Dictionary = action_definitions.get(action.id, {})
@@ -239,7 +257,11 @@ func explain_action(action: MirrorAction) -> Dictionary:
     if int(definition.get("action_type", action.action_type)) != action.action_type:
         reasons.append({"kind": "action", "reason": "action_type_mismatch", "expected": int(definition.get("action_type", action.action_type)), "actual": action.action_type})
     var context := _action_context(action)
-    reasons.append_array(MirrorConditions.explain_failures(definition.get("preconditions", {}), context))
+    for failure in MirrorConditions.explain_failures(definition.get("preconditions", {}), context):
+        # Tag the failure so _affordance_state() can bucket it. Untagged failures made the
+        # "blocked_by_state" bucket unreachable (kind "" matched nothing in its precedence list).
+        failure["kind"] = "state"
+        reasons.append(failure)
     var targets: Array = definition.get("valid_targets", [])
     if not targets.is_empty() and action.target_id not in targets:
         reasons.append({"kind": "target", "reason": "invalid_target", "target_id": action.target_id})
@@ -292,9 +314,12 @@ func _is_latent_affordance(reasons: Array) -> bool:
 
 func explain_affordances(target_id: String, context: Dictionary = {}, actor_id: String = "player") -> Array:
     var output: Array = []
+    # The catalog fingerprint hashes the whole catalog. Checking it once per query instead of
+    # once per candidate action keeps affordance lookups O(actions), not O(actions x catalog).
+    var catalog_tampered := catalog_is_locked and compute_catalog_fingerprint() != catalog_fingerprint
     for definition in action_definitions.values():
         var action := MirrorAction.new(str(definition.get("id", "")), actor_id, target_id, int(definition.get("action_type", MirrorDomain.ActionType.CUSTOM)), {}, context)
-        var report := explain_action(action)
+        var report := {"available": false, "reasons": [{"kind": "catalog", "reason": "catalog_fingerprint_mismatch"}]} if catalog_tampered else _explain_action_unchecked(action)
         output.append({
             "action": definition.duplicate(true),
             "available": report.get("available", false),
@@ -500,6 +525,11 @@ func resolve_action(action: MirrorAction) -> Dictionary:
             "evidence": authored_evidence,
             "presentation": response.get("presentation", []).duplicate(true),
         }
+        # Optional: record the relationship effect against someone other than the action's
+        # target (casting at a machine is a social event between the actor and the owner).
+        # Only written when used, so the payload of every existing contract is unchanged.
+        if not str(response.get("relationship_target", "")).is_empty():
+            response_payload["relationship_target"] = str(response["relationship_target"])
         var response_event := _make_event(response_event_id, "ResponseResolved", action.target_id, action.actor_id, response_payload)
         response_event.transaction_id = transaction_id
         response_event.causes = [action_event_id]
@@ -569,7 +599,7 @@ func resolve_action(action: MirrorAction) -> Dictionary:
     if time_cost > 0:
         world_state["__mirror_time"] = get_time() + time_cost
 
-    if not _validate_post_commit():
+    if not _validate_post_commit(snapshot):
         _restore_snapshot(snapshot)
         return _fail("post_commit_validation_failed")
     if not event_store.publish(staged_events):
@@ -638,9 +668,10 @@ func _update_models_from_action(action: MirrorAction, definition: Dictionary, ev
     models.observe_action(action.actor_id, definition.get("prediction_signature", []), action.context, event_id, action.actor_id)
 
 func _update_relationships(action: MirrorAction, response: Dictionary, event_id: String) -> void:
-    if action.target_id.is_empty():
+    var other := str(response.get("relationship_target", action.target_id))
+    if other.is_empty():
         return
-    relationships.record(action.actor_id, action.target_id, event_id, response.get("relationship_tags", []), response.get("relationship_payload", {}))
+    relationships.record(action.actor_id, other, event_id, response.get("relationship_tags", []), response.get("relationship_payload", {}))
 
 func _apply_knowledge_effects(effects: Array, event_id: String) -> void:
     for effect in effects:
@@ -732,7 +763,7 @@ func record_observation(observer_id: String, subject_id: String, observation: Di
         _restore_snapshot(snapshot)
         return _fail("evidence_conflict")
     action_memory["__event_count"] = event_store.size()
-    if not _validate_post_commit():
+    if not _validate_post_commit(snapshot):
         _restore_snapshot(snapshot)
         return _fail("post_commit_validation_failed")
     if not event_store.publish([observation_event]):
@@ -795,7 +826,7 @@ func share_claim(from_holder_id: String, to_holder_id: String, claim_id: String,
         _restore_snapshot(snapshot)
         return _fail("evidence_conflict")
     action_memory["__event_count"] = event_store.size()
-    if not _validate_post_commit():
+    if not _validate_post_commit(snapshot):
         _restore_snapshot(snapshot)
         return _fail("post_commit_validation_failed")
     if not event_store.publish([event]):
@@ -827,7 +858,7 @@ func acquire_operator(observer_id: String, operator_id: String, context: Diction
         return _fail("event_store_rejected", {"reason": event_store.last_error})
     operators.acquire(operator_id, observer_id, event.event_id, source, context)
     action_memory["__event_count"] = event_store.size()
-    if not _validate_post_commit():
+    if not _validate_post_commit(snapshot):
         _restore_snapshot(snapshot)
         return _fail("post_commit_validation_failed")
     if not event_store.publish([event]):
@@ -857,7 +888,7 @@ func revoke_operator(observer_id: String, operator_id: String, reason: String = 
         return _fail("event_store_rejected", {"reason": event_store.last_error})
     operators.revoke(operator_id, observer_id, event.event_id)
     action_memory["__event_count"] = event_store.size()
-    if not _validate_post_commit():
+    if not _validate_post_commit(snapshot):
         _restore_snapshot(snapshot)
         return _fail("post_commit_validation_failed")
     if not event_store.publish([event]):
@@ -884,7 +915,7 @@ func advance_time(delta: int, actor_id: String = "system", reason: String = "man
         return _fail("event_store_rejected", {"reason": event_store.last_error})
     world_state["__mirror_time"] = get_time() + delta
     action_memory["__event_count"] = event_store.size()
-    if not _validate_post_commit():
+    if not _validate_post_commit(snapshot):
         _restore_snapshot(snapshot)
         return _fail("post_commit_validation_failed")
     if not event_store.publish([time_event]):
@@ -950,7 +981,7 @@ func consume_storylet(storylet_id: String, actor_id: String = "player", context:
     action_memory["storylet_seen:" + storylet_id] = event_store.size()
     action_memory["storylet_count:" + storylet_id] = int(action_memory.get("storylet_count:" + storylet_id, 0)) + 1
     action_memory["__event_count"] = event_store.size()
-    if not _validate_post_commit():
+    if not _validate_post_commit(snapshot):
         _restore_snapshot(snapshot)
         return _fail("post_commit_validation_failed")
     if not event_store.publish([content_event]):
@@ -1178,9 +1209,12 @@ func _diff_values(before: Variant, after: Variant, path: String, out: Array) -> 
     elif before != after:
         out.append({"path": path, "kind": "changed", "before": before, "after": after})
 
-func _snapshot() -> Dictionary:
-    return {
-        "event_store": event_store.to_dict(),
+# Transactional snapshot. By default the event log is recorded as a length marker only:
+# every engine transaction is append-only, so rolling back is truncation. Pass
+# full = true when the event store itself may be REPLACED before the rollback (load_json).
+func _snapshot(full: bool = false) -> Dictionary:
+    var event_part := {"event_store": event_store.to_dict()} if full else {"event_count": event_store.size()}
+    var snap := {
         "knowledge": knowledge.to_dict(),
         "models": models.to_dict(),
         "evidence": evidence.to_dict(),
@@ -1196,9 +1230,14 @@ func _snapshot() -> Dictionary:
         "catalog_revision": catalog_revision,
         "catalog_fingerprint": catalog_fingerprint,
     }
+    snap.merge(event_part)
+    return snap
 
 func _restore_snapshot(snapshot: Dictionary) -> void:
-    event_store.restore_from_dict(snapshot["event_store"])
+    if snapshot.has("event_store"):
+        event_store.restore_from_dict(snapshot["event_store"])
+    else:
+        event_store.truncate_to(int(snapshot.get("event_count", 0)))
     knowledge.restore(snapshot["knowledge"].get("claims", {}))
     models.restore(snapshot["models"])
     evidence.restore(snapshot["evidence"])
@@ -1214,23 +1253,50 @@ func _restore_snapshot(snapshot: Dictionary) -> void:
     catalog_revision = int(snapshot.get("catalog_revision", 0))
     catalog_fingerprint = str(snapshot.get("catalog_fingerprint", ""))
 
-func _validate_post_commit() -> bool:
-    if not event_store.verify_chain().get("ok", false):
+# Validates what a transaction just changed: the events appended since `snapshot`, plus the
+# evidence they reference. Earlier events were validated when they committed and are
+# re-checked in full by audit_integrity() / on load, so re-hashing the whole log on every
+# commit was pure overhead. With no baseline snapshot the whole log is validated.
+func _validate_post_commit(snapshot: Dictionary = {}) -> bool:
+    var appended := event_store.size()
+    if snapshot.has("event_count"):
+        appended = event_store.size() - int(snapshot["event_count"])
+    if not event_store.verify_tail(appended).get("ok", false):
         return false
     if not evidence.validate().get("ok", false):
         return false
-    for event in event_store.get_all():
+    for event in event_store.tail(appended):
         for evidence_id in event.evidence_refs:
             if evidence.get_evidence(str(evidence_id)).is_empty():
                 return false
         for evidence_item in evidence.for_event(event.event_id):
             if evidence_item.is_empty():
                 return false
+            var source_event := str(evidence_item.get("source_event", ""))
+            if not source_event.is_empty() and event_store.get_by_id(source_event) == null:
+                return false
+    return true
+
+# Full, O(n) integrity audit of everything the engine holds: the hash chain, the evidence
+# index, and every cross-reference between them. Used by the debug inspector, tests and
+# release gates; transactions only validate their own delta.
+func audit_integrity() -> Dictionary:
+    var errors: Array = []
+    var chain := event_store.verify_chain()
+    if not chain.get("ok", false):
+        errors.append({"kind": "chain", "detail": chain})
+    var evidence_report := evidence.validate()
+    if not evidence_report.get("ok", false):
+        errors.append({"kind": "evidence_index", "detail": evidence_report.get("errors", [])})
+    for event in event_store.get_all():
+        for evidence_id in event.evidence_refs:
+            if evidence.get_evidence(str(evidence_id)).is_empty():
+                errors.append({"kind": "missing_evidence", "event_id": event.event_id, "evidence_id": str(evidence_id)})
     for evidence_item in evidence.all():
         var source_event := str(evidence_item.get("source_event", ""))
         if not source_event.is_empty() and event_store.get_by_id(source_event) == null:
-            return false
-    return true
+            errors.append({"kind": "orphan_evidence", "evidence_id": str(evidence_item.get("id", ""))})
+    return {"ok": errors.is_empty(), "errors": errors, "events": event_store.size()}
 
 func _fail(code: String, details: Dictionary = {}) -> Dictionary:
     var result := {"ok": false, "error": code, "details": details}
@@ -1404,14 +1470,23 @@ func restore_from_save(data: Dictionary) -> bool:
     # they must be guarded here. Both are always present in a well-formed save and
     # back-filled by MirrorPersistence.migrate(). Guarding them turns a corrupt value
     # into a clean `false` instead of a hard SCRIPT ERROR stack trace.
+    # Every section must be present AND a Dictionary. `data.get(key, {}) is Dictionary` is
+    # true for a missing key (the default is {}), so a save with a section deleted passed
+    # this gate and then raised a hard SCRIPT ERROR on the `data[key]` reads below.
     var required_sections := ["event_store", "knowledge", "models", "evidence", "relationships", "prediction", "world_state", "npc_state", "initial_world_state", "initial_npc_state", "action_memory", "operators", "catalog"]
     for key in required_sections:
-        if not data.get(key, {}) is Dictionary:
+        if not data.has(key) or not data[key] is Dictionary:
             return false
+    # Nested containers are optional (each store defaults them) but, when present, must
+    # have the type the store will call duplicate()/iterate on.
+    for section in SAVE_SHAPES.keys():
+        for field in SAVE_SHAPES[section].keys():
+            if data[section].has(field) and typeof(data[section][field]) != int(SAVE_SHAPES[section][field]):
+                return false
     var candidate_store := MirrorEventStore.new(int(data["event_store"].get("max_events", 100000)))
+    # restore_from_dict() already checks sequence, prev_hash, every event hash, the head hash
+    # and uniqueness, so a second verify_chain() here only re-hashed the whole log again.
     if not candidate_store.restore_from_dict(data["event_store"]):
-        return false
-    if not candidate_store.verify_chain().get("ok", false):
         return false
     var candidate_knowledge := MirrorKnowledgeStore.from_dict(data["knowledge"])
     var candidate_models := MirrorModelStore.from_dict(data["models"])
@@ -1472,8 +1547,8 @@ func projection_snapshot() -> Dictionary:
         "catalog": {"revision": catalog_revision, "fingerprint": catalog_fingerprint, "locked": catalog_is_locked},
     }
 
-func rebuild_projections_from_event_log() -> Dictionary:
-    if not event_store.verify_chain().get("ok", false):
+func rebuild_projections_from_event_log(verify_chain: bool = true) -> Dictionary:
+    if verify_chain and not event_store.verify_chain().get("ok", false):
         return {"ok": false, "error": "event_chain_invalid"}
     world_state = initial_world_state.duplicate(true)
     npc_state = initial_npc_state.duplicate(true)
@@ -1518,7 +1593,14 @@ func rebuild_projections_from_event_log() -> Dictionary:
                 _apply_knowledge_effects(response_payload.get("knowledge_effects", []), event.event_id)
                 _apply_model_effects(response_payload.get("model_effects", []), event.event_id)
                 _apply_operator_effects(response_payload.get("operator_effects", []), event.event_id)
-                relationships.record(str(event.target_id), str(event.actor_id), event.event_id, response_payload.get("relationship_tags", []), response_payload.get("relationship_payload", {}))
+                # Must mirror the live path (_update_relationships), which records nothing for an
+                # action with no target. A ResponseResolved event is authored by the action's target,
+                # so an empty actor_id here means there was no target. Recording a relation keyed
+                # "player::" made every save containing a target-less action (e.g. a bare WAIT with a
+                # response contract) fail to load with projection_mismatch.
+                var replay_other := str(response_payload.get("relationship_target", event.actor_id))
+                if not replay_other.is_empty():
+                    relationships.record(str(event.target_id), replay_other, event.event_id, response_payload.get("relationship_tags", []), response_payload.get("relationship_payload", {}))
                 _apply_transfer_applications(response_payload.get("transfer_applications", []), event.event_id)
                 _apply_evidence(response_payload.get("evidence", []))
             "TimeAdvanced":

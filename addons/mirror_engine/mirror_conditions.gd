@@ -4,7 +4,10 @@ extends RefCounted
 # Small deterministic authoring DSL shared by actions, predictions, responses, planners,
 # transfers and storylets. Plain dictionaries remain the authoring surface.
 
-static func get_path(root: Dictionary, path: String, default_value: Variant = null) -> Variant:
+# Named read_path, not get_path: a static `get_path` on a GDScript class shadows the built-in
+# Resource.get_path(), so MirrorConditions.get_path(...) could not be called from outside the
+# class at all ("Invalid call ... Expected 0 argument(s)"). Internal callers masked the bug.
+static func read_path(root: Dictionary, path: String, default_value: Variant = null) -> Variant:
     if path.is_empty():
         return root
     var current: Variant = root
@@ -16,8 +19,12 @@ static func get_path(root: Dictionary, path: String, default_value: Variant = nu
     return current
 
 static func has_path(root: Dictionary, path: String) -> bool:
-    var missing := Object.new()
-    return get_path(root, path, missing) != missing
+    # The previous implementation compared the looked-up value with a freshly allocated
+    # Object sentinel. That raised "Invalid operands 'int' and 'Object'" whenever the value at
+    # the path was a number (or similar), and leaked one Object per call.
+    if path.is_empty():
+        return true
+    return bool(_lookup(root, path)["exists"])
 
 # GDScript raises "Invalid operands" for some cross-type comparisons (for example
 # bool == Dictionary), which surfaces as a SCRIPT ERROR on stderr even though the
@@ -225,7 +232,7 @@ static func _explain(node: Variant, actual: Dictionary, prefix: String, out: Arr
                 else:
                     for sub_path in value.keys():
                         if not _compare_one(actual, str(sub_path), value[sub_path], path.substr(1)):
-                            out.append({"path": str(sub_path), "reason": path.substr(1), "expected": value[sub_path], "actual": get_path(actual, str(sub_path), null)})
+                            out.append({"path": str(sub_path), "reason": path.substr(1), "expected": value[sub_path], "actual": read_path(actual, str(sub_path), null)})
             _:
                 var info := _lookup(actual, path)
                 if not bool(info["exists"]) or not _safe_equals(info["value"], value):

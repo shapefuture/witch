@@ -1,0 +1,23 @@
+[
+	{
+		"id": "h.authorship_not_trust",
+		"rule": {"pattern": "help_is_not_authorization", "about": "tomas"},
+		"baseline_model": {"id": "m.helping_is_welcome"},
+		"anomaly": {},
+		"requires_evidence": [
+			{"id": "tomas_paused_at_wand"},
+			{"id": "tomas_invited_help"}
+		],
+		"requires_models": [
+			{"id": "m.help_needs_authorship", "min_status": "SUPPORTED"}
+		],
+		"operator_id": "op.ask_before_acting",
+		"experiments": [
+			{"action_id": "ask_tomas_help", "target_id": "tomas", "action_type": "ASK"}
+		],
+		"boundary": {"npc.tomas.stance": "withdrawn"},
+		"reframe_id": "reframe.help_is_not_authorization",
+		"semantic_distance": 2,
+		"importance": 3
+	}
+]

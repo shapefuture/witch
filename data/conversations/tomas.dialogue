@@ -1,0 +1,70 @@
+# Tomas, at the machine.
+#
+# STRUCTURE ONLY. Every spoken line is a KEY, and the prose for it lives in
+# data/text/ru.json (the single home of all player-visible text). Dialogue Manager
+# resolves a line's text through tr(), so `tomas: dlg.tomas_ask_what.1` shows the Russian
+# written under that key. The speaker id (`tomas`) is translated via `speaker.<id>`.
+#
+# This file never decides what happened: the Mirror runtime commits the action first and
+# only then presents the title named by the response contract. Conditions read Mirror
+# state through `ctx` (MirrorDialogueContext); nothing here writes game state.
+
+~ tomas_ask_what
+tomas: dlg.tomas_ask_what.1
+if ctx.expected_action("tomas") == "EXPECT_MAGIC"
+	tomas: dlg.tomas_ask_what.2a
+else
+	tomas: dlg.tomas_ask_what.2b
+=> END
+
+~ tomas_show_wand
+tomas: dlg.tomas_show_wand.1
+tomas: dlg.tomas_show_wand.2
+tomas: dlg.tomas_show_wand.3
+=> END
+
+~ tomas_invites_component
+tomas: dlg.tomas_invites_component.1
+tomas: dlg.tomas_invites_component.2
+=> END
+
+~ tomas_invites_lantern
+tomas: dlg.tomas_invites_lantern.1
+tomas: dlg.tomas_invites_lantern.2
+=> END
+
+~ tomas_ask_help_withdrawn
+tomas: dlg.tomas_ask_help_withdrawn.1
+tomas: dlg.tomas_ask_help_withdrawn.2
+tomas: dlg.tomas_ask_help_withdrawn.3
+=> END
+
+~ tomas_ask_help_open
+tomas: dlg.tomas_ask_help_open.1
+tomas: dlg.tomas_ask_help_open.2
+=> END
+
+~ tomas_invited_show_solution
+tomas: dlg.tomas_invited_show_solution.1
+tomas: dlg.tomas_invited_show_solution.2
+=> END
+
+~ tomas_thanks_together
+tomas: dlg.tomas_thanks_together.1
+if ctx.expected_action("tomas") == "EXPECT_RECIPROCITY"
+	tomas: dlg.tomas_thanks_together.2
+=> END
+
+~ tomas_thanks_tuned
+tomas: dlg.tomas_thanks_tuned.1
+tomas: dlg.tomas_thanks_tuned.2
+=> END
+
+~ tomas_withdraws
+tomas: dlg.tomas_withdraws.1
+tomas: dlg.tomas_withdraws.2
+=> END
+
+~ tomas_quiet
+dlg.tomas_quiet.1
+=> END

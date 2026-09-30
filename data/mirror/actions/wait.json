@@ -1,0 +1,490 @@
+[
+	{
+		"id": "wait_watch",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.wait_watch",
+		"valid_targets": [
+			"tomas"
+		],
+		"time_cost": 8,
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"prediction_candidates": [
+			{
+				"id": "p.quiet_after_invite",
+				"priority": 10,
+				"when": {
+					"$in": {
+						"npc.tomas.stance": [
+							"inviting",
+							"partnered",
+							"quiet"
+						]
+					}
+				},
+				"expected": {
+					"outcome": "time_passes"
+				}
+			},
+			{
+				"id": "p.nothing_happens",
+				"priority": 0,
+				"when": {},
+				"expected": {
+					"outcome": "nothing_happens"
+				}
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "wait_watch.bell_invites",
+				"priority": 30,
+				"when": {
+					"machine.state": "jammed",
+					"$in": {
+						"npc.tomas.stance": [
+							"braced",
+							"working"
+						]
+					}
+				},
+				"requires_claims": [
+					{
+						"id": "bell_tilted_into_wind",
+						"holder_id": "player"
+					}
+				],
+				"observed": {
+					"outcome": "invited",
+					"npc_expected": "EXPECT_MAGIC",
+					"expectation_violated": true,
+					"cue": "bell"
+				},
+				"effects": {
+					"npc_state": {
+						"tomas": {
+							"stance": "inviting",
+							"expects": "EXPECT_RECIPROCITY",
+							"invited": true,
+							"tense": false
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "tomas_invited_help",
+						"proposition": {
+							"tomas": "invited_help"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					},
+					{
+						"id": "machine_needs_second_component",
+						"proposition": {
+							"machine": "needs_second_component"
+						},
+						"status": "SUPPORTED",
+						"scope": "clearing"
+					},
+					{
+						"id": "tomas_times_work_to_the_bell",
+						"proposition": {
+							"tomas": "listens_for_the_bell"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					}
+				],
+				"model_effects": [
+					{
+						"type": "upsert",
+						"rule_id": "m.helping_is_welcome",
+						"subject_id": "tomas",
+						"proposition": {
+							"helping": "welcome_when_invited"
+						},
+						"scope": "help",
+						"confidence": 0.6,
+						"status": "CONTEXTUAL",
+						"depth": 1
+					},
+					{
+						"type": "revise",
+						"old_rule_id": "m.tomas_distrusts_witch",
+						"new_rule_id": "m.help_needs_authorship",
+						"proposition": {
+							"help": "needs_authorship"
+						},
+						"scope": "help",
+						"subject_id": "tomas"
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "bell_rang_then_tomas_looked_up"
+						}
+					}
+				],
+				"relationship_tags": [
+					"INVITATION"
+				],
+				"relationship_payload": {
+					"topic": "hold_component",
+					"via": "waiting"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.wait.wind_bell"
+					},
+					{
+						"kind": "anim",
+						"actor": "tomas",
+						"name": "look_up"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "inviting"
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_invites_component"
+					}
+				]
+			},
+			{
+				"id": "wait_watch.invites_component",
+				"priority": 20,
+				"when": {
+					"machine.state": "jammed",
+					"npc.tomas.stance": "working"
+				},
+				"observed": {
+					"outcome": "invited",
+					"npc_expected": "EXPECT_MAGIC",
+					"expectation_violated": true
+				},
+				"effects": {
+					"npc_state": {
+						"tomas": {
+							"stance": "inviting",
+							"expects": "EXPECT_RECIPROCITY",
+							"invited": true,
+							"tense": false
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "tomas_invited_help",
+						"proposition": {
+							"tomas": "invited_help"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					},
+					{
+						"id": "machine_needs_second_component",
+						"proposition": {
+							"machine": "needs_second_component"
+						},
+						"status": "SUPPORTED",
+						"scope": "clearing"
+					}
+				],
+				"model_effects": [
+					{
+						"type": "upsert",
+						"rule_id": "m.helping_is_welcome",
+						"subject_id": "tomas",
+						"proposition": {
+							"helping": "welcome_when_invited"
+						},
+						"scope": "help",
+						"confidence": 0.6,
+						"status": "CONTEXTUAL",
+						"depth": 1
+					},
+					{
+						"type": "revise",
+						"old_rule_id": "m.tomas_distrusts_witch",
+						"new_rule_id": "m.help_needs_authorship",
+						"proposition": {
+							"help": "needs_authorship"
+						},
+						"scope": "help",
+						"subject_id": "tomas"
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "tomas_asked_for_a_hand_unprompted"
+						}
+					}
+				],
+				"relationship_tags": [
+					"INVITATION"
+				],
+				"relationship_payload": {
+					"topic": "hold_component",
+					"via": "waiting"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "tomas",
+						"name": "look_up"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "inviting"
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_invites_component"
+					}
+				]
+			},
+			{
+				"id": "wait_watch.invites_lantern",
+				"priority": 20,
+				"when": {
+					"machine.state": "running_by_magic",
+					"npc.tomas.stance": "working"
+				},
+				"observed": {
+					"outcome": "invited",
+					"npc_expected": "EXPECT_MAGIC",
+					"expectation_violated": true
+				},
+				"effects": {
+					"npc_state": {
+						"tomas": {
+							"stance": "inviting",
+							"expects": "EXPECT_RECIPROCITY",
+							"invited": true,
+							"tense": false
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "tomas_invited_help",
+						"proposition": {
+							"tomas": "invited_help"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					}
+				],
+				"model_effects": [
+					{
+						"type": "support",
+						"rule_id": "m.help_needs_authorship",
+						"delta": 0.15
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "tomas_asked_for_a_hand_after_being_overridden"
+						}
+					}
+				],
+				"relationship_tags": [
+					"INVITATION"
+				],
+				"relationship_payload": {
+					"topic": "hold_lantern",
+					"via": "waiting",
+					"after": "withdrawal"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "tomas",
+						"name": "look_up"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "inviting"
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_invites_lantern"
+					}
+				]
+			},
+			{
+				"id": "wait_watch.relaxes",
+				"priority": 15,
+				"when": {
+					"npc.tomas.stance": "braced"
+				},
+				"observed": {
+					"outcome": "relaxes",
+					"npc_expected": "EXPECT_MAGIC",
+					"expectation_violated": true
+				},
+				"effects": {
+					"npc_state": {
+						"tomas": {
+							"stance": "working",
+							"expects": "EXPECT_DISTANCE",
+							"tense": false
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "tomas_relaxes_when_left_alone",
+						"proposition": {
+							"tomas": "relaxes_when_left_alone"
+						},
+						"status": "SUPPORTED",
+						"scope": "tomas"
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "tomas_shoulders_dropped_when_nothing_happened"
+						}
+					}
+				],
+				"relationship_tags": [
+					"NOTE"
+				],
+				"relationship_payload": {
+					"topic": "space_given"
+				},
+				"presentation": [
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "working"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.wait.relaxes"
+					}
+				]
+			},
+			{
+				"id": "wait_watch.recovers",
+				"priority": 15,
+				"when": {
+					"npc.tomas.stance": "withdrawn"
+				},
+				"observed": {
+					"outcome": "recovering",
+					"npc_expected": "EXPECT_MAGIC",
+					"expectation_violated": true
+				},
+				"effects": {
+					"npc_state": {
+						"tomas": {
+							"stance": "working",
+							"expects": "EXPECT_DISTANCE",
+							"tense": false
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "tomas_returns_when_left_alone",
+						"proposition": {
+							"tomas": "returns_when_left_alone"
+						},
+						"status": "POSSIBLE",
+						"scope": "tomas"
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "tomas_got_up_and_went_back_to_the_bench"
+						}
+					}
+				],
+				"relationship_tags": [
+					"NOTE"
+				],
+				"relationship_payload": {
+					"topic": "space_given",
+					"after": "withdrawal"
+				},
+				"presentation": [
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "working"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.wait.recovers"
+					}
+				]
+			},
+			{
+				"id": "wait_watch.idle",
+				"priority": 0,
+				"observed": {
+					"outcome": "time_passes"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.wait.idle"
+					}
+				]
+			}
+		]
+	}
+]

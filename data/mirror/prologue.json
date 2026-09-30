@@ -1,0 +1,15 @@
+{
+	"_about": "What the witch already believes when she walks in. Recorded as the first event of a new game so the log, not a side channel, is the source of truth. Note: a plain assumption, not a fact.",
+	"observer_id": "player",
+	"subject_id": "clearing",
+	"observation": {"signature": ["PROLOGUE"]},
+	"context": {},
+	"knowledge_effects": [],
+	"model_effects": [
+		{
+			"type": "upsert", "rule_id": "m.helping_is_welcome", "subject_id": "tomas",
+			"proposition": {"helping": "is_welcome"}, "scope": "help",
+			"confidence": 0.7, "status": "HYPOTHESIS", "depth": 1
+		}
+	]
+}

@@ -80,9 +80,24 @@ func get_transaction(transaction_id: String) -> Array[MirrorEvent]:
         out.append(event)
     return out
 
+# Full audit: re-hashes every event. O(n) in the log, so it belongs on load / explicit
+# audit, NOT on every commit (see verify_tail).
 func verify_chain() -> Dictionary:
-    var expected_prev := "GENESIS"; var expected_sequence := 1; var seen: Dictionary = {}
-    for event in _events:
+    return _verify_from(0)
+
+# Re-hashes only the last `count` events and checks they link to their predecessor.
+# Committing appends events that were finalised a moment earlier, so re-verifying the
+# untouched prefix on every transaction made each action cost O(log size) in SHA-256
+# work (~215 ms at 900 events, i.e. 87% of the transaction) for no added safety.
+func verify_tail(count: int) -> Dictionary:
+    return _verify_from(maxi(0, _events.size() - maxi(0, count)))
+
+func _verify_from(start: int) -> Dictionary:
+    var expected_prev := "GENESIS" if start == 0 else _events[start - 1].hash
+    var expected_sequence := 1 if start == 0 else _events[start - 1].sequence + 1
+    var seen: Dictionary = {}
+    for i in range(start, _events.size()):
+        var event := _events[i]
         if event.sequence != expected_sequence: return {"ok": false, "error": "sequence_gap", "event_id": event.event_id}
         if event.prev_hash != expected_prev: return {"ok": false, "error": "prev_hash_mismatch", "event_id": event.event_id}
         var original_hash := event.hash; event.finalize()
@@ -95,6 +110,34 @@ func verify_chain() -> Dictionary:
     if _next_sequence != expected_sequence: return {"ok": false, "error": "next_sequence_mismatch"}
     return {"ok": true, "count": _events.size(), "head_hash": _head_hash}
 
+func tail(count: int) -> Array[MirrorEvent]:
+    var out: Array[MirrorEvent] = []
+    for i in range(maxi(0, _events.size() - maxi(0, count)), _events.size()):
+        out.append(_events[i])
+    return out
+
+# Drops every event after the first `count`. The store is append-only, so this is an exact
+# inverse of the append that a failed transaction performed; it replaces rebuilding the
+# whole store from a serialised copy (which re-hashed the entire log on every rollback,
+# including every preview_action).
+func truncate_to(count: int) -> bool:
+    if count < 0 or count > _events.size(): return false
+    if count == _events.size(): return true
+    for i in range(count, _events.size()):
+        var event := _events[i]
+        _by_id.erase(event.event_id)
+        var tx := event.transaction_id
+        if not tx.is_empty() and _by_transaction.has(tx):
+            var remaining: Array = []
+            for candidate in _by_transaction[tx]:
+                if candidate != event: remaining.append(candidate)
+            if remaining.is_empty(): _by_transaction.erase(tx)
+            else: _by_transaction[tx] = remaining
+    _events.resize(count)
+    _head_hash = "GENESIS" if count == 0 else _events[count - 1].hash
+    _next_sequence = 1 if count == 0 else _events[count - 1].sequence + 1
+    return true
+
 func to_dict() -> Dictionary:
     var event_data: Array = []
     for event in _events: event_data.append(event.to_dict())
@@ -102,13 +145,15 @@ func to_dict() -> Dictionary:
 
 func restore_from_dict(data: Dictionary) -> bool:
     last_error = ""
+    if not data.get("events", []) is Array: last_error = "invalid_event_payload"; return false
     var incoming: Array = data.get("events", [])
     var candidate_max := maxi(1, int(data.get("max_events", max_events)))
     if incoming.size() > candidate_max: last_error = "capacity_exceeded"; return false
     var new_events: Array[MirrorEvent] = []; var previous := "GENESIS"; var expected_sequence := 1; var seen: Dictionary = {}
     for raw in incoming:
-        if not raw is Dictionary: last_error = "invalid_event_payload"; return false
+        if not raw is Dictionary or not MirrorEvent.validate_dict(raw).is_empty(): last_error = "invalid_event_payload"; return false
         var event := MirrorEvent.from_dict(raw)
+        if event == null: last_error = "invalid_event_payload"; return false
         if event.event_id.is_empty() or seen.has(event.event_id): last_error = "duplicate_event_id"; return false
         if event.sequence != expected_sequence: last_error = "invalid_sequence"; return false
         if event.prev_hash != previous: last_error = "prev_hash_mismatch"; return false

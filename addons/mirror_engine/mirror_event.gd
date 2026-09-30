@@ -71,7 +71,39 @@ func to_dict() -> Dictionary:
     out["hash"] = hash
     return out
 
+const _STRING_FIELDS := ["event_id", "event_type", "actor_id", "target_id", "author_tag", "prev_hash", "hash", "transaction_id", "definition_hash", "catalog_fingerprint"]
+const _DICT_FIELDS := ["context", "payload", "effects"]
+const _STRING_ARRAY_FIELDS := ["causes", "prediction_signature", "evidence_refs"]
+
+# Returns "" for a well-formed serialised event, otherwise a short error code.
+# from_dict() used to assume well-formed input, so a corrupt save raised several
+# engine-level SCRIPT ERROR traces (Array constructor, duplicate() on a String, typed
+# argument conversion) before load failed through an accidental null. A save can be
+# damaged by truncation or a bad edit, so it has to fail as a clean rejection.
+static func validate_dict(data: Variant) -> String:
+    if not data is Dictionary:
+        return "not_a_dictionary"
+    for field in _STRING_FIELDS:
+        if data.has(field) and not data[field] is String:
+            return "invalid_field:" + field
+    for field in _DICT_FIELDS:
+        if data.has(field) and not data[field] is Dictionary:
+            return "invalid_field:" + field
+    for field in _STRING_ARRAY_FIELDS:
+        if data.has(field):
+            if not data[field] is Array:
+                return "invalid_field:" + field
+            for item in data[field]:
+                if not item is String:
+                    return "invalid_field:" + field
+    for field in ["sequence", "schema_version"]:
+        if data.has(field) and not (data[field] is int or data[field] is float):
+            return "invalid_field:" + field
+    return ""
+
 static func from_dict(data: Dictionary) -> MirrorEvent:
+    if not validate_dict(data).is_empty():
+        return null
     var event := MirrorEvent.new(str(data.get("event_type", "")), str(data.get("actor_id", "")), str(data.get("target_id", "")), data.get("payload", {}))
     event.event_id = str(data.get("event_id", ""))
     event.sequence = int(data.get("sequence", 0))

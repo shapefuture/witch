@@ -1,0 +1,56 @@
+{
+	"name": "Patient, bell noticed: one wait becomes an invitation",
+	"steps": [
+		{
+			"action": "look_tomas",
+			"target": "tomas"
+		},
+		{
+			"action": "look_bell",
+			"target": "bell"
+		},
+		{
+			"action": "ask_tomas_what",
+			"target": "tomas"
+		},
+		{
+			"action": "look_machine_informed",
+			"target": "machine"
+		},
+		{
+			"action": "wait_watch",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"target": "machine"
+		},
+		{
+			"action": "cast_flourish",
+			"target": "machine"
+		},
+		{
+			"action": "go_path_out",
+			"target": "path_out"
+		}
+	],
+	"expect": {
+		"state": {
+			"machine.state": "singing",
+			"npc.tomas.stance": "quiet",
+			"clearing.departed": true
+		},
+		"knows": [
+			"bell_tilted_into_wind",
+			"tomas_invited_help",
+			"machine_sings",
+			"why_tomas_went_quiet"
+		],
+		"model_status": {
+			"m.help_needs_authorship": "SUPPORTED"
+		},
+		"operators": [
+			"op.ask_before_acting"
+		]
+	}
+}

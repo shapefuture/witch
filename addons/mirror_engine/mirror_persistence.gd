@@ -9,15 +9,21 @@ static func build_save(engine: MirrorEngine) -> Dictionary:
 static func to_json(engine:MirrorEngine)->String:return JSON.stringify(build_save(engine),"    ",true)
 
 static func load_json(engine:MirrorEngine,text:String)->Dictionary:
-    var parsed=JSON.parse_string(text)
-    if not parsed is Dictionary:return {"ok":false,"error":"invalid_json"}
+    var json:=JSON.new()
+    if json.parse(text)!=OK or not json.data is Dictionary:return {"ok":false,"error":"invalid_json"}
+    var parsed:Dictionary=json.data
     var migrated:=migrate(parsed)
     if not migrated.get("ok",false):return migrated
+    # A rejected load must leave the engine exactly as it was. The previous code answered a
+    # projection_mismatch by re-restoring the REJECTED save into the engine, so a forged
+    # projection (or events from a save that failed verification) survived in live state.
+    var before:=engine._snapshot(true)
     if not engine.restore_from_save(migrated["data"]):return {"ok":false,"error":"restore_rejected"}
-    var loaded_projection:=engine.projection_snapshot();var replay:=engine.rebuild_projections_from_event_log()
-    if not replay.get("ok",false):return {"ok":false,"error":"replay_rejected"}
+    var loaded_projection:=engine.projection_snapshot();var replay:=engine.rebuild_projections_from_event_log(false)
+    if not replay.get("ok",false):
+        engine._restore_snapshot(before);return {"ok":false,"error":"replay_rejected"}
     if MirrorHash.canonical_json(loaded_projection)!=MirrorHash.canonical_json(replay.get("after",{})):
-        engine.restore_from_save(migrated["data"]);return {"ok":false,"error":"projection_mismatch"}
+        engine._restore_snapshot(before);return {"ok":false,"error":"projection_mismatch"}
     return {"ok":true,"schema_version":migrated["data"]["schema_version"]}
 
 static func migrate(data:Dictionary)->Dictionary:

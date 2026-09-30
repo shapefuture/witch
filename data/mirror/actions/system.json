@@ -1,0 +1,9 @@
+[
+	{
+		"id": "DIALOGUE_CHOICE",
+		"action_type": "CUSTOM",
+		"hidden": true,
+		"allow_no_response": true,
+		"default_observed": {"outcome": "dialogue_choice"}
+	}
+]
