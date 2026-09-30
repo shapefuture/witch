@@ -28,4 +28,12 @@ if ! grep -q "^TESTS PASSED:" "$LOG"; then echo "GATE FAIL: no positive proof th
 ALLOWED='resources still in use at exit|ObjectDB instances leaked at exit'
 if grep -vE "$ALLOWED" "$LOG" | grep -E "SCRIPT ERROR|Parse Error|^ERROR:|^FAIL " >/dev/null; then echo "GATE FAIL: error markers in output"; fail=1; fi
 
+# 3. Render regression (real shaders, real pixels). Skipped automatically when Xvfb / software GL
+#    are unavailable, or with SKIP_RENDER=1.
+if [ "${SKIP_RENDER:-0}" != "1" ]; then
+	render_out="$(GODOT="$GODOT" ./tests/render/render_check.sh 2>&1)"
+	echo "$render_out"
+	if echo "$render_out" | grep -q "^RENDER FAILED"; then echo "GATE FAIL: render regression"; fail=1; fi
+fi
+
 if [ "$fail" -eq 0 ]; then echo "GATE PASS"; else exit 1; fi

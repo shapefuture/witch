@@ -11,7 +11,7 @@ var navigator: GridNavigator
 var spawn_position := Vector3.ZERO
 # Default framing for the camera director when nothing is being composed.
 var camera_focus := Vector3.ZERO
-var camera_distance := 12.0
+var camera_distance := 11.5
 var camera_pitch_deg := 32.0
 var camera_yaw_deg := 0.0
 var camera_fov := 40.0

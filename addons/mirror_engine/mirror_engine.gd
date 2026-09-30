@@ -44,6 +44,11 @@ var catalog_is_locked := false
 var catalog_revision := 0
 var catalog_fingerprint := ""
 var _suppress_signals := false
+# Cheap tamper stamp of the locked catalog. The SHA-256 fingerprint is what saves bind to, but
+# recomputing it (canonicalise + hash the whole catalog, ~5 ms for a 24 KB catalog) on every
+# call made each action cost 3-4x that. Dictionary.hash() runs in C++ and detects the same
+# thing the guard exists for: a locked catalog being edited in place after the fact.
+var _catalog_stamp := 0
 
 func _init() -> void:
     event_store = MirrorEventStore.new()
@@ -129,6 +134,9 @@ func _catalog() -> Dictionary:
 func compute_catalog_fingerprint() -> String:
     return MirrorHash.sha256(_catalog())
 
+func _catalog_intact() -> bool:
+    return not catalog_is_locked or _catalog().hash() == _catalog_stamp
+
 func lock_catalog() -> bool:
     if catalog_is_locked:
         return true
@@ -136,6 +144,7 @@ func lock_catalog() -> bool:
     if not validation.get("ok", false):
         return false
     catalog_fingerprint = compute_catalog_fingerprint()
+    _catalog_stamp = _catalog().hash()
     catalog_is_locked = true
     if not _suppress_signals:
         catalog_lock_acquired.emit(catalog_fingerprint)
@@ -243,7 +252,7 @@ func _action_context(action: MirrorAction) -> Dictionary:
     return context
 
 func explain_action(action: MirrorAction) -> Dictionary:
-    if catalog_is_locked and compute_catalog_fingerprint() != catalog_fingerprint:
+    if not _catalog_intact():
         return {"available": false, "reasons": [{"kind": "catalog", "reason": "catalog_fingerprint_mismatch"}]}
     return _explain_action_unchecked(action)
 
@@ -316,7 +325,7 @@ func explain_affordances(target_id: String, context: Dictionary = {}, actor_id: 
     var output: Array = []
     # The catalog fingerprint hashes the whole catalog. Checking it once per query instead of
     # once per candidate action keeps affordance lookups O(actions), not O(actions x catalog).
-    var catalog_tampered := catalog_is_locked and compute_catalog_fingerprint() != catalog_fingerprint
+    var catalog_tampered := not _catalog_intact()
     for definition in action_definitions.values():
         var action := MirrorAction.new(str(definition.get("id", "")), actor_id, target_id, int(definition.get("action_type", MirrorDomain.ActionType.CUSTOM)), {}, context)
         var report := {"available": false, "reasons": [{"kind": "catalog", "reason": "catalog_fingerprint_mismatch"}]} if catalog_tampered else _explain_action_unchecked(action)
@@ -465,7 +474,8 @@ func resolve_action(action: MirrorAction) -> Dictionary:
     var availability := explain_action(action)
     if not availability.get("available", false):
         return _fail("action_unavailable", availability)
-    var pending_catalog_fingerprint := compute_catalog_fingerprint()
+    # Already verified intact by explain_action above, so a locked catalog's fingerprint is known.
+    var pending_catalog_fingerprint := catalog_fingerprint if catalog_is_locked else compute_catalog_fingerprint()
 
     var definition: Dictionary = action_definitions[action.id].duplicate(true)
     var context := _action_context(action)
@@ -566,7 +576,7 @@ func resolve_action(action: MirrorAction) -> Dictionary:
         return _fail("transaction_event_limit")
     if not lock_catalog():
         return _fail("catalog_invalid")
-    if catalog_fingerprint != pending_catalog_fingerprint or compute_catalog_fingerprint() != catalog_fingerprint:
+    if catalog_fingerprint != pending_catalog_fingerprint or not _catalog_intact():
         return _fail("catalog_fingerprint_mismatch")
     for staged_event in staged_events:
         staged_event.catalog_fingerprint = catalog_fingerprint
@@ -734,7 +744,7 @@ func _apply_evidence(items: Array) -> bool:
 func record_observation(observer_id: String, subject_id: String, observation: Dictionary, context: Dictionary = {}, evidence_items: Array = [], knowledge_effects: Array = [], model_effects: Array = [], operator_effects: Array = []) -> Dictionary:
     if not lock_catalog():
         return _fail("catalog_invalid")
-    if compute_catalog_fingerprint() != catalog_fingerprint:
+    if not _catalog_intact():
         return _fail("catalog_fingerprint_mismatch")
     var transaction_id := "tx_observation_%s" % str(event_store.next_sequence())
     var event_id := transaction_id + ":observation"
@@ -781,7 +791,7 @@ func share_claim(from_holder_id: String, to_holder_id: String, claim_id: String,
         return _fail("self_claim_transfer")
     if not lock_catalog():
         return _fail("catalog_invalid")
-    if compute_catalog_fingerprint() != catalog_fingerprint:
+    if not _catalog_intact():
         return _fail("catalog_fingerprint_mismatch")
     var source := knowledge.get_claim(claim_id, from_holder_id)
     if source.is_empty():
@@ -844,7 +854,7 @@ func acquire_operator(observer_id: String, operator_id: String, context: Diction
         return _fail("unknown_operator", {"operator_id": operator_id})
     if not lock_catalog():
         return _fail("catalog_invalid")
-    if compute_catalog_fingerprint() != catalog_fingerprint:
+    if not _catalog_intact():
         return _fail("catalog_fingerprint_mismatch")
     if operators.has(operator_id, observer_id):
         return {"ok": true, "idempotent": true, "operator": operators.get_operator(operator_id, observer_id), "catalog_fingerprint": catalog_fingerprint}
@@ -876,7 +886,7 @@ func revoke_operator(observer_id: String, operator_id: String, reason: String = 
         return {"ok": true, "idempotent": true, "operator_id": operator_id, "observer_id": observer_id, "reason": "not_acquired"}
     if not lock_catalog():
         return _fail("catalog_invalid")
-    if compute_catalog_fingerprint() != catalog_fingerprint:
+    if not _catalog_intact():
         return _fail("catalog_fingerprint_mismatch")
     var tx := "tx_operator_revoke_%s_%s" % [operator_id, str(event_store.next_sequence())]
     var event := _make_event(tx + ":revoke", "OperatorRevoked", observer_id, "", {"operator_id": operator_id, "observer_id": observer_id, "reason": reason})
@@ -904,7 +914,7 @@ func advance_time(delta: int, actor_id: String = "system", reason: String = "man
         return _fail("negative_time")
     if not lock_catalog():
         return _fail("catalog_invalid")
-    if compute_catalog_fingerprint() != catalog_fingerprint:
+    if not _catalog_intact():
         return _fail("catalog_fingerprint_mismatch")
     var tx := "tx_time_%s" % str(event_store.next_sequence())
     var time_event := _make_event(tx + ":time", "TimeAdvanced", actor_id, "", {"from": get_time(), "to": get_time() + delta, "delta": delta, "reason": reason})
@@ -927,7 +937,7 @@ func advance_time(delta: int, actor_id: String = "system", reason: String = "man
     return result
 
 func select_storylets(context: Dictionary = {}, actor_id: String = "player") -> Array:
-    if catalog_is_locked and compute_catalog_fingerprint() != catalog_fingerprint:
+    if not _catalog_intact():
         return []
     var candidates: Array = []
     for definition in storylet_definitions.values():
@@ -959,7 +969,7 @@ func consume_storylet(storylet_id: String, actor_id: String = "player", context:
         return _fail("storylet_unavailable", report)
     if not lock_catalog():
         return _fail("catalog_invalid")
-    if compute_catalog_fingerprint() != catalog_fingerprint:
+    if not _catalog_intact():
         return _fail("catalog_fingerprint_mismatch")
     var transaction_id := "tx_storylet_%s_%s" % [storylet_id, str(event_store.next_sequence())]
     var content_event := _make_event(transaction_id + ":content", "ContentConsumed", actor_id, "", {
@@ -1531,6 +1541,8 @@ func restore_from_save(data: Dictionary) -> bool:
     catalog_revision = int(saved_catalog.get("revision", catalog_revision))
     catalog_fingerprint = saved_fingerprint if not saved_fingerprint.is_empty() else current_catalog_fingerprint
     catalog_is_locked = bool(saved_catalog.get("locked", event_store.size() > 0))
+    if catalog_is_locked:
+        _catalog_stamp = _catalog().hash()
     return true
 
 func projection_snapshot() -> Dictionary:
@@ -1620,6 +1632,8 @@ func rebuild_projections_from_event_log(verify_chain: bool = true) -> Dictionary
     catalog_is_locked = event_store.size() > 0
     if catalog_fingerprint.is_empty() and catalog_is_locked:
         catalog_fingerprint = compute_catalog_fingerprint()
+    if catalog_is_locked:
+        _catalog_stamp = _catalog().hash()
     return {"ok": true, "before": {}, "after": projection_snapshot(), "event_count": event_store.size()}
 
 func replay_all() -> Dictionary:

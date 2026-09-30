@@ -11,6 +11,7 @@ extends Node
 #   --sim-first name            play data/sim/name.json first, so the scene starts in that state
 #   --show-options target       open the action surface for a target without walking (capture aid)
 #   --load                      continue from save slot 1
+#   --magic amount              hold the magic shader globals at 0..1 (capture aid: shows the break)
 
 const SLOT := 1
 
@@ -155,6 +156,8 @@ func _build() -> void:
 	pause_menu.quit_requested.connect(func() -> void: get_tree().quit())
 	runtime.presenter = _present
 	_register_presentation()
+	if args.has("magic"):
+		PSXGlobals.set_magic(float(str(args["magic"])))
 
 func _register_presentation() -> void:
 	presentation.register("line", _play_line)

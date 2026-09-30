@@ -117,12 +117,14 @@ static func machine() -> Node3D:
 	var root := Node3D.new()
 	root.name = "Machine"
 	_add(root, box(Vector3(2.2, 0.25, 1.4), Palette.WOOD_DARK, Vector3(0, 0.125, 0)), "Base")
-	var big := _add(root, cylinder(0.62, 0.12, Palette.BRASS, Vector3(-0.35, 0.78, 0), -1.0, false, 10), "BigGear") as Node3D
+	# Gears stand on edge, face toward the camera. Each is a dark disc with lighter teeth around
+	# the rim and iron spokes, so it reads as a gear (and as turning) rather than a coin.
+	var big := _add(root, cylinder(0.62, 0.12, Palette.BRASS_DARK, Vector3(-0.35, 0.78, 0), -1.0, false, 10), "BigGear") as Node3D
 	big.rotation_degrees = Vector3(90, 0, 0)
-	big.add_child(box(Vector3(1.3, 0.1, 0.13), Palette.BRASS))
+	_gear_details(big, 0.62, 10, Palette.BRASS)
 	var small := _add(root, cylinder(0.3, 0.12, Palette.BRASS_DARK, Vector3(0.45, 0.6, 0), -1.0, false, 8), "SmallGear") as Node3D
 	small.rotation_degrees = Vector3(90, 0, 0)
-	small.add_child(box(Vector3(0.68, 0.1, 0.1), Palette.BRASS_DARK))
+	_gear_details(small, 0.3, 8, Palette.BRASS)
 	_add(root, cylinder(0.1, 1.1, Palette.IRON, Vector3(-0.95, 0.8, -0.4), -1.0, false, 6), "Pipe")
 	var lever := _add(root, box(Vector3(0.08, 0.7, 0.08), Palette.IRON, Vector3(0.95, 0.6, 0.3)), "Lever")
 	lever.rotation_degrees = Vector3(0, 0, -20)
@@ -133,6 +135,16 @@ static func machine() -> Node3D:
 	lamp.visible = false
 	_add(root, lamp, "Indicator")
 	return root
+
+# Teeth around the rim and two crossing spokes, in the gear's local XZ plane (its axis is Y).
+static func _gear_details(gear: Node3D, radius: float, teeth: int, tooth_color: Color) -> void:
+	for i in range(teeth):
+		var angle := TAU * i / teeth
+		var tooth := box(Vector3(0.16, 0.14, 0.12), tooth_color, Vector3(cos(angle) * radius, 0, sin(angle) * radius))
+		tooth.rotation.y = -angle
+		gear.add_child(tooth)
+	gear.add_child(box(Vector3(radius * 1.7, 0.16, 0.1), Palette.IRON, Vector3(0, 0.02, 0)))
+	gear.add_child(box(Vector3(0.1, 0.16, radius * 1.7), Palette.IRON, Vector3(0, 0.02, 0)))
 
 static func tree_with_bell() -> Node3D:
 	var root := Node3D.new()

@@ -71,7 +71,11 @@ def referenced_keys():
                 refs["speaker." + speaker.group(1)].append(str(path.relative_to(ROOT)))
     for folder in ("game", "autoload"):
         for path in (ROOT / folder).rglob("*.gd"):
-            for match in re.finditer(r'\btr\("([^"]+)"\)', path.read_text(encoding="utf-8")):
+            source = path.read_text(encoding="utf-8")
+            for match in re.finditer(r'\btr\("([^"]+)"\)', source):
+                refs[match.group(1)].append(str(path.relative_to(ROOT)))
+            # Keys are also passed around as plain literals (display_key = "obj.tomas", table rows).
+            for match in re.finditer(r'"((?:%s)\.[a-z0-9_.]+)"' % "|".join(GROUP_ORDER), source):
                 refs[match.group(1)].append(str(path.relative_to(ROOT)))
     return refs
 

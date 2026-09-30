@@ -1,0 +1,101 @@
+# Architecture
+
+> **YAKO owns presentation mechanics. Mirror owns meaning.**
+
+*Witch You Were Here* is a third-person PSX diorama in which **knowledge, prediction,
+discrepancy, relationships and model revision are the gameplay**. The engine beneath it is the
+deterministic Mirror runtime (`addons/mirror_engine`); the game on top is presentation and
+authored content.
+
+```
+                          pointer (mouse / touch)
+                                   |
+                     IntentInput -> PlayerIntent      (MOVE_TO / INSPECT / CHOOSE / CANCEL)
+                                   |
+                          InteractionFlow             walk, face, open the action surface
+                                   |
+        InteractionResolver  <--  MirrorEngine.explain_affordances   (what is possible, and why)
+                                   |  player chooses a natural-language option
+                             ActionQueue              one consequential action at a time
+                                   |
+                     MirrorEngine.resolve_action      ONE atomic transaction:
+                                   |                  prediction -> response -> events -> effects
+            committed result: observed, discrepancy, knowledge/model effects, presentation[]
+                                   |
+                        PresentationDirector          plays entries in order, awaiting each
+          line -> SubtitleUI   dialogue -> Dialogue Manager   camera -> CameraDirector
+          npc -> NPC pose      anim -> Witch/NPC       magic -> MagicPresentation (PSX break)
+```
+
+Nothing on the lower half decides what happened. Scenes, NPCs, dialogue and UI submit actions
+and present committed results; `Mirror` (the `MirrorRuntime` autoload) is the only authority.
+
+## Directory map
+
+| Path | Role |
+|---|---|
+| `addons/mirror_engine/` | Epistemic-social runtime: event log, knowledge, models, evidence, relationships, predictions, operators, storylets, planner, persistence. Vendored; see `PROVENANCE.md`. |
+| `addons/dialogue_manager/` | Language/runtime layer for `.dialogue` files (unmodified, v3.10.4). |
+| `autoload/` | `Localization` (loads the one text table), `SettingsState` (volume), `SceneManager` (fade transitions). `Mirror` (`game/mirror/mirror_runtime.gd`) and `DialogueManager` are also autoloads. |
+| `game/mirror/` | `MirrorRuntime` facade, `MirrorCatalog` (loads `data/mirror`), `ActionQueue`, `EventLogView`. |
+| `game/interaction/` | `PlayerIntent`, `PointerTracker`, `IntentInput`, `InteractionProbe`, `InteractionResolver`, `InteractionOption/Context`, `InteractionFlow`. |
+| `game/npc/` | `Expectation` (the hidden variable), `ResponsePolicy`, `NPC` (poses). |
+| `game/dialogue/` | `DialogueBridge` (runs conversations, records choices), `MirrorDialogueContext` (the read-only window `.dialogue` sees). |
+| `game/world/` | `Room`, `Clearing`, `Interactable`, `GridNavigator`, `Placeholders`, `MachineView`. |
+| `game/player/` | `Witch` (movement), `WitchAnimation`. |
+| `game/camera/` | `DioramaCamera`, `CameraDirector` (pure `compute_pose`, the `stay` contract). |
+| `game/presentation/` | `PresentationDirector`, `MagicPresentation`, `PSXActorPresenter`, `FocusOutline`. |
+| `game/ui/` | `UIKit`, `SubtitleUI`, `InteractionPresenter`, `PauseMenuUI`, `SettingsMenuUI`, fonts. |
+| `game/save/` | `SaveCodec`, `SaveGame`. |
+| `game/debug/` | `SimulationRunner`, `MirrorInspector`. |
+| `game/main/` | `GameRoot` (composition root + command-line hooks) and `main.tscn`. |
+| `data/mirror/` | The authored catalog: `world.json`, `prologue.json`, `actions/*.json`, `operators.json`, `storylets.json`, `hypotheses.json`. |
+| `data/text/ru.json` | **Every** player-visible string. |
+| `data/conversations/` | `.dialogue` structure (line keys, conditions). |
+| `data/sim/` | Deterministic playthroughs with expectations. |
+| `render/psx/` | PSX shaders, `psx_screen` (grade), `magic_break`, `PSXMaterials`, `PSXGlobals`, `Palette`. |
+| `tests/` | Headless suite, golden transcripts, render regression. See `GAUNTLET.md`. |
+| `tools/` | `text_tool.py`, `perf_probe.gd`, `fbx_to_glb_with_texture.py`. |
+
+## The model in one paragraph
+
+An action carries a hidden **prediction** ("I believe this will happen"); the world answers with
+a **response contract** chosen by state, knowledge and the NPC's **expectation**; the result is
+**evidence**; any gap is a **discrepancy** (outcome, motive, scope, timing, relational...); and
+the player's **model** is revised through explicit effects (`upsert`, `support`, `contradict`,
+`revise`, `transfer`). Affordances are then recomputed from knowledge and models, so the same
+verbs on the same objects mean something new. The Clearing's whole causal story is in
+`data/mirror/actions/*.json`; `docs/AUTHORING.md` explains the format.
+
+## Implementation notes that differ from the original plan
+
+| Plan | Built | Why |
+|---|---|---|
+| `mirror/` with hand-written `knowledge_state`, `event_log`, `relationship_state`, ... | Those are the Mirror addon's own stores; `game/mirror/` is a facade. | The engine already provides them; re-implementing would fork the truth. |
+| `transaction_queue.gd` | `ActionQueue` (serialises resolve + presentation) over the engine's own atomic transactions. | The engine already does begin/validate/commit/rollback; what was missing was *presentation* not interleaving. |
+| `NavigationAgent3D` | `GridNavigator` (A* over a grid). | Deterministic, headless-testable, no baked mesh needed at this scale. |
+| `CameraZone`, `CameraTarget`, `CausalObject` | Room framing on `Room`; focus ids resolved by the director; causal tags on `Interactable`. | No second consumer yet; add when a second room needs them. |
+| `data/observations`, `data/causal_rules`, `data/places` ... | Claims, evidence, models, hypotheses inside the action contracts. | "Observation" is an event + evidence + claim in the engine; separate files would duplicate it. |
+| Dialogue text inside `.dialogue` | Keys only; prose in `ru.json`. | One place for all text, editable by hand or tool. |
+| Multiple languages | Russian only. | Requested. |
+
+## Replacing placeholders
+
+Every model is a primitive from `game/world/placeholders.gd` whose named parts (`Body`, `Head`,
+`Hat`, `ArmR`/`Wand`, `BigGear`, ...) are what animation code drives. To drop in a real model:
+build or import a `Node3D` exposing those names, call `Witch.set_visual()` / `NPC.set_visual()`,
+and run `PSXActorPresenter.apply(root)` to give any imported surface the PSX actor look. Missing
+parts are skipped, not errors.
+
+## Status against the plan
+
+Built and tested: project strip and rename; Dialogue Manager; third-person witch with
+tap/click-to-move; unified input; contextual natural-language options; Mirror runtime, catalog,
+queue; one NPC with a hidden expectation; one causal object plus the bell (epistemic
+affordance); all six verbs; the model-betrayal loop and its recovery; save/load; debug
+inspector and Explain Why; deterministic simulation; render regression; PSX + magic break.
+
+Not built (deliberately, per the plan): the raccoon tele-somatic signal (only its silhouette and
+`RaccoonLink` anchor exist), Vera / Elian / Ilya, the town-wide causal graph, LimboAI,
+zeldaremake-inspired world composition, a world compiler from `PlaceDef` resources, mobile
+profile tuning, the full ending, and a main menu.

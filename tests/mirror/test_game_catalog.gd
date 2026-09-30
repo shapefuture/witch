@@ -85,3 +85,9 @@ func test_fixed_evidence_ids_in_repeatable_actions_are_rejected_at_load() -> voi
 	var once_errors: Array = []
 	MirrorCatalog._normalize_action({"id": "x", "once_key": "k", "response_contracts": [{"id": "r", "evidence": [{"id": "fixed"}]}]}, once_errors, [])
 	eq(once_errors.size(), 0, "fine when the action can only fire once")
+
+func test_the_addons_own_project_validator_finds_no_errors_in_game_content() -> void:
+	# This is what the editor's Project > Tools > Validate Mirror Content runs.
+	var report := MirrorValidator.new().validate_project("res://data")
+	eq(report["errors"], [], "every JSON file under data/ parses")
+	ok(report["files"].size() >= 15, "it actually scanned the content (%d files)" % report["files"].size())

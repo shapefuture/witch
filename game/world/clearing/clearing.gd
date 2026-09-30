@@ -24,8 +24,8 @@ var moon: DirectionalLight3D
 
 func _ready() -> void:
 	room_id = "clearing"
-	spawn_position = Vector3(0.4, 0.0, 4.5)
-	camera_focus = Vector3(0.0, 0.8, -1.2)
+	spawn_position = Vector3(0.6, 0.0, 2.5)
+	camera_focus = Vector3(0.0, 0.8, -0.8)
 	navigator = GridNavigator.new(Rect2(-11.0, -11.0, 22.0, 22.0))
 	navigator.block_outside(8.6, PATH_AT + Vector3(0, 0, -1.2), 1.5)
 	_build_environment()
