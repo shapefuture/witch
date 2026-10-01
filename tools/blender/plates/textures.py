@@ -135,7 +135,7 @@ def star(n=96, ink=(0.32, 0.27, 0.20)):
     return out
 
 
-def carpet(n=1024, extent=8.4, pitch=1.18, purple=(0.30, 0.21, 0.35), gold=(0.55, 0.50, 0.30), seam=(0.17, 0.13, 0.11)):
+def carpet(n=1024, extent=8.4, pitch=1.18, purple=(0.30, 0.21, 0.35), gold=(0.47, 0.43, 0.27), seam=(0.15, 0.12, 0.10)):
     """A hexagonal spiral seen from above (the floor's inlay): purple band, dark seam, pale olive-gold
     band, dark seam. `extent` is the side of the square in metres; alpha fades the outer turns."""
     yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)

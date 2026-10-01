@@ -42,7 +42,7 @@ def foreground(coll, mats):
     on a pedestal and a rock bottom-right, the end of a shelf at each side. World space."""
     out = []
     b = Builder("FgRocks")
-    b.sphere((-2.55, 0.35, 3.05), (1.05, 0.95, 0.9), "stone_dark", subdiv=3, amp=0.45, seed=5, flat_bottom=-0.35, freq=1.2)
+    b.sphere((-2.55, 0.35, 3.05), (1.05, 0.95, 0.9), "stone", subdiv=3, amp=0.45, seed=5, flat_bottom=-0.35, freq=1.2)
     b.sphere((-3.4, 0.25, 2.1), (0.8, 0.7, 0.9), "stone_dark", subdiv=3, amp=0.5, seed=6, flat_bottom=-0.3, freq=1.2)
     b.sphere((2.85, 0.32, 2.75), (0.62, 0.5, 0.55), "stone_dark", subdiv=3, amp=0.45, seed=8, flat_bottom=-0.5, freq=1.3)
     o = b.build(coll, mats)

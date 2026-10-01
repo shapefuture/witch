@@ -35,7 +35,7 @@ SWATCHES = {
     "book_red":    ((122, 64, 42), 0.10, 0.03, 0.08, 0.18),
     "book_green":  ((72, 88, 58), 0.10, 0.03, 0.08, 0.18),
     "book_purple": ((86, 62, 100), 0.10, 0.03, 0.08, 0.15),
-    "cloak":       ((112, 102, 76), 0.18, 0.03, 0.10, 0.0),
+    "cloak":       ((96, 88, 66), 0.18, 0.03, 0.10, 0.0),
     "void":        ((9, 8, 11), 0.05, 0.0, 0.02, 0.0),
     "iron":        ((62, 58, 66), 0.12, 0.02, 0.08, 0.10),
     "brass":       ((178, 132, 52), 0.10, 0.03, 0.06, 0.08),
@@ -175,7 +175,7 @@ def emissive(name, colour, strength):
     return m
 
 
-def beam_volume(name, density=0.085, anisotropy=0.5, colour=(1.0, 0.93, 0.80), mottle=0.5):
+def beam_volume(name, density=0.06, anisotropy=0.5, colour=(1.0, 0.93, 0.80), mottle=0.5):
     """Dust in the beam: scattering only inside the beam-shaped hull, gently mottled."""
     m = _new(name)
     n = Nodes(m)
@@ -183,6 +183,11 @@ def beam_volume(name, density=0.085, anisotropy=0.5, colour=(1.0, 0.93, 0.80), m
     noise.inputs["Scale"].default_value = 0.9
     noise.inputs["Detail"].default_value = 3.0
     d = n.math("MULTIPLY", n.math("ADD", n.math("MULTIPLY", n.math("SUBTRACT", noise.outputs["Fac"], 0.5), 2.0 * mottle), 1.0), density)
+    # denser high up (dust hangs near the hole, the beam fades as it falls); Blender z = height
+    height = n.new("ShaderNodeSeparateXYZ")
+    n.link(n.new("ShaderNodeNewGeometry").outputs["Position"], height.inputs[0])
+    fall = n.math("ADD", n.math("MULTIPLY", n.math("DIVIDE", n.math("SUBTRACT", height.outputs["Z"], 1.0), 9.0, clamp=True), 0.7), 0.3)
+    d = n.math("MULTIPLY", d, fall)
     vol = n.new("ShaderNodeVolumeScatter")
     vol.inputs["Color"].default_value = (*colour, 1.0)
     vol.inputs["Anisotropy"].default_value = anisotropy

@@ -95,7 +95,7 @@ def z_at(depth):
 NAVE_LEFT = x_at(0, 4.15)            # front of the left bookcases: the shelf slopes give 3.4 m left of the eye
 NAVE_RIGHT = x_at(1672, 4.45)        # front of the right shelves: they leave the frame at 4.4 m
 LEFT_END_Z = z_at(8.1)               # the left bookcase ends at the pilaster (screen x ~380)
-RIGHT_END_Z = z_at(8.6)              # the right shelves end beside the statue (screen x ~1220)
+RIGHT_END_Z = z_at(7.6)              # the right shelves end beside the statue (screen x ~1220)
 ARCH_WALL_Z = z_at(10.0)             # the wall with the great arch and the eye
 ALCOVE_BACK_Z = z_at(13.2)           # the beam-lit recess behind the statue (screen x 930..1220)
 ALCOVE_RIGHT = x_at(1225, 13.2) + 0.6
@@ -106,13 +106,13 @@ ARCH_APEX = 5.6
 PASSAGE_LEN = 4.4                     # the vaulted passage behind the arch
 STAIR_ROOM_DEPTH = 5.0                # the second shelf room past the third arch
 
-STATUE_AT = v3((3.3, 0.0, -3.0))
+STATUE_AT = v3((3.55, 0.0, -2.3))
 TOWER_A_AT = floor_at(850, 738)       # the dark central bookcase tower (screen x 770..930)
 TOWER_B_AT = floor_at(992, 740)       # the beam-lit pointed tower behind the statue's left
 PILASTER_AT = np.array([NAVE_LEFT + 0.35, 0.0, LEFT_END_Z - 0.55])
 CARPET_C = floor_at(655, 836)
-POOL = floor_at(840, 815)            # the brightest floor in the reference: just left of and behind the witch
-OCULUS_PX = (1152, 60)
+POOL = floor_at(880, 822)            # the brightest floor in the reference: just left of and behind the witch
+OCULUS_PX = (1148, 58)
 OCULUS_Y = 10.4
 OCULUS = REF.hit_plane_y(OCULUS_PX[0], OCULUS_PX[1], OCULUS_Y)
 SUN_DIR = (OCULUS - POOL) / np.linalg.norm(OCULUS - POOL)

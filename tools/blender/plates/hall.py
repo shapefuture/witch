@@ -28,7 +28,7 @@ WALL_R = L.NAVE_RIGHT + 1.0
 SPRING_Y = 8.6                  # the nave walls stand this high, then the vault closes in
 VAULT_APEX = 12.6
 ALCOVE_L = 1.75                 # where the arch wall ends and the alcove opens
-OCULUS_R = 0.95
+OCULUS_R = 0.64
 
 # the great arch (opening; the molding ring sits outside it)
 ARCH_HW = 1.6
@@ -300,7 +300,7 @@ def passage(coll, mats):
         x, y = xa + (xb - xa) * u, top * v
         return (x, y, z1 + _bump((x, y, z1), 0.12, 0.9, 7.0))
 
-    b.surface(end_fn, int((xb - xa) / 0.1), int(top / 0.1), "stone_warm", keep=lambda u, v: not inside_arch(xa + (xb - xa) * u, top * v, THIRD_X, THIRD_HW, THIRD_SPRING, THIRD_APEX))
+    b.surface(end_fn, int((xb - xa) / 0.1), int(top / 0.1), "stone_dark", keep=lambda u, v: not inside_arch(xa + (xb - xa) * u, top * v, THIRD_X, THIRD_HW, THIRD_SPRING, THIRD_APEX))
     # third arch ring
     for k in range(13):
         y = THIRD_APEX * k / 12
@@ -364,7 +364,7 @@ def alcove(coll, mats):
     # right side wall faces -x, from the end of the nave's right wall back
     _wall_sheet(b, (xr, 0, zb), (0, 0, L.RIGHT_END_Z - zb + 0.5), (0, h, 0), int((L.RIGHT_END_Z - zb) / 0.18), int(h / 0.18), "stone", 0.35, 0.55, 10.0, (-1, 0, 0))
     # the corner between the nave's right wall and the alcove: a pier
-    b.box((WALL_R + 0.3, h / 2, L.RIGHT_END_Z - 0.2), (1.3, h, 1.0), "stone")
+    b.box((WALL_R + 0.3, 4.1, L.RIGHT_END_Z - 0.2), (1.3, 8.2, 1.0), "stone")
     obj = b.build(coll, mats)
     geo.facet(obj, target_edge=0.5, seed=51)
     return obj
@@ -375,7 +375,7 @@ def pilaster(coll, mats):
     b = Builder("Pilaster")
     x, _, z = L.PILASTER_AT
     prof = [(0.55, 0.0), (0.55, 0.45), (0.42, 0.7), (0.36, 2.0), (0.34, 6.0), (0.37, 8.4), (0.55, 9.2), (0.62, 12.0)]
-    b.lathe(prof, "stone", segs=10, matrix=geo.xf((x, 0, z)), jitter=0.07, seed=3)
+    b.lathe(prof, "stone_warm", segs=10, matrix=geo.xf((x, 0, z)), jitter=0.07, seed=3)
     # a dark iron sconce with a purple orb (the ref's small purple note high on the column)
     b.cyl((x + 0.3, 6.55, z + 0.2), (x + 0.6, 6.85, z + 0.4), 0.04, 0.04, "iron", segs=5)
     b.box((x + 0.33, 6.4, z + 0.18), (0.08, 0.5, 0.14), "iron")
@@ -387,50 +387,56 @@ def pilaster(coll, mats):
 
 
 def statue(coll, mats):
-    """Hooded and faceless, holding a bundle of scrolls, a crown of pale crystals behind the head,
-    on a two-step plinth. A smooth form, collapsed into facets."""
+    """Hooded and faceless, holding scrolls at the chest, a crown of pale crystals behind the head,
+    on a two-step plinth. A smooth form (robe with folds, peaked hood), collapsed into facets."""
     sx, _, sz = L.STATUE_AT
     yaw = -25.0
-    m = geo.xf((sx, 0, sz), (0, yaw, 0))
+    m = geo.xf((sx, 0, sz), (0, yaw, 0), 1.1)
     b = Builder("Statue")
     n0 = b.count()
     b.box((0, 0.17, 0), (1.7, 0.34, 1.6), "stone_dark")
     b.box((0, 0.46, 0), (1.35, 0.26, 1.3), "stone", r=(0, 6, 0))
-    # robe: a lathe with folds (noise in angle), flaring at the hem
-    prof = [(0.70, 0.58), (0.66, 0.9), (0.58, 1.5), (0.52, 2.1), (0.48, 2.6), (0.47, 2.9), (0.40, 3.1), (0.18, 3.2)]
-    b.lathe(prof, "cloak", segs=28, jitter=0.0)
+    # robe: shoulders, chest, a long fall of folds flaring at the hem; slightly flattened front-back
     n1 = b.count()
-    # hood: a stretched sphere, pulled back to a soft peak
-    b.sphere((0, 3.28, -0.02), (0.38, 0.47, 0.42), "cloak", subdiv=3, amp=0.05, seed=2)
+    prof = [(0.6, 0.58), (0.56, 0.9), (0.47, 1.6), (0.41, 2.2), (0.40, 2.55), (0.45, 2.82), (0.40, 2.98), (0.16, 3.06)]
+    b.lathe(prof, "cloak", segs=36)
 
-    def hood_peak(p):
-        if p.y > 3.45:
-            k = (p.y - 3.45) / 0.3
-            p.z -= 0.18 * k * k
-        return p
-    b.displace(n1, hood_peak)
-    # the empty face
-    b.sphere((0, 3.22, 0.22), (0.24, 0.3, 0.16), "void", subdiv=2, amp=0.02, seed=1)
-    # arms folded forward to the chest, holding scrolls
+    def folds(p):
+        a = math.atan2(p.z, p.x)
+        k = max(0.0, min(1.0, (2.7 - p.y) / 1.6))
+        r = 1.0 + 0.09 * k * math.sin(7 * a + p.y * 0.6) + 0.04 * k * math.sin(13 * a)
+        return Vector((p.x * r, p.y, p.z * r * 0.8))
+    b.displace(n1, folds)
+    # the hood: a peaked cowl, tipped back; the face is a black hollow inside its rim
+    n2 = b.count()
+    b.lathe([(0.0, 2.9), (0.33, 2.95), (0.37, 3.15), (0.33, 3.38), (0.22, 3.58), (0.08, 3.74), (0.0, 3.8)], "cloak", segs=16)
+
+    def tip_back(p):
+        k = max(0.0, p.y - 3.1)
+        return Vector((p.x, p.y, p.z * 1.05 - 0.45 * k * k))
+    b.displace(n2, tip_back)
+    b.sphere((0, 3.24, 0.21), (0.19, 0.25, 0.15), "void", subdiv=2, amp=0.02, seed=1)
+    # sleeves to the chest, hands meeting round the scrolls
     for s in (-1, 1):
-        b.cyl((s * 0.45, 2.95, 0.02), (s * 0.18, 2.45, 0.42), 0.16, 0.13, "cloak", segs=8)
-    for k, (dy, rad) in enumerate(((2.52, 0.085), (2.36, 0.08), (2.66, 0.07))):
-        b.cyl((-0.42, dy, 0.48 + 0.03 * k), (0.4, dy + 0.05, 0.5 + 0.03 * k), rad, rad, "scroll", segs=8)
-        for s in (-1, 1):
-            xx = 0.4 if s > 0 else -0.42
-            b.cyl((xx, dy + (0.05 if s > 0 else 0), 0.48 + 0.03 * k), (xx + s * 0.05, dy + (0.05 if s > 0 else 0), 0.48 + 0.03 * k), rad + 0.012, rad + 0.012, "scroll_end", segs=8)
+        b.cyl((s * 0.42, 2.8, 0.0), (s * 0.14, 2.32, 0.38), 0.15, 0.12, "cloak", segs=7)
+    # two rolls with the sheet between them, held across the chest
+    for k, (p0, p1) in enumerate((((-0.36, 2.42, 0.42), (0.22, 2.56, 0.48)), ((-0.18, 2.2, 0.47), (0.4, 2.33, 0.5)))):
+        b.cyl(p0, p1, 0.075, 0.075, "scroll", segs=8)
+        for e in (p0, p1):
+            d = (Vector(p1) - Vector(p0)).normalized() * (0.03 if e is p1 else -0.03)
+            b.cyl(e, tuple(Vector(e) + d), 0.085, 0.085, "scroll_end", segs=8)
+    b.quad((-0.3, 2.42, 0.46), (0.25, 2.55, 0.5), (0.36, 2.25, 0.52), (-0.2, 2.12, 0.49), "pale")
     # the crown: pale crystals fanning behind the head
-    for k, ang in enumerate((-58, -38, -19, 0, 19, 38, 58)):
+    for k, ang in enumerate((-60, -40, -20, 0, 20, 40, 60)):
         a = math.radians(ang)
-        tall = 1.05 if k in (2, 3, 4) else 0.72
-        base = Vector((math.sin(a) * 0.2, 3.45, -0.3))
-        tip = Vector((math.sin(a) * 0.85, 3.45 + tall * math.cos(a), -0.48))
-        b.cyl(base, tip, 0.12, 0.0, "crystal", segs=5, spin=18)
-        b.sphere(tuple(tip + (base - tip) * 0.25), 0.1, "crystal", subdiv=1, amp=0.3, seed=k)
+        tall = 0.95 if k in (2, 3, 4) else 0.65
+        base = Vector((math.sin(a) * 0.18, 3.45, -0.32))
+        tip = Vector((math.sin(a) * 0.8, 3.5 + tall * math.cos(a), -0.45))
+        b.cyl(base, tip, 0.1, 0.0, "crystal", segs=5, spin=18)
+        b.sphere(tuple(tip + (base - tip) * 0.22), 0.085, "crystal", subdiv=1, amp=0.3, seed=k)
     b.transform(n0, m)
     obj = b.build(coll, mats)
-    # keep the plinth's planes, facet the figure
-    geo.facet(obj, target_edge=0.11, seed=71)
+    geo.facet(obj, target_edge=0.12, seed=71)
     return obj
 
 
@@ -465,3 +471,14 @@ def tower_frame(name, at, yaw, w, d, h, spire, coll, mats, taper=0.16, seed=0):
     obj = b.build(coll, mats)
     geo.facet(obj, seed=81 + seed)
     return obj, tiers
+
+
+def right_post(coll, mats, z=-0.35):
+    """A pale stone post standing proud of the right bookcases (the lit vertical in the reference)."""
+    b = Builder("RightPost")
+    x = L.NAVE_RIGHT + 0.02
+    b.lathe([(0.24, 0.0), (0.24, 0.3), (0.16, 0.45), (0.14, 4.0), (0.15, 7.7), (0.24, 8.2)], "pale", segs=7,
+            matrix=geo.xf((x, 0, z)), jitter=0.05, seed=5)
+    obj = b.build(coll, mats)
+    geo.facet(obj, target_edge=0.35, seed=91)
+    return obj

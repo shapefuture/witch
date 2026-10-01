@@ -85,7 +85,7 @@ def paint_over(img, z, key_share, glow_share, fov_v, haze_col=(0.62, 0.53, 0.38)
     kb = blur(key_share * l, 6 * s)
     out = out * (1.0 + 0.45 * strength * smoothstep(0.05, 0.4, kb))[..., None]
     near_dark = (1 - smoothstep(2.5, 6.0, zz)) * (1 - smoothstep(0.02, 0.2, blur(key_share, 4 * s)))
-    out = out * (1.0 - 0.28 * strength * near_dark)[..., None]
+    out = out * (1.0 - 0.18 * strength * near_dark)[..., None]
     # glow: bright sources and the beam's edges bloom a little (warm)
     l = lum(out)
     bright = np.clip(l - 0.55, 0, None)[..., None] * out / np.maximum(l, 1e-4)[..., None]

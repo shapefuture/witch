@@ -20,7 +20,7 @@ class Hall:
 
 
 def tower_b_at():
-    return np.array([2.05, 0.0, -4.65])
+    return np.array([2.85, 0.0, -5.0])
 
 
 def build(quick=False, dusk=False, blockout=False):
@@ -55,11 +55,11 @@ def build(quick=False, dusk=False, blockout=False):
     sl, run, _ = shelves.bookcase_run(lib, coll, mats, "ShelvesL", L.NAVE_LEFT, hall.FRONT_Z - 0.3, L.LEFT_END_Z, +1, 8.7, rng, run,
                                       candles=h.candles)
     perch = L.RACCOON_PERCH
-    sr, run, _ = shelves.bookcase_run(lib, coll, mats, "ShelvesR", L.NAVE_RIGHT, hall.FRONT_Z - 0.3, L.RIGHT_END_Z, -1, 8.7, rng, run,
+    sr, run, _ = shelves.bookcase_run(lib, coll, mats, "ShelvesR", L.NAVE_RIGHT, hall.FRONT_Z - 0.3, L.RIGHT_END_Z, -1, 8.2, rng, run,
                                       board_gap=L.RIGHT_BOARD_GAP, first_board=L.RIGHT_FIRST_BOARD,
                                       skips=[(perch[1], perch[2] - 0.55, perch[2] + 0.55), (2.5, L.BELL_HANG[2] - 0.2, L.BELL_HANG[2] + 0.2)],
                                       candles=h.candles)
-    add([sl, sr])
+    add([sl, sr, hall.right_post(coll, mats)])
     run = shelves.fill_tower(lib, tiers_a, tuple(L.TOWER_A_AT), 4.0, rng, run, candles=h.candles)
     run = shelves.fill_tower(lib, tiers_b, tuple(tower_b_at()), -8.0, rng, run, candles=h.candles)
     al, run = shelves.wall_shelves(lib, coll, mats, "AlcoveShelves", 2.95, 6.4, L.ALCOVE_BACK_Z + 0.25, 0.3, 6.2, rng, run, candles=h.candles)
