@@ -91,10 +91,15 @@ only: tap/click the ground to walk, an object to get its options. No WASD.
 - `pixel.ttf` provenance/licence isn't recorded: confirm before shipping.
 - Characters are placeholder primitives (`game/world/placeholders.gd`); real models are to be supplied.
   The set is real (Blender kit), but its source of truth is `tools/blender/` plus the committed GLB.
-- The reference image the user supplied is not in the repo (it reached the session inline): put it at
-  `docs/visual-gauntlet/bar/reference_hall.png` so critics can compare against the real thing.
+- The reference image the user supplied is NOT in the repo (it reached the session inline; I did not commit
+  someone's artwork without being asked). Put it at `docs/visual-gauntlet/bar/reference_hall.png` and
+  `blind_ab.py` + `metrics.py` compare against the real thing; `visual-gauntlet/BAR.md` holds the numbers
+  measured from it (low key: median luma 0.16, 99th percentile 0.63, saturation 0.58). Judge frames against
+  the image, never a description: three rounds were wasted on a description that was wrong.
 - bmesh reuses freed slots and `recalc_face_normals` re-guesses winding on loose triangles: both bit
-  the Blender kit; read the notes in `tools/blender/kit/common.py` before changing it.
+  the Blender kit (vertex creation order is stored on the vertices, not in a list of wrappers); read the
+  notes in `tools/blender/kit/common.py` before changing it. The floor and the carpet inlay are drawn
+  unsnapped (`snap_amount`) because coplanar surfaces snapped differently shear into shards.
 - The export preset includes `data/*` (JSON and `.dialogue` are not Godot resources, so they would otherwise be missing from a build).
 
 ## Not built yet (by design)
