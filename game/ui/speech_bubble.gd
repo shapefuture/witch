@@ -123,7 +123,7 @@ func _best_rect(size: Vector2, anchor_px: Vector2, safe: Rect2, avoid: Array) ->
 		at.x = clampf(at.x, safe.position.x, maxf(safe.position.x, safe.end.x - size.x))
 		at.y = clampf(at.y, safe.position.y, maxf(safe.position.y, safe.end.y - size.y))
 		var candidate := Rect2(at, size)
-		var score := float(i) * 40.0 + candidate.get_center().distance_to(anchor_px) * 0.5
+		var score := float(i) * 25.0 + candidate.get_center().distance_to(anchor_px) * 0.5
 		score += _overlap(candidate, body) * 6.0
 		for hero in avoid:
 			score += _overlap(candidate, hero as Rect2)

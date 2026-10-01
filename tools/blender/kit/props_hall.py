@@ -359,13 +359,13 @@ def hooded_statue(at, yaw):
     part.box((0, 0.18, 0), (1.9, 0.36, 1.9), "rock_b")
     part.box((0, 0.56, 0), (1.45, 0.4, 1.45), "rock_a", rot=(0, 8, 0))
     # robe: long folds, flaring at the hem
-    part.lathe([(0.66, 0.76), (0.58, 1.3), (0.50, 2.0), (0.44, 2.6), (0.40, 3.05), (0.34, 3.3)], segs=9, mat="rock_a", jitter=0.14, seed=3, closed_top=True)
-    part.lathe([(0.68, 0.76), (0.69, 0.86), (0.66, 0.95)], segs=9, mat="gold", closed_top=False, closed_bottom=False, jitter=0.04, seed=4)
+    part.lathe([(0.66, 0.76), (0.58, 1.3), (0.50, 2.0), (0.44, 2.6), (0.40, 3.05), (0.34, 3.3)], segs=9, mat="rock_b", jitter=0.14, seed=3, closed_top=True)
+    part.lathe([(0.68, 0.76), (0.69, 0.9), (0.66, 1.05)], segs=9, mat="carpet_purple", closed_top=False, closed_bottom=False, jitter=0.04, seed=4)
     part.lathe([(0.45, 2.34), (0.47, 2.42), (0.44, 2.5)], segs=9, mat="gold", closed_top=False, closed_bottom=False, jitter=0.03, seed=5)
     # shoulders, hood and the dark empty face
-    part.blob((0, 3.15, 0), (0.62, 0.3, 0.42), "rock_a", subdiv=1, amp=0.12, seed=2)
-    part.blob((0, 3.7, 0.02), (0.38, 0.52, 0.4), "rock_a", subdiv=2, amp=0.12, seed=6)
-    part.cyl((0, 4.05, 0.02), (0, 4.75, 0.14), 0.33, 0.0, "rock_a", segs=7)
+    part.blob((0, 3.15, 0), (0.62, 0.3, 0.42), "carpet_purple", subdiv=1, amp=0.12, seed=2)
+    part.blob((0, 3.7, 0.02), (0.38, 0.52, 0.4), "rock_b", subdiv=2, amp=0.12, seed=6)
+    part.cyl((0, 4.05, 0.02), (0, 4.75, 0.14), 0.33, 0.0, "rock_b", segs=7)
     part.blob((0, 3.66, 0.3), (0.24, 0.32, 0.18), "iron", subdiv=1, amp=0.05, seed=1)
     # arms folded forward around the scroll
     for sx in (-1, 1):

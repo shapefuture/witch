@@ -45,7 +45,7 @@ static func compute_pose(pose_mode: String, focus_points: Array, room_framing: D
 	var base_roll: float = room_framing.get("roll_deg", 0.0)
 	match pose_mode:
 		"inspect":
-			return {"look_at": center + Vector3(0, 0.6, 0), "distance": base_distance * 0.5, "pitch_deg": base_pitch - 3.0, "yaw_deg": base_yaw, "roll_deg": base_roll - 1.5, "fov": base_fov - 8.0}
+			return {"look_at": center + Vector3(0, 1.1, 0), "distance": base_distance * 0.44, "pitch_deg": base_pitch - 3.0, "yaw_deg": base_yaw, "roll_deg": base_roll - 1.5, "fov": base_fov - 8.0}
 		"conversation":
 			return {"look_at": center + Vector3(0, 1.0, 0), "distance": base_distance * 0.46, "pitch_deg": base_pitch - 3.0, "yaw_deg": base_yaw + 16.0, "roll_deg": base_roll + 2.2, "fov": base_fov - 10.0}
 		"magic_reveal":

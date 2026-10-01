@@ -360,6 +360,9 @@ func _hero_rects() -> Array:
 		var radius := float(region["radius"])
 		var top := at + Vector3(0, float(region["height"]), 0)
 		var corners: Array[Vector3] = [at + Vector3(radius, 0, 0), at - Vector3(radius, 0, 0), at + Vector3(0, 0, radius), at - Vector3(0, 0, radius), top]
+		if region.has("to"):
+			var to: Vector3 = region["to"]
+			corners.append_array([to + Vector3(radius, 0, 0), to - Vector3(radius, 0, 0), to + Vector3(0, 0, radius), to - Vector3(0, 0, radius)])
 		var rect := Rect2(camera.unproject_position(at), Vector2.ZERO)
 		for corner in corners:
 			if camera.is_position_behind(corner):

@@ -63,8 +63,11 @@ func _ready() -> void:
 	_build_interactables()
 
 func hero_regions() -> Array:
+	var pool := StageLight.anchor_vector("pool", Vector3(0.8, 0.0, -1.5))
+	var sun := StageLight.anchor_vector("sun_dir", Vector3(0.25, 0.91, -0.33))
 	return [
-		{"at": Vector3(0.8, 0.0, -1.5), "radius": 2.0, "height": 0.3},
+		{"at": pool, "radius": 2.0, "height": 0.3},
+		{"at": pool + sun * 1.5, "to": pool + sun * 9.0, "radius": 1.4, "height": 0.0},
 		{"at": Vector3(0.0, 0.0, -9.4), "radius": 2.2, "height": 5.0},
 		{"at": Vector3(2.6, 0.0, -3.0), "radius": 0.7, "height": 3.0},
 	]
