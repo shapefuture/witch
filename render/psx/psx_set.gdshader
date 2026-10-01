@@ -16,7 +16,7 @@ global uniform float fog_density;
 
 uniform sampler2D albedo_tex : source_color, filter_nearest_mipmap, repeat_enable;
 uniform vec4 tint : source_color = vec4(1.0);
-uniform float gain = 1.55; // exposure: baked light is stored with the sunlit floor at 1.0
+uniform float gain = 1.25; // exposure: baked light is stored with the sunlit floor at 1.0
 uniform float sway = 0.0;
 uniform float glow = 0.0;
 uniform float fog_amount = 1.0;

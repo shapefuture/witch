@@ -217,15 +217,17 @@ func _mount_foreground() -> void:
 	_fit_foreground()
 
 # Keeps the two edges of the frame at the two edges of the picture at any aspect ratio. The pieces
-# were authored for 16:9; a narrower screen pulls them in, a wider one pushes them out.
+# were authored for 16:9 at the wide shot's lens; a narrower screen pulls them in, a wider one
+# pushes them out.
 func _fit_foreground() -> void:
 	if _frame_left == null or camera == null:
 		return
 	var size := get_viewport().get_visible_rect().size
 	var aspect := size.x / maxf(size.y, 1.0)
 	var depth := 4.4
-	var half_actual := depth * tan(deg_to_rad(camera.fov) * 0.5) * aspect
-	var half_authored := depth * tan(deg_to_rad(60.0) * 0.5) * (16.0 / 9.0)
+	var wide_fov: float = room.camera_fov if room != null else camera.fov
+	var half_actual := depth * tan(deg_to_rad(wide_fov) * 0.5) * aspect
+	var half_authored := depth * tan(deg_to_rad(wide_fov) * 0.5) * (16.0 / 9.0)
 	_frame_left.position.x = _frame_left_x - (half_actual - half_authored)
 	_frame_right.position.x = _frame_right_x + (half_actual - half_authored)
 

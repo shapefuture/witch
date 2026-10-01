@@ -18,9 +18,9 @@ uniform sampler2D dither_tex : hint_default_white, repeat_enable, filter_nearest
 uniform float col_depth = 31.0;
 uniform float magic_col_depth = 127.0;
 uniform float glow_amount = 0.4;
-uniform float vignette = 0.78;
+uniform float vignette = 0.5;
 uniform vec3 shadow_tint : source_color = vec3(0.93, 0.91, 0.90);
-uniform vec3 light_tint : source_color = vec3(1.03, 1.0, 0.90);
+uniform vec3 light_tint : source_color = vec3(1.02, 1.0, 0.94);
 
 vec2 warp(vec2 uv, float k) {
 	vec2 c = uv * 2.0 - 1.0;
@@ -37,13 +37,13 @@ void fragment() {
 	vec3 c = base + bloom;
 	float luma = dot(c, vec3(0.299, 0.587, 0.114));
 	c *= mix(shadow_tint, light_tint, smoothstep(0.1, 0.8, luma));
-	c = mix(vec3(luma), c, 0.86 + magic_amount * 0.3);
+	c = mix(vec3(luma), c, 1.08 + magic_amount * 0.25);
 	c *= mix(vec3(1.0), vec3(1.06, 0.90, 1.14), magic_amount); // reality loosens toward purple and coral, not acid yellow
 	vec2 q = SCREEN_UV * 2.0 - 1.0;
 	float edge = dot(q * vec2(0.9, 1.0), q * vec2(0.9, 1.0));
 	c *= 1.0 - vignette * smoothstep(0.35, 1.9, edge);
 	float grain = fract(sin(dot(floor(SCREEN_UV * vec2(textureSize(screen_texture, 0))), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
-	c += grain * 0.028 * (1.0 - magic_amount);
+	c += grain * 0.016 * (1.0 - magic_amount);
 	vec2 dith_size = vec2(textureSize(dither_tex, 0));
 	vec2 buf_size = vec2(textureSize(screen_texture, 0));
 	vec3 dith = texture(dither_tex, SCREEN_UV * (buf_size / dith_size)).rgb - 0.5;

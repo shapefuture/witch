@@ -85,9 +85,11 @@ class Part:
         self.name = name
         self.bm = bmesh.new()
         self.mats = []
-        # Every vertex this part creates, in order. bmesh reuses freed slots (create_icosphere frees
-        # some), so "everything with index >= n" is NOT "everything added since": track explicitly.
-        self._created = []
+        # Creation order lives ON the vertices (an int layer), not in a list of Python wrappers.
+        # bmesh reuses freed slots (create_icosphere frees some) and the wrappers of older vertices
+        # then go stale, so a list of them silently drops geometry from later transforms.
+        self._seq_layer = self.bm.verts.layers.int.new("seq")
+        self._seq = 0
 
     # ---- materials -------------------------------------------------------------------------
     def mi(self, mat):
@@ -102,7 +104,9 @@ class Part:
 
     def _reg(self, verts):
         verts = [v for v in verts if v.is_valid]
-        self._created.extend(verts)
+        for v in verts:
+            v[self._seq_layer] = self._seq
+            self._seq += 1
         return verts
 
     def _tag_new(self, verts, mat):
@@ -110,10 +114,11 @@ class Part:
         self._tag(list({f for v in verts for f in v.link_faces}), mat)
 
     def mark(self):
-        return len(self._created)
+        return self._seq
 
     def verts_since(self, mark):
-        return [v for v in self._created[mark:] if v.is_valid]
+        layer = self._seq_layer
+        return [v for v in self.bm.verts if v[layer] >= mark]
 
     def deform(self, mark, fn):
         """fn(Vector)->Vector applied to every vertex created since `mark`."""
@@ -125,7 +130,8 @@ class Part:
 
     def _vert(self, co):
         v = self.bm.verts.new(co)
-        self._created.append(v)
+        v[self._seq_layer] = self._seq
+        self._seq += 1
         return v
 
     # ---- primitives --------------------------------------------------------------------------

@@ -17,6 +17,9 @@ const TEXTURE_DIR := "res://assets/archive/textures/"
 const GLOWING := {"glow": Color(1.0, 0.86, 0.5), "glow_warm": Color(1.0, 0.6, 0.26), "glow_green": Color(0.5, 1.0, 0.4), "glow_blue": Color(0.4, 0.65, 1.0), "glow_white": Color(1.0, 0.95, 0.8)}
 const SET_SWAY := 0.16
 # Surfaces that should look lit even where the bake left them dim: metal and glass catch light.
+# Exposure of the baked set (matches the shader default). The reference is a low-key picture: the
+# sunlit floor tops out around 0.65 luma, so the pool is felt, not blown out.
+const SET_GAIN := 1.25
 const SHINY := {"brass": 1.7, "gold": 1.7, "crystal": 1.5, "crystal_grey": 1.3, "iron": 1.2, "coral": 1.15}
 # Painted sheets cut out by their alpha (ink on the wall, not a poster).
 const CUTOUT := ["mural_eye"]
@@ -60,7 +63,7 @@ static func set_material(tile: String) -> ShaderMaterial:
 			material.set_shader_parameter("cutout", 1.0)
 			material.set_shader_parameter("rim", 0.0)
 		if SHINY.has(tile):
-			material.set_shader_parameter("gain", 1.55 * float(SHINY[tile]) / 1.5)
+			material.set_shader_parameter("gain", SET_GAIN * float(SHINY[tile]) / 1.5)
 	material.set_shader_parameter("albedo_tex", tile_texture(tile))
 	_set_materials[tile] = material
 	return material

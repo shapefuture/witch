@@ -30,8 +30,8 @@ MACHINE_AT = (-1.6, 0.0, -1.2)
 TOWER_AT = (-4.4, 0.0, -5.0)       # the crooked bookcase tower the raccoon watches from
 PATH_AT = (0.0, 0.0, -7.8)
 # The wide shot's camera, as set in game/world/archive/archive_hall.gd (see _camera_pose below).
-CAMERA_AT = (-0.6, 3.5, -3.0)
-CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 14.5, -8.0, 22.0
+CAMERA_AT = (0.2, 2.4, -2.2)
+CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 11.0, -6.0, 24.0
 CAMERA_FROM = (CAMERA_AT[0] + math.sin(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
                CAMERA_AT[1] + math.sin(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
                CAMERA_AT[2] + math.cos(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE)
@@ -41,7 +41,7 @@ BENCH_AT = (-3.2, 0.0, -2.6)
 # The key light: a steep late-afternoon beam from the right-back, through a hole in the vault.
 SUN_DIR = Vector((0.246, 0.913, -0.326)).normalized()
 POOL = Vector((0.8, 0.0, -1.5))   # where the shaft lands: Tomas, the machine, the spiral, the statue's side
-AMBIENT_LIFT = np.array([0.045, 0.038, 0.030], dtype=np.float32)   # shade is never black: warm olive air
+AMBIENT_LIFT = np.array([0.026, 0.021, 0.026], dtype=np.float32)   # shade is deep but not dead: a breath of lilac olive
 
 
 def build(out_dir, samples, do_bake):
@@ -74,7 +74,7 @@ def build(out_dir, samples, do_bake):
     add(props_hall.floor())
     add(props_hall.carpet(), max_edge=0.55)
     add(props_hall.back_wall())
-    add(props_hall.mural_eye(), max_edge=1.6)
+    add(props_hall.mural_eye())   # one quad: CENTERED places the whole eye once per face
     add(props_hall.vault_ribs())
     add(props_hall.oculus_ring(oculus, SUN_DIR))
     add(props_hall.corridor())
@@ -104,7 +104,7 @@ def build(out_dir, samples, do_bake):
     anchors["raccoon_perch"] = [px, 2.2, pz]
     add(props_hall.tower((4.3, 0, -8.3), -6, 2.2, 1.6, 10.4, 0.55, seed=12))
     add(props_hall.tower((-6.4, 0, -7.7), 4, 2.2, 1.6, 10.8, 0.55, seed=13))
-    add(props_hall.hooded_statue((2.6, 0, -3.0), -48))
+    add(props_hall.hooded_statue((2.6, 0, -3.0), -48, scale=1.18))
     add(props_hall.rubble((-7.2, 0, 6.6), 0.9, 21))
     add(props_hall.rubble((7.6, 0, 7.0), 0.8, 23))
 
@@ -185,9 +185,11 @@ def build(out_dir, samples, do_bake):
             print("DEBUG ray from", (x, z), "->", ob2.name if h2 else None, (common.TO_GD @ l2).to_tuple(1) if h2 else None)
     # ---- light --------------------------------------------------------------------------------------------
     bake.setup_world(scene, strength=0.9)
-    bake.add_sun(scene, "Key", tuple(SUN_DIR), (1.0, 0.80, 0.42), 7.0, 1.2)
+    bake.add_sun(scene, "Key", tuple(SUN_DIR), (1.0, 0.85, 0.55), 7.0, 1.2)
     # the limelight: a soft warm fill from the camera's side, so fronts facing us are not black
-    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 900.0, (1.0, 0.86, 0.60))
+    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 900.0, (1.0, 0.89, 0.70))
+    # a soft wash on the back wall, so the eye on it is readable without lighting the whole hall
+    bake.add_area(scene, "Wash", (-3.0, 9.0, 4.0), (0.0, 9.0, props_hall.BACK_Z), 7.0, 700.0, (1.0, 0.88, 0.68))
     all_bake = static + dyn + fg_objects
     if do_bake:
         t1 = time.time()
@@ -210,7 +212,7 @@ def build(out_dir, samples, do_bake):
         print("shaft core luma %.3f (n=%d); floor median %.3f" % (core_luma, int(core.sum()), float(np.median(gcol @ w))))
         for o in all_bake:
             big = o.name.startswith(("Floor", "Shell", "BackWall", "Corridor", "Mural"))
-            bake.smooth_light(o, radius=0.65 if big else 0.22)
+            bake.smooth_light(o, radius=0.65 if big else 0.22, normal_dot=0.96 if big else 0.9)
         gcol = bake.read_corner_colours(floor_obj)[:, :3]
         gain = 1.0 / max(float(np.percentile(gcol @ w, 98.0)), 1e-4)
         print("exposure: floor p98 -> gain %.2f" % gain)
@@ -224,8 +226,9 @@ def build(out_dir, samples, do_bake):
     for o in all_bake:
         frame = o.name.startswith("Fg")
         # the camera frame is a dark crop: bake it in shade and take most of the colour out of it
-        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.42 if frame else 1.0, desaturate=0.55 if frame else 0.0)
-        bake.facet_tone(o, strength=0.16 if o.name.startswith("Fg") else 0.085, hue=0.025, seed=len(o.name))
+        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.6 if frame else 1.0, desaturate=0.25 if frame else 0.0)
+        arch = o.name.startswith(("Floor", "Shell", "BackWall", "Corridor", "Ribs", "Pilaster", "Statue", "Tower"))
+        bake.facet_tone(o, strength=0.14 if o.name.startswith("Fg") else (0.095 if arch else 0.08), hue=0.03 if arch else 0.022, seed=len(o.name))
         if os.environ.get('STATS'):
             c = bake.read_corner_colours(o)
             print('STAT %-12s mean %s max %.2f nan %d' % (o.name, c[:, :3].mean(axis=0).round(3), c[:, :3].max(), int(np.isnan(c).sum())))

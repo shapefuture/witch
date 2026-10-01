@@ -9,9 +9,9 @@ global uniform float magic_amount : hint_range(0.0, 1.0) = 0.0;
 
 uniform vec3 sun_dir = vec3(-0.36, 0.64, -0.68);
 uniform vec3 glow_dir = vec3(0.0, 0.06, -1.0);
-uniform vec3 zenith : source_color = vec3(0.86, 0.80, 0.56);
-uniform vec3 high : source_color = vec3(0.94, 0.86, 0.62);
-uniform vec3 mid : source_color = vec3(0.98, 0.88, 0.60);
+uniform vec3 zenith : source_color = vec3(0.80, 0.84, 0.80);
+uniform vec3 high : source_color = vec3(0.90, 0.88, 0.74);
+uniform vec3 mid : source_color = vec3(0.96, 0.90, 0.70);
 uniform vec3 horizon : source_color = vec3(1.0, 0.90, 0.62);
 uniform vec3 ground_haze : source_color = vec3(0.70, 0.60, 0.40);
 

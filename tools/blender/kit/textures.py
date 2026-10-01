@@ -50,8 +50,15 @@ SPECS = {
     "scroll":   dict(p=[(0.68, 0.60, 0.42), (0.83, 0.75, 0.55), (0.94, 0.88, 0.70)], acc=[(0.60, 0.46, 0.32), (0.98, 0.94, 0.80)], angle=0, blot=0.8, dabs=80),
     "cloak":    dict(p=[(0.20, 0.18, 0.14), (0.31, 0.28, 0.21), (0.45, 0.41, 0.31)], acc=[(0.56, 0.50, 0.36), (0.12, 0.10, 0.10)], angle=None, blot=1.2, dabs=120),
     "crystal_grey": dict(p=[(0.38, 0.38, 0.40), (0.55, 0.54, 0.54), (0.74, 0.72, 0.70)], acc=[(0.86, 0.82, 0.74), (0.24, 0.24, 0.28)], angle=35, blot=1.2, dabs=90),
+    "void":     dict(p=[(0.015, 0.014, 0.02), (0.03, 0.028, 0.04), (0.06, 0.055, 0.07)], acc=[(0.02, 0.02, 0.03), (0.08, 0.07, 0.09)], angle=None, blot=0.5, dabs=40),
     "mush_cap": dict(p=[(0.66, 0.20, 0.18), (0.82, 0.30, 0.24), (0.92, 0.46, 0.34)], acc=[(0.98, 0.92, 0.78), (0.40, 0.14, 0.20)], angle=None, blot=0.9, dabs=60),
 }
+
+
+# Architecture is nearly flat per facet with a faint paper grain (the reference's big crystalline
+# planes); props and books keep the full painterly mottle.
+CALM = {"rock_a": 0.42, "rock_b": 0.42, "floor": 0.45, "plaster": 0.5, "cloak": 0.5, "carpet_purple": 0.5, "carpet_gold": 0.5,
+        "crystal_grey": 0.6, "wood_dark": 0.7, "void": 0.3}
 
 
 def _fft_noise(rng, n, beta):
@@ -83,7 +90,8 @@ def make_tile(name, size=SIZE, seed=0):
     big = _fft_noise(rng, size, 2.6)
     mid = _fft_noise(rng, size, 1.6)
     fine = _fft_noise(rng, size, 0.8)
-    t = np.clip(0.5 + (big - 0.5) * 1.5 * spec["blot"] + (mid - 0.5) * 0.7, 0, 1)
+    calm = CALM.get(name, 1.0)
+    t = np.clip(0.5 + (big - 0.5) * 1.5 * spec["blot"] * calm + (mid - 0.5) * 0.7 * calm, 0, 1)
     img = _lerp3(spec["p"], t)
     pil = Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8), "RGB").convert("RGBA")
     # dabs: soft translucent ellipses of accent colour, drawn wrapped so the tile repeats cleanly
@@ -96,7 +104,7 @@ def make_tile(name, size=SIZE, seed=0):
         ang = spec["angle"] if spec["angle"] is not None else rng.uniform(0, 180)
         ang = np.radians(ang + rng.normal(0, 14))
         colour = spec["acc"][int(rng.integers(0, len(spec["acc"])))]
-        alpha = int(rng.uniform(28, 80))
+        alpha = int(rng.uniform(28, 80) * calm)
         pts = []
         for k in range(10):
             a = np.pi * 2 * k / 10
@@ -107,8 +115,8 @@ def make_tile(name, size=SIZE, seed=0):
                 draw.polygon([(cx + px + ox, cy + py + oy) for px, py in pts], fill=tuple(int(c * 255) for c in colour) + (alpha,))
     pil = Image.alpha_composite(pil, layer)
     arr = np.asarray(pil.convert("RGB"), dtype=np.float32) / 255.0
-    arr *= (0.94 + 0.12 * fine)[..., None]
-    arr += rng.normal(0, 0.012, arr.shape).astype(np.float32)
+    arr *= (1.0 - 0.06 * calm + 0.12 * calm * fine)[..., None]
+    arr += rng.normal(0, 0.012 * calm, arr.shape).astype(np.float32)
     return Image.fromarray((np.clip(arr, 0, 1) * 255).astype(np.uint8), "RGB")
 
 
