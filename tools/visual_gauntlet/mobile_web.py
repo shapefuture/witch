@@ -74,7 +74,7 @@ async def main():
         await page.wait_for_timeout(4000)
         await page.screenshot(path=os.path.join(out, "03_options.png"))
         # choose the second plaque by touch
-        await page.touchscreen.tap(vp["width"] * 0.70, vp["height"] * 0.68)
+        await page.touchscreen.tap(vp["width"] * 0.70, vp["height"] * 0.645)
         await page.wait_for_timeout(5000)
         await page.screenshot(path=os.path.join(out, "04_after_choice.png"))
         with open(os.path.join(out, "console.txt"), "w") as f:
