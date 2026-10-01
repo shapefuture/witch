@@ -145,7 +145,7 @@ func _place() -> void:
 
 func _clear() -> void:
 	for child in get_children():
-		child.queue_free()
 		remove_child(child)
+		child.free()
 	_label = null
 	_prompt = null

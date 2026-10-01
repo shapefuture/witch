@@ -100,8 +100,8 @@ func close() -> void:
 	visible = false
 	_items.clear()
 	for child in get_children():
-		child.queue_free()
 		remove_child(child)
+		child.free()
 	_dim = null
 	_title_node = null
 	_title_label = null

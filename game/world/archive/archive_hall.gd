@@ -60,11 +60,16 @@ func _ready() -> void:
 	_build_tomas()
 	_build_interactables()
 
-# Where the witch may walk: the open floor between the shelves, narrowing toward the camera.
+# Where the witch may walk: the open floor between the shelves, trimmed so that she is always inside
+# the frame of the bolted wide shot at 4:3 (the tightest aspect). The camera sits to the right, so
+# the near-left and near-right corners of the floor fall outside the picture and are not walkable.
+# tests/render/test_archive_hall.gd checks this against the real camera.
 static func stage_allows(x: float, z: float) -> bool:
-	if z > 5.2:
+	if z > 4.3:
 		return false
-	return absf(x) <= minf(6.8, 5.4 + (2.5 - z) * 0.9)
+	var left := -6.8 if z <= 2.0 else -6.8 + (z - 2.0) * 2.0
+	var right := 6.8 if z <= -1.0 else 6.8 - (z + 1.0) * 0.9
+	return x >= left and x <= right
 
 func _build_environment() -> void:
 	var environment := Environment.new()
