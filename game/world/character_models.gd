@@ -61,7 +61,8 @@ static func merge_flat_surfaces(mesh_instance: MeshInstance3D) -> int:
 	var kept: Array[int] = []
 	for surface in source.get_surface_count():
 		var material := source.surface_get_material(surface) as BaseMaterial3D
-		if material != null and material.albedo_texture == null and source.surface_get_primitive_type(surface) == Mesh.PRIMITIVE_TRIANGLES:
+		var untextured := material == null or material.albedo_texture == null
+		if untextured and source.surface_get_primitive_type(surface) == Mesh.PRIMITIVE_TRIANGLES:
 			flat.append(surface)
 		else:
 			kept.append(surface)
@@ -93,7 +94,8 @@ static func _concat(source: ArrayMesh, surfaces: Array[int]) -> Array:
 		var arrays := source.surface_get_arrays(surface)
 		var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 		var offset := vertices.size()
-		var albedo := (source.surface_get_material(surface) as BaseMaterial3D).albedo_color
+		var material := source.surface_get_material(surface) as BaseMaterial3D
+		var albedo := material.albedo_color if material != null else Color.WHITE
 		vertices.append_array(verts)
 		if arrays[Mesh.ARRAY_NORMAL] != null:
 			normals.append_array(arrays[Mesh.ARRAY_NORMAL])

@@ -13,7 +13,7 @@ const HEIGHTS := {"witch": 1.3, "witch_antler": 1.3, "tomas": 1.55, "raccoon": 0
 
 func test_every_character_loads_with_its_clips_at_game_scale() -> void:
 	for id in MODELS:
-		var visual := CharacterModels.instantiate(id)
+		var visual := _spawn(id)
 		ok(visual != null, "%s loads" % id)
 		if visual == null:
 			continue
@@ -27,11 +27,11 @@ func test_every_character_loads_with_its_clips_at_game_scale() -> void:
 			bottom = minf(bottom, aabb.position.y)
 		ok(absf(top - float(HEIGHTS[id])) < 0.08, "%s is %.2f m tall (%.2f)" % [id, float(HEIGHTS[id]), top])
 		ok(absf(bottom) < 0.03, "%s stands on the floor" % id)
-		visual.free()
+		visual.queue_free()
 
 func test_characters_cost_at_most_two_draw_calls_and_fit_the_triangle_budget() -> void:
 	for id in MODELS:
-		var visual := CharacterModels.instantiate(id)
+		var visual := _spawn(id)
 		if visual == null:
 			continue
 		var surfaces := 0
@@ -45,11 +45,11 @@ func test_characters_cost_at_most_two_draw_calls_and_fit_the_triangle_budget() -
 				triangles += (indices.size() if not indices.is_empty() else (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()) / 3
 		ok(surfaces <= 2, "%s draws in %d surfaces" % [id, surfaces])
 		ok(triangles <= 9000, "%s has %d triangles" % [id, triangles])
-		visual.free()
+		visual.queue_free()
 
 func test_every_surface_is_psx_actor_shaded_and_textures_are_used() -> void:
 	for id in MODELS:
-		var visual := CharacterModels.instantiate(id)
+		var visual := _spawn(id)
 		if visual == null:
 			continue
 		for node in visual.find_children("*", "MeshInstance3D", true, false):
@@ -60,4 +60,12 @@ func test_every_surface_is_psx_actor_shaded_and_textures_are_used() -> void:
 				var source := mesh_instance.mesh.surface_get_material(surface) as BaseMaterial3D
 				if material != null and source != null and source.albedo_texture != null:
 					ok(bool(material.get_shader_parameter("use_texture")), "%s surface %d samples its texture" % [id, surface])
-		visual.free()
+		visual.queue_free()
+
+# In the tree like in the game: freeing an orphan skinned instance trips a dummy-renderer
+# material lookup (headless only) once the full suite has run.
+func _spawn(id: String) -> Node3D:
+	var visual := CharacterModels.instantiate(id)
+	if visual != null:
+		(Engine.get_main_loop() as SceneTree).root.add_child(visual)
+	return visual
