@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://cppfx2uyr0lq8"
+path="res://.godot/imported/depth.png-e602ae9c91951807d66813b430d923a9.image"
+
+[deps]
+
+source_file="res://assets/archive/plates/inspect_machine/depth.png"
+dest_files=["res://.godot/imported/depth.png-e602ae9c91951807d66813b430d923a9.image"]
+
+[params]
+

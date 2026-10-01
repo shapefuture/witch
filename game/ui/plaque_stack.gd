@@ -34,6 +34,7 @@ var _pulse_index := -1
 var _pulse := 0.0
 var _clock := 0.0
 var _open := false
+var _scale := 1.0   # render pixels per UI pixel (rects below are in UI pixels)
 
 func _ready() -> void:
 	visible = false
@@ -48,14 +49,18 @@ func item_count() -> int:
 func item_rects() -> Array[Rect2]:
 	var out: Array[Rect2] = []
 	for item in _items:
-		out.append(item["rect"])
+		var rect: Rect2 = item["rect"]
+		out.append(Rect2(rect.position * _scale, rect.size * _scale))
 	return out
 
 # `labels` are already translated. `dim_background` puts a dark veil over the whole picture.
 # `dim_last` draws the final plaque quieter (the "never mind" row).
 func open(title: String, labels: Array[String], anchor_px: Vector2, centered: bool = false, dim_background: bool = false, dim_last: bool = false) -> void:
 	close()
-	var viewport_size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2(480, 360)
+	var real_size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2(480, 360)
+	_scale = Diegetic.ui_scale(real_size)
+	var viewport_size := Diegetic.ui_size(real_size)
+	anchor_px /= _scale
 	var font := UIKit.font()
 	var widest := MIN_WIDTH
 	for text in labels + [title]:
@@ -131,7 +136,8 @@ func hover(px: Vector2) -> void:
 		for item in _items:
 			_set_highlight(item, item["index"] == _hover)
 
-func _index_at(px: Vector2) -> int:
+func _index_at(viewport_px: Vector2) -> int:
+	var px := viewport_px / _scale
 	for item in _items:
 		if (item["rect"] as Rect2).grow(3.0).has_point(px):
 			return item["index"]
@@ -157,7 +163,7 @@ func _make_plaque(rect: Rect2, text: String, tile: String, tint: Color, ink: Col
 	node.add_child(Diegetic.mesh_instance(SlabMesh.fill(outline), Diegetic.slab_material(border, "wood_dark", priority + 1), -0.1))
 	var fill_material := Diegetic.slab_material(tint, tile, priority + 2)
 	node.add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.inset(outline, 2.0)), fill_material, 0.0))
-	var label := Diegetic.label(text, ink, priority + 3)
+	var label := Diegetic.label(text, ink, priority + 3, _scale)
 	label.position = Vector3(PAD, -(rect.size.y - UIKit.FONT_SIZE) * 0.5 + 1.0, 0.2)
 	node.add_child(label)
 	add_child(node)

@@ -8,17 +8,28 @@ extends RefCounted
 # yet its type stays pixel-crisp and the same physical size on every device.
 
 const DEPTH := 2.5
+# UI is laid out in the pixels of a 360-row picture (the size it was designed and touch-tested at);
+# the render is taller (540 rows), so one UI pixel is ui_scale() render pixels. Callers lay out in UI
+# pixels and give rectangles to the outside world (taps, tests) in viewport pixels.
+const UI_ROWS := 360.0
+
+static func ui_scale(viewport_size: Vector2) -> float:
+	return maxf(viewport_size.y, 1.0) / UI_ROWS
+
+static func ui_size(viewport_size: Vector2) -> Vector2:
+	return viewport_size / ui_scale(viewport_size)
 
 static func metres_per_pixel(camera: Camera3D, viewport_height: float, depth: float = DEPTH) -> float:
 	return 2.0 * depth * tan(deg_to_rad(camera.fov) * 0.5) / maxf(viewport_height, 1.0)
 
-# Transform that puts a node's local origin (the top-left of its rectangle) at `screen_px`, growing
-# by `grow` about `pivot` (local pixel coordinates).
+# Transform that puts a node's local origin (the top-left of its rectangle) at `screen_px` (UI pixels),
+# growing by `grow` about `pivot` (local UI pixels). `viewport_size` is the real one.
 # `upright`: keep the slab's "up" on the WORLD's up while it still faces the camera, so a rolled camera
 # (the Dutch tilt, the spell's 45 degrees) tips speech and plaques with the world instead of leaving
 # them as a flat overlay. Menus use the camera's own axes.
 static func transform_for(camera: Camera3D, viewport_size: Vector2, screen_px: Vector2, grow: float = 1.0, pivot: Vector2 = Vector2.ZERO, upright: bool = false) -> Transform3D:
-	var unit := metres_per_pixel(camera, viewport_size.y)
+	var scale := ui_scale(viewport_size)
+	var unit := metres_per_pixel(camera, viewport_size.y) * scale
 	var cam_basis := camera.global_transform.basis.orthonormalized()
 	if upright:
 		var back := cam_basis.z
@@ -26,12 +37,12 @@ static func transform_for(camera: Camera3D, viewport_size: Vector2, screen_px: V
 		if right.length() > 0.001:
 			right = right.normalized()
 			cam_basis = Basis(right, back.cross(right).normalized(), back)
-	var origin := camera.project_position(screen_px.round(), DEPTH)
+	var origin := camera.project_position((screen_px * scale).round(), DEPTH)
 	origin += cam_basis * Vector3(pivot.x, pivot.y, 0.0) * unit * (1.0 - grow)
 	return Transform3D(cam_basis * Basis.from_scale(Vector3.ONE * unit * grow), origin)
 
 # The part of the picture that is safe to draw UI in: inside notches and rounded corners, and
-# away from the screen edge a thumb rests on. In viewport pixels.
+# away from the screen edge a thumb rests on. In the pixels of `viewport_size` (pass ui_size()).
 static func safe_rect(viewport_size: Vector2) -> Rect2:
 	# phones round their corners and hide a notch even when they report no insets: stay clear of the sides
 	var side := maxf(26.0, viewport_size.x * 0.045)
@@ -65,11 +76,13 @@ static func slab_material(tint: Color, tile: String, priority: int) -> ShaderMat
 	material.render_priority = priority
 	return material
 
-static func label(text: String, color: Color, priority: int) -> Label3D:
+# `scale` = ui_scale(): the glyphs are rasterised at the real pixel size, then drawn UIKit.FONT_SIZE
+# UI pixels tall, so text stays crisp at 540 rows and keeps its physical size.
+static func label(text: String, color: Color, priority: int, scale: float = 1.0) -> Label3D:
 	var node := Label3D.new()
 	node.font = UIKit.font()
-	node.font_size = UIKit.FONT_SIZE
-	node.pixel_size = 1.0
+	node.font_size = roundi(UIKit.FONT_SIZE * scale)
+	node.pixel_size = float(UIKit.FONT_SIZE) / float(node.font_size)
 	node.text = text
 	node.modulate = color
 	node.outline_size = 0

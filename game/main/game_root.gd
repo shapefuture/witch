@@ -14,7 +14,9 @@ extends Node
 #   --magic amount              hold the magic shader globals at 0..1 (capture aid: shows the break)
 #   --shot mode                 hold the camera on a director shot (wide, inspect, conversation, magic_reveal ...)
 #   --lens amount               hold the fisheye lens swing at 0..1 (capture aid)
-#   --no-fx                     leave out the light shaft, dust and glow (capture aid)
+#   --no-fx                     leave out the dust (capture aid: the bare plates)
+#   --no-post                   leave out the screen grade (capture aid: compare the frame with a plate)
+#   --variant name              show the room in a plate variant ("dusk") from the start
 #   --cam x,y,z,tx,ty,tz[,fov] put the camera there, looking at t (capture aid: inspect the set)
 
 const SLOT := 1
@@ -42,10 +44,6 @@ var dialogue: DialogueBridge
 var presentation := PresentationDirector.new()
 var hover_target := ""
 var _outlined: Node3D
-var _frame_left: Node3D
-var _frame_right: Node3D
-var _frame_left_x := 0.0
-var _frame_right_x := 0.0
 var _started := false
 var _frames := 0
 var _clock := 0.0
@@ -109,17 +107,13 @@ func _build() -> void:
 	camera.name = "DioramaCamera"
 	camera.current = true
 	add_child(camera)
-	_mount_foreground()
 	director = CameraDirector.new()
 	director.camera = camera
 	director.framing_provider = room.framing
 	director.focus_resolver = _focus_position
+	director.shot_provider = room.shot_pose
 	add_child(director)
 	director.frame("wide", [], true)
-	director.cut.connect(func(mode: String) -> void:
-		# the frame suits the wide and the spell; close-ups need the space
-		if room.foreground != null:
-			room.foreground.visible = mode in ["wide", "magic_reveal", "stay"])
 
 	var post := CanvasLayer.new()
 	post.name = "PSXScreen"
@@ -129,6 +123,7 @@ func _build() -> void:
 	grade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	grade.material = PSXMaterials.screen()
 	post.add_child(grade)
+	post.visible = not args.has("no-post")
 	add_child(post)
 
 	surface = InteractionPresenter.new()
@@ -184,52 +179,22 @@ func _build() -> void:
 		PSXGlobals.set_magic(float(str(args["magic"])))
 	if args.has("lens"):
 		PSXGlobals.set_lens(float(str(args["lens"])))
+	if args.has("variant"):
+		room.plates.set_variant(str(args["variant"]))
 	if args.has("shot"):
-		var focus: Array = ["tomas"] if str(args["shot"]) in ["inspect", "conversation", "consequence"] else []
-		var points: Array = []
-		for id in focus:
-			var at: Variant = _focus_position(str(id))
-			if at is Vector3:
-				points.append(at)
-		camera.set_pose(CameraDirector.compute_pose(str(args["shot"]), points, room.framing()), true)
+		var shot := str(args["shot"])
+		var focus: Array = ["tomas"] if shot in ["conversation", "consequence"] else []
+		if shot in ["inspect", "magic_reveal"]:
+			focus = [str(args.get("focus", "machine"))]
+		var pose := director.pose_for(shot, focus)
+		pose.erase("dolly")
+		camera.set_pose(pose, true)
 		camera.locked = true
 	if args.has("cam"):
 		var v := str(args["cam"]).split_floats(",")
 		if v.size() >= 6:
 			director.frozen = true
 			camera.debug_place(Vector3(v[0], v[1], v[2]), Vector3(v[3], v[4], v[5]), v[6] if v.size() > 6 else 62.0)
-
-# The dark shelf/globe/rock frame rides on the camera: it is authored in camera space.
-func _mount_foreground() -> void:
-	var frame := room.foreground
-	if frame == null:
-		return
-	room.remove_child(frame)
-	camera.add_child(frame)
-	frame.transform = Transform3D.IDENTITY
-	for child in frame.get_children():
-		if child.name == "FgLeft":
-			_frame_left = child as Node3D
-			_frame_left_x = _frame_left.position.x
-		elif child.name == "FgRight":
-			_frame_right = child as Node3D
-			_frame_right_x = _frame_right.position.x
-	_fit_foreground()
-
-# Keeps the two edges of the frame at the two edges of the picture at any aspect ratio. The pieces
-# were authored for 16:9 at the wide shot's lens; a narrower screen pulls them in, a wider one
-# pushes them out.
-func _fit_foreground() -> void:
-	if _frame_left == null or camera == null:
-		return
-	var size := get_viewport().get_visible_rect().size
-	var aspect := size.x / maxf(size.y, 1.0)
-	var depth := 4.4
-	var wide_fov: float = room.camera_fov if room != null else camera.fov
-	var half_actual := depth * tan(deg_to_rad(wide_fov) * 0.5) * aspect
-	var half_authored := depth * tan(deg_to_rad(wide_fov) * 0.5) * (16.0 / 9.0)
-	_frame_left.position.x = _frame_left_x - (half_actual - half_authored)
-	_frame_right.position.x = _frame_right_x + (half_actual - half_authored)
 
 func _register_presentation() -> void:
 	presentation.register("line", _play_line)
@@ -240,6 +205,7 @@ func _register_presentation() -> void:
 	presentation.register("magic", _play_magic)
 	presentation.register("leave_frame", _play_leave_frame)
 	presentation.register("wait", _play_wait)
+	presentation.register("room_variant", _play_room_variant)
 
 func _begin() -> void:
 	if args.has("load") and SaveGame.exists(SLOT):
@@ -310,7 +276,8 @@ func _process(delta: float) -> void:
 
 func _on_resized() -> void:
 	PSXGlobals.set_render_size(get_viewport().get_visible_rect().size)
-	_fit_foreground()
+	if camera != null:
+		camera.refit()   # the roll fit depends on the screen's shape
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and surface != null:
@@ -334,6 +301,10 @@ func _sync_departure() -> void:
 	witch.visible = not departed
 	if departed:
 		director.frame("stay")
+		# the light has gone on without her (the beat that ages the room, replayed instantly)
+		room.plates.set_variant("dusk")
+	elif not room.plates.variant.is_empty() and not args.has("variant"):
+		room.plates.set_variant("")
 
 func _update_outline() -> void:
 	var wanted := flow.focused_target if not flow.focused_target.is_empty() else hover_target
@@ -426,8 +397,12 @@ func _play_magic(entry: Dictionary) -> void:
 
 func _play_leave_frame(_entry: Dictionary) -> void:
 	# The camera has been told to stay; the witch walks away along the path and keeps going.
-	await witch.walk_off(Vector3(ArchiveHall.ARCH_X, 0, -16.0))
+	await witch.walk_off(room.exit_point())
 	witch.visible = false
+
+# The room ages: the plates crossfade to a variant ("dusk"). Presentation only.
+func _play_room_variant(entry: Dictionary) -> void:
+	await room.set_room_variant(str(entry.get("variant", "")), float(entry.get("seconds", PlateStage.CROSSFADE_SECONDS)))
 
 func _play_wait(entry: Dictionary) -> void:
 	await get_tree().create_timer(float(entry.get("seconds", 0.5))).timeout

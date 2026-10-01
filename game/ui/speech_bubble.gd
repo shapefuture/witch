@@ -18,7 +18,8 @@ const BRASS := Color(0.84, 0.66, 0.28)
 
 var camera: Camera3D
 
-var _rect := Rect2()
+var _rect := Rect2()   # UI pixels
+var _scale := 1.0
 var _pivot := Vector2.ZERO
 var _label: Label3D
 var _wrapped := ""
@@ -37,7 +38,9 @@ func is_showing() -> bool:
 # `avoid` is a list of screen Rect2s (the picture's focal points) the slab should not sit on.
 func present(speaker: String, text: String, anchor_world: Vector3, narration: bool, avoid: Array = []) -> void:
 	_clear()
-	var viewport_size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2(480, 360)
+	var real_size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2(480, 360)
+	_scale = Diegetic.ui_scale(real_size)
+	var viewport_size := Diegetic.ui_size(real_size)
 	var font := UIKit.font()
 	var wrap := minf(MAX_WIDTH, viewport_size.x * 0.58) - PAD * 2.0
 	# Lines are broken HERE, once, so the typewriter reveals characters without the text reflowing.
@@ -55,9 +58,12 @@ func present(speaker: String, text: String, anchor_world: Vector3, narration: bo
 	var h := ceilf(measured.y) + PAD * 2.0 + 8.0
 	var anchor_px := viewport_size * 0.5
 	if camera != null:
-		anchor_px = camera.unproject_position(anchor_world)
+		anchor_px = camera.unproject_position(anchor_world) / _scale
 	var safe := Diegetic.safe_rect(viewport_size)
-	_rect = _best_rect(Vector2(w, h), anchor_px, safe, avoid)
+	var avoid_ui: Array = []
+	for hero in avoid:
+		avoid_ui.append(Rect2((hero as Rect2).position / _scale, (hero as Rect2).size / _scale))
+	_rect = _best_rect(Vector2(w, h), anchor_px, safe, avoid_ui)
 	var x := _rect.position.x
 	var y := _rect.position.y
 	var to_anchor := Vector2(anchor_px.x - x, -(anchor_px.y - y))
@@ -88,13 +94,13 @@ func present(speaker: String, text: String, anchor_world: Vector3, narration: bo
 		var tab_w := ceilf(font.get_string_size(speaker, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.FONT_SIZE).x) + 8.0
 		var tab := PackedVector2Array([Vector2(5, 0), Vector2(5, 11), Vector2(9, 13), Vector2(5 + tab_w - 4, 13), Vector2(5 + tab_w, 11), Vector2(5 + tab_w, 0)])
 		add_child(Diegetic.mesh_instance(SlabMesh.fill(tab), Diegetic.slab_material(BRASS, "brass", 11), -0.05))
-		var name_label := Diegetic.label(speaker, INK, 13)
+		var name_label := Diegetic.label(speaker, INK, 13, _scale)
 		name_label.position = Vector3(9, 11, 0.2)
 		add_child(name_label)
-	_label = Diegetic.label(_wrapped, ink, 13)
+	_label = Diegetic.label(_wrapped, ink, 13, _scale)
 	_label.position = Vector3(PAD, -PAD, 0.2)
 	add_child(_label)
-	_prompt = Diegetic.label("▼", border, 13)
+	_prompt = Diegetic.label("▼", border, 13, _scale)
 	_prompt.position = Vector3(w - PAD - 8.0, -(h - 10.0), 0.2)
 	_prompt.visible = false
 	add_child(_prompt)
@@ -159,7 +165,7 @@ func dismiss() -> void:
 
 # The bubble's rectangle in viewport pixels (for tests and for keeping other UI clear of it).
 func screen_rect() -> Rect2:
-	return _rect
+	return Rect2(_rect.position * _scale, _rect.size * _scale)
 
 func _process(delta: float) -> void:
 	if not _active:
