@@ -16,7 +16,7 @@ extends Node
 #   --lens amount               hold the fisheye lens swing at 0..1 (capture aid)
 #   --no-fx                     leave out the dust (capture aid: the bare plates)
 #   --no-post                   leave out the screen grade (capture aid: compare the frame with a plate)
-#   --variant name              show the room in a plate variant ("dusk") from the start
+#   --variant name [--fade s]   show the room in a plate variant ("dusk"), or crossfade to it over s seconds
 #   --cam x,y,z,tx,ty,tz[,fov] put the camera there, looking at t (capture aid: inspect the set)
 
 const SLOT := 1
@@ -180,7 +180,10 @@ func _build() -> void:
 	if args.has("lens"):
 		PSXGlobals.set_lens(float(str(args["lens"])))
 	if args.has("variant"):
-		room.plates.set_variant(str(args["variant"]))
+		if args.has("fade"):
+			room.plates.crossfade_to(str(args["variant"]), float(str(args["fade"])))
+		else:
+			room.plates.set_variant(str(args["variant"]))
 	if args.has("shot"):
 		var shot := str(args["shot"])
 		var focus: Array = ["tomas"] if shot in ["conversation", "consequence"] else []

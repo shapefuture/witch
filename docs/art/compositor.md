@@ -86,15 +86,19 @@ its shot plates with that much vertical overscan, so a 16:9 screen shows exactly
 
 | Screen | Effective vertical fov |
 |---|---|
-| 4:3 | 52° |
-| 16:9 | 52° |
-| 21:9 | 51° (a 2 % crop) |
+| 4:3 | 53.1° |
+| 16:9 | 52.0° |
+| 21:9 | 50.7° |
 
 If real plates are rendered at the authored fov with no overscan, the shot zooms about 10 % at 16:9
 instead. That is still correct, just tighter.
 
 **The spell's dolly.** The `magic_reveal` pose carries `dolly` (6 % of the wide distance). After the
 cut, the camera pushes in that far over 3 s, so the projected set shows real parallax.
+
+The stub has two covers: `cover:magic` (the spell's low view from under the floor) and
+`cover:conversation` (the two-shot side). Without the second, the computed conversation shot showed
+dark cracks of fallback colour along the arch, where it sees surfaces that no plate saw.
 
 ## Variants (the ageing room)
 
@@ -140,7 +144,7 @@ params when the PNG is replaced, so the real plates inherit them. A plate in a *
 Godot's defaults, which are wrong. Copy the `.import` files, or run `make_stub.py`'s `write_imports`
 logic. `test_depth_key_and_glow_are_imported_as_images_and_beauty_compressed` catches this.
 
-The stub totals 14.3 MB on desktop and 12.7 MB on mobile (budget 24 MB). Depth dominates: about
+The stub totals 16.5 MB on desktop and 14.9 MB on mobile (budget 24 MB). Depth dominates: about
 3.6 MB per 2048-wide plate.
 
 ## Actors

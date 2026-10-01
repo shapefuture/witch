@@ -10,7 +10,8 @@ What it does (runs on the `bpy` module, numpy and PIL):
     light x gain, a warm rim, the haze, the highlight shoulder), so the stub looks like the game did;
   * leaves out what Godot keeps drawing live: the machine, the bell, the camera-space frame;
   * renders the plates: `wide` (the bolted master shot), `inspect:machine` (one inspect pose) and
-    `cover:magic` (coverage for the spell's low, tipped view), plus a `dusk` variant of `wide`;
+    two covers, `cover:magic` (the spell's low, tipped view) and `cover:conversation` (the two-shot
+    side), plus a `dusk` variant of `wide`;
   * adds the beam and the floor glow analytically (the old shaft quad and pool glow, now baked);
   * writes beauty / beauty_m / depth / key / glow per plate, plates/shots.json, a decimated
     hall_proxy.glb and the layout keys of anchors.json, and the Godot .import settings the
@@ -86,6 +87,8 @@ def compute_pose(mode, focus, framing):
     d, pitch, yaw, fov, roll = framing["distance"], framing["pitch_deg"], framing["yaw_deg"], framing["fov"], framing["roll_deg"]
     if mode == "inspect":
         return Vector(focus) + Vector((0, 1.1, 0)), d * 0.44, pitch - 3.0, yaw, fov - 8.0, roll - 1.5
+    if mode == "conversation":
+        return Vector(focus) + Vector((0, 1.0, 0)), d * 0.46, pitch - 3.0, yaw + 16.0, fov - 10.0, roll + 2.2
     if mode == "magic_reveal":
         return Vector(focus) + Vector((0, 1.2, 0)), d * 0.8, pitch - 11.0, yaw, fov + 8.0, roll - 45.0
     return Vector(framing["focus"]), d, pitch, yaw, fov, roll
@@ -707,6 +710,8 @@ def main():
         shot_spec("wide", "wide", [], None, "shot", a.width),
         shot_spec("inspect:machine", "inspect", ["machine"], machine_focus, "shot", a.width),
         shot_spec("cover:magic", "magic_reveal", [], machine_focus, "cover", 1024, cover_fov=96.0),
+        # the two-shot between the witch at her start and Tomas braced (game: focus ["player", "tomas"])
+        shot_spec("cover:conversation", "conversation", [], (Vector((1.0, 1.0, 0.3)) + Vector(TOMAS_AT) + Vector((0, 1.0, 0))) * 0.5, "cover", 1024, cover_fov=72.0),
     ]
     entries = []
     for spec in specs:
