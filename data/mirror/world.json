@@ -1,0 +1,10 @@
+{
+	"_about": "Initial canonical state for THE CLEARING. Applied before the catalog locks; everything after this point changes only through committed events.",
+	"world": {
+		"machine": {"state": "jammed", "in_tune": false},
+		"clearing": {"departed": false}
+	},
+	"npc_state": {
+		"tomas": {"stance": "braced", "expects": "EXPECT_MAGIC", "invited": false, "tense": false}
+	}
+}

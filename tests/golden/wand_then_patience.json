@@ -1,0 +1,177 @@
+{
+	"final": {
+		"event_count": 15,
+		"head_hash": "bb2108f869152580fabf8bdf4f38c196b086d52bdc37b711a7e5193005676937",
+		"knowledge": {
+			"help_respected_authorship": "SUPPORTED",
+			"machine_needs_second_component": "SUPPORTED",
+			"machine_runs": "ESTABLISHED",
+			"tomas_invited_help": "SUPPORTED",
+			"tomas_paused_at_wand": "SUPPORTED",
+			"tomas_relaxes_when_left_alone": "SUPPORTED"
+		},
+		"models": {
+			"m.help_needs_authorship": "SUPPORTED",
+			"m.helping_is_welcome": "CONTEXTUAL",
+			"m.tomas_distrusts_witch": "REVISED"
+		},
+		"npc_state": {
+			"tomas": {
+				"expects": "EXPECT_RECIPROCITY",
+				"invited": true,
+				"stance": "partnered",
+				"tense": false
+			}
+		},
+		"operators": [
+			"op.ask_before_acting"
+		],
+		"world": {
+			"__mirror_time": 16,
+			"clearing": {
+				"departed": false
+			},
+			"machine": {
+				"in_tune": true,
+				"state": "running_together"
+			}
+		}
+	},
+	"name": "The natural wrong hypothesis (he distrusts me), then its revision",
+	"steps": [
+		{
+			"action": "show_tomas_wand",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "tense",
+				"relationship_signature": "EXPECT_MAGIC"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "show_tomas_wand.tense",
+			"target": "tomas"
+		},
+		{
+			"action": "wait_watch",
+			"camera": [],
+			"observed": {
+				"expectation_violated": true,
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "relaxes"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "wait_watch.relaxes",
+			"target": "tomas"
+		},
+		{
+			"action": "wait_watch",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"expectation_violated": true,
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "invited"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"go_assist",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "wait_watch.invites_component",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"camera": [
+				"inspect",
+				"consequence"
+			],
+			"observed": {
+				"motive": "shared_work",
+				"npc_expected": "EXPECT_RECIPROCITY",
+				"outcome": "repaired_together",
+				"relationship_signature": "EXPECT_RECIPROCITY"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "go_assist.component",
+			"target": "machine"
+		}
+	]
+}

@@ -10,32 +10,33 @@ config_version=5
 
 [application]
 
-config/name="Demo"
-run/main_scene="uid://dd7yfb3atb8io"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/name="Witch You Were Here"
+config/description="A PSX-style diorama adventure about knowledge, expectation and what it means to help."
+run/main_scene="res://game/main/main.tscn"
+config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
-SceneManager="*res://autoload/SceneManager.gd"
-YellowDuckState="*res://autoload/YellowDuckState.gd"
-BackroomState="*res://autoload/BackroomState.gd"
 Localization="*res://autoload/Localization.gd"
 SettingsState="*res://autoload/SettingsState.gd"
-TravelState="*res://autoload/TravelState.gd"
-BGMPlayer="*res://autoload/BGMPlayer.gd"
+SceneManager="*res://autoload/SceneManager.gd"
+DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
+Mirror="*res://game/mirror/mirror_runtime.gd"
 
 [display]
 
-window/size/viewport_width=320
-window/size/viewport_height=240
+window/size/viewport_width=480
+window/size/viewport_height=360
 window/size/window_width_override=1980
 window/size/window_height_override=1080
 window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+window/handheld/orientation=4
 
-[dotnet]
+[editor_plugins]
 
-project/assembly_name="Demo"
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/mirror_engine/plugin.cfg")
 
 [filesystem]
 
@@ -43,31 +44,21 @@ import/blender/enabled=false
 
 [input]
 
-Fowared={
+pause={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":87,"key_label":0,"unicode":119,"location":0,"echo":false,"script":null)
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194305,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
-Back={
+debug_overlay={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":83,"key_label":0,"unicode":115,"location":0,"echo":false,"script":null)
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194334,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
-Left={
-"deadzone": 0.2,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":65,"key_label":0,"unicode":97,"location":0,"echo":false,"script":null)
-]
-}
-Right={
-"deadzone": 0.2,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":68,"key_label":0,"unicode":100,"location":0,"echo":false,"script":null)
-]
-}
-Smoke={
-"deadzone": 0.2,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":70,"key_label":0,"unicode":102,"location":0,"echo":false,"script":null)
-]
-}
+
+[internationalization]
+
+locale/translations_pot_files=PackedStringArray("res://data/conversations/tomas.dialogue")
+locale/fallback="ru"
 
 [physics]
 
@@ -75,11 +66,39 @@ Smoke={
 
 [rendering]
 
-rendering_device/driver.windows="d3d12"
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.09, 0.06, 0.1, 1)
+anti_aliasing/quality/msaa_3d=0
 
 [shader_globals]
 
 precision_multiplier={
 "type": "float",
 "value": 0.5
+}
+magic_amount={
+"type": "float",
+"value": 0.0
+}
+snap_grid={
+"type": "vec2",
+"value": Vector2(240, 180)
+}
+stage_time={
+"type": "float",
+"value": 0.0
+}
+lens_warp={
+"type": "float",
+"value": 0.0
+}
+fog_color={
+"type": "color",
+"value": Color(0.5, 0.44, 0.28, 1)
+}
+fog_density={
+"type": "float",
+"value": 0.034
 }

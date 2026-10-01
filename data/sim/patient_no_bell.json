@@ -1,0 +1,38 @@
+{
+	"name": "Patient, bell missed: two waits",
+	"steps": [
+		{
+			"action": "ask_tomas_what",
+			"target": "tomas"
+		},
+		{
+			"action": "wait_watch",
+			"target": "tomas"
+		},
+		{
+			"action": "wait_watch",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"target": "machine"
+		},
+		{
+			"action": "go_path_out",
+			"target": "path_out"
+		}
+	],
+	"expect": {
+		"state": {
+			"machine.state": "running_together",
+			"npc.tomas.stance": "partnered"
+		},
+		"knows": [
+			"tomas_invited_help",
+			"help_respected_authorship"
+		],
+		"operators": [
+			"op.ask_before_acting"
+		]
+	}
+}

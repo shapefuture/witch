@@ -1,0 +1,13 @@
+[
+	{
+		"id": "story.arrival",
+		"priority": 1,
+		"once_key": "story_arrival",
+		"preconditions": {"clearing.departed": false},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.arrival.1"},
+			{"kind": "line", "speaker": "narrator", "key": "line.arrival.2"}
+		]
+	}
+]

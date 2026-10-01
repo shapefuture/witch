@@ -1,0 +1,43 @@
+{
+	"name": "Impulsive magic, then recovery by asking",
+	"steps": [
+		{
+			"action": "cast_repair",
+			"target": "machine"
+		},
+		{
+			"action": "ask_tomas_help",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"target": "machine"
+		},
+		{
+			"action": "cast_flourish",
+			"target": "machine"
+		},
+		{
+			"action": "go_path_out",
+			"target": "path_out"
+		}
+	],
+	"expect": {
+		"state": {
+			"machine.state": "singing",
+			"clearing.departed": true
+		},
+		"knows": [
+			"machine_runs",
+			"why_tomas_withdrew",
+			"why_tomas_went_quiet"
+		],
+		"model_status": {
+			"m.helping_is_welcome": "CONTRADICTED",
+			"m.help_needs_authorship": "SUPPORTED"
+		},
+		"operators": [
+			"op.ask_before_acting"
+		]
+	}
+}

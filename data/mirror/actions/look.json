@@ -1,0 +1,145 @@
+[
+	{
+		"id": "look_machine",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.look_machine",
+		"valid_targets": ["machine"],
+		"preconditions": {"machine.state": "jammed"},
+		"excludes_claims": [{"id": "tomas_explained_alignment"}, {"id": "machine_needs_second_component"}],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "look_machine.jammed",
+				"observed": {"outcome": "observed_jam"},
+				"knowledge_effects": [
+					{"id": "machine_is_jammed", "proposition": {"machine": "jammed"}, "status": "SUPPORTED", "scope": "clearing"}
+				],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "gear_train_stopped_mid_turn"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["machine"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.machine.jammed"}
+				]
+			}
+		]
+	},
+	{
+		"id": "look_machine_informed",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.look_machine_informed",
+		"valid_targets": ["machine"],
+		"preconditions": {"machine.state": "jammed"},
+		"requires_claims": [{"id": "tomas_explained_alignment"}],
+		"excludes_claims": [{"id": "machine_needs_second_component"}],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "look_machine_informed.gap",
+				"observed": {"outcome": "observed_gap"},
+				"knowledge_effects": [
+					{"id": "machine_needs_second_component", "proposition": {"machine": "needs_second_component"}, "status": "SUPPORTED", "scope": "clearing"}
+				],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "cam_must_be_held_while_gear_turns"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["machine"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.machine.gap"}
+				]
+			}
+		]
+	},
+	{
+		"id": "look_machine_running",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.look_machine_running",
+		"valid_targets": ["machine"],
+		"preconditions": {"$neq": {"machine.state": "jammed"}},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "look_machine_running.by_magic", "when": {"machine.state": "running_by_magic"},
+				"observed": {"outcome": "observed_running_wrong"},
+				"presentation": [{"kind": "camera", "mode": "inspect", "focus": ["machine"]}, {"kind": "line", "speaker": "narrator", "key": "line.machine.by_magic"}]
+			},
+			{
+				"id": "look_machine_running.together", "when": {"machine.state": "running_together"},
+				"observed": {"outcome": "observed_running_true"},
+				"presentation": [{"kind": "camera", "mode": "inspect", "focus": ["machine"]}, {"kind": "line", "speaker": "narrator", "key": "line.machine.together"}]
+			},
+			{
+				"id": "look_machine_running.singing", "when": {"machine.state": "singing"},
+				"observed": {"outcome": "observed_singing"},
+				"presentation": [{"kind": "camera", "mode": "inspect", "focus": ["machine"]}, {"kind": "line", "speaker": "narrator", "key": "line.machine.singing"}]
+			}
+		]
+	},
+	{
+		"id": "look_tomas",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.look_tomas",
+		"valid_targets": ["tomas"],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "look_tomas.braced", "when": {"npc.tomas.stance": "braced"},
+				"observed": {"outcome": "observed_braced"},
+				"knowledge_effects": [
+					{"id": "tomas_glances_toward_tree", "proposition": {"tomas": "glances_toward_tree"}, "status": "POSSIBLE", "scope": "tomas"}
+				],
+				"presentation": [{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]}, {"kind": "line", "speaker": "narrator", "key": "line.tomas.look.braced"}]
+			},
+			{
+				"id": "look_tomas.working", "when": {"npc.tomas.stance": "working"},
+				"observed": {"outcome": "observed_working"},
+				"knowledge_effects": [
+					{"id": "tomas_glances_toward_tree", "proposition": {"tomas": "glances_toward_tree"}, "status": "POSSIBLE", "scope": "tomas"}
+				],
+				"presentation": [{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]}, {"kind": "line", "speaker": "narrator", "key": "line.tomas.look.working"}]
+			},
+			{
+				"id": "look_tomas.inviting", "when": {"npc.tomas.stance": "inviting"},
+				"observed": {"outcome": "observed_waiting_for_you"},
+				"presentation": [{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]}, {"kind": "line", "speaker": "narrator", "key": "line.tomas.look.inviting"}]
+			},
+			{
+				"id": "look_tomas.withdrawn", "when": {"npc.tomas.stance": "withdrawn"},
+				"observed": {"outcome": "observed_withdrawn"},
+				"presentation": [{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]}, {"kind": "line", "speaker": "narrator", "key": "line.tomas.look.withdrawn"}]
+			},
+			{
+				"id": "look_tomas.partnered", "when": {"npc.tomas.stance": "partnered"},
+				"observed": {"outcome": "observed_partnered"},
+				"presentation": [{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]}, {"kind": "line", "speaker": "narrator", "key": "line.tomas.look.partnered"}]
+			},
+			{
+				"id": "look_tomas.quiet", "when": {"npc.tomas.stance": "quiet"},
+				"observed": {"outcome": "observed_quiet"},
+				"presentation": [{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]}, {"kind": "line", "speaker": "narrator", "key": "line.tomas.look.quiet"}]
+			}
+		]
+	},
+	{
+		"id": "look_bell",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.look_bell",
+		"valid_targets": ["bell"],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "look_bell.tilted",
+				"observed": {"outcome": "observed_bell_tilted"},
+				"knowledge_effects": [
+					{"id": "bell_tilted_into_wind", "proposition": {"bell": "tilted_into_wind"}, "status": "SUPPORTED", "scope": "clearing"}
+				],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "bell_angled_to_catch_gusts"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["bell"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.bell.tilted"}
+				]
+			}
+		]
+	}
+]

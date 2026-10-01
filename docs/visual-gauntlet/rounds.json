@@ -1,0 +1,154 @@
+[
+  {
+    "round": 1,
+    "dir": "r01",
+    "verdict": "baseline",
+    "gap": "First build of the reference hall: shell, shelves, machine, bell, baked light. Not judged by a separate critic; used to find the pipeline's own bugs (double gamma, flipped winding, culled glow quads, missing glyph and mural tiles).",
+    "fixed": [
+      "Cycles vertex-colour bake with a steep key through the vault, display-referred values",
+      "Faceted, mottled hand-painted tiles for every material",
+      "Bolted diorama camera with a Dutch roll; hard cuts; the spell's fisheye plus 45 degree tilt"
+    ],
+    "next": [
+      "A single authored god-ray and a pool the characters can stand in",
+      "A dark cropped foreground frame",
+      "Cut the over-saturated orange"
+    ]
+  },
+  {
+    "round": 2,
+    "dir": "r02",
+    "verdict": "NO",
+    "gap": "There is no god-ray: the oculus is a yellow blowout and the floor is lit evenly, so nothing leads the eye. The near floor averages luma 0.40 and the pool by the witch 0.47.",
+    "fixed": [
+      "Ribbed pointed vault with a real oculus; a slanted shaft prism, floor glow and drifting dust",
+      "Dark, desaturated foreground shelf and rock baked in camera space",
+      "Grade shifted from orange to olive-gold; mean saturation 0.59 to 0.44, orange share 28% to 12%",
+      "All UI moved into the scene: 3D speech bubbles, carved option plaques, menu plaques"
+    ],
+    "next": [
+      "One authored light event with scale around it",
+      "Bubble must not sit on the focal point",
+      "Carpet and shelves read as noise"
+    ]
+  },
+  {
+    "round": 3,
+    "dir": "r03",
+    "verdict": "NO",
+    "gap": "No single authored light event: the beam and pool are present but weak, a bubble covers the focal point, there is no cathedral scale, the carpet is noise, characters do not sit in the light, and the shelves read as wallpaper.",
+    "fixed": [
+      "Hooded statue redesigned slim and pointed; moved into the light",
+      "12 px type and larger tap targets on the plaques",
+      "Real device check: Web export driven by touch in a Pixel 7 landscape emulation"
+    ],
+    "next": [
+      "Smaller oculus, narrower and brighter shaft",
+      "Spiral carpet as geometry, shelf variety, felt-like globe",
+      "Blob shadows so characters sit on the floor",
+      "Bubbles that avoid the pool, arch and statue"
+    ]
+  },
+  {
+    "round": 4,
+    "dir": "r04",
+    "verdict": "superseded",
+    "gap": "Not sent to a critic. Before it was, the client's reference image was recovered from the session and put next to this frame: the real picture is a low-key, intimate scene (median luma 0.16 against our 0.28, 0.5% of pixels above 0.75 against our 10.7%), with characters and a hooded statue three times larger, and large calm facets where ours had small noisy tiles.",
+    "fixed": [
+      "Spiral carpet as real geometry; shelf variety; smaller oculus; blob shadows under the three characters",
+      "Speech bubbles score six spots around the speaker and avoid the pool, the shaft, the arch and the statue",
+      "Tighter inspect close-up, so the phone frame is not a third empty floor",
+      "Hooded statue as a dark robe with a purple hem"
+    ],
+    "next": [
+      "Measure against the real image, not a description",
+      "Pull the camera in; calm the architecture; bigger props"
+    ]
+  },
+  {
+    "round": 5,
+    "dir": "r05",
+    "verdict": "NO",
+    "gap": "Blind A/B against the real reference: the critic picked the reference and named the missing shaft of light as the biggest gap. With the closer camera the oculus was out of frame, so the beam read as a yellow haze with no source and the eye had nowhere to land.",
+    "fixed": [
+      "Camera from 17 m / 52 degrees to 11 m: pool, statue, arch and eye in one picture",
+      "Calm architecture tiles, coarser irregular shell and floor, facets from orientation; median luma 0.28 to 0.21",
+      "One bold pixel-stepped eye on a plaster patch (it had been repeated 5x4 by a UV bug)",
+      "Statue rebuilt: its robe was never placed with its head because of a vertex-tracking bug; black hood void, scroll, crystal crown",
+      "Chunkier shelf props, faceted purple orb in the foreground, pale sky patch, softer shaft and pool"
+    ],
+    "next": [
+      "A shaft with a visible source, defined edges and a landing on the characters",
+      "Arch stones read as a voxel checker, with light seams along the arch",
+      "Hood reads as a capirote, crystals as a mohawk, scroll as a flat card",
+      "Brass machine, violet gem and gold pips too hot; palette runs mustard and electric purple",
+      "Foreground gem and boulder mean nothing; shelves are uniform book blocks",
+      "Tap targets 25 px (4.7 mm): too small for a fingertip"
+    ]
+  },
+  {
+    "round": 6,
+    "dir": "r06",
+    "verdict": "NO",
+    "gap": "Blind A/B against the real reference: picked the reference again. Biggest gap: the light. The reference is a dim hall cut by one beam from a visible hole to a pool at the witch's feet; ours spread two or three beams over the statue and wall and lifted the whole centre to an even mustard glow, with the oculus a hair out of frame.",
+    "fixed": [
+      "Sun at 57 degrees, its hole at the top of the frame: a diagonal god-ray from a visible source raking behind the statue, 1 m clear of it",
+      "Arch back-left, tower moved off the path, one-material arch stones that overlap the opening, compass plate (it read as a halo) removed",
+      "Statue: draped cowl, rolled scrolls at the chest, pale crystal candelabra, 30% taller",
+      "Palette: olive gold, mauve purple, dusty books, dimmer brass and gem, cooler corridor spill",
+      "Faceted purple orb on a brass stand; chunkier shelf contents with more glyph crates and scroll piles",
+      "Plaques 38 px with 8 px gaps and a small brass title tag; safe margin 4.5% of width; lens warp folds instead of smearing",
+      "Touch re-verified in the Web build: tap the machine, plaques open, choose one"
+    ],
+    "next": [
+      "One beam, oculus in frame, vault darker",
+      "Arch opening filled with the same lit wall; no depth, a white hairline along its edge",
+      "Witch, Tomas and the machine merge into one clump",
+      "Walls read as a regular quad grid; floor spiral breaks into yellow shards",
+      "Palette: orange yellows, blue-violet purples",
+      "Foreground gem and boulder off-palette; bell post reads as a tree trunk"
+    ]
+  },
+  {
+    "round": 7,
+    "dir": "r07",
+    "verdict": "NO",
+    "gap": "Blind A/B against the real reference: picked the reference again (and told the two apart). Biggest gap: the sun does not land on the player. In the reference the beam hits the spiral where the witch stands, a tiny dark silhouette in the brightest pool inside a dark frame; ours hit the statue and back wall and left the floor an even ochre.",
+    "fixed": [
+      "Camera looks up 14 degrees: the hole in the vault shows as a bright disc top-right; one shaft instead of a shaft plus halo and streaks",
+      "Arch interior is a dark tunnel with a bright far end; the corridor starts inside the wall so no hairline of far light shows",
+      "Floor spiral clean: floor and inlay were snapped differently by the PSX vertex snap, shearing into shards; both are now drawn unsnapped from one floor material",
+      "Walls: heights jittered and diagonals random, so no regular quad grid",
+      "Witch spawns in the pool, apart from Tomas and the machine",
+      "Soft highlight shoulder on the set (99th percentile luma 0.97 to 0.86; reference 0.63); mauve purples, quieter floor gold, faceted bell post, gold crown",
+      "Gate was red for one commit (the shoulder darkened the speech bubble in the screen pass); moved into the set shader and fixed"
+    ],
+    "next": [
+      "Aim the beam at the witch; floor outside the pool darker; cool violet shadows",
+      "A lit far room behind the arch",
+      "Finer, crisper facets; calmer tiles",
+      "Foreground pieces still loud; right side empty",
+      "Eye lashes hang down (the mural was flipped); floating sconce; crack at the oculus; ring stones hanging under the hole"
+    ]
+  },
+  {
+    "round": 8,
+    "dir": "r08",
+    "verdict": "NO",
+    "gap": "Blind A/B against the real reference: picked the reference again (and told the two apart). Biggest gap: no depth. The back of the hall is a flat, lit wall a few metres behind the statue; the reference recedes through arch inside arch into a lit stair, which gives it scale and a value ladder from dark frame to bright distance. Also named again: the vault hole is clipped by the top edge, the statue has no plinth and floats, walls are mottled planes rather than crisp facets, and ochre where the reference is olive.",
+    "fixed": [
+      "Pool and carpet moved onto the witch's mark: the beam now lands on her; floor tile and fill light darker so the pool is the brightest place",
+      "Cool violet shadows (bake fill and screen grade)",
+      "Eye mural was vertically flipped: lashes now point up like the reference",
+      "A crack of daylight along the vault's ridge (left and right halves jittered their ridge vertices apart) and ring stones that hung in the room under the oculus: both fixed",
+      "Finer vault and wall facets, crisper shelf gems, floating sconces removed, darker foreground pieces, a less dead tunnel"
+    ],
+    "next": [
+      "A real passage behind the arch: nested arches and a lit stair",
+      "The hole in the vault fully framed (needs a lower vault or a squeezed frame: the camera cannot pitch further without dropping below the floor)",
+      "Statue on a visible plinth, off the wall",
+      "Crisper facets; calmer tiles; olive rather than ochre",
+      "Bell bracket and arms attach to nothing; the bubble pinned to the frame edge reads as an overlay"
+    ]
+  }
+]

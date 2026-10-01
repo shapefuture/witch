@@ -1,0 +1,263 @@
+[
+	{
+		"id": "cast_repair",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.cast_repair",
+		"valid_targets": [
+			"machine"
+		],
+		"preconditions": {
+			"machine.state": "jammed"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"prediction_candidates": [
+			{
+				"id": "p.naive_cast",
+				"when": {},
+				"expected": {
+					"outcome": "repaired_by_magic",
+					"motive": "grateful",
+					"relationship_signature": "welcomed"
+				}
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "cast_repair.override",
+				"observed": {
+					"outcome": "repaired_by_magic",
+					"motive": "unknown",
+					"relationship_signature": "withdrawal",
+					"npc_expected": "EXPECT_MAGIC",
+					"expectation_violated": false
+				},
+				"effects": {
+					"world": {
+						"machine": {
+							"state": "running_by_magic",
+							"in_tune": false
+						}
+					},
+					"npc_state": {
+						"tomas": {
+							"stance": "withdrawn",
+							"expects": "EXPECT_MAGIC",
+							"invited": false,
+							"tense": false
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "machine_runs",
+						"proposition": {
+							"machine": "runs"
+						},
+						"status": "ESTABLISHED",
+						"scope": "clearing"
+					},
+					{
+						"id": "why_tomas_withdrew",
+						"proposition": {
+							"about": "tomas_withdrawal",
+							"resolved": false
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "tomas"
+					}
+				],
+				"model_effects": [
+					{
+						"type": "contradict",
+						"rule_id": "m.helping_is_welcome"
+					},
+					{
+						"type": "revise",
+						"old_rule_id": "m.tomas_distrusts_witch",
+						"new_rule_id": "m.help_needs_authorship",
+						"proposition": {
+							"help": "needs_authorship"
+						},
+						"scope": "help",
+						"subject_id": "tomas"
+					}
+				],
+				"evidence": [
+					{
+						"type": "DIRECT",
+						"payload": {
+							"saw": "machine_ran_then_tomas_sat_down_with_his_back_turned"
+						}
+					}
+				],
+				"relationship_target": "tomas",
+				"relationship_tags": [
+					"BOUNDARY"
+				],
+				"relationship_payload": {
+					"domain": "intervention",
+					"boundary": {
+						"unasked_magic": "withdrew"
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"machine"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "repair",
+						"target": "machine"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "withdrawn"
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_withdraws"
+					},
+					{
+						"kind": "camera",
+						"mode": "consequence",
+						"focus": [
+							"tomas"
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "cast_flourish",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.cast_flourish",
+		"valid_targets": [
+			"machine"
+		],
+		"once_key": "cast_flourish",
+		"preconditions": {
+			"machine.state": "running_together"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"prediction_candidates": [
+			{
+				"id": "p.delight",
+				"when": {},
+				"expected": {
+					"outcome": "spectacle",
+					"motive": "delighted"
+				}
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "cast_flourish.spectacle",
+				"observed": {
+					"outcome": "spectacle",
+					"motive": "unknown",
+					"npc_expected": "EXPECT_RECIPROCITY"
+				},
+				"effects": {
+					"world": {
+						"machine": {
+							"state": "singing",
+							"in_tune": true
+						}
+					},
+					"npc_state": {
+						"tomas": {
+							"stance": "quiet"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "machine_sings",
+						"proposition": {
+							"machine": "sings"
+						},
+						"status": "ESTABLISHED",
+						"scope": "clearing"
+					},
+					{
+						"id": "why_tomas_went_quiet",
+						"proposition": {
+							"about": "tomas_silence",
+							"resolved": false
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "tomas"
+					}
+				],
+				"evidence": [
+					{
+						"type": "AMBIGUOUS",
+						"payload": {
+							"saw": "tomas_watched_the_machine_sing_and_said_nothing"
+						}
+					}
+				],
+				"relationship_target": "tomas",
+				"relationship_tags": [
+					"NOTE"
+				],
+				"relationship_payload": {
+					"topic": "flourish",
+					"interpretation": "unresolved"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"machine"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "machine"
+					},
+					{
+						"kind": "npc",
+						"actor": "tomas",
+						"pose": "quiet"
+					},
+					{
+						"kind": "dialogue",
+						"title": "tomas_quiet"
+					},
+					{
+						"kind": "camera",
+						"mode": "consequence",
+						"focus": [
+							"tomas"
+						]
+					}
+				]
+			}
+		]
+	}
+]

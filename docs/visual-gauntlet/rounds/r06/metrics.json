@@ -1,0 +1,106 @@
+[
+ {
+  "file": "docs/visual-gauntlet/rounds/r06/wide_169.png",
+  "size": [
+   640,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.029,
+   0.038,
+   0.116,
+   0.234,
+   0.397,
+   0.841,
+   0.964
+  ],
+  "dark_frame_share_lt_0.12": 0.256,
+  "bright_pool_share_gt_0.75": 0.068,
+  "contrast_p95_over_p5": 22.1,
+  "olive_gold_share": 0.501,
+  "purple_share": 0.023,
+  "orange_share": 0.143,
+  "mean_saturation": 0.521,
+  "facet_gradient": 3.16,
+  "vignette_corner_over_centre": 0.284,
+  "distinct_colours": 964
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r06/wide_43.png",
+  "size": [
+   480,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.029,
+   0.038,
+   0.105,
+   0.227,
+   0.427,
+   0.888,
+   0.975
+  ],
+  "dark_frame_share_lt_0.12": 0.296,
+  "bright_pool_share_gt_0.75": 0.085,
+  "contrast_p95_over_p5": 23.34,
+  "olive_gold_share": 0.496,
+  "purple_share": 0.04,
+  "orange_share": 0.094,
+  "mean_saturation": 0.5,
+  "facet_gradient": 3.11,
+  "vignette_corner_over_centre": 0.277,
+  "distinct_colours": 934
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r06/wide_phone_219.png",
+  "size": [
+   800,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.036,
+   0.06,
+   0.109,
+   0.227,
+   0.362,
+   0.784,
+   0.964
+  ],
+  "dark_frame_share_lt_0.12": 0.274,
+  "bright_pool_share_gt_0.75": 0.056,
+  "contrast_p95_over_p5": 12.96,
+  "olive_gold_share": 0.476,
+  "purple_share": 0.029,
+  "orange_share": 0.141,
+  "mean_saturation": 0.529,
+  "facet_gradient": 3.11,
+  "vignette_corner_over_centre": 0.304,
+  "distinct_colours": 971
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r06/conversation.png",
+  "size": [
+   640,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.036,
+   0.048,
+   0.116,
+   0.234,
+   0.429,
+   0.812,
+   0.963
+  ],
+  "dark_frame_share_lt_0.12": 0.259,
+  "bright_pool_share_gt_0.75": 0.065,
+  "contrast_p95_over_p5": 16.98,
+  "olive_gold_share": 0.518,
+  "purple_share": 0.056,
+  "orange_share": 0.123,
+  "mean_saturation": 0.538,
+  "facet_gradient": 2.78,
+  "vignette_corner_over_centre": 0.387,
+  "distinct_colours": 1004
+ }
+]

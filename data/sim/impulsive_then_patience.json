@@ -1,0 +1,31 @@
+{
+	"name": "Impulsive magic, then recovery by waiting",
+	"steps": [
+		{
+			"action": "cast_repair",
+			"target": "machine"
+		},
+		{
+			"action": "wait_watch",
+			"target": "tomas"
+		},
+		{
+			"action": "wait_watch",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"target": "machine"
+		}
+	],
+	"expect": {
+		"state": {
+			"machine.state": "running_together",
+			"npc.tomas.stance": "partnered"
+		},
+		"knows": [
+			"tomas_returns_when_left_alone",
+			"tomas_invited_help"
+		]
+	}
+}

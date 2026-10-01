@@ -10,3 +10,10 @@ Thumbs.db
 
 # Claude Code local settings
 .claude/
+
+# Python bytecode (Blender kit)
+__pycache__/
+*.pyc
+
+# local builds
+build/

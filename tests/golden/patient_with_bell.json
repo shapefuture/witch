@@ -1,0 +1,304 @@
+{
+	"final": {
+		"event_count": 22,
+		"head_hash": "f52994b59a301bae9ca792c68b753f7a2b6f664a6d0f22f613ddce2e8c758a27",
+		"knowledge": {
+			"bell_tilted_into_wind": "SUPPORTED",
+			"help_respected_authorship": "SUPPORTED",
+			"machine_needs_second_component": "SUPPORTED",
+			"machine_runs": "ESTABLISHED",
+			"machine_sings": "ESTABLISHED",
+			"tomas_explained_alignment": "SUPPORTED",
+			"tomas_glances_toward_tree": "POSSIBLE",
+			"tomas_invited_help": "SUPPORTED",
+			"tomas_times_work_to_the_bell": "SUPPORTED",
+			"why_tomas_went_quiet": "UNRESOLVED_BY_DESIGN"
+		},
+		"models": {
+			"m.help_needs_authorship": "SUPPORTED",
+			"m.helping_is_welcome": "CONTEXTUAL"
+		},
+		"npc_state": {
+			"tomas": {
+				"expects": "EXPECT_RECIPROCITY",
+				"invited": true,
+				"stance": "quiet",
+				"tense": false
+			}
+		},
+		"operators": [
+			"op.ask_before_acting"
+		],
+		"world": {
+			"__mirror_time": 8,
+			"clearing": {
+				"departed": true
+			},
+			"machine": {
+				"in_tune": true,
+				"state": "singing"
+			}
+		}
+	},
+	"name": "Patient, bell noticed: one wait becomes an invitation",
+	"steps": [
+		{
+			"action": "look_tomas",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "observed_braced"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "look_tomas.braced",
+			"target": "tomas"
+		},
+		{
+			"action": "look_bell",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "observed_bell_tilted"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "look_bell.tilted",
+			"target": "bell"
+		},
+		{
+			"action": "ask_tomas_what",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"motive": "guarded",
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "incomplete_explanation"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_informed",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "ask_tomas_what.partial",
+			"target": "tomas"
+		},
+		{
+			"action": "look_machine_informed",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "observed_gap"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_solution",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "look_machine_informed.gap",
+			"target": "machine"
+		},
+		{
+			"action": "wait_watch",
+			"camera": [
+				"wide",
+				"conversation"
+			],
+			"observed": {
+				"cue": "bell",
+				"expectation_violated": true,
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "invited"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"go_assist",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "wait_watch.bell_invites",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"camera": [
+				"inspect",
+				"consequence"
+			],
+			"observed": {
+				"motive": "shared_work",
+				"npc_expected": "EXPECT_RECIPROCITY",
+				"outcome": "repaired_together",
+				"relationship_signature": "EXPECT_RECIPROCITY"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "go_assist.component",
+			"target": "machine"
+		},
+		{
+			"action": "cast_flourish",
+			"camera": [
+				"magic_reveal",
+				"consequence"
+			],
+			"observed": {
+				"motive": "unknown",
+				"npc_expected": "EXPECT_RECIPROCITY",
+				"outcome": "spectacle"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"MOTIVE"
+			],
+			"response": "cast_flourish.spectacle",
+			"target": "machine"
+		},
+		{
+			"action": "go_path_out",
+			"camera": [
+				"stay"
+			],
+			"observed": {
+				"ending": "unresolved",
+				"outcome": "departed"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running"
+				],
+				"path_out": [],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "go_path_out.depart",
+			"target": "path_out"
+		}
+	]
+}

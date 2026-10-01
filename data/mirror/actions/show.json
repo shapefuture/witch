@@ -1,0 +1,75 @@
+[
+	{
+		"id": "show_tomas_wand",
+		"action_type": "SHOW",
+		"affordance_group": "social",
+		"label_key": "opt.show_tomas_wand",
+		"valid_targets": ["tomas"],
+		"preconditions": {"$neq": {"npc.tomas.stance": "withdrawn"}},
+		"excludes_claims": [{"id": "tomas_paused_at_wand"}],
+		"prediction_signature": ["SHOW", "EXPECT_MAGIC"],
+		"prediction_candidates": [
+			{"id": "p.impressed", "when": {}, "expected": {"outcome": "impressed"}}
+		],
+		"response_contracts": [
+			{
+				"id": "show_tomas_wand.tense",
+				"observed": {"outcome": "tense", "relationship_signature": "EXPECT_MAGIC", "npc_expected": "EXPECT_MAGIC"},
+				"effects": {"npc_state": {"tomas": {"tense": true}}},
+				"knowledge_effects": [
+					{"id": "tomas_paused_at_wand", "proposition": {"tomas": "paused_at_wand"}, "status": "SUPPORTED", "scope": "tomas"}
+				],
+				"model_effects": [
+					{
+						"type": "upsert", "rule_id": "m.tomas_distrusts_witch", "subject_id": "tomas",
+						"proposition": {"tomas": "distrusts_witch"}, "scope": "help",
+						"confidence": 0.5, "status": "HYPOTHESIS", "depth": 2
+					}
+				],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "tomas_went_still_at_the_wand"}}],
+				"relationship_tags": ["BOUNDARY"],
+				"relationship_payload": {"domain": "intervention", "boundary": {"wand_shown_not_used": true}},
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]},
+					{"kind": "anim", "actor": "tomas", "name": "pause"},
+					{"kind": "dialogue", "title": "tomas_show_wand"}
+				]
+			}
+		]
+	},
+	{
+		"id": "show_tomas_solution",
+		"action_type": "SHOW",
+		"affordance_group": "social",
+		"label_key": "opt.show_tomas_solution",
+		"valid_targets": ["tomas"],
+		"preconditions": {"npc.tomas.invited": false, "machine.state": "jammed", "$neq": {"npc.tomas.stance": "withdrawn"}},
+		"requires_claims": [{"id": "machine_needs_second_component"}],
+		"prediction_signature": ["SHOW", "EXPECT_DISTANCE"],
+		"prediction_candidates": [
+			{"id": "p.ignored", "when": {}, "expected": {"outcome": "ignored"}}
+		],
+		"response_contracts": [
+			{
+				"id": "show_tomas_solution.invited",
+				"observed": {"outcome": "invited", "npc_expected": "EXPECT_MAGIC", "expectation_violated": true},
+				"effects": {"npc_state": {"tomas": {"stance": "inviting", "expects": "EXPECT_RECIPROCITY", "invited": true, "tense": false}}},
+				"knowledge_effects": [
+					{"id": "tomas_invited_help", "proposition": {"tomas": "invited_help"}, "status": "SUPPORTED", "scope": "tomas"}
+				],
+				"model_effects": [
+					{"type": "upsert", "rule_id": "m.helping_is_welcome", "subject_id": "tomas", "proposition": {"helping": "welcome_when_invited"}, "scope": "help", "confidence": 0.6, "status": "CONTEXTUAL", "depth": 1},
+					{"type": "revise", "old_rule_id": "m.tomas_distrusts_witch", "new_rule_id": "m.help_needs_authorship", "proposition": {"help": "needs_authorship"}, "scope": "help", "subject_id": "tomas"}
+				],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "tomas_nodded_at_the_shown_gap"}}],
+				"relationship_tags": ["INVITATION"],
+				"relationship_payload": {"topic": "hold_component", "via": "showing"},
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]},
+					{"kind": "npc", "actor": "tomas", "pose": "inviting"},
+					{"kind": "dialogue", "title": "tomas_invited_show_solution"}
+				]
+			}
+		]
+	}
+]

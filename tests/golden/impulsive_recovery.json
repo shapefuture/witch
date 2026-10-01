@@ -1,0 +1,217 @@
+{
+	"final": {
+		"event_count": 16,
+		"head_hash": "4ddc637bdca221caf53b6c806b7f98f117a36e9603d854da56b83c73be3770fe",
+		"knowledge": {
+			"help_respected_authorship": "SUPPORTED",
+			"machine_runs": "ESTABLISHED",
+			"machine_sings": "ESTABLISHED",
+			"tomas_invited_help": "SUPPORTED",
+			"tomas_wanted_the_last_turn": "POSSIBLE",
+			"why_tomas_went_quiet": "UNRESOLVED_BY_DESIGN",
+			"why_tomas_withdrew": "UNRESOLVED_BY_DESIGN"
+		},
+		"models": {
+			"m.help_needs_authorship": "SUPPORTED",
+			"m.helping_is_welcome": "CONTRADICTED"
+		},
+		"npc_state": {
+			"tomas": {
+				"expects": "EXPECT_RECIPROCITY",
+				"invited": true,
+				"stance": "quiet",
+				"tense": false
+			}
+		},
+		"operators": [
+			"op.ask_before_acting"
+		],
+		"world": {
+			"clearing": {
+				"departed": true
+			},
+			"machine": {
+				"in_tune": true,
+				"state": "singing"
+			}
+		}
+	},
+	"name": "Impulsive magic, then recovery by asking",
+	"steps": [
+		{
+			"action": "cast_repair",
+			"camera": [
+				"magic_reveal",
+				"conversation",
+				"consequence"
+			],
+			"observed": {
+				"expectation_violated": false,
+				"motive": "unknown",
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "repaired_by_magic",
+				"relationship_signature": "withdrawal"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_help",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"MOTIVE",
+				"RELATIONAL"
+			],
+			"response": "cast_repair.override",
+			"target": "machine"
+		},
+		{
+			"action": "ask_tomas_help",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"expectation_violated": true,
+				"motive": "unknown",
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "disclosed"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"go_assist"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "ask_tomas_help.withdrawn",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"camera": [
+				"inspect",
+				"consequence"
+			],
+			"observed": {
+				"motive": "shared_work",
+				"npc_expected": "EXPECT_RECIPROCITY",
+				"outcome": "tuned_together",
+				"relationship_signature": "EXPECT_RECIPROCITY"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "go_assist.lantern",
+			"target": "machine"
+		},
+		{
+			"action": "cast_flourish",
+			"camera": [
+				"magic_reveal",
+				"consequence"
+			],
+			"observed": {
+				"motive": "unknown",
+				"npc_expected": "EXPECT_RECIPROCITY",
+				"outcome": "spectacle"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"MOTIVE"
+			],
+			"response": "cast_flourish.spectacle",
+			"target": "machine"
+		},
+		{
+			"action": "go_path_out",
+			"camera": [
+				"stay"
+			],
+			"observed": {
+				"ending": "unresolved",
+				"outcome": "departed"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running"
+				],
+				"path_out": [],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "go_path_out.depart",
+			"target": "path_out"
+		}
+	]
+}

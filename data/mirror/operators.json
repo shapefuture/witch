@@ -1,0 +1,9 @@
+[
+	{
+		"id": "op.ask_before_acting",
+		"abstraction": {"pattern": "help_is_not_authorization"},
+		"action_ids": ["ask_tomas_help"],
+		"source_model_ids": ["m.help_needs_authorship"],
+		"transfer_rule_ids": []
+	}
+]

@@ -1,0 +1,210 @@
+[
+ {
+  "file": "docs/visual-gauntlet/rounds/r02/closeup_bell.png",
+  "size": [
+   640,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.06,
+   0.107,
+   0.177,
+   0.313,
+   0.476,
+   0.739,
+   0.936
+  ],
+  "dark_frame_share_lt_0.12": 0.07,
+  "bright_pool_share_gt_0.75": 0.042,
+  "contrast_p95_over_p5": 6.93,
+  "olive_gold_share": 0.521,
+  "purple_share": 0.037,
+  "orange_share": 0.295,
+  "mean_saturation": 0.629,
+  "facet_gradient": 3.16,
+  "vignette_corner_over_centre": 0.496,
+  "distinct_colours": 1700
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r02/conversation.png",
+  "size": [
+   640,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.068,
+   0.107,
+   0.2,
+   0.362,
+   0.625,
+   0.836,
+   0.949
+  ],
+  "dark_frame_share_lt_0.12": 0.063,
+  "bright_pool_share_gt_0.75": 0.107,
+  "contrast_p95_over_p5": 7.85,
+  "olive_gold_share": 0.654,
+  "purple_share": 0.016,
+  "orange_share": 0.186,
+  "mean_saturation": 0.613,
+  "facet_gradient": 2.96,
+  "vignette_corner_over_centre": 0.35,
+  "distinct_colours": 1744
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r02/magic.png",
+  "size": [
+   640,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.072,
+   0.115,
+   0.197,
+   0.305,
+   0.528,
+   0.841,
+   0.937
+  ],
+  "dark_frame_share_lt_0.12": 0.057,
+  "bright_pool_share_gt_0.75": 0.111,
+  "contrast_p95_over_p5": 7.31,
+  "olive_gold_share": 0.575,
+  "purple_share": 0.031,
+  "orange_share": 0.237,
+  "mean_saturation": 0.785,
+  "facet_gradient": 2.03,
+  "vignette_corner_over_centre": 0.322,
+  "distinct_colours": 3903
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r02/options_machine.png",
+  "size": [
+   640,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.013,
+   0.102,
+   0.2,
+   0.288,
+   0.44,
+   0.739,
+   0.897
+  ],
+  "dark_frame_share_lt_0.12": 0.072,
+  "bright_pool_share_gt_0.75": 0.046,
+  "contrast_p95_over_p5": 7.23,
+  "olive_gold_share": 0.505,
+  "purple_share": 0.036,
+  "orange_share": 0.286,
+  "mean_saturation": 0.599,
+  "facet_gradient": 3.72,
+  "vignette_corner_over_centre": 0.407,
+  "distinct_colours": 1729
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r02/top_down.png",
+  "size": [
+   480,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.06,
+   0.109,
+   0.231,
+   0.324,
+   0.394,
+   0.642,
+   0.767
+  ],
+  "dark_frame_share_lt_0.12": 0.056,
+  "bright_pool_share_gt_0.75": 0.011,
+  "contrast_p95_over_p5": 5.9,
+  "olive_gold_share": 0.64,
+  "purple_share": 0.056,
+  "orange_share": 0.188,
+  "mean_saturation": 0.551,
+  "facet_gradient": 3.14,
+  "vignette_corner_over_centre": 0.523,
+  "distinct_colours": 1393
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r02/wide_169.png",
+  "size": [
+   640,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.038,
+   0.109,
+   0.2,
+   0.302,
+   0.463,
+   0.743,
+   0.861
+  ],
+  "dark_frame_share_lt_0.12": 0.058,
+  "bright_pool_share_gt_0.75": 0.047,
+  "contrast_p95_over_p5": 6.83,
+  "olive_gold_share": 0.518,
+  "purple_share": 0.039,
+  "orange_share": 0.28,
+  "mean_saturation": 0.588,
+  "facet_gradient": 3.37,
+  "vignette_corner_over_centre": 0.349,
+  "distinct_colours": 1803
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r02/wide_43.png",
+  "size": [
+   480,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.038,
+   0.109,
+   0.2,
+   0.313,
+   0.514,
+   0.786,
+   0.911
+  ],
+  "dark_frame_share_lt_0.12": 0.064,
+  "bright_pool_share_gt_0.75": 0.071,
+  "contrast_p95_over_p5": 7.22,
+  "olive_gold_share": 0.524,
+  "purple_share": 0.053,
+  "orange_share": 0.254,
+  "mean_saturation": 0.58,
+  "facet_gradient": 3.56,
+  "vignette_corner_over_centre": 0.349,
+  "distinct_colours": 1872
+ },
+ {
+  "file": "docs/visual-gauntlet/rounds/r02/wide_phone_219.png",
+  "size": [
+   800,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.048,
+   0.109,
+   0.193,
+   0.279,
+   0.432,
+   0.722,
+   0.836
+  ],
+  "dark_frame_share_lt_0.12": 0.059,
+  "bright_pool_share_gt_0.75": 0.036,
+  "contrast_p95_over_p5": 6.63,
+  "olive_gold_share": 0.518,
+  "purple_share": 0.025,
+  "orange_share": 0.285,
+  "mean_saturation": 0.586,
+  "facet_gradient": 3.24,
+  "vignette_corner_over_centre": 0.355,
+  "distinct_colours": 1763
+ }
+]

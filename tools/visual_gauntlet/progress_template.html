@@ -1,0 +1,78 @@
+<title>Hall Gauntlet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: one column of rounds, newest first; each round is the master shot, its numbers, then what changed and what is open. */
+:root {
+  --bg: #f2eee3;
+  --panel: #fbf9f2;
+  --ink: #2a241a;
+  --muted: #6d6552;
+  --line: #d9d1bb;
+  --olive: #7b6a1f;
+  --purple: #5b3f8c;
+  --good: #3f6b2c;
+  --bad: #8f2f2a;
+  --wait: #7a6a2a;
+  --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --body: "Source Sans 3", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14110b; --panel: #1d1911; --ink: #e9e0c6; --muted: #a69b80; --line: #3a3322;
+    --olive: #cdb552; --purple: #a98bd8; --good: #8cc16a; --bad: #e07a70; --wait: #d6bd5a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14110b; --panel: #1d1911; --ink: #e9e0c6; --muted: #a69b80; --line: #3a3322;
+  --olive: #cdb552; --purple: #a98bd8; --good: #8cc16a; --bad: #e07a70; --wait: #d6bd5a; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+main { max-width: 62rem; margin: 0 auto; padding-inline: 1rem; padding-block: 2rem 4rem; display: flex; flex-direction: column; gap: 2.5rem; }
+h1, h2 { font-family: var(--display); font-weight: 600; letter-spacing: 0.01em; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.05; }
+h2 { font-size: 1.7rem; }
+h3 { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.5rem; }
+.lede { max-width: 42rem; color: var(--muted); margin: 0.75rem 0 0; }
+.bar { border: 1px solid var(--line); background: var(--panel); padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.bar b { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--olive); }
+.bar p { margin: 0; max-width: 46rem; }
+.round { display: flex; flex-direction: column; gap: 0.9rem; }
+.round > header { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 0.4rem; }
+.chip { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid currentColor; padding: 0.15rem 0.55rem; }
+.chip.no { color: var(--bad); } .chip.yes { color: var(--good); } .chip.wait { color: var(--wait); }
+.gap { margin: 0; max-width: 46rem; font-size: 1.05rem; }
+.hero { width: 100%; height: auto; display: block; image-rendering: auto; border: 1px solid var(--line); }
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: 0.6rem 1rem; margin: 0; }
+.metrics div { border-top: 2px solid var(--line); padding-top: 0.3rem; }
+.metrics dt { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.metrics dd { margin: 0; font-family: var(--mono); font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.extra { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.8rem; }
+figure { margin: 0; display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); }
+figcaption { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1.2rem; }
+.lists ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.barcmp { display: flex; flex-direction: column; gap: 0.9rem; }
+.barcmp .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 0.9rem; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; max-width: 40rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 0.35rem 0.8rem 0.35rem 0; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 0.85rem; font-weight: 400; }
+thead th { color: var(--muted); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
+tbody th { font-family: var(--body); color: var(--muted); }
+.phone { display: flex; flex-direction: column; gap: 0.9rem; }
+.phone .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 0.9rem; }
+</style>
+<main>
+  <div>
+    <h1>Hall Gauntlet</h1>
+    <p class="lede">The first scene is rebuilt from your reference still: a faceted library hall with one shaft of light. Each round, a fresh critic with no memory of the work judges the frames and names the single biggest gap. The loop ends when the critic picks ours, blind.</p>
+  </div>
+  {{BAR}}
+  {{ROUNDS}}
+  <section class="phone">
+    <h2>Played on a phone</h2>
+    <p class="lede">The exported Web build, driven by real touch events in a Pixel 7 landscape browser: the arrival narration is tapped through, the brass machine is tapped, and a wooden plaque is chosen.</p>
+    <div class="shots">{{PHONE}}</div>
+  </section>
+</main>
