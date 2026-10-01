@@ -36,6 +36,12 @@ same script print the same head hash; diff two transcripts to see where playthro
 xvfb-run -a godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 -- \
     --capture out.png --capture-frames 90 [--sim-first impulsive_recovery] [--show-options tomas] [--magic 1.0]
 ```
+Capture aids (all after `--`): `--resolution WxH` is a Godot flag (before `--`) and sets the window,
+so `1200x900` renders 4:3 and `2400x1080` a 20:9 phone; `--shot wide|inspect|conversation|magic_reveal`
+holds a director shot; `--cam x,y,z,tx,ty,tz[,fov]` puts the camera anywhere (and locks it);
+`--lens 0..1` the fisheye; `--no-fx` hides the shaft/dust/glow to see the bare baked set. The diorama
+clock is the frame count in capture mode, so a given `--capture-frames` is the same picture every run.
+`tools/visual_gauntlet/capture.sh out_dir` takes the standard set.
 Godot's headless mode uses a dummy renderer that **does not compile shaders**, so shader errors
 only appear when really rendering. `tests/render/render_check.sh` does the above for three
 scenarios and checks pixels (see `GAUNTLET.md`).

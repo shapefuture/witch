@@ -3,8 +3,9 @@
 ## Project
 
 **Witch You Were Here**: a third-person PSX diorama adventure. Knowledge, prediction,
-discrepancy, relationships and model revision *are* the gameplay. Godot **4.6.3**, Forward+,
-Jolt, 320x240 viewport (stretch `viewport`). The game is **Russian-only**.
+discrepancy, relationships and model revision *are* the gameplay. Godot **4.6.3**, **Compatibility**
+renderer (mobile first), Jolt, 480x360 base viewport with stretch `viewport` + `expand` (360 rows on
+every screen, wider as the aspect grows). The game is **Russian-only**.
 
 Forked from YAKO (first-person walking game); YAKO is now infrastructure, not a template. See
 `docs/PROVENANCE.md`. Start with `docs/ARCHITECTURE.md` and `docs/DESIGN_INVARIANTS.md`.
@@ -21,12 +22,27 @@ UPDATE_GOLDEN=1 ./tests/run_tests.sh golden      # accept intended behaviour cha
 godot --headless --path . -- --debug-sim [data/sim/x.json]   # deterministic transcript
 python3 tools/text_tool.py check                 # text table consistency
 godot --headless --path . --script res://tools/perf_probe.gd
+# the art: scripted in Blender (pip install bpy), committed as GLB; rebuild only when the art changes
+python tools/blender/build_hall.py --out assets/archive --samples 96   # ~40 s, then run the gate
+GODOT=... tools/visual_gauntlet/capture.sh out_dir                      # the standard frames for a critic
 ```
 Run the gate before committing. **Godot exits 0 even when GDScript fails to compile**: never trust an
 exit code; the gate greps for `SCRIPT ERROR` / `Parse Error` / `ERROR:` and requires `TESTS PASSED`.
 New `class_name`s need `--import` first (the gate does it). Real rendering (screenshots, shader
 errors) needs `xvfb-run` with `--rendering-method gl_compatibility`; headless uses a dummy renderer
 that does not compile shaders. See `docs/DEBUGGING.md`.
+
+## Art rules (see `docs/ART_PIPELINE.md`)
+
+- The first scene is the **archive hall** (`game/world/archive/`), built from the user's reference
+  still: faceted, mottled, olive-and-purple, one shaft of light. **Do not invent a different scene.**
+  Its Mirror room id is still `"clearing"` (ids are data; looks are not).
+- Characters are **placeholders on purpose** (`game/world/placeholders.gd`); do not model them.
+- Set art is baked in Blender (vertex-colour light + painted tiles) and drawn **unshaded**; there are
+  no Godot lights. Shaders write display-referred colour (Compatibility does not sRGB-encode).
+- **No 2D UI.** Speech bubbles, option plaques and the pause menu are 3D slabs (`game/ui/`, `Diegetic`).
+- The camera is **bolted** (never follows); shot changes are cuts; only the spell eases (fisheye + 45 degrees).
+- Mobile budgets are tests: <= 60k static triangles, <= 28 surfaces, painted tiles <= 256 px.
 
 ## Rules that are enforced by tests
 
@@ -58,7 +74,9 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 
 `addons/mirror_engine` (engine, locally patched: see PROVENANCE) . `addons/dialogue_manager`
 (unmodified) . `autoload/` . `game/{mirror,interaction,npc,dialogue,world,player,camera,presentation,ui,save,debug,main}`
-. `data/{mirror,text,conversations,sim}` . `render/psx` . `tests/` (+ `tests/golden`) . `tools/` . `docs/`.
+(`game/world/archive` is the hall, `game/ui` the diegetic UI) . `data/{mirror,text,conversations,sim}`
+. `render/psx` (shaders, StageLight) . `assets/archive` (baked set, tiles, anchors) . `tools/blender`
+(the art kit) . `tools/visual_gauntlet` . `tests/` (+ `tests/golden`) . `docs/` (+ `docs/visual-gauntlet`).
 
 ## Input
 
@@ -71,10 +89,15 @@ only: tap/click the ground to walk, an object to get its options. No WASD.
 - Dialogue Manager 3.10.4 leaks its resource at process exit; the gate allow-lists exactly those two messages.
 - `.uid` files are git-ignored (repo convention); the addon's were force-tracked by PR #1.
 - `pixel.ttf` provenance/licence isn't recorded: confirm before shipping.
-- All 3D is placeholder primitives (`game/world/placeholders.gd`); real character models are to be supplied.
+- Characters are placeholder primitives (`game/world/placeholders.gd`); real models are to be supplied.
+  The set is real (Blender kit), but its source of truth is `tools/blender/` plus the committed GLB.
+- The reference image the user supplied is not in the repo (it reached the session inline): put it at
+  `docs/visual-gauntlet/bar/reference_hall.png` so critics can compare against the real thing.
+- bmesh reuses freed slots and `recalc_face_normals` re-guesses winding on loose triangles: both bit
+  the Blender kit; read the notes in `tools/blender/kit/common.py` before changing it.
 - The export preset includes `data/*` (JSON and `.dialogue` are not Godot resources, so they would otherwise be missing from a build).
 
 ## Not built yet (by design)
 
 Raccoon tele-somatic signal, Vera/Elian/Ilya, the town graph, LimboAI, a world compiler from
-place resources, mobile profile tuning, a main menu, the full ending.
+place resources, on-device mobile profiling, a main menu, the full ending, real character models.

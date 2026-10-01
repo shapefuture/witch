@@ -9,11 +9,13 @@ PSX renderer and on the deterministic **Mirror Engine** (`addons/mirror_engine`)
 predictions, evidence, discrepancies, relationships and revisions of the player's own model are
 the gameplay.
 
-## First room: the Clearing
+## First room: the archive hall
 
-A man named Tomas is arguing quietly with a brass machine. Look, ask, show, wait, step in, or try
-the strange thing. Every route is valid and every wrong one is recoverable; what changes is what
-you understand about helping. All models are placeholders for now.
+A gothic hall of tall shelves, an eye on the wall, a hooded statue and a single shaft of late
+light on a spiral floor. A man named Tomas is arguing quietly with a brass machine. Look, ask,
+show, wait, step in, or try the strange thing. Every route is valid and every wrong one is
+recoverable; what changes is what you understand about helping. The hall is hand-built and
+light-baked (`docs/ART_PIPELINE.md`); the characters are placeholders for now.
 
 ## Run
 
@@ -37,7 +39,7 @@ godot --headless --path . -- --debug-sim data/sim/patient_no_bell.json
 ## Docs
 
 `docs/ARCHITECTURE.md` . `docs/DESIGN_INVARIANTS.md` . `docs/AUTHORING.md` . `docs/GAUNTLET.md` .
-`docs/DEBUGGING.md` . `docs/PERFORMANCE.md` . `docs/PROVENANCE.md`
+`docs/DEBUGGING.md` . `docs/PERFORMANCE.md` . `docs/ART_PIPELINE.md` . `docs/PROVENANCE.md`
 
 ## Licence notes
 

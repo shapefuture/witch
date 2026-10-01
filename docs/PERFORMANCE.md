@@ -32,19 +32,27 @@ Remaining O(n) work, all off the tap-to-result path: loading a save, `audit_inte
 the encode cost. Saves are pretty-printed for readability; if a real session ever makes them
 large, compact them and/or snapshot projections.
 
-## Scene (the Clearing)
+## Scene (the archive hall)
 
-133 nodes, 91 meshes (91 surfaces, so ~91 draw calls before batching), ~2,700 vertices,
-4 lights, no shadows (the PSX shaders disable them). Trivial for a desktop; the first thing to
-check on a phone is draw-call count: merge static props per material if it matters.
+Static set: ~35,000 triangles in one batch of 23 surfaces (one draw call per painted tile) plus
+~2,000 for the animated machine and bell and ~1,500 for the camera frame. No Godot lights and no
+shadows: the set is unshaded (light is baked into vertex colours), characters sample a 96x96 light
+map. Per frame the extras are a handful of additive meshes (two shaft prisms, a floor glow, 150
+dust quads in one MultiMesh) and the diegetic UI (three to ten tiny slabs and Label3Ds). Fill is
+the 480x360 base (about 170k pixels at 4:3, 290k at 20:9) with one full-screen grade pass that
+samples the screen texture's mip chain for glow.
+
+These budgets are **tests** (`tests/render/test_archive_hall.gd`): <= 60,000 static triangles,
+<= 28 surfaces, painted tiles <= 256 px. The set GLB is about 4.5 MB; textures 0.8 MB.
 
 ## What to measure on real hardware
 
 CPU frame time, GPU frame time, draw calls, visible meshes, particle cost, VRAM, scene load
 time and **input latency** (touch to first reaction), per profile:
 
-- **Mobile**: Forward+ is the configured renderer; on phones evaluate Mobile and Compatibility.
-  Compare the OpenGL compatibility path used by `render_check.sh` with the real target.
+- **Mobile**: Compatibility (OpenGL ES 3) is the configured renderer. Check the vertex shader cost
+  (snap + sway on ~110k split vertices) and the one screen-texture read; if either hurts, split the
+  static batch into four regions so culling helps, and drop the bloom taps.
 - **Desktop**
 - **Capture/High**: for marketing shots.
 
