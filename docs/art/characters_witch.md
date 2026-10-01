@@ -73,12 +73,19 @@ face plate technique of the user's Shadow model, generalised in `face_plate.py`:
 3. **Window.** Skin connected to the face centre becomes a smooth, symmetric contour (per-row
    half width, median-smoothed, a jaw that only narrows, a round hairline arc where the petals
    and fringe would leave spikes). Outside it is **hair colour**.
-4. **Eyes.** Inside the eye ellipses, local contrast is raised and pixels darker than their
-   surroundings are deepened, on the lash line and iris only (a darkened lower lid reads as a
-   squint). Then an unsharp mask (stronger in the eyes) and **5-bit quantisation**.
+4. **Features, repainted.** At 50 to 90 px the art's eyes upscale into smears, so the photo
+   keeps only the skin. The original eyes, brows and lips are filled from a masked low-pass of
+   the surrounding skin, so the plate's shading survives. They are then redrawn at 4x in
+   texture space from the source's `tex_face` geometry (same model frame as the landmarks),
+   box-downsampled and blended back through feathered masks. Each eye is an almond (`seg`)
+   with lid shading, an iris in three rings sampled toward the art (v1 light grey-violet,
+   v2 hazel-green), a pupil, one catch-light, a dark upper lash line with a wing flick and a
+   soft lower lid. The brows are thin and orange-brown, the lips soft coral. Then an unsharp
+   mask and **5-bit quantisation**.
 5. **Plate.** An 18 x 13 grid over the head front follows the head's analytic superellipse
    surface plus a **relief**: nose bridge and tip, alae, lips, brow ridge, eye sockets,
-   cheekbones and chin. All are sized by the eye spacing, so the relief fits whatever head it
+   cheekbones and chin. The sockets are centred on the eye landmarks, as are the painted
+   eyes, and the brow ridge sits under the painted brows. All are sized by the eye spacing, so the relief fits whatever head it
    sits on. UVs use the same linear model-to-texture map, so the texture lands where the
    landmarks say. Each head's front rings were refitted to its reference's face window: v1 is
    round with a soft chin, v2 heart-shaped. The plate's edges sit 4 mm (model units) proud of
@@ -129,9 +136,8 @@ proportions, which match this concept. New geometry:
 
 ## Still off
 
-- The faces come from roughly 50 to 90 px of art. They are clean at game size (about 15 to
-  25 px on screen), but a close-up shows the softness, and v1's eyes stay paler than the
-  sheet's.
+- The faces mix a soft photo (skin, nose, chin) with crisply painted features. In a close-up
+  the skin is softer than the eyes, and v1's eyes are rounder than the sheet's heavy-lidded almonds.
 - v1's back hair is flat paper-strip ribbons, not the sheet's dense mop of ringlets, so the
   cape shows between locks. More locks would cost about 120 triangles each.
 - The skirt and cape are rigid: the walk moves the legs under a stiff cone. The camera never

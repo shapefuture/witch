@@ -130,13 +130,21 @@ def cowl_z(x, y):
     return rz * max(0, 1 - (abs(x) / rx) ** 2.2) ** (1 / 2.2)
 
 
+FACE_PAINT = dict(eye_w=.064, eye_h=.034, tilt=.011, iris_r=.038, white=(.92, .91, .87), white_shade=(.70, .68, .68),
+                  lid=(.86, .62, .58), lid_shade=(.78, .55, .52), pupil=(.08, .06, .07), lash=(.20, .11, .10), lash_w=.0085,
+                  lower_lid=(.66, .44, .42), brow=(.72, .44, .22), brow_d=(.52, .30, .16), brow_dy=.083,
+                  lip_up=(.84, .46, .43), lip_lo=(.91, .57, .52), lip_line=(.58, .27, .27), lip_hi=(1., .80, .76),
+                  # light grey-violet iris, as in the sheet: outer ring, body, inner
+                  iris=((.42, .38, .54), (.60, .56, .72), (.75, .71, .85)))
+
+
 def face_spec(refs):
     """Landmarks on the sheet's front view (top left), pixels at the original 1197x668 size."""
     return fp.FaceSpec(os.path.join(refs, REF_SHEET) if refs else None,
                        dict(eyeR=(150.4, 92.3), eyeL=(176.9, 100.4), nose=(161.9, 108.75),
                             mouth=(159.6, 113.6), chin=(162.5, 125.2)),
                        LM, (-.26, .26, 2.33, 2.87), (176, 184), 'her_right', COL['skin'], COL['hair'],
-                       hairline=2.79, eye_contrast=.8, eye_dark=.65)
+                       hairline=2.79, paint=FACE_PAINT)
 
 
 # ======================================================================================================

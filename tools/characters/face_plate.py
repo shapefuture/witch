@@ -18,7 +18,7 @@
 """
 import math
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter
 from scipy import ndimage as ndi
 
 A = np.array
@@ -49,7 +49,7 @@ class FaceSpec:
     """Everything needed to make one face: reference, landmarks, plate window, colours."""
 
     def __init__(s, ref, px, model, win, size, keep, target, hair, eye_r=.05, upscale=3,
-                 hairline=None, eye_contrast=.5, eye_dark=.5):
+                 hairline=None, eye_contrast=.5, eye_dark=.5, paint=None):
         s.ref = ref                  # path of the concept image
         s.px = px                    # landmark -> (x, y) pixels in the reference
         s.model = model              # landmark -> (x, y) on the head, model units
@@ -63,6 +63,7 @@ class FaceSpec:
         s.hairline = hairline        # model y where the forehead meets the hair (None: estimate)
         s.eye_contrast = eye_contrast
         s.eye_dark = eye_dark
+        s.paint = paint              # Features to repaint crisply (see paint_features), or None
 
     # model <-> texture -------------------------------------------------------------------------
     def tex_uv(s, x, y):
@@ -172,22 +173,30 @@ def face_texture(spec, debug=None):
     edge = ndi.gaussian_filter(win.astype(float), .7)[..., None]
     sym = sym * edge + spec.hair * (1 - edge)
 
-    # crisp, dark-lined eyes: local contrast up, pixels darker than their surroundings deepened
+    if spec.paint is None:
+        # crisp, dark-lined eyes: local contrast up, pixels darker than their surroundings deepened
+        eyes = np.zeros((h, w), bool)
+        for k in ('eyeR', 'eyeL'):
+            ex, ey = spec.model[k]
+            eyes |= ((X - ex) / (spec.eye_r * 1.3)) ** 2 + ((Y - ey) / spec.eye_r) ** 2 < 1
+        ew = ndi.gaussian_filter(eyes.astype(float), 1.5)[..., None]
+        loc3 = np.stack([ndi.gaussian_filter(sym[..., c], 4.0) for c in range(3)], 2)
+        sym = sym + (sym - loc3) * spec.eye_contrast * ew
+        Ls = _lum(np.clip(sym, 0, 1))
+        loc = ndi.gaussian_filter(Ls, 3.0)
+        # only the lash line and iris deepen; a darkened lower lid reads as a squint
+        upper = np.zeros((h, w))
+        for k in ('eyeR', 'eyeL'):
+            upper = np.maximum(upper, np.clip((Y - (spec.model[k][1] - .25 * spec.eye_r)) / (.3 * spec.eye_r), 0, 1))
+        k_ = np.clip((loc - Ls - .02) / .2, 0, 1) * ew[..., 0] * upper
+        sym = np.clip(sym * (1 - spec.eye_dark * k_)[..., None], 0, 1)
+    else:
+        # the photo keeps the skin shading; eyes, brows and lips are repainted crisply
+        sym = paint_features(sym, spec, win)
     eyes = np.zeros((h, w), bool)
     for k in ('eyeR', 'eyeL'):
         ex, ey = spec.model[k]
         eyes |= ((X - ex) / (spec.eye_r * 1.3)) ** 2 + ((Y - ey) / spec.eye_r) ** 2 < 1
-    ew = ndi.gaussian_filter(eyes.astype(float), 1.5)[..., None]
-    loc3 = np.stack([ndi.gaussian_filter(sym[..., c], 4.0) for c in range(3)], 2)
-    sym = sym + (sym - loc3) * spec.eye_contrast * ew
-    Ls = _lum(np.clip(sym, 0, 1))
-    loc = ndi.gaussian_filter(Ls, 3.0)
-    # only the lash line and iris deepen; a darkened lower lid reads as a squint
-    upper = np.zeros((h, w))
-    for k in ('eyeR', 'eyeL'):
-        upper = np.maximum(upper, np.clip((Y - (spec.model[k][1] - .25 * spec.eye_r)) / (.3 * spec.eye_r), 0, 1))
-    k_ = np.clip((loc - Ls - .02) / .2, 0, 1) * ew[..., 0] * upper
-    sym = np.clip(sym * (1 - spec.eye_dark * k_)[..., None], 0, 1)
 
     im = Image.fromarray((np.clip(sym, 0, 1) * 255 + .5).astype(np.uint8))
     im = im.filter(ImageFilter.UnsharpMask(radius=1.2, percent=55, threshold=2))
@@ -208,6 +217,124 @@ def face_texture(spec, debug=None):
             yy = spec.win[3] - (j + .5) / h * (spec.win[3] - spec.win[2])
             rows.append((yy, (c.max() + 1 - xc) / w * (spec.win[1] - spec.win[0])))
     return tex, dict(affine=M, resid_px=resid, window_rows=rows)
+
+
+# ---- repainted features ----------------------------------------------------------------------------
+def _seg(w, h, p, n, tilt, side):
+    """Almond outline (the source's `seg`): superellipse, outer corner lifted by `tilt`."""
+    pts = []
+    for k in range(n):
+        th = 2 * math.pi * k / n
+        c, s_ = math.cos(th), math.sin(th)
+        x = w * math.copysign(abs(c) ** (2 / p), c)
+        pts.append((x, h * math.copysign(abs(s_) ** (2 / p), s_) - tilt * side * x / w))
+    return pts
+
+
+def paint_features(a, spec, win, ss=4):
+    """Repaint eyes, brows and lips over the photo texture at `ss`x, then box-downsample.
+
+    The art's features are 5-15 px across; upscaled they read as smears. Here the photo's own
+    features are first replaced by a masked low-pass of the surrounding skin (so the plate's
+    shading survives), then the features are drawn from the source's `tex_face` geometry
+    (model units, same frame as the landmarks) and blended back through soft masks."""
+    h, w = a.shape[:2]
+    P = spec.paint
+    x0, x1, y0, y1 = spec.win
+    W4, H4 = w * ss, h * ss
+    kx, ky = W4 / (x1 - x0), H4 / (y1 - y0)
+    S = lambda x, y: ((x - x0) * kx, (y1 - y) * ky)
+    X, Y = spec.tex_xy()
+    ew, eh, tilt = P['eye_w'], P['eye_h'], P['tilt']
+    ym = spec.model['mouth'][1]
+
+    # 1. suppress the photo's eyes, brows, lips: fill from surrounding skin (normalised blur)
+    sup = np.zeros((h, w))
+    for k in ('eyeR', 'eyeL'):
+        ex, ey = spec.model[k]
+        sup = np.maximum(sup, (((X - ex) / (ew * P.get('sup_w', 1.55))) ** 2 + ((Y - ey - .004) / (eh * 2.1)) ** 2 < 1).astype(float))
+        sup = np.maximum(sup, (((X - ex - math.copysign(.012, ex)) / (ew * 1.35)) ** 2 + ((Y - ey - .085) / .022) ** 2 < 1).astype(float))
+    sup = np.maximum(sup, ((X / .085) ** 2 + ((Y - ym) / .03) ** 2 < 1).astype(float))
+    sup = np.clip(ndi.gaussian_filter(sup, 1.5) * 1.4, 0, 1) * win
+    keep = ((sup <= .05) & win).astype(float)
+
+    def fill(sig):
+        den = ndi.gaussian_filter(keep, sig)
+        num = np.stack([ndi.gaussian_filter(a[..., c] * keep, sig) for c in range(3)], 2)
+        return num / np.maximum(den, 1e-6)[..., None], den
+    near, dn = fill(6.)
+    far, _ = fill(24.)
+    wn = np.clip(dn / .08, 0, 1)[..., None]           # deep inside a region: take the wide fill
+    base = np.clip(near * wn + far * (1 - wn), 0, 1)
+    a = a * (1 - sup[..., None]) + base * sup[..., None]
+
+    # 2. paint at ss x on top of the cleaned photo
+    big = Image.fromarray((np.clip(a, 0, 1) * 255 + .5).astype(np.uint8)).resize((W4, H4), Image.BICUBIC)
+    d = ImageDraw.Draw(big)
+    C8 = lambda c: tuple(int(round(max(0, min(1, v)) * 255)) for v in c)
+    px = lambda m: max(1, int(round(m * kx)))
+
+    def soft(cx, cy, rx, ry, col, alpha, blur):
+        m = Image.new('L', big.size, 0)
+        X0, Y0 = S(cx - rx, cy + ry)
+        X1, Y1 = S(cx + rx, cy - ry)
+        ImageDraw.Draw(m).ellipse([X0, Y0, X1, Y1], fill=255)
+        m = m.filter(ImageFilter.GaussianBlur(blur * ss)).point(lambda v: int(v * alpha))
+        big.paste(Image.new('RGB', big.size, C8(col)), (0, 0), m)
+
+    for sg, k in ((1, 'eyeL'), (-1, 'eyeR')):
+        cx, cy = spec.model[k]
+        soft(cx, cy + eh * .9, ew * 1.15, eh * .75, P['lid_shade'], .45, 2.5)          # lid fold shading
+        soft(cx, cy - eh * 1.2, ew * .9, eh * .45, P['lid_shade'], .25, 2.0)           # soft under-eye
+        d.polygon([S(cx + x, cy + y) for x, y in _seg(ew * 1.12, eh * 1.28, 2.0, 32, tilt, sg)], fill=C8(P['lid']))
+        al = _seg(ew, eh, 1.7, 32, tilt, sg)
+        d.polygon([S(cx + x, cy + y) for x, y in al], fill=C8(P['white']))
+        soft(cx, cy + eh * .55, ew * .85, eh * .35, P['white_shade'], .55, .8)          # lid shadow on the white
+        # iris rings clipped into the almond
+        ir = P['iris_r']
+        for r_, col in zip((ir, ir * .86, ir * .62), P['iris']):
+            pts = []
+            for q in range(32):
+                t = 2 * math.pi * q / 32
+                x, y = r_ * math.cos(t), r_ * math.sin(t)
+                m_ = ((abs(x) / ew) ** 1.7 + (abs(y) / (eh * .98)) ** 1.7) ** (1 / 1.7)
+                f = 1 / m_ if m_ > 1 else 1
+                pts.append(S(cx - sg * .002 + x * f, cy + y * f))
+            d.polygon(pts, fill=C8(col))
+        pr = ir * .45
+        X0, Y0 = S(cx - sg * .002 - pr, cy + pr)
+        X1, Y1 = S(cx - sg * .002 + pr, cy - pr)
+        d.ellipse([X0, Y0, X1, Y1], fill=C8(P['pupil']))
+        cr = ir * .22                                                                   # one catch-light, same side on both eyes
+        X0, Y0 = S(cx + ir * .32 - cr, cy + ir * .38 + cr)
+        X1, Y1 = S(cx + ir * .32 + cr, cy + ir * .38 - cr)
+        d.ellipse([X0, Y0, X1, Y1], fill=(255, 252, 240))
+        top = sorted([p for p in al if p[1] >= -.004], key=lambda p: p[0])
+        d.line([S(cx + x, cy + y + .002) for x, y in top], fill=C8(P['lash']), width=px(P['lash_w']), joint='curve')
+        ox = ew * sg                                                                    # wing flick at the outer corner
+        d.line([S(cx + ox * .92, cy + .003 - tilt * .5), S(cx + ox * 1.2, cy + .012), S(cx + ox * 1.36, cy + .018)],
+               fill=C8(P['lash']), width=px(P['lash_w'] * .6), joint='curve')
+        low = sorted([p for p in al if p[1] <= 0], key=lambda p: p[0])
+        d.line([S(cx + x, cy + y - .002) for x, y in low], fill=C8(P['lower_lid']), width=px(.003), joint='curve')
+        # brow: thin arch, orange-brown with a darker lower edge
+        us = np.linspace(0, 1, 11)
+        bx = [cx + sg * (-.05 + .135 * u) for u in us]
+        by = [cy + P['brow_dy'] + .016 * math.sin(math.pi * u) ** 1.2 - .016 * u * u for u in us]
+        d.line([S(x, y) for x, y in zip(bx, by)], fill=C8(P['brow']), width=px(.0105), joint='curve')
+        d.line([S(x, y - .0035) for x, y in zip(bx, by)], fill=C8(P['brow_d']), width=px(.0035), joint='curve')
+    # lips: soft coral, small closed smile
+    up = [(-.056, .004), (-.03, .015), (-.011, .0195), (0, .012), (.011, .0195), (.03, .015), (.056, .004), (.03, -.002), (-.03, -.002)]
+    lo = [(-.050, -.002), (-.026, -.014), (0, -.0185), (.026, -.014), (.050, -.002), (.03, 0), (-.03, 0)]
+    sc = P.get('mouth_sc', 1.)
+    d.polygon([S(x * sc, ym + y * sc) for x, y in lo], fill=C8(P['lip_lo']))
+    d.polygon([S(x * sc, ym + y * sc) for x, y in up], fill=C8(P['lip_up']))
+    d.line([S(x * sc, ym + y * sc) for x, y in ((-.058, .006), (-.03, 0), (0, -.002), (.03, 0), (.058, .006))], fill=C8(P['lip_line']), width=px(.0032), joint='curve')
+    soft(0, ym - .011 * sc, .016, .005, P['lip_hi'], .5, .6)
+
+    small = np.asarray(big.resize((w, h), Image.BOX)).astype(float) / 255
+    # soft blend: painted features through a feathered mask, photo shading everywhere else
+    feat = ndi.gaussian_filter(np.maximum(sup, 0), .8)[..., None]
+    return a * (1 - feat) + small * feat
 
 
 # ---- relief and plate ----------------------------------------------------------------------------
@@ -232,7 +359,7 @@ def relief(x, y, lm):
         h += hn * math.exp(-(ax / sg) ** 2)
     h += d * .025 * math.exp(-(((ax - .085 * d) / (.045 * d)) ** 2 + ((y - (yn + .01 * d)) / (.04 * d)) ** 2))   # alae
     h += d * .030 * math.exp(-((ax / (.24 * d)) ** 4 + ((y - ym) / (.06 * d)) ** 2))                           # lips
-    h += d * .030 * math.exp(-((y - (ey + .24 * d)) / (.08 * d)) ** 2) * (1 if ax < ex * 1.5 else math.exp(-((ax - ex * 1.5) / (.2 * d)) ** 2))  # brow
+    h += d * .030 * math.exp(-((y - (ey + .36 * d)) / (.08 * d)) ** 2) * (1 if ax < ex * 1.5 else math.exp(-((ax - ex * 1.5) / (.2 * d)) ** 2))  # brow
     h -= d * .028 * math.exp(-(((ax - ex) / (.26 * d)) ** 2 + ((y - ey) / (.17 * d)) ** 2))                    # sockets
     h += d * .030 * math.exp(-(((ax - ex * 1.25) / (.22 * d)) ** 2 + ((y - (ey - .38 * d)) / (.2 * d)) ** 2))   # cheekbones
     h += d * .032 * math.exp(-((ax / (.2 * d)) ** 2 + ((y - (yc + .12 * d)) / (.1 * d)) ** 2))                 # chin
