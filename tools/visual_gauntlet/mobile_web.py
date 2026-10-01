@@ -12,12 +12,23 @@ in an actual mobile-class browser, not just the desktop build.
 import asyncio
 import glob
 import http.server
+import io
 import os
 import socketserver
 import sys
 import threading
 
+import numpy as np
+from PIL import Image
 from playwright.async_api import async_playwright
+
+
+async def bubble_visible(page):
+    """A speech bubble is the only large near-white parchment shape on the screen."""
+    img = Image.open(io.BytesIO(await page.screenshot())).convert("RGB")
+    a = np.asarray(img)
+    near_white = (a[..., 0] > 225) & (a[..., 1] > 212) & (a[..., 2] > 185)
+    return near_white.mean() > 0.004
 
 
 def serve(directory, port=0):
@@ -46,12 +57,20 @@ async def main():
         await page.screenshot(path=os.path.join(out, "01_boot.png"))
         vp = page.viewport_size
         # tap through the narration (a tap completes the typing, the next one dismisses the line)
-        for i in range(6):
-            await page.touchscreen.tap(vp["width"] * 0.5, vp["height"] * 0.55)
-            await page.wait_for_timeout(900)
+        quiet = 0
+        for i in range(60):
+            if await bubble_visible(page):
+                quiet = 0
+                await page.touchscreen.tap(vp["width"] * 0.5, vp["height"] * 0.55)
+                await page.wait_for_timeout(700)
+            else:
+                quiet += 1
+                if quiet >= 3:
+                    break
+                await page.wait_for_timeout(800)
         await page.screenshot(path=os.path.join(out, "02_after_narration.png"))
         # the machine, roughly where the capture shows it (left of centre, low)
-        await page.touchscreen.tap(vp["width"] * 0.43, vp["height"] * 0.66)
+        await page.touchscreen.tap(vp["width"] * 0.38, vp["height"] * 0.64)
         await page.wait_for_timeout(4000)
         await page.screenshot(path=os.path.join(out, "03_options.png"))
         # choose the second plaque by touch

@@ -27,11 +27,11 @@ from kit.common import Part, empty  # noqa: E402
 # Gameplay anchors: identical to game/world/archive/archive_hall.gd.
 BELL_PILLAR_AT = (5.6, 0.0, -3.0)
 MACHINE_AT = (-1.6, 0.0, -1.2)
-TOWER_AT = (-4.4, 0.0, -5.0)       # the crooked bookcase tower the raccoon watches from
-PATH_AT = (0.0, 0.0, -7.8)
+TOWER_AT = (-6.2, 0.0, -5.4)       # the crooked bookcase tower the raccoon watches from
+PATH_AT = (props_hall.ARCH_X, 0.0, -7.8)   # = ArchiveHall.PATH_AT
 # The wide shot's camera, as set in game/world/archive/archive_hall.gd (see _camera_pose below).
-CAMERA_AT = (0.2, 2.4, -2.2)
-CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 11.0, -6.0, 24.0
+CAMERA_AT = (0.2, 2.9, -2.2)
+CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 11.0, -10.0, 24.0
 CAMERA_FROM = (CAMERA_AT[0] + math.sin(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
                CAMERA_AT[1] + math.sin(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
                CAMERA_AT[2] + math.cos(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE)
@@ -39,7 +39,7 @@ CRATE_AT = (2.4, 0.0, -0.4)
 BENCH_AT = (-3.2, 0.0, -2.6)
 
 # The key light: a steep late-afternoon beam from the right-back, through a hole in the vault.
-SUN_DIR = Vector((0.246, 0.913, -0.326)).normalized()
+SUN_DIR = Vector((0.21, 0.84, -0.50)).normalized()
 POOL = Vector((0.8, 0.0, -1.5))   # where the shaft lands: Tomas, the machine, the spiral, the statue's side
 AMBIENT_LIFT = np.array([0.026, 0.021, 0.026], dtype=np.float32)   # shade is deep but not dead: a breath of lilac olive
 
@@ -79,17 +79,16 @@ def build(out_dir, samples, do_bake):
     add(props_hall.oculus_ring(oculus, SUN_DIR))
     add(props_hall.corridor())
     for sx in (-1, 1):
-        add(props_hall.pilaster(sx * 4.3, props_hall.BACK_Z + 0.9, seed=sx + 3))
-        add(props_hall.sconce((sx * 4.3, 4.6, props_hall.BACK_Z + 1.7), 0.0))
-    add(props_hall.compass_plate((-6.3, 10.6, props_hall.BACK_Z + 0.12)))
+        px = props_hall.ARCH_X + sx * 3.7
+        add(props_hall.pilaster(px, props_hall.BACK_Z + 0.9, seed=sx + 3))
+        add(props_hall.sconce((px, 4.6, props_hall.BACK_Z + 1.7), 0.0))
 
     # ---- shelves: walls of them -----------------------------------------------------------------------
     zs = [-8.4, -6.0, -3.6, -1.2, 1.2, 3.6, 6.0]
     for i, z in enumerate(zs):
         add(props_hall.bookcase((8.95, 0, z), -90, 2.3, 9.0, 1.1, seed=100 + i))
         add(props_hall.bookcase((-8.95, 0, z), 90, 2.3, 9.0, 1.1, seed=200 + i, density=0.8))
-    for sx in (-1, 1):
-        add(props_hall.bookcase((sx * 6.9, 0, props_hall.BACK_Z + 0.55), 0, 3.0, 9.0, 1.1, seed=300 + sx))
+    add(props_hall.bookcase((6.9, 0, props_hall.BACK_Z + 0.55), 0, 3.0, 9.0, 1.1, seed=301))
     for (x, z) in ((8.95, 8.4), (-8.95, 8.4)):
         pass
 
@@ -102,9 +101,9 @@ def build(out_dir, samples, do_bake):
     px = TOWER_AT[0] + perch_local[0] * math.cos(th) + perch_local[1] * math.sin(th) + lean * 2.2 * 2.2
     pz = TOWER_AT[2] - perch_local[0] * math.sin(th) + perch_local[1] * math.cos(th)
     anchors["raccoon_perch"] = [px, 2.2, pz]
-    add(props_hall.tower((4.3, 0, -8.3), -6, 2.2, 1.6, 10.4, 0.55, seed=12))
-    add(props_hall.tower((-6.4, 0, -7.7), 4, 2.2, 1.6, 10.8, 0.55, seed=13))
-    add(props_hall.hooded_statue((2.6, 0, -3.0), -48, scale=1.18))
+    add(props_hall.tower((5.4, 0, -8.0), -6, 2.2, 1.6, 10.4, 0.55, seed=12))   # clear of the beam
+    add(props_hall.tower((-7.3, 0, -7.0), 4, 2.2, 1.6, 10.8, 0.55, seed=13))
+    add(props_hall.hooded_statue((2.6, 0, -3.0), -48, scale=1.3))
     add(props_hall.rubble((-7.2, 0, 6.6), 0.9, 21))
     add(props_hall.rubble((7.6, 0, 7.0), 0.8, 23))
 
@@ -189,7 +188,7 @@ def build(out_dir, samples, do_bake):
     # the limelight: a soft warm fill from the camera's side, so fronts facing us are not black
     bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 900.0, (1.0, 0.89, 0.70))
     # a soft wash on the back wall, so the eye on it is readable without lighting the whole hall
-    bake.add_area(scene, "Wash", (-3.0, 9.0, 4.0), (0.0, 9.0, props_hall.BACK_Z), 7.0, 700.0, (1.0, 0.88, 0.68))
+    bake.add_area(scene, "Wash", (-3.0, 9.0, 4.0), (0.0, 9.0, props_hall.BACK_Z), 7.0, 430.0, (1.0, 0.9, 0.72))
     all_bake = static + dyn + fg_objects
     if do_bake:
         t1 = time.time()
@@ -226,9 +225,9 @@ def build(out_dir, samples, do_bake):
     for o in all_bake:
         frame = o.name.startswith("Fg")
         # the camera frame is a dark crop: bake it in shade and take most of the colour out of it
-        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.6 if frame else 1.0, desaturate=0.25 if frame else 0.0)
+        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.42 if frame else 1.0, desaturate=0.45 if frame else 0.0)
         arch = o.name.startswith(("Floor", "Shell", "BackWall", "Corridor", "Ribs", "Pilaster", "Statue", "Tower"))
-        bake.facet_tone(o, strength=0.14 if o.name.startswith("Fg") else (0.095 if arch else 0.08), hue=0.03 if arch else 0.022, seed=len(o.name))
+        bake.facet_tone(o, strength=0.22 if o.name.startswith("Fg") else (0.085 if arch else 0.08), hue=0.03 if arch else 0.022, seed=len(o.name))
         if os.environ.get('STATS'):
             c = bake.read_corner_colours(o)
             print('STAT %-12s mean %s max %.2f nan %d' % (o.name, c[:, :3].mean(axis=0).round(3), c[:, :3].max(), int(np.isnan(c).sum())))

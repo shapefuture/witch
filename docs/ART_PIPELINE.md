@@ -52,8 +52,12 @@ noise. Shelves are not wallpaper: each tier gets its own density, some are empty
 - The Compatibility renderer writes `ALBEDO` to the screen **as is** (probed: 0.5 in, 0.5 out). Do
   not gamma-correct in shaders; bake display-referred values.
 - bmesh **reuses freed slots** (`create_icosphere` frees some), so "vertices with index >= n" is not
-  "vertices added since". `Part` tracks created vertices explicitly. `bevel` deletes vertices and is
-  ignored for that reason.
+  "vertices added since", and a *list of Python vertex wrappers* goes stale too (a subdivided blob
+  silently dropped earlier geometry from later transforms: a statue's robe was left at the origin
+  while its head was placed). `Part` stamps creation order into an int layer on the vertices
+  themselves. `bevel` deletes vertices and is ignored for that reason.
+- `CENTERED` materials (the eye) map a face's bounding box to the whole tile, so such a surface must
+  be ONE face: subdividing it repeats the picture once per piece.
 - `recalc_face_normals` re-guesses winding per loose triangle and flips about half of them. Winding
   is authored per primitive; shells use `tri_toward`.
 - glTF `COLOR_0` is exported normalised (clamped to 1.0), so light is stored with the sunlit floor
@@ -64,10 +68,22 @@ noise. Shelves are not wallpaper: each tier gets its own density, some are empty
   an inclusive range loops forever, silently, inside Blender.
 - Sky/dome shaders must not write depth by hand: the depth convention differs between renderers.
 
+## Measure against the image, not a description
+
+`tools/visual_gauntlet/metrics.py` prints luma percentiles, hue shares, saturation, vignette and a
+facet-noise number for a frame. Run it on the reference (downscaled to the capture size) and on ours:
+rounds 1-4 chased a written description and came out twice as bright and half as intimate as the
+real picture. The targets are in `visual-gauntlet/BAR.md`.
+
 ## The camera and the frame
 
 Bolted. `DioramaCamera` holds a pose (look-at, distance, pitch, yaw, **roll**, fov) and never follows
-the witch; `CameraDirector` changes shot by **cutting**, and only the spell's `magic_reveal` eases
+the witch. The wide shot is 11 m out at 52 degrees, low and looking up a little, so the shelf walls
+press in and the pool, statue, arch and eye share one picture (the way out is a pointed arch back-left,
+`ARCH_X` in the kit and in `ArchiveHall`; the key is a 57 degree sun whose hole in the vault sits at the
+top of the frame, so the beam has a visible source and passes 1 m clear of the statue) (`ArchiveHall.wide_framing`, mirrored
+by `CAMERA_*` in `build_hall.py`: change both, and re-bake, because the foreground frame is baked for
+that camera); `CameraDirector` changes shot by **cutting**, and only the spell's `magic_reveal` eases
 (fisheye swing via the `lens_warp` global and a 45 degree tilt; the cut back to the wide is the snap).
 The walkable floor (`ArchiveHall.stage_allows`) is trimmed so she is always inside the 4:3 frame; a
 test projects every walkable cell through the real camera. The dark foreground shelf, globe and rock

@@ -34,12 +34,13 @@ static func transform_for(camera: Camera3D, viewport_size: Vector2, screen_px: V
 # away from the screen edge a thumb rests on. In viewport pixels.
 static func safe_rect(viewport_size: Vector2) -> Rect2:
 	# phones round their corners and hide a notch even when they report no insets: stay clear of the sides
-	var rect := Rect2(Vector2(20, 10), viewport_size - Vector2(40, 22))
+	var side := maxf(26.0, viewport_size.x * 0.045)
+	var rect := Rect2(Vector2(side, 12), viewport_size - Vector2(side * 2.0, 12 + 24))
 	var screen := Vector2(DisplayServer.screen_get_size())
 	var safe := Rect2(DisplayServer.get_display_safe_area())
 	if screen.x > 0.0 and screen.y > 0.0 and safe.size.x > 0.0 and safe.size.y > 0.0:
 		var scale := Vector2(viewport_size.x / screen.x, viewport_size.y / screen.y)
-		var from_safe := Rect2(safe.position * scale + Vector2(20, 10), safe.size * scale - Vector2(40, 22))
+		var from_safe := Rect2(safe.position * scale + Vector2(side, 12), safe.size * scale - Vector2(side * 2.0, 12 + 24))
 		rect = rect.intersection(from_safe) if rect.intersects(from_safe) else rect
 	return rect
 

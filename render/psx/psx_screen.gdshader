@@ -20,13 +20,15 @@ uniform float magic_col_depth = 127.0;
 uniform float glow_amount = 0.4;
 uniform float vignette = 0.5;
 uniform vec3 shadow_tint : source_color = vec3(0.93, 0.91, 0.90);
-uniform vec3 light_tint : source_color = vec3(1.02, 1.0, 0.94);
+uniform vec3 light_tint : source_color = vec3(0.99, 1.0, 0.95);
 
 vec2 warp(vec2 uv, float k) {
 	vec2 c = uv * 2.0 - 1.0;
 	float r2 = dot(c, c);
-	c *= (1.0 + k * r2) / (1.0 + k);
-	return clamp(c * 0.5 + 0.5, vec2(0.0), vec2(1.0));
+	c *= (1.0 + k * r2) / (1.0 + k * 1.6);
+	// past the edge the picture folds back on itself instead of smearing the last pixel
+	vec2 folded = sign(c) * (1.0 - abs(1.0 - abs(c)));
+	return folded * 0.5 + 0.5;
 }
 
 void fragment() {

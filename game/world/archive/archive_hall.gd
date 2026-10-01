@@ -15,15 +15,16 @@ extends Room
 # stable data; the look of the place is not).
 #
 # Layout (x right, z toward the camera, metres):
-#     arch out (0, -10)       tower + raccoon (-4.4, -5.0)      bell post (5.6, -3.0)
+#     arch out (-4.2, -10)    tower + raccoon (-6.2, -5.4)      bell post (5.6, -3.0)
 #     bench (-3.2, -2.6)   machine (-1.6, -1.2)   Tomas (-0.1, -0.9)   crate (2.4, -0.4)
 #     witch starts (1.0, 1.0)           statue (2.6, -3.0)      light pool (0.8, -1.5)
 
 const RADIUS := 9.5
 const BELL_POST_AT := Vector3(5.6, 0, -3.0)
 const MACHINE_AT := Vector3(-1.6, 0, -1.2)
-const TOWER_AT := Vector3(-4.4, 0, -5.0)
-const PATH_AT := Vector3(0, 0, -7.8)
+const TOWER_AT := Vector3(-6.2, 0, -5.4)
+const ARCH_X := -4.2   # the way out is back-left (tools/blender/kit/props_hall.py ARCH_X)
+const PATH_AT := Vector3(ARCH_X, 0, -7.8)
 const BELL_TILT_DEG := 24.0
 
 # Capture aid (--no-fx): leave out the shaft, dust and glow to see the bare baked set.
@@ -52,7 +53,7 @@ func _ready() -> void:
 	navigator = GridNavigator.new(Rect2(-11.0, -11.0, 22.0, 22.0))
 	navigator.block_outside(8.6, PATH_AT + Vector3(0, 0, -1.2), 1.5)
 	# The camera never follows her, so she must stay where the frame shows her (4:3 is the tightest).
-	navigator.block_where(func(p: Vector2) -> bool: return not stage_allows(p.x, p.y) and not (p.y < -6.0 and absf(p.x) < 1.5))
+	navigator.block_where(func(p: Vector2) -> bool: return not stage_allows(p.x, p.y) and not (p.y < -6.0 and absf(p.x - ARCH_X) < 1.5))
 	PSXGlobals.set_fog(PSXGlobals.FOG_COLOR, PSXGlobals.FOG_DENSITY)
 	_build_environment()
 	_build_ground_pick()
@@ -67,15 +68,15 @@ func hero_regions() -> Array:
 	var sun := StageLight.anchor_vector("sun_dir", Vector3(0.25, 0.91, -0.33))
 	return [
 		{"at": pool, "radius": 2.0, "height": 0.3},
-		{"at": pool + sun * 1.5, "to": pool + sun * 9.0, "radius": 1.4, "height": 0.0},
-		{"at": Vector3(0.0, 0.0, -9.4), "radius": 2.2, "height": 5.0},
+		{"at": pool + sun * 1.5, "to": pool + sun * 12.0, "radius": 1.4, "height": 0.0},
+		{"at": Vector3(ARCH_X, 0.0, -9.4), "radius": 2.2, "height": 5.0},
 		{"at": Vector3(2.6, 0.0, -3.0), "radius": 0.7, "height": 3.0},
 	]
 
 # The bolted master shot. tools/blender/build_hall.py bakes the camera-space foreground frame for
 # exactly this pose (CAMERA_AT / CAMERA_DISTANCE / CAMERA_PITCH / CAMERA_YAW): change both together.
 static func wide_framing() -> Dictionary:
-	return {"focus": Vector3(0.2, 2.4, -2.2), "distance": 11.0, "pitch_deg": -6.0, "yaw_deg": 24.0, "fov": 52.0, "roll_deg": 3.5}
+	return {"focus": Vector3(0.2, 2.9, -2.2), "distance": 11.0, "pitch_deg": -10.0, "yaw_deg": 24.0, "fov": 52.0, "roll_deg": 3.5}
 
 # Where the witch may walk: the open floor between the shelves, trimmed so that she is always inside
 # the frame of the bolted wide shot at 4:3 (the tightest aspect). The camera sits to the right, so
@@ -84,7 +85,7 @@ static func wide_framing() -> Dictionary:
 static func stage_allows(x: float, z: float) -> bool:
 	if z > 4.3:
 		return false
-	var left := maxf(-6.8, -5.0 + (z - 1.0) * 1.5)
+	var left := maxf(-6.8, -4.4 + (z - 1.0) * 1.5)
 	var right := 6.8 if z <= -3.0 else 6.8 - (z + 3.0) * 0.6
 	return x >= left and x <= right
 
@@ -154,7 +155,7 @@ func _build_props() -> void:
 	add_obstacle(MACHINE_AT, 1.25)
 	add_obstacle(BELL_POST_AT, 0.95, 3.0)
 	add_obstacle(TOWER_AT, 1.7, 2.4)
-	add_obstacle(Vector3(3.9, 0, -8.3), 1.3, 3.0)
+	add_obstacle(Vector3(5.4, 0, -8.0), 1.3, 3.0)
 	add_obstacle(Vector3(-6.4, 0, -7.7), 1.3, 3.0)
 	add_obstacle(Vector3(2.6, 0, -3.0), 1.3, 3.0)
 	add_obstacle(Vector3(2.4, 0, -0.4), 0.5, 0.6)
@@ -203,7 +204,7 @@ func _build_interactables() -> void:
 	add_interactable("bell", "obj.bell", BELL_POST_AT + Vector3(-1.3, 2.25, 0.0), 0.8, 0.0, BELL_POST_AT + Vector3(-1.3, 0, 1.6), PackedStringArray(["wind", "sound", "attention"]))
 	# The whole pointed arch is the target: a tall volume in the wall, so a low camera can still
 	# point at it over the heads of the people standing in front.
-	add_interactable("path_out", "obj.path_out", Vector3(0, 0, -9.4), 2.6, 3.2, Vector3(0, 0, -6.6), PackedStringArray(["departure"]))
+	add_interactable("path_out", "obj.path_out", Vector3(ARCH_X, 0, -9.4), 2.6, 3.2, Vector3(ARCH_X + 0.6, 0, -6.4), PackedStringArray(["departure"]))
 
 # The node that gets the focus outline when `target_id` is pointed at (null = no outline).
 func focus_node(target_id: String) -> Node3D:

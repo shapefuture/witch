@@ -10,7 +10,7 @@ import random
 
 from mathutils import Vector
 
-from .common import Part, fbm, smoothstep
+from .common import Part, fbm, smoothstep, xf
 
 HALL_W = 9.5
 BACK_Z = -10.0
@@ -18,6 +18,7 @@ FRONT_Z = 13.0
 STRAIGHT = 9.0       # walls are vertical this high, then the vault closes in
 H = 14.0
 CARPET_C = (0.8, -1.8)
+ARCH_X = -4.2         # the pointed arch sits back-left; the statue and the beam own the right
 ARCH_W = 2.4
 ARCH_STRAIGHT = 4.2
 ARCH_TOP = 7.9
@@ -25,7 +26,7 @@ CORRIDOR_END = -27.5
 HOLE_RADIUS = 2.4     # the hole in the vault: one ragged oculus, so the beam is a single clear event
 STEPS_FROM = -17.0
 
-BOOKS = ["book_red", "book_olive", "book_purple", "book_tan", "book_teal", "book_red", "book_tan", "book_olive"]
+BOOKS = ["book_tan", "book_olive", "book_olive", "book_tan", "book_red", "book_tan", "book_olive", "book_purple"]
 
 
 def half_w(y):
@@ -43,7 +44,7 @@ def arch_hw(y, scale=1.0):
 
 
 def inside_arch(x, y, scale=1.0):
-    return y <= ARCH_TOP * scale and abs(x) < arch_hw(y, scale)
+    return y <= ARCH_TOP * scale and abs(x - ARCH_X) < arch_hw(y, scale)
 
 
 def ray_distance(p, origin, direction):
@@ -108,8 +109,8 @@ def shell(oculus, seed=1):
                     mid = (tri[0] + tri[1] + tri[2]) / 3.0
                     if mid.y > 9.0 and (mid - oculus).length < HOLE_RADIUS:
                         continue
-                    n = fbm((mid.x * 0.2, mid.y * 0.2, mid.z * 0.2), 2, 3.0)
-                    mat = "rock_b" if (mid.y > STRAIGHT - 0.5 or n > 0.3) else "rock_a"
+                    n = fbm((mid.x * 0.09, mid.y * 0.09, mid.z * 0.09), 2, 3.0)
+                    mat = "rock_b" if (mid.y > STRAIGHT + 0.8 or n > 0.35) else "rock_a"
                     part.tri_toward(tri[0], tri[1], tri[2], mat, Vector((0, mid.y * 0.35, mid.z)))
     return part
 
@@ -162,15 +163,15 @@ def back_wall(seed=4):
             for tri in tris:
                 mid = (tri[0] + tri[1] + tri[2]) / 3.0
                 mat = "rock_b" if mid.y > 9.0 or fbm((mid.x * 0.25, mid.y * 0.25, 1.0), 2, 2.0) > 0.3 else "rock_a"
-                if (mid.x / 6.0) ** 2 + ((mid.y - 10.3) / 3.6) ** 2 < 1.0:
+                if ((mid.x - ARCH_X) / 5.8) ** 2 + ((mid.y - 10.3) / 3.5) ** 2 < 1.0:
                     mat = "plaster"      # the pale stucco the eye is painted on
                 part.tri_toward(tri[0], tri[1], tri[2], mat, Vector((mid.x, mid.y, 5.0)))
     # voussoirs: chunky stones around the opening
     outline = []
     for k in range(0, 13):
         y = ARCH_TOP * k / 12.0
-        outline.append((-arch_hw(y), y))
-    outline += [(-x, y) for (x, y) in reversed(outline[:-1])]
+        outline.append((ARCH_X - arch_hw(y), y))
+    outline += [(2 * ARCH_X - x, y) for (x, y) in reversed(outline[:-1])]
     rnd = random.Random(seed)
     for k in range(len(outline) - 1):
         (x0, y0), (x1, y1) = outline[k], outline[k + 1]
@@ -184,14 +185,14 @@ def back_wall(seed=4):
             nx, ny = -nx, -ny
         if my <= ARCH_STRAIGHT:
             nx, ny = (-1.0 if mx < 0 else 1.0), 0.0
-        off = 0.5
-        part.box((mx + nx * off, my + ny * off, BACK_Z + 0.35), (max(length, 0.6) * 1.1, 0.95 + rnd.uniform(-0.1, 0.18), 1.1 + rnd.uniform(0, 0.25)),
-                 "rock_a" if k % 2 else "rock_b", rot=(0, 0, ang + rnd.uniform(-3, 3)), bevel=0.06)
-    part.box((0, ARCH_TOP + 0.7, BACK_Z + 0.4), (1.3, 1.2, 1.4), "rock_a", rot=(0, 0, 3), bevel=0.08, taper=(0.8, 1.0))
+        off = 0.38
+        part.box((mx + nx * off, my + ny * off, BACK_Z + 0.35), (max(length, 0.6) * 1.25, 1.2 + rnd.uniform(-0.1, 0.16), 1.1 + rnd.uniform(0, 0.25)),
+                 "rock_a", rot=(0, 0, ang + rnd.uniform(-3, 3)), bevel=0.06)
+    part.box((ARCH_X, ARCH_TOP + 0.7, BACK_Z + 0.4), (1.3, 1.2, 1.4), "rock_a", rot=(0, 0, 3), bevel=0.08, taper=(0.8, 1.0))
     return part
 
 
-def mural_eye(centre=(0.0, 10.2, BACK_Z + 0.04), size=(9.6, 4.8)):
+def mural_eye(centre=(ARCH_X, 10.2, BACK_Z + 0.04), size=(9.0, 4.5)):
     part = Part("Mural")
     cx, cy, cz = centre
     hw, hh = size[0] / 2, size[1] / 2
@@ -202,6 +203,7 @@ def mural_eye(centre=(0.0, 10.2, BACK_Z + 0.04), size=(9.6, 4.8)):
 def corridor(seed=5):
     """What lies beyond the arch: a short tunnel, a second arch, steps climbing to a blaze of light."""
     part = Part("Corridor")
+    m0 = part.mark()
     ys = [0.0]
     y = 0.0
     while y < ARCH_TOP * 0.97:
@@ -236,16 +238,17 @@ def corridor(seed=5):
     for k in range(len(outline) - 1):
         (x0, y0), (x1, y1) = outline[k], outline[k + 1]
         part.box(((x0 + x1) / 2 + (-0.4 if (x0 + x1) < 0 else 0.4 if (x0 + x1) > 0 else 0), (y0 + y1) / 2 + (0.3 if abs(x0 + x1) < 0.2 else 0), -15.0),
-                 (max(math.hypot(x1 - x0, y1 - y0), 0.5) * 1.1, 0.7, 0.9), "rock_b" if k % 2 else "rock_a", rot=(0, 0, math.degrees(math.atan2(y1 - y0, x1 - x0))), bevel=0.05)
+                 (max(math.hypot(x1 - x0, y1 - y0), 0.5) * 1.25, 0.95, 0.9), "rock_a", rot=(0, 0, math.degrees(math.atan2(y1 - y0, x1 - x0))), bevel=0.05)
     # end wall: the blaze
     part.quad_out((-2.6, 0.0, CORRIDOR_END), (2.6, 0.0, CORRIDOR_END), (2.6, 8.0, CORRIDOR_END), (-2.6, 8.0, CORRIDOR_END), "glow_white", (0, 3, CORRIDOR_END - 5.0))
+    part.transform_since(m0, xf((ARCH_X, 0, 0)))
     return part
 
 
 def pilaster(x, z, h=12.0, seed=0):
     part = Part("Pilaster")
     part.box((x, 0.35, z), (1.9, 0.7, 1.9), "rock_b", bevel=0.08)
-    part.lathe([(0.78, 0.7), (0.66, 1.5), (0.6, 5.0), (0.66, h - 1.2), (0.92, h - 0.3), (1.0, h)], segs=8, mat="rock_a", center=(x, 0, z), jitter=0.07, seed=seed)
+    part.lathe([(0.78, 0.7), (0.66, 1.5), (0.6, 5.0), (0.66, h - 1.2), (0.92, h - 0.3), (1.0, h)], segs=8, mat="rock_b", center=(x, 0, z), jitter=0.07, seed=seed)
     return part
 
 
@@ -262,14 +265,14 @@ def _fill_tier(part, y0, x0, x1, z_front, tier_h, rnd, density=0.88, skip=None):
         if roll > density:
             x += rnd.uniform(0.15, 0.4)
             continue
-        if roll < 0.56:
+        if roll < 0.42:
             w = rnd.uniform(0.12, 0.3)
             h = rnd.uniform(0.45, min(1.0, tier_h - 0.14))
             d = rnd.uniform(0.4, 0.56)
             lean = rnd.choice([0, 0, 0, 0, 10, -12]) if rnd.random() < 0.25 else 0
             part.book((x + w / 2, y0 + 0.04 + h / 2, z_front - d / 2), (w, h, d), rnd.choice(BOOKS), rot_z=lean)
             x += w + 0.01
-        elif roll < 0.68:
+        elif roll < 0.60:
             r = rnd.uniform(0.12, 0.18)
             ln = rnd.uniform(0.46, 0.6)
             rows = 2 if rnd.random() < 0.6 else 1
@@ -283,11 +286,11 @@ def _fill_tier(part, y0, x0, x1, z_front, tier_h, rnd, density=0.88, skip=None):
             s = rnd.uniform(0.46, 0.66)
             part.book((x + s / 2, y0 + 0.04 + s * 0.45, z_front - s / 2), (s, s * 0.9, s), "box_glyph")
             x += s + 0.04
-        elif roll < 0.86:
+        elif roll < 0.88:
             h = rnd.uniform(0.42, 0.66)
             part.lathe([(0.14, 0.0), (0.2, h * 0.4), (0.12, h * 0.8), (0.07, h)], segs=5, mat=rnd.choice(["cream", "crystal", "coral"]), center=(x + 0.14, y0 + 0.04, z_front - 0.22), closed_bottom=False)
             x += 0.46
-        elif roll < 0.89:
+        elif roll < 0.91:
             part.blob((x + 0.18, y0 + 0.22, z_front - 0.24), (0.17, 0.2, 0.17), rnd.choice(["crystal", "crystal_grey"]), subdiv=1, amp=0.25, seed=int(x * 100))
             x += 0.4
         else:
@@ -353,30 +356,33 @@ def tower(at, yaw, w, d, h, taper, seed, lean=0.0, tier_h=0.85, skip_tiers=None,
 
 
 def hooded_statue(at, yaw, scale=1.0):
-    """A tall, slim robed figure with a pointed hood, an empty face and an open scroll held at the chest,
-    on a stepped plinth, with a crown of crystals behind its head. Big flat folds so it reads as a
-    statue (not a cone) even in shade."""
+    """A tall, slim robed figure in a soft draped cowl with a black empty face, two rolled scrolls held at
+    the chest, on a two-step plinth, with a pale candelabra of crystals behind the head. Big flat folds
+    so it reads as a statue (not a cone) even in shade."""
     part = Part("Statue")
     m = part.mark()
-    part.box((0, 0.18, 0), (1.9, 0.36, 1.9), "rock_b")
-    part.box((0, 0.56, 0), (1.45, 0.4, 1.45), "rock_a", rot=(0, 8, 0))
+    part.box((0, 0.2, 0), (2.2, 0.4, 2.2), "rock_b")
+    part.box((0, 0.62, 0), (1.7, 0.44, 1.7), "rock_a", rot=(0, 8, 0))
     # robe: long folds, flaring at the hem
-    part.lathe([(0.66, 0.76), (0.58, 1.3), (0.50, 2.0), (0.44, 2.6), (0.40, 3.05), (0.34, 3.3)], segs=9, mat="cloak", jitter=0.14, seed=3, closed_top=True)
-    part.lathe([(0.68, 0.76), (0.69, 0.9), (0.66, 1.05)], segs=9, mat="carpet_purple", closed_top=False, closed_bottom=False, jitter=0.04, seed=4)
-    part.lathe([(0.45, 2.34), (0.47, 2.42), (0.44, 2.5)], segs=9, mat="gold", closed_top=False, closed_bottom=False, jitter=0.03, seed=5)
-    # shoulders, hood and the dark empty face
-    part.blob((0, 3.15, 0), (0.62, 0.3, 0.42), "carpet_purple", subdiv=1, amp=0.12, seed=2)
-    part.blob((0, 3.7, 0.02), (0.38, 0.52, 0.4), "cloak", subdiv=2, amp=0.12, seed=6)
-    part.cyl((0, 4.05, 0.02), (0, 4.75, 0.14), 0.33, 0.0, "cloak", segs=7)
-    part.blob((0, 3.66, 0.3), (0.30, 0.40, 0.24), "void", subdiv=1, amp=0.04, seed=1)
-    # arms folded forward around the scroll
+    part.lathe([(0.66, 0.84), (0.58, 1.4), (0.50, 2.1), (0.44, 2.7), (0.40, 3.1), (0.34, 3.35)], segs=9, mat="cloak", jitter=0.14, seed=3, closed_top=True)
+    part.lathe([(0.68, 0.84), (0.69, 0.98), (0.66, 1.12)], segs=9, mat="carpet_purple", closed_top=False, closed_bottom=False, jitter=0.04, seed=4)
+    # shoulders and the cowl: a heavy drape that peaks back and down, not a pointed cone
+    part.blob((0, 3.2, 0), (0.62, 0.3, 0.42), "carpet_purple", subdiv=1, amp=0.12, seed=2)
+    part.blob((0, 3.78, 0.0), (0.46, 0.58, 0.46), "cloak", subdiv=2, amp=0.1, seed=6)
+    part.cyl((0, 4.15, -0.02), (0, 4.72, -0.34), 0.34, 0.0, "cloak", segs=7)
+    part.blob((0, 3.7, 0.3), (0.31, 0.42, 0.26), "void", subdiv=1, amp=0.04, seed=1)
+    # arms folded forward, hands together at the chest, around a pair of rolled scrolls
     for sx in (-1, 1):
-        part.cyl((sx * 0.46, 3.0, 0.05), (sx * 0.26, 2.5, 0.52), 0.13, 0.11, "cloak", segs=5)
-    part.cyl((-0.4, 2.48, 0.56), (0.4, 2.48, 0.56), 0.1, 0.1, "scroll", segs=6)
-    part.box((0.0, 2.1, 0.62), (0.62, 0.7, 0.03), "scroll", rot=(8, 0, 2))
-    for k, ang in enumerate((-55, -28, 0, 28, 55)):
+        part.cyl((sx * 0.48, 3.08, 0.05), (sx * 0.2, 2.62, 0.5), 0.17, 0.14, "cloak", segs=6)
+    for k, (y0, y1, mat_) in enumerate(((2.66, 2.74, "scroll"), (2.46, 2.6, "book_tan"))):
+        part.cyl((-0.34, y0, 0.58 - 0.04 * k), (0.34, y1, 0.6 - 0.04 * k), 0.095, 0.095, mat_, segs=7)
+        for sx in (-1, 1):   # rolled ends: a darker ring so they read as scrolls, not planks
+            part.cyl((sx * 0.34, y0 if sx < 0 else y1, 0.58 - 0.04 * k), (sx * 0.4, y0 + 0.02 if sx < 0 else y1 + 0.02, 0.58 - 0.04 * k), 0.1, 0.1, "iron", segs=7)
+    # a candelabra of pale crystals fanning out behind the head
+    for k, ang in enumerate((-62, -42, -21, 0, 21, 42, 62)):
         a = math.radians(ang)
-        part.cyl((math.sin(a) * 0.3, 4.2, -0.34), (math.sin(a) * 1.05, 4.2 + 1.0 * math.cos(a) + (0.3 if k in (1, 3) else 0.0), -0.55), 0.16, 0.0, "crystal", segs=4, spin=15)
+        tall = 1.15 if k in (2, 3, 4) else 0.8
+        part.cyl((math.sin(a) * 0.22, 4.0, -0.38), (math.sin(a) * 0.95, 4.0 + tall * math.cos(a), -0.6), 0.14, 0.0, "cream", segs=4, spin=15)
     if scale != 1.0:
         part.deform(m, lambda v: Vector((v.x * scale, v.y * scale, v.z * scale)))
     _place(part, m, at, yaw)
@@ -458,12 +464,11 @@ def foreground_left(seed=40):
     parts.append((shelf, (-4.9, -4.6, -4.5)))
     globe = Part("FgGlobe")
     globe.lathe([(0.7, 0.0), (0.45, 0.2), (0.22, 0.55), (0.3, 0.95), (0.62, 1.15), (0.5, 1.2)], segs=8, mat="wood", jitter=0.03, seed=2)
-    globe.blob((0, 2.0, 0), (0.86, 0.86, 0.86), "crystal", subdiv=1, amp=0.06, seed=9)
-    globe.blob((0.25, 2.35, 0.45), (0.12, 0.1, 0.12), "gold", subdiv=1, amp=0.1, seed=3)   # one hot facet
+    globe.blob((0, 2.0, 0), (0.8, 0.8, 0.8), "crystal", subdiv=1, amp=0.07, seed=9)
     globe.cyl((0, 1.1, 0), (0, 1.3, 0), 0.5, 0.46, "brass", segs=9)
-    parts.append((globe, (-2.9, -3.55, -3.9)))
+    parts.append((globe, (-2.7, -2.7, -3.9)))
     rock = Part("FgRockL")
-    rock.blob((0, 0.7, 0), (1.9, 1.1, 1.4), "rock_b", subdiv=1, amp=0.45, seed=5, flat_bottom=-0.2)
+    rock.blob((0, 0.7, 0), (1.9, 1.1, 1.4), "rock_b", subdiv=1, amp=0.6, seed=5, flat_bottom=-0.2)
     parts.append((rock, (-4.4, -3.6, -3.2)))
     return _squeeze(parts)
 
@@ -478,7 +483,7 @@ def foreground_right(seed=41):
     gem.name = "FgGem"
     parts.append((gem, (3.2, -3.7, -3.6)))
     rock = Part("FgRockR")
-    rock.blob((0, 0.6, 0), (1.7, 1.0, 1.3), "rock_b", subdiv=1, amp=0.45, seed=8, flat_bottom=-0.2)
+    rock.blob((0, 0.6, 0), (1.7, 1.0, 1.3), "rock_b", subdiv=1, amp=0.65, seed=8, flat_bottom=-0.2)
     parts.append((rock, (4.6, -3.7, -3.0)))
     return _squeeze(parts)
 

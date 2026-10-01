@@ -426,7 +426,7 @@ func _play_magic(entry: Dictionary) -> void:
 
 func _play_leave_frame(_entry: Dictionary) -> void:
 	# The camera has been told to stay; the witch walks away along the path and keeps going.
-	await witch.walk_off(Vector3(0, 0, -16.0))
+	await witch.walk_off(Vector3(ArchiveHall.ARCH_X, 0, -16.0))
 	witch.visible = false
 
 func _play_wait(entry: Dictionary) -> void:

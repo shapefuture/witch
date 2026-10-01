@@ -1,13 +1,16 @@
 # The bar, in words
 
-This is a written reading of the user's reference still (a faceted, olive-and-purple library hall
-with a shaft of light, a small witch and a raccoon) and the character sheet beside it. It exists so
-a critic who cannot open the image still has something concrete to hold our frames against. **The
-image itself is the bar**; see `bar/README.md` for where it goes. Numbers here are eyeballed.
+This is a reading of the user's reference still (a faceted, olive-and-purple library hall with a
+shaft of light, a small witch and a raccoon) and the character sheet beside it. **The image itself
+is the bar**; see `bar/README.md` for where it goes. Rounds 1-4 were judged against an earlier
+*eyeballed* version of this file and got several things wrong (the picture is darker and more
+saturated than described, and its characters are larger). The numbers below were measured from the
+image itself with `tools/visual_gauntlet/metrics.py` after downscaling it to 640x360.
 
 ## Composition
-- A low camera at figure height, wide lens, one-point-ish perspective: towering architecture and
-  tiny characters (about 12% of frame height), cathedral scale.
+- A low camera at figure height, about 6 m from the characters, moderate lens (~40-50 degrees):
+  the characters are about 15% of frame height, the hooded statue about 45%; the shelf walls press
+  in close on both sides. Intimate and towering, not a long wide shot.
 - Dark, cropped **foreground frame** on both sides: a tall shelf with scrolls and carved boxes on
   the left with a **purple faceted glass globe** on a stand and a big dark rock at the bottom-left;
   a tall dark shelf wall on the right and a **grey faceted crystal on a stone pedestal** bottom-right.
@@ -20,19 +23,22 @@ image itself is the bar**; see `bar/README.md` for where it goes. Numbers here a
 - A **spiral carpet** (purple and pale olive-gold bands) on the floor leads the eye to the two
   characters standing in the light pool.
 
-## Value structure
-- Darkest (5-12% luma): foreground corners, vault top. Mids (25-45%): olive-khaki stone, brown wood.
-  Brightest (85-95%): the beam, oculus, corridor glow, the pool on the floor.
-- Strong vignette; the lit pool and the bright corridor are the only places that glow.
+## Value structure (measured)
+- **Low key.** Luma percentiles 1/5/25/50/75/95/99 = 0.013 / 0.023 / 0.076 / 0.155 / 0.258 / 0.431 /
+  0.632. 38% of the frame is below 0.12; only 0.5% is above 0.75. The beam is soft and the pool on
+  the floor tops out near 0.6: it is *felt*, not blown out. Deep blacks in the foreground corners.
+- Vignette is gentle: corner luma is 44% of centre luma.
+- The lit pool, the oculus and a little corridor glow are the only places that glow.
 
 ## Colour
-- Dominant **desaturated olive / khaki / sepia** (hue 40-55, saturation 0.25-0.45), deep brown
-  woodwork, warm gold light. **Purple accents** (hue 270-285): orbs, globe, carpet stripes, hats.
+- Dominant **olive / khaki / sepia** (hue 40-55), mean saturation **0.58** (not washed out: dark
+  and rich), 45% olive-gold pixels, 9.5% orange, deep brown woodwork, warm gold light. **Purple accents** (hue 270-285): orbs, globe, carpet stripes, hats.
 - Haze lifts distant things toward warm beige; shadows are brown-olive, not black, not blue.
 
 ## Surface
 - Everything is **faceted triangles**; stone facets about 1-3% of the picture width, each facet a
   slightly different value (a crystalline mosaic) with **soft gradients across large facets**.
+  Edge energy (`facet_gradient`) is 1.74: calm planes, not noise.
 - A fine **paper-grain / mottle** texture over all surfaces; edges stay crisp; nothing is a clean
   flat colour. Glyphs on boxes and on the wall are **pixel-stepped**.
 

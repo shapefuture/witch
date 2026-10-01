@@ -48,5 +48,37 @@
       "Blob shadows so characters sit on the floor",
       "Bubbles that avoid the pool, arch and statue"
     ]
+  },
+  {
+    "round": 4,
+    "dir": "r04",
+    "verdict": "superseded",
+    "gap": "Not sent to a critic. Before it was, the client's reference image was recovered from the session and put next to this frame: the real picture is a low-key, intimate scene (median luma 0.16 against our 0.28, 0.5% of pixels above 0.75 against our 10.7%), with characters and a hooded statue three times larger, and large calm facets where ours had small noisy tiles.",
+    "fixed": [
+      "Spiral carpet as real geometry; shelf variety; smaller oculus; blob shadows under the three characters",
+      "Speech bubbles score six spots around the speaker and avoid the pool, the shaft, the arch and the statue",
+      "Tighter inspect close-up, so the phone frame is not a third empty floor",
+      "Hooded statue as a dark robe with a purple hem"
+    ],
+    "next": [
+      "Measure against the real image, not a description",
+      "Pull the camera in; calm the architecture; bigger props"
+    ]
+  },
+  {
+    "round": 5,
+    "dir": "r05",
+    "verdict": "pending",
+    "gap": "Awaiting the first blind judgement against the real reference.",
+    "fixed": [
+      "Camera from 17 m / 52 degrees to 11 m: pool, statue, arch and eye in one picture",
+      "Calm architecture tiles, coarser irregular shell and floor, facets from orientation; median luma 0.28 to 0.21",
+      "One bold pixel-stepped eye on a plaster patch (it had been repeated 5x4 by a UV bug)",
+      "Statue rebuilt: its robe was never placed with its head because of a vertex-tracking bug; black hood void, scroll, crystal crown",
+      "Chunkier shelf props, faceted purple orb in the foreground, pale sky patch, softer shaft and pool"
+    ],
+    "next": [
+      "Critic's list"
+    ]
   }
 ]

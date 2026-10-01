@@ -21,7 +21,7 @@ def make_materials(extra_glow=("glow", "glow_warm", "glow_green", "glow_blue", "
         bsdf.inputs["Base Color"].default_value = (r, g, b, 1.0)
         bsdf.inputs["Roughness"].default_value = 1.0
         mats[name] = m
-    glow_colours = {"glow": (1.0, 0.82, 0.45), "glow_warm": (1.0, 0.55, 0.22), "glow_green": (0.45, 1.0, 0.35), "glow_blue": (0.3, 0.6, 1.0), "glow_white": (1.0, 0.93, 0.75)}
+    glow_colours = {"glow": (1.0, 0.82, 0.45), "glow_warm": (1.0, 0.55, 0.22), "glow_green": (0.45, 1.0, 0.35), "glow_blue": (0.3, 0.6, 1.0), "glow_white": (0.80, 0.90, 0.84)}
     for name in extra_glow:
         m = bpy.data.materials.new(name)
         m.use_nodes = True

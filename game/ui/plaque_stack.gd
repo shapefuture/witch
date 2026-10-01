@@ -8,8 +8,10 @@ extends Node3D
 
 signal chosen(index: int)
 
-const ROW_HEIGHT := 30.0   # render pixels; about 8 mm on a phone held in landscape
-const GAP := 6.0
+const ROW_HEIGHT := 38.0   # render pixels; about 7-9 mm on a phone held in landscape (a fingertip)
+const GAP := 8.0
+const TITLE_HEIGHT := 22.0  # the title is a small brass tag, visibly not a button
+const TITLE_GAP := 12.0
 const PAD := 8.0
 const MIN_WIDTH := 112.0
 const WOOD := Color(1.18, 1.0, 0.86)
@@ -58,8 +60,9 @@ func open(title: String, labels: Array[String], anchor_px: Vector2, centered: bo
 	var widest := MIN_WIDTH
 	for text in labels + [title]:
 		widest = maxf(widest, ceilf(font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.FONT_SIZE).x) + PAD * 2.0 + 6.0)
-	var rows := labels.size() + (1 if not title.is_empty() else 0)
-	var stack_h := rows * ROW_HEIGHT + maxi(rows - 1, 0) * GAP
+	var rows := labels.size()
+	var title_w := ceilf(font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.FONT_SIZE).x) + 18.0
+	var stack_h := rows * ROW_HEIGHT + maxi(rows - 1, 0) * GAP + (TITLE_HEIGHT + TITLE_GAP if not title.is_empty() else 0.0)
 	var safe := Diegetic.safe_rect(viewport_size)
 	var origin := Vector2.ZERO
 	if centered:
@@ -74,11 +77,11 @@ func open(title: String, labels: Array[String], anchor_px: Vector2, centered: bo
 		add_child(_dim)
 	var y := origin.y
 	if not title.is_empty():
-		_title_rect = Rect2(origin.x, y, widest, ROW_HEIGHT)
+		_title_rect = Rect2(origin.x, y, title_w, TITLE_HEIGHT)
 		var made := _make_plaque(_title_rect, title, "brass", Color(1, 1, 1), INK, Color(0.36, 0.26, 0.10), 20)
 		_title_node = made["node"]
 		_title_label = made["label"]
-		y += ROW_HEIGHT + GAP
+		y += TITLE_HEIGHT + TITLE_GAP
 	for i in range(labels.size()):
 		var rect := Rect2(origin.x, y, widest, ROW_HEIGHT)
 		var quiet := dim_last and i == labels.size() - 1

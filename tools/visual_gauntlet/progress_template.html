@@ -53,18 +53,22 @@ figure img { width: 100%; height: auto; display: block; border: 1px solid var(--
 figcaption { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1.2rem; }
 .lists ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.barcmp { display: flex; flex-direction: column; gap: 0.9rem; }
+.barcmp .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 0.9rem; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; max-width: 40rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 0.35rem 0.8rem 0.35rem 0; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 0.85rem; font-weight: 400; }
+thead th { color: var(--muted); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
+tbody th { font-family: var(--body); color: var(--muted); }
 .phone { display: flex; flex-direction: column; gap: 0.9rem; }
 .phone .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 0.9rem; }
 </style>
 <main>
   <div>
     <h1>Hall Gauntlet</h1>
-    <p class="lede">The first scene is rebuilt from the user's reference still: a faceted library hall with one shaft of light. Each round, a fresh critic with no memory of the work judges the frames and names the single biggest gap. The loop ends when the critic picks ours.</p>
+    <p class="lede">The first scene is rebuilt from your reference still: a faceted library hall with one shaft of light. Each round, a fresh critic with no memory of the work judges the frames and names the single biggest gap. The loop ends when the critic picks ours, blind.</p>
   </div>
-  <div class="bar">
-    <b>The bar</b>
-    <p>The reference image reached the session inline and is not a file the critic can open. Until it is committed as <code>docs/visual-gauntlet/bar/reference_hall.png</code>, critics hold our frames against <code>BAR.md</code>, a written reading of it, and the comparison is weaker than a blind A/B against the image.</p>
-  </div>
+  {{BAR}}
   {{ROUNDS}}
   <section class="phone">
     <h2>Played on a phone</h2>
