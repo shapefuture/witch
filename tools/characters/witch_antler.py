@@ -72,13 +72,18 @@ def head_front_z(x, y):
     return cz + rz * max(0., 1 - u ** w1.HEAD_E) ** (1 / w1.HEAD_E)
 
 
+# bigger, rounder eyes with a hazel-green iris, as in the antler concept
+FACE_PAINT = dict(w1.FACE_PAINT, sup_w=1.75, eye_w=.066, eye_h=.047, tilt=.004, iris_r=.045, lash=(.24, .14, .08),
+                  iris=((.30, .31, .16), (.48, .50, .27), (.67, .60, .34)))
+
+
 def face_spec(refs):
     """Landmarks on the T-pose front concept (1034x772)."""
     return fp.FaceSpec(os.path.join(refs, REF_FRONT) if refs else None,
                        dict(eyeR=(495.6, 125.6), eyeL=(543.75, 126.9), nose=(520.0, 147.5),
                             mouth=(521.25, 158.1), chin=(522.5, 175.0)),
                        w1.LM, (-.26, .26, 2.33, 2.87), (176, 184), 'her_left', COL['skin'], COL['hair'],
-                       hairline=2.78, eye_contrast=.4, eye_dark=.35)
+                       hairline=2.78, paint=FACE_PAINT)
 
 
 # ---- texturing helpers --------------------------------------------------------------------------------
