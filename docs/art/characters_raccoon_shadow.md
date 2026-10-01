@@ -7,7 +7,7 @@ sheet and the reference photos are **not** in the repo.
 | asset | height | triangles | bones | surfaces | clips (all loop) |
 |---|---|---|---|---|---|
 | `assets/characters/raccoon.glb` | 0.70 m with the hat | 1,942 | 22 | 12 | idle 4.0 s, walk 0.9 s, talk 2.4 s, watch 4.0 s |
-| `assets/characters/shadow.glb` | 1.70 m with the hood | 5,200 | 22 | 25 | idle 4.0 s, walk 1.1 s, talk 2.4 s |
+| `assets/characters/shadow.glb` | 1.70 m with the hood | 5,347 | 22 | 25 | idle 4.0 s, walk 1.1 s, talk 2.4 s |
 | `assets/characters/shadow_lady.glb` | 1.65 m | 4,847 | 23 | 16 | idle 4.0 s, walk 1.1 s, talk 2.4 s |
 
 The sources were 1,630 triangles (raccoon, T-pose) and 4,895 (Lady, T-pose).
@@ -84,9 +84,16 @@ python tools/characters/glb_preview.py assets/characters/raccoon.glb out.png   #
    0.66 H, chin 0.73 H) already fit, so the head group (head, face plate, hair, hood, scarf) is scaled
    1.6x about the neck and the arms are set 4.5 cm wider. The source head was realistic; at 360 rows
    the bigger face also reads.
-2. **Hood.** It is deep and pointed, with a faceted crown ridge and a peak behind the top. An outer
-   shell, a near-black lining and a rim run round a face window that closes in a pointed arch. It
-   frames the pale face in dark, as drawn.
+2. **Hood.** It reads as cloth, not a dome:
+   - **Facets:** few, large ones (11 columns) with fold creases, darker valleys and a ridge down the
+     back.
+   - **Peak:** the crown narrows and its top rings walk backward into a soft peak that falls behind
+     the head.
+   - **Drape:** the bottom rings flare into a torn drape lying over the shoulders into the mantle.
+     It is weighted to the chest, so a head turn doesn't drag it.
+
+   An outer shell, a near-black lining and a rim run round a face window that closes in a pointed
+   arch, framing the pale face in dark, as drawn.
 3. **Face plate.** The photo-projected relief plate is kept and improved:
    - **Relief:** more rows through the eyes, and upper-lid ridges and a philtrum added to the
      nose/lips/brow/socket/cheekbone/chin terms.
@@ -101,9 +108,12 @@ python tools/characters/glb_preview.py assets/characters/raccoon.glb out.png   #
    over her right eye remain; the back mass is hidden and dropped, and curtains read as earmuffs.
 5. **Layered ragged cloak:**
    - a bulky scarf/cowl under the chin;
-   - a shoulder mantle to the elbows with big irregular points, open at the throat;
-   - a long bell-shaped outer cloak, open wide at the front, with a longer, uneven back hem, torn
-     teeth and four tattered strips down the back;
+   - a broad shoulder mantle in two tiers with big irregular points, open at the throat, the lower
+     tier to the elbows;
+   - bell sleeves flaring past the elbows;
+   - a long bell-shaped outer cloak, open wide at the front, with a longer, uneven back hem and
+     three wide ragged panels down the back;
+   - a leather belt cinching the cloak at the waist, so a belt line reads from behind;
    - a navy robe with worn panels and a ragged hem, showing in the front opening;
    - a knotted grey sash at the waist.
 
@@ -135,10 +145,9 @@ She keeps the source's realistic proportions (see below).
 
 ## Still off against the sheet
 
-- **Shadow hood.** The sheet's hood is broader and drapes over the shoulders as one mass, and the
-  sheet's sleeves are big bell shapes at the elbows. Ours are mostly hidden under the mantle, so the
-  waist-level silhouette is narrower than drawn.
-- **Shadow back.** The sheet's back strips are wider panels than our four strips.
+- **Shadow layers.** The sheet's hood and scarf merge into one heavier mass at the neck. The
+  layered mantle's tooth pattern is busier than the sheet's few big flaps.
+- **Shadow width.** The waist-level silhouette is still a little narrower than drawn.
 - **Shadow face.** The photo face is more realistic than the sheet's painted one.
 - **Lady proportions.** The Lady is not the Shadow's exact body: her head is 1.2x, the Shadow's 1.6x.
   This is a deliberate split between "per the sheet" and "the Lady the script builds".
