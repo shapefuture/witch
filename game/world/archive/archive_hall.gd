@@ -160,7 +160,11 @@ func _build_props() -> void:
 	add_obstacle(Vector3(2.6, 0, -3.0), 1.3, 3.0)
 	add_obstacle(Vector3(2.4, 0, -0.4), 0.5, 0.6)
 	add_obstacle(Vector3(-3.2, 0, -2.6), 1.0, 1.0)
-	raccoon = Placeholders.raccoon()
+	raccoon = CharacterModels.instantiate("raccoon")
+	if raccoon == null:
+		raccoon = Placeholders.raccoon()
+	else:
+		CharacterModels.play(raccoon, "watch", 0.7)
 	raccoon.position = StageLight.anchor_vector("raccoon_perch", Vector3(-3.8, 2.2, -4.5))
 	raccoon.rotation_degrees.y = 12.0
 	add_child(raccoon)

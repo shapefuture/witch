@@ -19,7 +19,8 @@ var _body_rest := Vector3.ZERO
 func _ready() -> void:
 	add_to_group("camera_target")
 	if visual == null:
-		set_visual(Placeholders.tomas())
+		var model := CharacterModels.instantiate(actor_id) if actor_id != "" else null
+		set_visual(model if model != null else Placeholders.tomas())
 	BlobShadow.attach(self, 0.38, 0.95)
 
 func set_visual(new_visual: Node3D) -> void:
@@ -55,6 +56,12 @@ func face_point(point: Vector3) -> void:
 
 # One-shot gestures: pause (freeze), look_up (head tips back).
 func play_anim(animation_name: String) -> void:
+	if CharacterModels.player_of(visual) != null:
+		if animation_name == "look_up":
+			CharacterModels.play(visual, "talk", 0.8)
+		await get_tree().create_timer(1.0 if animation_name == "pause" else 1.2).timeout
+		_play_pose_clip()
+		return
 	var head := visual.get_node_or_null("Head") as Node3D if visual != null else null
 	var tween := create_tween()
 	match animation_name:
@@ -78,6 +85,8 @@ func _apply_anchor(pose_name: String) -> void:
 func _reset_limbs() -> void:
 	if visual == null:
 		return
+	if _play_pose_clip():
+		return
 	for limb in ["ArmL", "ArmR"]:
 		var node := visual.get_node_or_null(limb) as Node3D
 		if node != null:
@@ -87,8 +96,21 @@ func _reset_limbs() -> void:
 		body.scale = Vector3.ONE
 		body.position = Vector3(0, 0.45, 0)
 
+# A real model shows a pose with one of its clips. Returns false for a placeholder.
+func _play_pose_clip() -> bool:
+	match pose:
+		"working":
+			return CharacterModels.play(visual, "work")
+		"partnered":
+			return CharacterModels.play(visual, "work", 0.6)
+		"inviting":
+			return CharacterModels.play(visual, "talk")
+		"withdrawn":
+			return CharacterModels.play(visual, "idle", 0.5)
+	return CharacterModels.play(visual, "idle")
+
 func _process(delta: float) -> void:
-	if visual == null:
+	if visual == null or CharacterModels.player_of(visual) != null:
 		return
 	_time += delta
 	var left := visual.get_node_or_null("ArmL") as Node3D
