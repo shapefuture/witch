@@ -24,6 +24,10 @@ uniform vec3 sun_dir = vec3(-0.36, 0.64, -0.68);
 uniform vec3 sun_color : source_color = vec3(1.0, 0.72, 0.4);
 uniform vec2 lit_range = vec2(0.28, 0.9); // luma of the floor in shade / in the shaft
 uniform float rim_strength = 1.3;
+// Experimental, so live actors sit in the painted plates: a faint paper grain fixed to the screen
+// (the plates are still pictures) and a small tone shift per facet (the plates' baked facet mosaic).
+uniform float paper_grain = 0.035;
+uniform float facet_tone = 0.05;
 
 varying vec3 v_world;
 varying vec3 v_normal;
@@ -69,6 +73,13 @@ void fragment() {
 	vec3 n_view = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
 	float rim = pow(clamp(1.0 - dot(n_view, view), 0.0, 1.0), 2.4) * rim_strength;
 	vec3 col = base * (shade + gold) + sun_color * rim * (0.35 + 0.65 * in_sun) * 0.6;
+	vec3 facet = normalize(cross(dFdx(v_world), dFdy(v_world)));
+	float facet_hash = fract(sin(dot(floor(facet * 23.0), vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+	col *= 1.0 + (facet_hash - 0.5) * 2.0 * facet_tone;
+	// grain cells of one pixel of a 360-row picture, whatever the render size
+	vec2 cell = floor(FRAGCOORD.xy / max(VIEWPORT_SIZE.y / 360.0, 1.0));
+	float grain = fract(sin(dot(cell, vec2(127.1, 311.7))) * 43758.5453) - 0.5;
+	col *= 1.0 + grain * paper_grain;
 	float haze = (1.0 - exp(-fog_density * v_dist)) * exp(-max(v_world.y, 0.0) * 0.035);
 	col = mix(col, fog_color.rgb, clamp(haze, 0.0, 0.9));
 	ALBEDO = max(col, vec3(0.0));

@@ -41,7 +41,7 @@ and present committed results; `Mirror` (the `MirrorRuntime` autoload) is the on
 | `game/interaction/` | `PlayerIntent`, `PointerTracker`, `IntentInput`, `InteractionProbe`, `InteractionResolver`, `InteractionOption/Context`, `InteractionFlow`. |
 | `game/npc/` | `Expectation` (the hidden variable), `ResponsePolicy`, `NPC` (poses). |
 | `game/dialogue/` | `DialogueBridge` (runs conversations, records choices), `MirrorDialogueContext` (the read-only window `.dialogue` sees). |
-| `game/world/` | `Room`, `Interactable`, `GridNavigator`, `Placeholders` (the characters, and the spec of the machine's named parts), `MachineView`. `game/world/archive/`: `ArchiveHall` (the first room: gameplay anchors, interactables), `ArchiveSet` (loads the baked GLB), `HallAtmosphere` (shaft, dust, glow). |
+| `game/world/` | `Room`, `Interactable`, `GridNavigator`, `Placeholders` (the characters, and the spec of the machine's named parts), `MachineView`. `game/world/archive/`: `ArchiveHall` (the first room: gameplay anchors, interactables), `PlateSet`/`PlateStage` (the pre-rendered plates on the proxy: `docs/art/compositor.md`), `ArchiveProps` (the live machine and bell), `HallAtmosphere` (dust). |
 | `game/player/` | `Witch` (movement), `WitchAnimation`. |
 | `game/camera/` | `DioramaCamera` (pose + roll, cuts, capture lock), `CameraDirector` (pure `compute_pose`, cuts vs the eased spell shot, the `stay` contract). |
 | `game/presentation/` | `PresentationDirector`, `MagicPresentation`, `PSXActorPresenter`, `FocusOutline`. |
