@@ -114,11 +114,13 @@ func test_clicking_empty_ground_walks_there_and_closes_the_surface() -> void:
 	await _open_surface(game, "tomas")
 	# any floor spot the option plaques are not hanging over (a tap on a plaque chooses it instead)
 	var ground := Vector3.ZERO
-	for candidate in [Vector3(-4, 0, 0.5), Vector3(3, 0, 1.5), Vector3(-1, 0, 2.5), Vector3(2, 0, -5), Vector3(-2, 0, 3)]:
-		var at := game.camera.unproject_position(candidate)
-		if game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
-			ground = candidate
-			break
+	var size := game.get_viewport().get_visible_rect().size
+	for z in range(3, -6, -1):
+		for x in range(-6, 7):
+			var candidate := Vector3(x, 0, z)
+			var at := game.camera.unproject_position(candidate)
+			if ground == Vector3.ZERO and ArchiveHall.stage_allows(x, z) and not game.camera.is_position_behind(candidate) and Rect2(Vector2.ZERO, size).grow(-10).has_point(at) and game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
+				ground = candidate
 	ok(ground != Vector3.ZERO, "found floor the plaques do not cover")
 	_click(game, game.camera.unproject_position(ground))
 	ok(not game.surface.is_open(), "surface closed")
