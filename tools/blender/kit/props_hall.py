@@ -17,7 +17,7 @@ BACK_Z = -10.0
 FRONT_Z = 13.0
 STRAIGHT = 9.0       # walls are vertical this high, then the vault closes in
 H = 14.0
-CARPET_C = (0.8, -1.8)
+CARPET_C = (1.0, -0.6)
 ARCH_X = -4.2         # the pointed arch sits back-left; the statue and the beam own the right
 ARCH_W = 2.4
 ARCH_STRAIGHT = 4.2
@@ -71,7 +71,7 @@ def oculus_point(pool, sun_dir):
 def _row_heights():
     ys, y = [0.0], 0.0
     while y < H - 1e-6:
-        y = min(H, y + (1.3 if y < STRAIGHT else 1.0))
+        y = min(H, y + (0.95 if y < STRAIGHT else 0.8))
         ys.append(y)
     return ys
 
@@ -84,7 +84,7 @@ def shell(oculus, seed=1):
     z = BACK_Z - 1.9
     while z < FRONT_Z + 0.01:
         zs.append(z)
-        z += 1.9
+        z += 1.4
     verts = {}
     for side in (-1, 1):
         for yi, y in enumerate(ys):
@@ -95,7 +95,7 @@ def shell(oculus, seed=1):
                 # keep the rock around the oculus smooth, so the light that enters is where it was aimed
                 near = (Vector((side * w, y, z)) - oculus).length
                 bump *= smoothstep(HOLE_RADIUS - 0.3, HOLE_RADIUS + 3.7, near)
-                jz = (math.sin(zj * 12.9 + yi * 78.2 + side) * 43758.5453 % 1.0 - 0.5) * 0.9 if 0 < zj < len(zs) - 1 else 0.0
+                jz = (math.sin(zj * 12.9 + yi * 78.2 + (0 if top else side)) * 43758.5453 % 1.0 - 0.5) * 0.9 if 0 < zj < len(zs) - 1 else 0.0
                 x = side * (w + bump * (0.9 if y < STRAIGHT else 0.8))
                 jy = (math.sin(zj * 4.1 + yi * 31.7 + side * 2.3) * 12345.678 % 1.0 - 0.5) * 0.7 if 0 < yi < len(ys) - 1 else 0.0
                 yy = y + (bump * 0.5 if y > STRAIGHT and not top else 0.0) + jy
@@ -294,7 +294,7 @@ def _fill_tier(part, y0, x0, x1, z_front, tier_h, rnd, density=0.88, skip=None):
             part.lathe([(0.14, 0.0), (0.2, h * 0.4), (0.12, h * 0.8), (0.07, h)], segs=5, mat=rnd.choice(["cream", "crystal", "coral"]), center=(x + 0.14, y0 + 0.04, z_front - 0.22), closed_bottom=False)
             x += 0.46
         elif roll < 0.91:
-            part.blob((x + 0.18, y0 + 0.22, z_front - 0.24), (0.17, 0.2, 0.17), rnd.choice(["crystal", "crystal_grey"]), subdiv=1, amp=0.25, seed=int(x * 100))
+            part.blob((x + 0.18, y0 + 0.22, z_front - 0.24), (0.17, 0.2, 0.17), rnd.choice(["crystal", "crystal_grey"]), subdiv=0, amp=0.3, seed=int(x * 100))
             x += 0.4
         else:
             x += rnd.uniform(0.1, 0.3)
@@ -501,7 +501,10 @@ def oculus_ring(oculus, sun_dir, radius=HOLE_RADIUS, seed=9):
     count = 11
     for k in range(count):
         a = math.tau * k / count + rnd.uniform(-0.15, 0.15)
-        centre = oculus + (u * math.cos(a) + v * math.sin(a)) * (radius + rnd.uniform(0.0, 0.5)) - axis * rnd.uniform(0.0, 0.6)
+        centre = oculus + (u * math.cos(a) + v * math.sin(a)) * (radius + rnd.uniform(0.0, 0.5))
+        y = min(centre.y, H - 0.25)
+        side = 1.0 if centre.x >= 0 else -1.0
+        centre = Vector((side * max(half_w(y) - 0.15, 0.0), y, centre.z))   # onto the vault surface
         r = rnd.uniform(0.7, 1.15)
         part.blob((centre.x, centre.y, centre.z), (r, r * 0.8, r), "rock_a" if k % 2 else "rock_b", subdiv=1, amp=0.4, seed=seed + k)
     return part

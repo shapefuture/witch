@@ -112,8 +112,8 @@
   {
     "round": 7,
     "dir": "r07",
-    "verdict": "pending",
-    "gap": "Awaiting the third blind judgement.",
+    "verdict": "NO",
+    "gap": "Blind A/B against the real reference: picked the reference again (and told the two apart). Biggest gap: the sun does not land on the player. In the reference the beam hits the spiral where the witch stands, a tiny dark silhouette in the brightest pool inside a dark frame; ours hit the statue and back wall and left the floor an even ochre.",
     "fixed": [
       "Camera looks up 14 degrees: the hole in the vault shows as a bright disc top-right; one shaft instead of a shaft plus halo and streaks",
       "Arch interior is a dark tunnel with a bright far end; the corridor starts inside the wall so no hairline of far light shows",
@@ -122,6 +122,26 @@
       "Witch spawns in the pool, apart from Tomas and the machine",
       "Soft highlight shoulder on the set (99th percentile luma 0.97 to 0.86; reference 0.63); mauve purples, quieter floor gold, faceted bell post, gold crown",
       "Gate was red for one commit (the shoulder darkened the speech bubble in the screen pass); moved into the set shader and fixed"
+    ],
+    "next": [
+      "Aim the beam at the witch; floor outside the pool darker; cool violet shadows",
+      "A lit far room behind the arch",
+      "Finer, crisper facets; calmer tiles",
+      "Foreground pieces still loud; right side empty",
+      "Eye lashes hang down (the mural was flipped); floating sconce; crack at the oculus; ring stones hanging under the hole"
+    ]
+  },
+  {
+    "round": 8,
+    "dir": "r08",
+    "verdict": "pending",
+    "gap": "Awaiting the fourth blind judgement.",
+    "fixed": [
+      "Pool and carpet moved onto the witch's mark: the beam now lands on her; floor tile and fill light darker so the pool is the brightest place",
+      "Cool violet shadows (bake fill and screen grade)",
+      "Eye mural was vertically flipped: lashes now point up like the reference",
+      "A crack of daylight along the vault's ridge (left and right halves jittered their ridge vertices apart) and ring stones that hung in the room under the oculus: both fixed",
+      "Finer vault and wall facets, crisper shelf gems, floating sconces removed, darker foreground pieces, a less dead tunnel"
     ],
     "next": [
       "Critic's list"

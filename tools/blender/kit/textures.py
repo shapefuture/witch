@@ -38,7 +38,7 @@ SPECS = {
     "fur_b":    dict(p=[(0.38, 0.38, 0.42), (0.56, 0.54, 0.56), (0.76, 0.72, 0.70)], acc=[(0.90, 0.86, 0.82), (0.22, 0.22, 0.28)], angle=70, blot=0.9, dabs=150),
     "rock_a":   dict(p=[(0.46, 0.43, 0.30), (0.60, 0.56, 0.40), (0.76, 0.70, 0.50)], acc=[(0.84, 0.78, 0.58), (0.34, 0.30, 0.26), (0.46, 0.38, 0.46)], angle=None, blot=1.25, dabs=130),
     "rock_b":   dict(p=[(0.28, 0.25, 0.19), (0.40, 0.36, 0.27), (0.54, 0.48, 0.34)], acc=[(0.62, 0.56, 0.40), (0.20, 0.17, 0.16), (0.34, 0.27, 0.36)], angle=None, blot=1.3, dabs=130),
-    "floor":    dict(p=[(0.28, 0.24, 0.19), (0.40, 0.34, 0.26), (0.54, 0.45, 0.33)], acc=[(0.46, 0.36, 0.44), (0.22, 0.19, 0.16), (0.62, 0.54, 0.38)], angle=None, blot=1.2, dabs=150),
+    "floor":    dict(p=[(0.22, 0.19, 0.16), (0.32, 0.27, 0.21), (0.44, 0.37, 0.28)], acc=[(0.46, 0.36, 0.44), (0.22, 0.19, 0.16), (0.62, 0.54, 0.38)], angle=None, blot=1.2, dabs=150),
     "carpet_purple": dict(p=[(0.22, 0.15, 0.30), (0.32, 0.22, 0.42), (0.44, 0.32, 0.54)], acc=[(0.56, 0.44, 0.66), (0.16, 0.11, 0.24)], angle=None, blot=1.1, dabs=140),
     "carpet_gold": dict(p=[(0.50, 0.46, 0.22), (0.66, 0.60, 0.31), (0.82, 0.76, 0.44)], acc=[(0.90, 0.84, 0.56), (0.40, 0.34, 0.20)], angle=None, blot=1.1, dabs=140),
     "carpet_dark": dict(p=[(0.14, 0.11, 0.10), (0.22, 0.17, 0.14), (0.32, 0.25, 0.19)], acc=[(0.10, 0.08, 0.10), (0.40, 0.30, 0.22)], angle=None, blot=0.9, dabs=100),
@@ -58,7 +58,7 @@ SPECS = {
 
 # Architecture is nearly flat per facet with a faint paper grain (the reference's big crystalline
 # planes); props and books keep the full painterly mottle.
-CALM = {"rock_a": 0.42, "rock_b": 0.42, "floor": 0.45, "plaster": 0.5, "cloak": 0.5, "carpet_purple": 0.5, "carpet_gold": 0.5,
+CALM = {"rock_a": 0.34, "rock_b": 0.34, "floor": 0.45, "plaster": 0.5, "cloak": 0.5, "carpet_purple": 0.5, "carpet_gold": 0.5,
         "crystal_grey": 0.6, "wood_dark": 0.7, "void": 0.3, "carpet_dark": 0.5}
 
 
@@ -178,7 +178,7 @@ def make_mural_eye(w=256, h=128):
     big = mask.resize((w, h), Image.NEAREST)
     out = Image.new("RGBA", (w, h), GLYPH_INK + (0,))
     out.putalpha(big)
-    return out
+    return out.transpose(Image.FLIP_TOP_BOTTOM)   # the CENTERED UVs flip v: lashes end up on top
 
 
 def mean_colour(name):

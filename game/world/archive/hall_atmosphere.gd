@@ -67,7 +67,7 @@ func _add_shaft(top: Vector3, bottom: Vector3, radius: float, strength: float, s
 
 func _add_pool_glow(pool: Vector3, sun: Vector3) -> void:
 	var plane := PlaneMesh.new()
-	plane.size = Vector2(6.2, 4.6)
+	plane.size = Vector2(7.2, 5.2)
 	var material := ShaderMaterial.new()
 	material.shader = load("res://render/psx/pool_glow.gdshader")
 	var instance := MeshInstance3D.new()

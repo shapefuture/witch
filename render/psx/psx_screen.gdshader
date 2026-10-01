@@ -19,7 +19,7 @@ uniform float col_depth = 31.0;
 uniform float magic_col_depth = 127.0;
 uniform float glow_amount = 0.4;
 uniform float vignette = 0.5;
-uniform vec3 shadow_tint : source_color = vec3(0.93, 0.91, 0.90);
+uniform vec3 shadow_tint : source_color = vec3(0.90, 0.89, 0.95);
 uniform vec3 light_tint : source_color = vec3(0.97, 1.0, 0.96);
 
 vec2 warp(vec2 uv, float k) {

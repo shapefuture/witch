@@ -39,9 +39,9 @@ CRATE_AT = (2.4, 0.0, -0.4)
 BENCH_AT = (-3.2, 0.0, -2.6)
 
 # The key light: a steep late-afternoon beam from the right-back, through a hole in the vault.
-SUN_DIR = Vector((0.21, 0.84, -0.50)).normalized()
-POOL = Vector((0.8, 0.0, -1.5))   # where the shaft lands: Tomas, the machine, the spiral, the statue's side
-AMBIENT_LIFT = np.array([0.026, 0.021, 0.026], dtype=np.float32)   # shade is deep but not dead: a breath of lilac olive
+SUN_DIR = Vector((0.10, 0.84, -0.53)).normalized()
+POOL = Vector((1.0, 0.0, -0.2))   # where the shaft lands: Tomas, the machine, the spiral, the statue's side
+AMBIENT_LIFT = np.array([0.028, 0.022, 0.038], dtype=np.float32)   # shade is deep but not dead: a breath of lilac olive
 
 
 def build(out_dir, samples, do_bake):
@@ -81,7 +81,6 @@ def build(out_dir, samples, do_bake):
     for sx in (-1, 1):
         px = props_hall.ARCH_X + sx * 3.7
         add(props_hall.pilaster(px, props_hall.BACK_Z + 0.9, seed=sx + 3))
-        add(props_hall.sconce((px, 4.6, props_hall.BACK_Z + 1.7), 0.0))
 
     # ---- shelves: walls of them -----------------------------------------------------------------------
     zs = [-8.4, -6.0, -3.6, -1.2, 1.2, 3.6, 6.0]
@@ -186,9 +185,9 @@ def build(out_dir, samples, do_bake):
     bake.setup_world(scene, strength=0.9)
     bake.add_sun(scene, "Key", tuple(SUN_DIR), (1.0, 0.85, 0.55), 7.0, 1.2)
     # the limelight: a soft warm fill from the camera's side, so fronts facing us are not black
-    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 600.0, (1.0, 0.89, 0.70))
+    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 340.0, (0.98, 0.88, 0.78))
     # a soft wash on the back wall, so the eye on it is readable without lighting the whole hall
-    bake.add_area(scene, "Wash", (-3.0, 9.0, 4.0), (0.0, 9.0, props_hall.BACK_Z), 7.0, 300.0, (1.0, 0.9, 0.72))
+    bake.add_area(scene, "Wash", (-3.0, 9.0, 4.0), (0.0, 9.0, props_hall.BACK_Z), 7.0, 200.0, (1.0, 0.9, 0.74))
     all_bake = static + dyn + fg_objects
     if do_bake:
         t1 = time.time()
@@ -225,7 +224,7 @@ def build(out_dir, samples, do_bake):
     for o in all_bake:
         frame = o.name.startswith("Fg")
         # the camera frame is a dark crop: bake it in shade and take most of the colour out of it
-        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.42 if frame else (0.55 if o.name.startswith("Corridor") else 1.0), desaturate=0.45 if frame else 0.0)
+        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.36 if frame else (0.8 if o.name.startswith("Corridor") else 1.0), desaturate=0.55 if frame else 0.0)
         arch = o.name.startswith(("Floor", "Shell", "BackWall", "Corridor", "Ribs", "Pilaster", "Statue", "Tower"))
         bake.facet_tone(o, strength=0.22 if o.name.startswith("Fg") else (0.085 if arch else 0.08), hue=0.03 if arch else 0.022, seed=len(o.name))
         if os.environ.get('STATS'):
