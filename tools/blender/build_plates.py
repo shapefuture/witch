@@ -224,15 +224,42 @@ def export_prop(root, objs, path):
 
 # ---- layout and actor light ---------------------------------------------------------------------
 
+def in_frame(cam, point, aspect=4.0 / 3.0, margin=0.07):
+    """Is a Godot-space point inside the bolted frame on a 4:3 screen (the narrowest we support: the
+    camera never follows, so the witch must be visible wherever she can stand)? The Dutch roll is
+    covered by the margin."""
+    rel = np.asarray(point, float) - cam.position
+    x, y, z = rel @ cam.basis[:, 0], rel @ cam.basis[:, 1], -(rel @ cam.basis[:, 2])
+    if z <= 0.2:
+        return False
+    tv = math.tan(math.radians(L.FOV_V) * 0.5)
+    th = tv * aspect
+    return abs(x / z) < th * (1 - margin) and abs(y / z) < tv * (1 - margin)
+
+
 def walkable():
-    left, right = L.NAVE_LEFT + 0.95, L.NAVE_RIGHT - 0.95
-    front = 4.0
+    """The floor the witch may stand on: the nave, trimmed so her whole figure (feet to hat) is in the
+    bolted wide shot at 4:3, plus the way out under the arch."""
+    cam = L.REF
+    left0, right0 = L.NAVE_LEFT + 0.95, L.NAVE_RIGHT - 0.95
     back = L.ARCH_WALL_Z + 0.6
     ax = float(L.ARCH_X)
     end = hall.PASS_END_Z + 0.5
-    pts = [(right, front), (left, front), (left, back + 0.2), (ax - 1.1, back), (ax - 1.1, end), (ax + 1.1, end), (ax + 1.1, back),
-           (right, back + 0.2)]
-    return [[round(float(x), 3), round(float(z), 3)] for x, z in pts]
+    zs = np.arange(4.0, back - 0.01, -0.25)
+    left, right = [], []
+    for z in zs:
+        xs = np.arange(left0, right0 + 0.01, 0.1)
+        ok = [x for x in xs if in_frame(cam, (x, 0.0, z)) and in_frame(cam, (x, 1.4, z))]
+        if ok:
+            left.append((min(ok), z))
+            right.append((max(ok), z))
+    pts = [right[0]] + [p for p in left] + [(ax - 1.1, back), (ax - 1.1, end), (ax + 1.1, end), (ax + 1.1, back)] + list(reversed(right))[:-1]
+    out = []
+    for x, z in pts:
+        q = [round(float(x), 3), round(float(z), 3)]
+        if not out or out[-1] != q:
+            out.append(q)
+    return out
 
 
 def anchors_for(old):
@@ -253,9 +280,9 @@ def anchors_for(old):
         "tomas_at": [round(float(c), 4) for c in L.TOMAS_AT], "tomas_yaw_deg": float(L.TOMAS_YAW),
         "interactables": {
             "machine": {"at": [round(float(c), 4) for c in machine], "radius": 1.7, "height": 0.8,
-                        "approach": [round(float(machine[0]) + 0.9, 3), 0.0, round(float(machine[2]) + 1.7, 3)]},
+                        "approach": [round(float(machine[0]) - 0.8, 3), 0.0, round(float(machine[2]) + 1.4, 3)]},
             "bell": {"at": [round(float(hang[0]) - 0.1, 3), 2.25, round(float(hang[2]), 3)], "radius": 0.8, "height": 0.0,
-                     "approach": [round(float(hang[0]) - 0.7, 3), 0.0, round(float(hang[2]) + 1.6, 3)]},
+                     "approach": [round(float(hang[0]) - 0.8, 3), 0.0, round(float(hang[2]) + 0.5, 3)]},
             "path_out": {"at": [round(ax, 3), 0.0, round(arch_z - 1.2, 3)], "radius": 2.0, "height": 3.2,
                          "approach": [round(ax + 0.5, 3), 0.0, round(arch_z + 2.6, 3)]},
         },

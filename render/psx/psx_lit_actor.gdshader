@@ -67,8 +67,8 @@ void fragment() {
 	vec3 n = normalize(v_normal);
 	float half_lambert = dot(n, normalize(sun_dir)) * 0.5 + 0.5;
 	// shade colour is the floor's own purple; the shaft adds gold on sun-facing sides
-	vec3 shade = floor_light * mix(0.85, 1.05, half_lambert);
-	vec3 gold = sun_color * (0.25 + 0.75 * half_lambert) * in_sun * 0.95;
+	vec3 shade = floor_light * mix(0.7, 0.95, half_lambert);
+	vec3 gold = sun_color * (0.25 + 0.75 * half_lambert) * in_sun * 0.55;
 	vec3 view = normalize(-(VIEW_MATRIX * vec4(v_world, 1.0)).xyz);
 	vec3 n_view = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
 	float rim = pow(clamp(1.0 - dot(n_view, view), 0.0, 1.0), 2.4) * rim_strength;

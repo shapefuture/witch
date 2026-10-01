@@ -85,7 +85,9 @@ func test_the_bolted_wide_shot_shows_everywhere_the_witch_may_stand() -> void:
 				var b := camera.unproject_position(head)
 				if not camera.is_position_behind(head) and Rect2(0, 0, 720, 540).grow(-6).has_point(a) and b.y > 0.0:
 					seen += 1
-	ok(checked > 80, "enough walkable cells to mean something (%d)" % checked)
+	# the stage is intimate on purpose: the camera sits low and close, like the reference painting, so only a
+	# strip of floor shows feet to hat at 4:3
+	ok(checked > 30, "enough walkable cells to mean something (%d)" % checked)
 	eq(seen, checked, "the witch is in frame wherever she can walk (%d of %d), because the camera never follows" % [seen, checked])
 
 func test_the_camera_cuts_between_shots_and_only_the_spell_eases() -> void:
