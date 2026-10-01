@@ -1,0 +1,28 @@
+[
+ {
+  "file": "docs/visual-gauntlet/rounds/r01/wide_169.png",
+  "size": [
+   640,
+   360
+  ],
+  "luma_pct_1_5_25_50_75_95_99": [
+   0.038,
+   0.105,
+   0.179,
+   0.282,
+   0.454,
+   0.726,
+   0.836
+  ],
+  "dark_frame_share_lt_0.12": 0.08,
+  "bright_pool_share_gt_0.75": 0.037,
+  "contrast_p95_over_p5": 6.93,
+  "olive_gold_share": 0.251,
+  "purple_share": 0.038,
+  "orange_share": 0.51,
+  "mean_saturation": 0.588,
+  "facet_gradient": 3.4,
+  "vignette_corner_over_centre": 0.348,
+  "distinct_colours": 1815
+ }
+]

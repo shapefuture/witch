@@ -5,7 +5,7 @@ render_mode unshaded, blend_add, cull_disabled, depth_draw_never, fog_disabled;
 
 global uniform float stage_time;
 
-uniform vec3 colour : source_color = vec3(1.0, 0.8, 0.45);
+uniform vec3 colour : source_color = vec3(1.0, 0.86, 0.52);
 uniform float strength = 0.4;
 
 void fragment() {

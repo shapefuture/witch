@@ -8,7 +8,7 @@ render_mode unshaded, blend_add, cull_back, depth_draw_never, fog_disabled;
 global uniform float stage_time;
 global uniform float magic_amount : hint_range(0.0, 1.0) = 0.0;
 
-uniform vec3 colour : source_color = vec3(1.0, 0.82, 0.48);
+uniform vec3 colour : source_color = vec3(1.0, 0.88, 0.56);
 uniform float strength = 0.5;
 uniform float streaks = 1.0;
 

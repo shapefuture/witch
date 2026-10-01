@@ -14,7 +14,7 @@ extends RefCounted
 
 const MUNDANE_PRECISION := 0.5
 const MAGIC_PRECISION := 1.0
-const FOG_COLOR := Color(0.52, 0.43, 0.26)
+const FOG_COLOR := Color(0.50, 0.44, 0.28)
 const FOG_DENSITY := 0.034
 
 static var _magic := 0.0

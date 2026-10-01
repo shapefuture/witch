@@ -179,9 +179,9 @@ def build(out_dir, samples, do_bake):
             print("DEBUG ray from", (x, z), "->", ob2.name if h2 else None, (common.TO_GD @ l2).to_tuple(1) if h2 else None)
     # ---- light --------------------------------------------------------------------------------------------
     bake.setup_world(scene, strength=0.9)
-    bake.add_sun(scene, "Key", tuple(SUN_DIR), (1.0, 0.70, 0.36), 7.0, 1.2)
+    bake.add_sun(scene, "Key", tuple(SUN_DIR), (1.0, 0.80, 0.42), 7.0, 1.2)
     # the limelight: a soft warm fill from the camera's side, so fronts facing us are not black
-    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 900.0, (1.0, 0.80, 0.55))
+    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 900.0, (1.0, 0.86, 0.60))
     all_bake = static + dyn + fg_objects
     if do_bake:
         t1 = time.time()

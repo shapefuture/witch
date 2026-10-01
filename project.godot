@@ -96,7 +96,7 @@ lens_warp={
 }
 fog_color={
 "type": "color",
-"value": Color(0.52, 0.43, 0.26, 1)
+"value": Color(0.5, 0.44, 0.28, 1)
 }
 fog_density={
 "type": "float",
