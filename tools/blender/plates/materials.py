@@ -224,7 +224,7 @@ def make_all():
     mats["carpet"] = surface("carpet", SWATCHES["floor"][0], 0.18, 0.04, 0.12, 0.0, sheet=carpet)
     for name, (col, strength, _group) in EMISSIVE.items():
         mats[name] = emissive(name, col, strength)
-    mats["beam"] = beam_volume("beam")
+    mats["beam"] = beam_volume("beam", density=0.016)
     mats["blockout"] = holdout_grey()
     return mats
 

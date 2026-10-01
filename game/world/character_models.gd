@@ -25,9 +25,23 @@ static func instantiate(id: String) -> Node3D:
 	root.add_child(model)
 	for node in model.find_children("*", "MeshInstance3D", true, false):
 		merge_flat_surfaces(node as MeshInstance3D)
-	PSXActorPresenter.apply(root)
+	# The models carry decals as micro-geometry a few millimetres off the cloth, so the placeholders'
+	# vertex wobble (4 mm) would tear them off, and the facet-hash tone would speckle them.
+	PSXActorPresenter.apply(root, 0.0)
+	_calm(root)
 	play(root, "idle")
 	return root
+
+static func _calm(node: Node) -> void:
+	var mesh := node as MeshInstance3D
+	if mesh != null and mesh.mesh != null:
+		for surface in mesh.mesh.get_surface_count():
+			var material := mesh.get_active_material(surface) as ShaderMaterial
+			if material != null:
+				material.set_shader_parameter("facet_tone", 0.015)
+				material.set_shader_parameter("paper_grain", 0.02)
+	for child in node.get_children():
+		_calm(child)
 
 static func player_of(visual: Node) -> AnimationPlayer:
 	if visual == null:

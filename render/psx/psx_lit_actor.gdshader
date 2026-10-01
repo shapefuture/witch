@@ -14,7 +14,7 @@ global uniform vec4 fog_color : source_color;
 global uniform float fog_density;
 
 uniform vec4 modulate_color : source_color = vec4(1.0);
-uniform sampler2D albedoTex : source_color, filter_nearest, repeat_enable;
+uniform sampler2D albedoTex : source_color, filter_nearest_mipmap, repeat_enable;
 uniform bool use_texture = false;
 uniform float wobble_amount : hint_range(0.0, 0.02) = 0.005;
 uniform sampler2D light_map : filter_linear, repeat_disable;
