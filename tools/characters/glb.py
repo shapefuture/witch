@@ -71,6 +71,16 @@ def frame_x(d, up=(0, 1.0, 0)):
     return np.stack([x, y, z], 1)
 
 
+def minrot(a, b):
+    """Shortest-arc rotation taking direction a onto direction b."""
+    a, b = nz(a), nz(b)
+    v = np.cross(a, b)
+    c = float(a @ b)
+    if np.linalg.norm(v) < 1e-9:
+        return np.eye(3) if c > 0 else rot_axis(np.cross(a, (0, 0, 1.0)) if abs(a[2]) < .9 else (1, 0, 0), 180)
+    return rot_axis(v, math.degrees(math.atan2(np.linalg.norm(v), c)))
+
+
 def q_axis(axis, deg):
     h = math.radians(deg) / 2
     x, y, z = nz(axis)
@@ -482,6 +492,37 @@ class Model:
         g.update(mat=mat, W=W, inv=inv, orient=orient)
         self.parts.append(g)
         return g
+
+    # ---- re-posing the bind pose
+    def pose_bind(self, rots):
+        """Bake a pose into the rest pose: rots = {bone: 3x3 local rotation}. Vertices move by
+        linear blend skinning, bones move to their posed heads, rest rotations stay identity.
+        Lets a part be authored in a convenient pose (the source's T-pose arms) and shipped in
+        another (arms down, or holding scrolls)."""
+        names = self.names
+        G = {}
+        for n in names:
+            par, h = self.bones[n]
+            M = np.eye(4)
+            M[:3, :3] = rots.get(n, np.eye(3))
+            M[:3, 3] = h - (self.bones[par][1] if par else 0)
+            G[n] = G[par] @ M if par else M
+        S = np.stack([G[n] @ np.vstack([np.hstack([np.eye(3), -self.bones[n][1][:, None]]), [0, 0, 0, 1]])
+                      for n in names])
+        for p in self.parts:
+            W = p['W']
+            M = np.einsum('vb,bij->vij', W, S)
+            V = p['V']
+            p['V'] = np.einsum('vij,vj->vi', M[:, :3, :3], V) + M[:, :3, 3]
+            ax = A(p['ax'], float)
+            near = np.argmin(((ax[:, None, :] - V[None]) ** 2).sum(2), 1)
+            Ma = M[near]
+            p['ax'] = np.einsum('vij,vj->vi', Ma[:, :3, :3], ax) + Ma[:, :3, 3]
+            if 'vn' in p:
+                vn = np.einsum('vij,vj->vi', M[:, :3, :3], p['vn'])
+                p['vn'] = vn / np.linalg.norm(vn, axis=1, keepdims=True)
+        for n in names:
+            self.bones[n] = (self.bones[n][0], G[n][:3, 3].copy())
 
     # ---- finishing
     def bbox(self):
