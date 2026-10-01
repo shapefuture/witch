@@ -89,8 +89,8 @@
   {
     "round": 6,
     "dir": "r06",
-    "verdict": "pending",
-    "gap": "Awaiting the second blind judgement.",
+    "verdict": "NO",
+    "gap": "Blind A/B against the real reference: picked the reference again. Biggest gap: the light. The reference is a dim hall cut by one beam from a visible hole to a pool at the witch's feet; ours spread two or three beams over the statue and wall and lifted the whole centre to an even mustard glow, with the oculus a hair out of frame.",
     "fixed": [
       "Sun at 57 degrees, its hole at the top of the frame: a diagonal god-ray from a visible source raking behind the statue, 1 m clear of it",
       "Arch back-left, tower moved off the path, one-material arch stones that overlap the opening, compass plate (it read as a halo) removed",
@@ -99,6 +99,29 @@
       "Faceted purple orb on a brass stand; chunkier shelf contents with more glyph crates and scroll piles",
       "Plaques 38 px with 8 px gaps and a small brass title tag; safe margin 4.5% of width; lens warp folds instead of smearing",
       "Touch re-verified in the Web build: tap the machine, plaques open, choose one"
+    ],
+    "next": [
+      "One beam, oculus in frame, vault darker",
+      "Arch opening filled with the same lit wall; no depth, a white hairline along its edge",
+      "Witch, Tomas and the machine merge into one clump",
+      "Walls read as a regular quad grid; floor spiral breaks into yellow shards",
+      "Palette: orange yellows, blue-violet purples",
+      "Foreground gem and boulder off-palette; bell post reads as a tree trunk"
+    ]
+  },
+  {
+    "round": 7,
+    "dir": "r07",
+    "verdict": "pending",
+    "gap": "Awaiting the third blind judgement.",
+    "fixed": [
+      "Camera looks up 14 degrees: the hole in the vault shows as a bright disc top-right; one shaft instead of a shaft plus halo and streaks",
+      "Arch interior is a dark tunnel with a bright far end; the corridor starts inside the wall so no hairline of far light shows",
+      "Floor spiral clean: floor and inlay were snapped differently by the PSX vertex snap, shearing into shards; both are now drawn unsnapped from one floor material",
+      "Walls: heights jittered and diagonals random, so no regular quad grid",
+      "Witch spawns in the pool, apart from Tomas and the machine",
+      "Soft highlight shoulder on the set (99th percentile luma 0.97 to 0.86; reference 0.63); mauve purples, quieter floor gold, faceted bell post, gold crown",
+      "Gate was red for one commit (the shoulder darkened the speech bubble in the screen pass); moved into the set shader and fixed"
     ],
     "next": [
       "Critic's list"
