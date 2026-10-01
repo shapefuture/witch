@@ -25,7 +25,10 @@ godot --headless --path . --script res://tools/perf_probe.gd
 # the art: scripted in Blender (pip install bpy), committed as GLB; rebuild only when the art changes
 python tools/blender/build_hall.py --out assets/archive --samples 96   # ~40 s, then run the gate
 GODOT=... tools/visual_gauntlet/capture.sh out_dir                      # the standard frames for a critic
+# image/video/audio generation (Higgsfield): estimate first, every run is capped by --max-usd
+python tools/higgsfield/hf.py run <model-path> --args-file job.json --max-usd 1   # see tools/higgsfield/README.md
 ```
+`.env.local` (git-ignored) holds `HF_KEY=key-id:key-secret`. Never print it, commit it or copy it into another file.
 Run the gate before committing. **Godot exits 0 even when GDScript fails to compile**: never trust an
 exit code; the gate greps for `SCRIPT ERROR` / `Parse Error` / `ERROR:` and requires `TESTS PASSED`.
 New `class_name`s need `--import` first (the gate does it). Real rendering (screenshots, shader
