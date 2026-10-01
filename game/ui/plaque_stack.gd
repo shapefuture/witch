@@ -8,14 +8,14 @@ extends Node3D
 
 signal chosen(index: int)
 
-const ROW_HEIGHT := 26.0   # render pixels; about 7 mm on a phone held in landscape
-const GAP := 4.0
+const ROW_HEIGHT := 30.0   # render pixels; about 8 mm on a phone held in landscape
+const GAP := 6.0
 const PAD := 8.0
 const MIN_WIDTH := 112.0
 const WOOD := Color(1.18, 1.0, 0.86)
 const WOOD_BORDER := Color(0.22, 0.15, 0.11)
 const CREAM := Color(1.0, 0.95, 0.80)
-const DIM_CREAM := Color(0.78, 0.72, 0.60)
+const DIM_CREAM := Color(0.92, 0.86, 0.70)
 const INK := Color(0.16, 0.11, 0.08)
 
 var camera: Camera3D
@@ -82,7 +82,7 @@ func open(title: String, labels: Array[String], anchor_px: Vector2, centered: bo
 	for i in range(labels.size()):
 		var rect := Rect2(origin.x, y, widest, ROW_HEIGHT)
 		var quiet := dim_last and i == labels.size() - 1
-		var made := _make_plaque(rect, labels[i], "wood", WOOD if not quiet else Color(0.8, 0.72, 0.66), CREAM if not quiet else DIM_CREAM, WOOD_BORDER, 30 + i * 4)
+		var made := _make_plaque(rect, labels[i], "wood", WOOD if not quiet else Color(0.62, 0.52, 0.46), CREAM if not quiet else DIM_CREAM, WOOD_BORDER, 30 + i * 4)
 		_items.append({"index": i, "rect": rect, "node": made["node"], "material": made["material"]})
 		y += ROW_HEIGHT + GAP
 	_hover = -1

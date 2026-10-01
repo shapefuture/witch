@@ -26,6 +26,11 @@ func get_interactable(target_id: String) -> Interactable:
 func framing() -> Dictionary:
 	return {"focus": camera_focus, "distance": camera_distance, "pitch_deg": camera_pitch_deg, "yaw_deg": camera_yaw_deg, "fov": camera_fov, "roll_deg": camera_roll_deg}
 
+# What the picture is about: world-space cylinders {"at", "radius", "height"} that a speech bubble
+# should not cover (the light pool, the way out, a statue). Rooms override this.
+func hero_regions() -> Array:
+	return []
+
 # Adds a solid obstacle: a blocking body for physics and a blocked disc for walk planning.
 func add_obstacle(at: Vector3, radius: float, height: float = 1.5) -> StaticBody3D:
 	var body := StaticBody3D.new()

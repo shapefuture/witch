@@ -23,7 +23,7 @@ uniform float light_scale = 1.4;
 uniform vec3 sun_dir = vec3(-0.36, 0.64, -0.68);
 uniform vec3 sun_color : source_color = vec3(1.0, 0.72, 0.4);
 uniform vec2 lit_range = vec2(0.28, 0.9); // luma of the floor in shade / in the shaft
-uniform float rim_strength = 0.9;
+uniform float rim_strength = 1.3;
 
 varying vec3 v_world;
 varying vec3 v_normal;
@@ -64,7 +64,7 @@ void fragment() {
 	float half_lambert = dot(n, normalize(sun_dir)) * 0.5 + 0.5;
 	// shade colour is the floor's own purple; the shaft adds gold on sun-facing sides
 	vec3 shade = floor_light * mix(0.85, 1.05, half_lambert);
-	vec3 gold = sun_color * (0.25 + 0.75 * half_lambert) * in_sun * 0.55;
+	vec3 gold = sun_color * (0.25 + 0.75 * half_lambert) * in_sun * 0.95;
 	vec3 view = normalize(-(VIEW_MATRIX * vec4(v_world, 1.0)).xyz);
 	vec3 n_view = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
 	float rim = pow(clamp(1.0 - dot(n_view, view), 0.0, 1.0), 2.4) * rim_strength;

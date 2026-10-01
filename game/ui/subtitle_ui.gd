@@ -22,6 +22,8 @@ var voice_pitch := {"tomas": 0.78}
 # The camera the bubble is placed against, and where each speaker's head is: func(id) -> Vector3.
 var camera: Camera3D
 var anchor_provider: Callable
+# func() -> Array of screen Rect2s: what the picture is about right now, kept clear of the bubble.
+var hero_provider: Callable
 
 var _bubble: SpeechBubble
 var _audio: AudioStreamPlayer
@@ -64,7 +66,8 @@ func show_line(speaker: String, text: String, speaker_id: String = "") -> void:
 	if anchor_provider.is_valid():
 		anchor = anchor_provider.call(speaker_id)
 	_bubble.camera = camera
-	_bubble.present(speaker, text, anchor, speaker.is_empty())
+	var heroes: Array = hero_provider.call() if hero_provider.is_valid() else []
+	_bubble.present(speaker, text, anchor, speaker.is_empty(), heroes)
 	_full = _bubble.wrapped_text()
 	_bubble.set_shown(0)
 	_bubble.set_prompt(false)

@@ -9,11 +9,11 @@ global uniform float magic_amount : hint_range(0.0, 1.0) = 0.0;
 
 uniform vec3 sun_dir = vec3(-0.36, 0.64, -0.68);
 uniform vec3 glow_dir = vec3(0.0, 0.06, -1.0);
-uniform vec3 zenith : source_color = vec3(0.30, 0.22, 0.52);
-uniform vec3 high : source_color = vec3(0.56, 0.38, 0.62);
-uniform vec3 mid : source_color = vec3(0.95, 0.52, 0.42);
-uniform vec3 horizon : source_color = vec3(1.0, 0.76, 0.42);
-uniform vec3 ground_haze : source_color = vec3(0.64, 0.42, 0.40);
+uniform vec3 zenith : source_color = vec3(0.86, 0.80, 0.56);
+uniform vec3 high : source_color = vec3(0.94, 0.86, 0.62);
+uniform vec3 mid : source_color = vec3(0.98, 0.88, 0.60);
+uniform vec3 horizon : source_color = vec3(1.0, 0.90, 0.62);
+uniform vec3 ground_haze : source_color = vec3(0.70, 0.60, 0.40);
 
 varying vec3 v_dir;
 
@@ -66,7 +66,7 @@ void fragment() {
 	vec2 p = vec2(d.x, d.z) / (abs(e) + 0.28) * 1.4 + vec2(stage_time * 0.012, 0.0);
 	float n = fbm(p * vec2(1.0, 2.6));
 	float cloud = smoothstep(0.52, 0.58, n) * smoothstep(0.02, 0.14, e) * (1.0 - smoothstep(0.55, 0.85, e));
-	vec3 cloud_col = mix(vec3(0.98, 0.62, 0.46), vec3(0.78, 0.60, 0.80), smoothstep(0.12, 0.45, e));
+	vec3 cloud_col = mix(vec3(0.98, 0.80, 0.52), vec3(0.88, 0.80, 0.62), smoothstep(0.12, 0.45, e));
 	cloud_col = mix(cloud_col, vec3(1.0, 0.86, 0.6), pow(sd, 3.0) * 0.8);
 	col = mix(col, cloud_col, cloud * 0.85);
 	ALBEDO = max(col, vec3(0.0));

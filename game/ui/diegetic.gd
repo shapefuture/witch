@@ -33,12 +33,13 @@ static func transform_for(camera: Camera3D, viewport_size: Vector2, screen_px: V
 # The part of the picture that is safe to draw UI in: inside notches and rounded corners, and
 # away from the screen edge a thumb rests on. In viewport pixels.
 static func safe_rect(viewport_size: Vector2) -> Rect2:
-	var rect := Rect2(Vector2(6, 6), viewport_size - Vector2(12, 12))
+	# phones round their corners and hide a notch even when they report no insets: stay clear of the sides
+	var rect := Rect2(Vector2(20, 10), viewport_size - Vector2(40, 22))
 	var screen := Vector2(DisplayServer.screen_get_size())
 	var safe := Rect2(DisplayServer.get_display_safe_area())
 	if screen.x > 0.0 and screen.y > 0.0 and safe.size.x > 0.0 and safe.size.y > 0.0:
 		var scale := Vector2(viewport_size.x / screen.x, viewport_size.y / screen.y)
-		var from_safe := Rect2(safe.position * scale + Vector2(6, 6), safe.size * scale - Vector2(12, 12))
+		var from_safe := Rect2(safe.position * scale + Vector2(20, 10), safe.size * scale - Vector2(40, 22))
 		rect = rect.intersection(from_safe) if rect.intersects(from_safe) else rect
 	return rect
 

@@ -139,6 +139,7 @@ func _build() -> void:
 	subtitles.name = "SubtitleUI"
 	subtitles.camera = camera
 	subtitles.anchor_provider = _bubble_anchor
+	subtitles.hero_provider = _hero_rects
 	add_child(subtitles)
 	pause_menu = PauseMenuUI.new()
 	pause_menu.name = "PauseMenu"
@@ -348,6 +349,24 @@ func _bubble_anchor(speaker_id: String) -> Vector3:
 	if speaker_id == "tomas" and room != null and room.tomas != null:
 		return room.tomas.global_position + Vector3(0, 1.45, 0)
 	return witch.global_position + Vector3(0, 1.8, 0)
+
+# The room's focal cylinders as screen rectangles, so a bubble can keep off them.
+func _hero_rects() -> Array:
+	var rects: Array = []
+	if room == null or camera == null:
+		return rects
+	for region: Dictionary in room.hero_regions():
+		var at: Vector3 = region["at"]
+		var radius := float(region["radius"])
+		var top := at + Vector3(0, float(region["height"]), 0)
+		var corners: Array[Vector3] = [at + Vector3(radius, 0, 0), at - Vector3(radius, 0, 0), at + Vector3(0, 0, radius), at - Vector3(0, 0, radius), top]
+		var rect := Rect2(camera.unproject_position(at), Vector2.ZERO)
+		for corner in corners:
+			if camera.is_position_behind(corner):
+				continue
+			rect = rect.expand(camera.unproject_position(corner))
+		rects.append(rect)
+	return rects
 
 func _focus_position(id: String) -> Variant:
 	if id == "player":

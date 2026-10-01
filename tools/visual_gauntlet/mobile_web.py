@@ -51,7 +51,7 @@ async def main():
             await page.wait_for_timeout(900)
         await page.screenshot(path=os.path.join(out, "02_after_narration.png"))
         # the machine, roughly where the capture shows it (left of centre, low)
-        await page.touchscreen.tap(vp["width"] * 0.375, vp["height"] * 0.67)
+        await page.touchscreen.tap(vp["width"] * 0.43, vp["height"] * 0.66)
         await page.wait_for_timeout(4000)
         await page.screenshot(path=os.path.join(out, "03_options.png"))
         # choose the second plaque by touch

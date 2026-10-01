@@ -37,7 +37,8 @@ void fragment() {
 	vec3 c = base + bloom;
 	float luma = dot(c, vec3(0.299, 0.587, 0.114));
 	c *= mix(shadow_tint, light_tint, smoothstep(0.1, 0.8, luma));
-	c = mix(vec3(luma), c, 0.86 + magic_amount * 0.7);
+	c = mix(vec3(luma), c, 0.86 + magic_amount * 0.3);
+	c *= mix(vec3(1.0), vec3(1.06, 0.90, 1.14), magic_amount); // reality loosens toward purple and coral, not acid yellow
 	vec2 q = SCREEN_UV * 2.0 - 1.0;
 	float edge = dot(q * vec2(0.9, 1.0), q * vec2(0.9, 1.0));
 	c *= 1.0 - vignette * smoothstep(0.35, 1.9, edge);

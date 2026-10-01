@@ -15,7 +15,7 @@ tools/blender/build_hall.py     composition + bake + export     -> assets/archiv
 
 ```sh
 pip install bpy numpy pillow          # Blender as a Python module (3.11 wheel for bpy 5.0)
-python tools/blender/build_hall.py --out assets/archive --samples 96     # ~40 s on 4 cores
+python tools/blender/build_hall.py --out assets/archive --samples 96     # about a minute on 4 cores
 godot --headless --path . --import && ./tests/run_tests.sh               # re-import, then the gate
 ```
 
@@ -36,9 +36,16 @@ godot --headless --path . --import && ./tests/run_tests.sh               # re-im
    static set is one mesh, one surface per tile.
 5. **Characters** (not baked) use `psx_lit_actor`, which samples `light_map.png` (the baked floor
    seen from above) so they glow in the shaft and go dim in the shade, with the same snap/wobble.
+   Each also drops a `BlobShadow` (a flat dark smear on the floor, stretched away from the key
+   light, top-level so it follows in world space) because the baked floor cannot shadow a mover.
 6. **Air**: `HallAtmosphere` adds a slanted shaft prism, a floor glow and drifting dust, all from
    the diorama clock. `psx_screen` adds glow from the screen's mip chain, a warm grade, vignette,
    5-bit ordered dither and the spell's fisheye.
+
+The floor's spiral is **geometry**: `props_hall.carpet()` lays real quad strips 1.5 cm above the
+floor (dark border, purple band, dark seam, gold band) so band edges are mesh edges and the pattern
+survives the 2-pixel snap and vertex-colour interpolation. Painting it into the floor tile read as
+noise. Shelves are not wallpaper: each tier gets its own density, some are empty, some bays gappy.
 
 ## Rules the code learned the hard way
 
@@ -53,6 +60,8 @@ godot --headless --path . --import && ./tests/run_tests.sh               # re-im
   at 1.0 and the shader applies the exposure (`gain`).
 - The set material is looked up by the glTF **material name**; aliasing two names to one Blender
   material loses one of them (`box_glyph`, `mural_eye` have their own).
+- A `while` that skips a gap must step *past* it (`x = gap_end + epsilon`): ending on the boundary of
+  an inclusive range loops forever, silently, inside Blender.
 - Sky/dome shaders must not write depth by hand: the depth convention differs between renderers.
 
 ## The camera and the frame
@@ -71,7 +80,9 @@ pushes them to the screen edges at any aspect, and they are hidden in close-up c
 render pixel, so slabs (`SlabMesh`) and `Label3D` text are scene geometry yet pixel-crisp and the
 same physical size on every device. `SpeechBubble`: parchment slab with a tail to the speaker, brass
 name tab, text pre-wrapped once (the typewriter never reflows); narration is a scalloped thought
-cloud with a trail of dots. `PlaqueStack`: carved wooden option plaques hung beside the tapped thing;
+cloud with a trail of dots. It tries six spots round the speaker's head and keeps the one that covers
+the least of the room's focal points (`Room.hero_regions()`: the light pool, the arch, the statue)
+and none of the speaker. `PlaqueStack`: carved wooden option plaques hung beside the tapped thing;
 a tap inside a plaque (touch or mouse) chooses it, `IntentInput.intercept` asks first. The pause and
 settings menus use the same plaques over a dark veil.
 

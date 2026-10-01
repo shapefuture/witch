@@ -34,7 +34,8 @@ func is_showing() -> bool:
 	return _active
 
 # Builds the bubble for one line and pops it in. `anchor_world` is where the speaker's head is.
-func present(speaker: String, text: String, anchor_world: Vector3, narration: bool) -> void:
+# `avoid` is a list of screen Rect2s (the picture's focal points) the slab should not sit on.
+func present(speaker: String, text: String, anchor_world: Vector3, narration: bool, avoid: Array = []) -> void:
 	_clear()
 	var viewport_size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2(480, 360)
 	var font := UIKit.font()
@@ -56,12 +57,9 @@ func present(speaker: String, text: String, anchor_world: Vector3, narration: bo
 	if camera != null:
 		anchor_px = camera.unproject_position(anchor_world)
 	var safe := Diegetic.safe_rect(viewport_size)
-	var x := clampf(anchor_px.x - w * 0.35, safe.position.x, maxf(safe.position.x, safe.end.x - w))
-	var y := anchor_px.y - h - 24.0
-	if y < safe.position.y:
-		y = anchor_px.y + 34.0
-	y = clampf(y, safe.position.y, maxf(safe.position.y, safe.end.y - h))
-	_rect = Rect2(x, y, w, h)
+	_rect = _best_rect(Vector2(w, h), anchor_px, safe, avoid)
+	var x := _rect.position.x
+	var y := _rect.position.y
 	var to_anchor := Vector2(anchor_px.x - x, -(anchor_px.y - y))
 	var centre := Vector2(w * 0.5, -h * 0.5)
 	var direction := (to_anchor - centre).normalized()
@@ -105,6 +103,38 @@ func present(speaker: String, text: String, anchor_world: Vector3, narration: bo
 	_active = true
 	visible = true
 	_place()
+
+# Tries a handful of spots around the speaker's head and keeps the one that covers the least of the
+# picture's focal points (the light pool, the arch, the statue) and none of the speaker.
+func _best_rect(size: Vector2, anchor_px: Vector2, safe: Rect2, avoid: Array) -> Rect2:
+	var body := Rect2(anchor_px.x - 16.0, anchor_px.y - 6.0, 32.0, 64.0)
+	var spots := [
+		Vector2(anchor_px.x - size.x * 0.35, anchor_px.y - size.y - 24.0),
+		Vector2(anchor_px.x - size.x * 0.70, anchor_px.y - size.y - 24.0),
+		Vector2(anchor_px.x - size.x * 0.5, anchor_px.y - size.y - 52.0),
+		Vector2(anchor_px.x - size.x - 22.0, anchor_px.y - size.y * 0.7),
+		Vector2(anchor_px.x + 22.0, anchor_px.y - size.y * 0.7),
+		Vector2(anchor_px.x - size.x * 0.35, anchor_px.y + 34.0),
+	]
+	var best := Rect2()
+	var best_score := INF
+	for i in range(spots.size()):
+		var at: Vector2 = spots[i]
+		at.x = clampf(at.x, safe.position.x, maxf(safe.position.x, safe.end.x - size.x))
+		at.y = clampf(at.y, safe.position.y, maxf(safe.position.y, safe.end.y - size.y))
+		var candidate := Rect2(at, size)
+		var score := float(i) * 40.0 + candidate.get_center().distance_to(anchor_px) * 0.5
+		score += _overlap(candidate, body) * 6.0
+		for hero in avoid:
+			score += _overlap(candidate, hero as Rect2)
+		if score < best_score:
+			best_score = score
+			best = candidate
+	return best
+
+static func _overlap(a: Rect2, b: Rect2) -> float:
+	var common := a.intersection(b)
+	return common.size.x * common.size.y if common.has_area() else 0.0
 
 # The text as broken into lines for this bubble (what SubtitleUI types out).
 func wrapped_text() -> String:

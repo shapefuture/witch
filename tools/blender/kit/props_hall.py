@@ -22,6 +22,7 @@ ARCH_W = 2.4
 ARCH_STRAIGHT = 4.2
 ARCH_TOP = 7.9
 CORRIDOR_END = -27.5
+HOLE_RADIUS = 2.4     # the hole in the vault: one ragged oculus, so the beam is a single clear event
 STEPS_FROM = -17.0
 
 BOOKS = ["book_red", "book_olive", "book_purple", "book_tan", "book_teal", "book_red", "book_tan", "book_olive"]
@@ -92,7 +93,7 @@ def shell(oculus, seed=1):
                 bump = 0.0 if (top or yi == 0) else (fbm((side * 3.0 + w * 0.2, y * 0.33, z * 0.3), 3, seed) * 0.5 + 0.5) * (1.0 if y < STRAIGHT else 1.6)
                 # keep the rock around the oculus smooth, so the light that enters is where it was aimed
                 near = (Vector((side * w, y, z)) - oculus).length
-                bump *= smoothstep(3.0, 7.0, near)
+                bump *= smoothstep(HOLE_RADIUS - 0.3, HOLE_RADIUS + 3.7, near)
                 jz = (math.sin(zj * 12.9 + yi * 78.2 + side) * 43758.5453 % 1.0 - 0.5) * 0.5 if 0 < zj < len(zs) - 1 else 0.0
                 x = side * (w + bump * (0.9 if y < STRAIGHT else 0.8))
                 yy = y + (bump * 0.5 if y > STRAIGHT and not top else 0.0)
@@ -105,7 +106,7 @@ def shell(oculus, seed=1):
                 tris = ((a, b, c), (a, c, d)) if (yi + zj) % 2 else ((a, b, d), (b, c, d))
                 for tri in tris:
                     mid = (tri[0] + tri[1] + tri[2]) / 3.0
-                    if mid.y > 9.0 and (mid - oculus).length < 3.3:
+                    if mid.y > 9.0 and (mid - oculus).length < HOLE_RADIUS:
                         continue
                     n = fbm((mid.x * 0.2, mid.y * 0.2, mid.z * 0.2), 2, 3.0)
                     mat = "rock_b" if (mid.y > STRAIGHT - 0.5 or n > 0.3) else "rock_a"
@@ -123,7 +124,7 @@ def vault_ribs(seed=2):
             pts.append(Vector((-half_w(y) + 0.5, y, z)))
         right = [Vector((-p.x, p.y, p.z)) for p in reversed(pts)]
         path = pts + right[1:]
-        part.tube(path, [0.65, 0.5, 0.4, 0.5, 0.65], mat="rock_a", segs=5, per_segment=1, jitter=0.12, seed=int(z * 3), caps=False)
+        part.tube(path, [0.65, 0.5, 0.4, 0.5, 0.65], mat="rock_a", segs=6, per_segment=1, jitter=0.05, seed=int(z * 3), caps=False, twist=0.5)
     return part
 
 
@@ -134,19 +135,6 @@ def floor(seed=3):
         return 0.05 * fbm((x * 0.5, 0, z * 0.5), 2, 5.0)
 
     def material(x, z):
-        dx, dz = x - CARPET_C[0], z - CARPET_C[1]
-        r = math.hypot(dx, dz)
-        if r < 7.0:
-            if r < 0.6:
-                return "carpet_gold"
-            ph = (r / 1.9 - math.atan2(dz, dx) / math.tau) % 1.0
-            if ph < 0.34:
-                return "carpet_purple"
-            if ph < 0.64:
-                return "carpet_gold"
-            return "floor"
-        if 7.2 < r < 7.8:
-            return "carpet_purple"
         return "rock_b" if fbm((x * 0.3, 0, z * 0.3), 2, 8.0) > 0.25 else "floor"
 
     part.grid(-HALL_W, HALL_W, BACK_Z, FRONT_Z, 0.45, height, material, jitter=0.22)
@@ -201,7 +189,7 @@ def back_wall(seed=4):
     return part
 
 
-def mural_eye(centre=(0.0, 11.4, BACK_Z + 0.04), size=(8.4, 4.2)):
+def mural_eye(centre=(0.0, 10.8, BACK_Z + 0.04), size=(10.4, 5.2)):
     part = Part("Mural")
     cx, cy, cz = centre
     hw, hh = size[0] / 2, size[1] / 2
@@ -266,20 +254,20 @@ def _fill_tier(part, y0, x0, x1, z_front, tier_h, rnd, density=0.88, skip=None):
     x = x0 + 0.1
     while x < x1 - 0.2:
         if skip and skip[0] <= x <= skip[1]:
-            x = skip[1]
+            x = skip[1] + 0.01
             continue
         roll = rnd.random()
         if roll > density:
             x += rnd.uniform(0.15, 0.4)
             continue
-        if roll < 0.52:
+        if roll < 0.56:
             w = rnd.uniform(0.08, 0.2)
             h = rnd.uniform(0.35, min(0.8, tier_h - 0.14))
             d = rnd.uniform(0.36, 0.5)
             lean = rnd.choice([0, 0, 0, 0, 10, -12]) if rnd.random() < 0.25 else 0
             part.book((x + w / 2, y0 + 0.04 + h / 2, z_front - d / 2), (w, h, d), rnd.choice(BOOKS), rot_z=lean)
             x += w + 0.01
-        elif roll < 0.70:
+        elif roll < 0.68:
             r = rnd.uniform(0.09, 0.13)
             ln = rnd.uniform(0.42, 0.56)
             rows = 2 if rnd.random() < 0.6 else 1
@@ -318,7 +306,13 @@ def bookcase(at, yaw, w, h, d, seed, tier_h=0.9, density=0.88, skip_tiers=None):
         part.box((0, y, 0), (w, 0.07, d), "shelf", rot=(0, 0, rnd.uniform(-0.6, 0.6)))
         if k < tiers:
             skip = (skip_tiers or {}).get(k)
-            _fill_tier(part, y, -w / 2 + 0.1, w / 2 - 0.1, d / 2 - 0.02, tier_h, rnd, density, skip)
+            tier_density = density * rnd.uniform(0.45, 1.05)
+            if rnd.random() < 0.12:
+                continue                      # an empty tier: the shelves are not wallpaper
+            if rnd.random() < 0.25 and skip is None:
+                gap = rnd.uniform(-w / 2 + 0.3, w / 2 - 1.2)
+                skip = (gap, gap + rnd.uniform(0.5, 1.1))
+            _fill_tier(part, y, -w / 2 + 0.1, w / 2 - 0.1, d / 2 - 0.02, tier_h, rnd, min(tier_density, 0.96), skip)
     _place(part, m, at, yaw)
     return part
 
@@ -427,9 +421,9 @@ def column(at, h=11.0, seed=0):
     """The carved wooden post that carries the bell's arm."""
     part = Part("Column")
     x, _, z = at
-    part.lathe([(0.9, 0.0), (0.7, 0.4), (0.55, 1.2), (0.5, 3.0), (0.52, 5.0), (0.56, 7.5), (0.62, 9.5), (0.8, h - 0.6), (1.0, h)], segs=7, mat="wood_dark", center=(x, 0, z), jitter=0.07, seed=seed)
+    part.lathe([(0.9, 0.0), (0.7, 0.4), (0.55, 1.2), (0.5, 3.0), (0.52, 5.0), (0.56, 7.5), (0.62, 9.5), (0.8, h - 0.6), (1.0, h)], segs=6, mat="wood_dark", center=(x, 0, z), jitter=0.05, seed=seed)
     for yb in (1.6, 5.2, 8.6):
-        part.lathe([(0.62 - (0.08 if yb < 5 else 0.0), yb), (0.74, yb + 0.12), (0.62, yb + 0.28)], segs=7, mat="shelf", center=(x, 0, z), jitter=0.04, seed=seed + 1, closed_bottom=False, closed_top=False)
+        part.lathe([(0.62 - (0.08 if yb < 5 else 0.0), yb), (0.74, yb + 0.12), (0.62, yb + 0.28)], segs=6, mat="shelf", center=(x, 0, z), jitter=0.03, seed=seed + 1, closed_bottom=False, closed_top=False)
     return part
 
 
@@ -446,13 +440,10 @@ def foreground_left(seed=40):
     parts.append((shelf, (-4.9, -4.6, -4.5)))
     globe = Part("FgGlobe")
     globe.lathe([(0.7, 0.0), (0.45, 0.2), (0.22, 0.55), (0.3, 0.95), (0.62, 1.15), (0.5, 1.2)], segs=8, mat="wood", jitter=0.03, seed=2)
-    globe.blob((0, 2.2, 0), (1.0, 1.0, 1.0), "crystal", subdiv=2, amp=0.06, seed=9)
-    globe.cyl((0, 1.15, 0), (0, 1.35, 0), 0.55, 0.5, "brass", segs=9)
+    globe.blob((0, 2.0, 0), (0.82, 0.82, 0.82), "crystal", subdiv=2, amp=0.05, seed=9)
+    globe.blob((0.25, 2.35, 0.45), (0.12, 0.1, 0.12), "gold", subdiv=1, amp=0.1, seed=3)   # one hot facet
+    globe.cyl((0, 1.1, 0), (0, 1.3, 0), 0.5, 0.46, "brass", segs=9)
     parts.append((globe, (-3.0, -3.7, -3.9)))
-    tablet = Part("FgTablet")
-    tablet.box((0, 0.75, 0), (1.05, 1.5, 0.14), "box_glyph", rot=(-18, 8, 3))
-    tablet.box((0, 0.75, -0.1), (1.15, 1.6, 0.1), "wood_dark", rot=(-18, 8, 3))
-    parts.append((tablet, (-1.55, -3.1, -3.3)))
     rock = Part("FgRockL")
     rock.blob((0, 0.7, 0), (1.9, 1.1, 1.4), "rock_b", subdiv=1, amp=0.45, seed=5, flat_bottom=-0.2)
     parts.append((rock, (-4.4, -3.6, -3.2)))
@@ -474,7 +465,7 @@ def foreground_right(seed=41):
     return parts
 
 
-def oculus_ring(oculus, sun_dir, radius=3.3, seed=9):
+def oculus_ring(oculus, sun_dir, radius=HOLE_RADIUS, seed=9):
     """Rough stones around the hole in the vault, so it reads as an opening cut through rock."""
     part = Part("OculusRing")
     rnd = random.Random(seed)
@@ -487,4 +478,34 @@ def oculus_ring(oculus, sun_dir, radius=3.3, seed=9):
         centre = oculus + (u * math.cos(a) + v * math.sin(a)) * (radius + rnd.uniform(0.0, 0.5)) - axis * rnd.uniform(0.0, 0.6)
         r = rnd.uniform(0.7, 1.15)
         part.blob((centre.x, centre.y, centre.z), (r, r * 0.8, r), "rock_a" if k % 2 else "rock_b", subdiv=1, amp=0.4, seed=seed + k)
+    return part
+
+
+def carpet(seed=7):
+    """The spiral carpet as real strips of quads laid 1.5 cm above the floor: band edges are mesh
+    edges, so the spiral reads as bands (not as the floor's triangulation), with a dark border."""
+    part = Part("Carpet")
+    pitch = 1.9
+    turns = 3.4
+    steps = int(turns * 72)
+
+    def band(ph0, ph1, mat, lift):
+        for i in range(steps):
+            t0, t1 = i / 72.0, (i + 1) / 72.0   # turns
+            quads = []
+            for t in (t0, t1):
+                th = t * math.tau
+                r0 = (t + ph0) * pitch
+                r1 = (t + ph1) * pitch
+                quads.append((Vector((CARPET_C[0] + math.cos(th) * r0, lift, CARPET_C[1] + math.sin(th) * r0)), Vector((CARPET_C[0] + math.cos(th) * r1, lift, CARPET_C[1] + math.sin(th) * r1))))
+            (a0, a1), (b0, b1) = quads
+            if max((a1 - CARPET_C_V).length, (b1 - CARPET_C_V).length) > 7.4 or min((a0 - CARPET_C_V).length, (b0 - CARPET_C_V).length) < 0.0:
+                continue
+            part.quad_out(a0, a1, b1, b0, mat, Vector((a0.x, -5.0, a0.z)))
+
+    CARPET_C_V = Vector((CARPET_C[0], 0.0, CARPET_C[1]))
+    band(-0.03, 0.37, "wood_dark", 0.012)      # dark border under the purple
+    band(0.00, 0.34, "carpet_purple", 0.02)
+    band(0.31, 0.67, "wood_dark", 0.012)
+    band(0.34, 0.64, "carpet_gold", 0.02)
     return part

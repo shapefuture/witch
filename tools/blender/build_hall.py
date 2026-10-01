@@ -31,7 +31,7 @@ TOWER_AT = (-4.4, 0.0, -5.0)       # the crooked bookcase tower the raccoon watc
 PATH_AT = (0.0, 0.0, -7.8)
 # The wide shot's camera, as set in game/world/archive/archive_hall.gd (see _camera_pose below).
 CAMERA_AT = (-0.6, 3.5, -3.0)
-CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 13.5, -8.0, 22.0
+CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 14.5, -8.0, 22.0
 CAMERA_FROM = (CAMERA_AT[0] + math.sin(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
                CAMERA_AT[1] + math.sin(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
                CAMERA_AT[2] + math.cos(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE)
@@ -52,7 +52,7 @@ def build(out_dir, samples, do_bake):
     scene.collection.children.link(coll)
     mats = bake.make_materials()
     density = {"rock_a": 0.28, "rock_b": 0.28, "floor": 0.3, "carpet_purple": 0.3, "carpet_gold": 0.3, "shelf": 0.9, "wood": 0.6, "wood_dark": 0.6, "plaster": 0.35,
-               "iron": 0.8, "brass": 0.8, "cream": 0.8, "coral": 0.8, "crystal": 0.9, "crystal_grey": 0.9, "scroll": 1.2, "cloak": 0.5,
+               "iron": 0.8, "brass": 0.8, "cream": 0.8, "coral": 0.8, "crystal": 0.32, "crystal_grey": 0.5, "scroll": 1.2, "cloak": 0.5,
                "book_red": 1.6, "book_olive": 1.6, "book_purple": 1.6, "book_tan": 1.6, "book_teal": 1.6}
     for name in list(textures.SPECS) + ["box_glyph", "mural_eye"]:
         common.UV_DENSITY[name] = density.get(name, 0.4)
@@ -72,6 +72,7 @@ def build(out_dir, samples, do_bake):
     # ---- architecture ------------------------------------------------------------------------------
     add(props_hall.shell(oculus))
     add(props_hall.floor())
+    add(props_hall.carpet(), max_edge=0.55)
     add(props_hall.back_wall())
     add(props_hall.mural_eye(), max_edge=1.6)
     add(props_hall.vault_ribs())
@@ -103,7 +104,7 @@ def build(out_dir, samples, do_bake):
     anchors["raccoon_perch"] = [px, 2.2, pz]
     add(props_hall.tower((4.3, 0, -8.3), -6, 2.2, 1.6, 10.4, 0.55, seed=12))
     add(props_hall.tower((-6.4, 0, -7.7), 4, 2.2, 1.6, 10.8, 0.55, seed=13))
-    add(props_hall.hooded_statue((2.9, 0, -3.3), -48))
+    add(props_hall.hooded_statue((2.6, 0, -3.0), -48))
     add(props_hall.rubble((-7.2, 0, 6.6), 0.9, 21))
     add(props_hall.rubble((7.6, 0, 7.0), 0.8, 23))
 
@@ -224,7 +225,7 @@ def build(out_dir, samples, do_bake):
         frame = o.name.startswith("Fg")
         # the camera frame is a dark crop: bake it in shade and take most of the colour out of it
         bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.42 if frame else 1.0, desaturate=0.55 if frame else 0.0)
-        bake.facet_tone(o, strength=0.085, hue=0.025, seed=len(o.name))
+        bake.facet_tone(o, strength=0.16 if o.name.startswith("Fg") else 0.085, hue=0.025, seed=len(o.name))
         if os.environ.get('STATS'):
             c = bake.read_corner_colours(o)
             print('STAT %-12s mean %s max %.2f nan %d' % (o.name, c[:, :3].mean(axis=0).round(3), c[:, :3].max(), int(np.isnan(c).sum())))

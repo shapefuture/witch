@@ -17,7 +17,7 @@ extends Room
 # Layout (x right, z toward the camera, metres):
 #     arch out (0, -10)       tower + raccoon (-4.4, -5.0)      bell post (5.6, -3.0)
 #     bench (-3.2, -2.6)   machine (-1.6, -1.2)   Tomas (-0.1, -0.9)   crate (2.4, -0.4)
-#     witch starts (0.6, 2.5)           statue (2.9, -3.3)      light pool (0.8, -1.5)
+#     witch starts (0.6, 2.5)           statue (2.6, -3.0)      light pool (0.8, -1.5)
 
 const RADIUS := 9.5
 const BELL_POST_AT := Vector3(5.6, 0, -3.0)
@@ -62,10 +62,17 @@ func _ready() -> void:
 	_build_tomas()
 	_build_interactables()
 
+func hero_regions() -> Array:
+	return [
+		{"at": Vector3(0.8, 0.0, -1.5), "radius": 2.0, "height": 0.3},
+		{"at": Vector3(0.0, 0.0, -9.4), "radius": 2.2, "height": 5.0},
+		{"at": Vector3(2.6, 0.0, -3.0), "radius": 0.7, "height": 3.0},
+	]
+
 # The bolted master shot. tools/blender/build_hall.py bakes the camera-space foreground frame for
 # exactly this pose (CAMERA_AT / CAMERA_DISTANCE / CAMERA_PITCH / CAMERA_YAW): change both together.
 static func wide_framing() -> Dictionary:
-	return {"focus": Vector3(-0.6, 3.5, -3.0), "distance": 13.5, "pitch_deg": -8.0, "yaw_deg": 22.0, "fov": 60.0, "roll_deg": 2.5}
+	return {"focus": Vector3(-0.6, 3.5, -3.0), "distance": 14.5, "pitch_deg": -8.0, "yaw_deg": 22.0, "fov": 60.0, "roll_deg": 3.5}
 
 # Where the witch may walk: the open floor between the shelves, trimmed so that she is always inside
 # the frame of the bolted wide shot at 4:3 (the tightest aspect). The camera sits to the right, so
@@ -146,13 +153,14 @@ func _build_props() -> void:
 	add_obstacle(TOWER_AT, 1.7, 2.4)
 	add_obstacle(Vector3(3.9, 0, -8.3), 1.3, 3.0)
 	add_obstacle(Vector3(-6.4, 0, -7.7), 1.3, 3.0)
-	add_obstacle(Vector3(2.9, 0, -3.3), 1.2, 3.0)
+	add_obstacle(Vector3(2.6, 0, -3.0), 1.2, 3.0)
 	add_obstacle(Vector3(2.4, 0, -0.4), 0.5, 0.6)
 	add_obstacle(Vector3(-3.2, 0, -2.6), 1.0, 1.0)
 	raccoon = Placeholders.raccoon()
 	raccoon.position = StageLight.anchor_vector("raccoon_perch", Vector3(-3.8, 2.2, -4.5))
 	raccoon.rotation_degrees.y = 12.0
 	add_child(raccoon)
+	BlobShadow.attach(raccoon, 0.26, 0.5)
 
 func _build_tomas() -> void:
 	tomas = NPC.new()

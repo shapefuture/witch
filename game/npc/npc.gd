@@ -20,6 +20,7 @@ func _ready() -> void:
 	add_to_group("camera_target")
 	if visual == null:
 		set_visual(Placeholders.tomas())
+	BlobShadow.attach(self, 0.38, 0.95)
 
 func set_visual(new_visual: Node3D) -> void:
 	if visual != null:

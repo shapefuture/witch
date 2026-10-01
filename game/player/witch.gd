@@ -32,6 +32,7 @@ func _ready() -> void:
 	add_child(shape)
 	set_visual(Placeholders.witch())
 	add_child(animation)
+	BlobShadow.attach(self, 0.42, 1.05)
 
 func set_visual(new_visual: Node3D) -> void:
 	if visual != null:

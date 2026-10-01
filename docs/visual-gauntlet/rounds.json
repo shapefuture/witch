@@ -1,0 +1,52 @@
+[
+  {
+    "round": 1,
+    "dir": "r01",
+    "verdict": "baseline",
+    "gap": "First build of the reference hall: shell, shelves, machine, bell, baked light. Not judged by a separate critic; used to find the pipeline's own bugs (double gamma, flipped winding, culled glow quads, missing glyph and mural tiles).",
+    "fixed": [
+      "Cycles vertex-colour bake with a steep key through the vault, display-referred values",
+      "Faceted, mottled hand-painted tiles for every material",
+      "Bolted diorama camera with a Dutch roll; hard cuts; the spell's fisheye plus 45 degree tilt"
+    ],
+    "next": [
+      "A single authored god-ray and a pool the characters can stand in",
+      "A dark cropped foreground frame",
+      "Cut the over-saturated orange"
+    ]
+  },
+  {
+    "round": 2,
+    "dir": "r02",
+    "verdict": "NO",
+    "gap": "There is no god-ray: the oculus is a yellow blowout and the floor is lit evenly, so nothing leads the eye. The near floor averages luma 0.40 and the pool by the witch 0.47.",
+    "fixed": [
+      "Ribbed pointed vault with a real oculus; a slanted shaft prism, floor glow and drifting dust",
+      "Dark, desaturated foreground shelf and rock baked in camera space",
+      "Grade shifted from orange to olive-gold; mean saturation 0.59 to 0.44, orange share 28% to 12%",
+      "All UI moved into the scene: 3D speech bubbles, carved option plaques, menu plaques"
+    ],
+    "next": [
+      "One authored light event with scale around it",
+      "Bubble must not sit on the focal point",
+      "Carpet and shelves read as noise"
+    ]
+  },
+  {
+    "round": 3,
+    "dir": "r03",
+    "verdict": "NO",
+    "gap": "No single authored light event: the beam and pool are present but weak, a bubble covers the focal point, there is no cathedral scale, the carpet is noise, characters do not sit in the light, and the shelves read as wallpaper.",
+    "fixed": [
+      "Hooded statue redesigned slim and pointed; moved into the light",
+      "12 px type and larger tap targets on the plaques",
+      "Real device check: Web export driven by touch in a Pixel 7 landscape emulation"
+    ],
+    "next": [
+      "Smaller oculus, narrower and brighter shaft",
+      "Spiral carpet as geometry, shelf variety, felt-like globe",
+      "Blob shadows so characters sit on the floor",
+      "Bubbles that avoid the pool, arch and statue"
+    ]
+  }
+]
