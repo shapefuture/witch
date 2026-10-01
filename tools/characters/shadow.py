@@ -361,47 +361,62 @@ def back_hair(m, rnd):
 
 
 def hood(m):
-    """Deep pointed hood (built at head scale before the head group is enlarged): an outer
-    shell, a dark lining and a rim joining them round a face window with a pointed top."""
-    #      y     rx    front  back  window half-angle (deg)
-    R = [(1.440, .140, .140, -.150, 46), (1.490, .158, .150, -.172, 58), (1.550, .165, .150, -.182, 62),
-         (1.610, .160, .140, -.178, 60), (1.660, .144, .122, -.168, 52), (1.700, .118, .095, -.150, 40),
-         (1.735, .080, .055, -.132, 0), (1.765, .040, .012, -.115, 0)]
-    M = 13
+    """Cloth hood (built at head scale; the head group is enlarged afterwards). Few, large
+    facets: 11 columns with fold creases (darker valleys, a ridge down the back), the top
+    rings walking backward into a soft peak that falls behind the head, and the bottom
+    rings flaring into a ragged drape that lies over the shoulders into the mantle.
+    Outer shell, near-black lining, and a rim round the face window (pointed arch on top)."""
+    #      y     cz     rx    rz   window half-angle (deg)
+    R = [(1.398, -.026, .200, .180, 38), (1.432, -.020, .158, .156, 42), (1.472, -.017, .150, .152, 50),
+         (1.532, -.016, .160, .162, 60), (1.600, -.022, .150, .158, 60), (1.660, -.048, .116, .136, 46),
+         (1.705, -.086, .076, .100, 28), (1.736, -.138, .042, .060, 0), (1.750, -.198, .020, .030, 0)]
+    tip = A((0, 1.742, -.270))
+    M = 11
+    crease = [0, .06, -.03, .07, -.02, .09, -.02, .07, -.03, .06, 0]
+    rnd = random.Random(61)
     outer, inner = [], []
-    for y, rx, fr, bk, op in R:
-        cz, rz = (fr + bk) / 2, (fr - bk) / 2
+    for y, cz, rx, rz, op in R:
         o, i_ = [], []
         for k in range(M):
             t = math.radians(op + (360 - 2 * op) * k / (M - 1))
-            # a little ridge down the back and over the crown: the sheet's faceted peak
-            ridge = 1 + .05 * math.exp(-((t - math.pi) / .5) ** 2) * (y > 1.6)
-            o.append((rx * ridge * math.sin(t), y, cz + rz * ridge * math.cos(t)))
+            f = 1 + crease[k] * (0 if op and k in (0, M - 1) else 1)
+            o.append((rx * f * math.sin(t), y, cz + rz * f * math.cos(t)))
             i_.append((rx * .86 * math.sin(t), y, cz + rz * .86 * math.cos(t) + .004))
         outer.append(o)
         inner.append(i_)
-    peak = A((0, 1.825, -.135))
-    axis = [(0, y, (fr + bk) / 2) for y, rx, fr, bk, op in R]
+    axis = [(0, y, cz) for y, cz, rx, rz, op in R]
     go = loft(outer, None, False, ax=axis)
-    last = len(R) - 1
-    Vt = list(go['V']) + [peak]
-    Ft = list(go['F']) + [(last * M + k, last * M + k + 1, len(Vt) - 1) for k in range(M - 1)]
-    go = dict(V=A(Vt), F=A(Ft), ax=A(axis + [(0, 1.74, -.03)]))
+    V = list(go['V'])
+    F = [tuple(f) for f in go['F']]
+    fb = [1 if crease[(i // 2) % (M - 1)] < 0 or crease[(i // 2) % (M - 1) + 1] < 0 else 0 for i in range(len(F))]
+    last = (len(R) - 1) * M
+    V.append(tip)
+    for k in range(M - 1):
+        F.append((last + k, last + k + 1, len(V) - 1))
+        fb.append(0)
+    # torn drape edge over the shoulders
+    for k in range(M - 1):
+        a_, b_ = A(outer[0][k]), A(outer[0][k + 1])
+        mid = (a_ + b_) / 2
+        out = nz(mid - A((0, mid[1], -.03))) * A((1, 0, 1))
+        V.append(mid + A((0, -.030 - rnd.uniform(0, .025), 0)) + out * .020)
+        F.append((k, k + 1, len(V) - 1))
+        fb.append(0)
+    go = dict(V=A(V), F=A(F), ax=A(axis + [(0, 1.70, -.12)]), fb=A(fb))
 
-    def hw(V):
-        return m.blend(V[:, 1], [(1.42, 'neck'), (1.50, 'head')])
-    m.add(go, lambda c, n: 'cloak' if n[1] < .75 else 'cloak_l', hw(go['V']))
+    def hw(V):  # the drape follows the chest, the cowl the neck, the rest the head
+        return m.blend(V[:, 1], [(1.38, 'chest'), (1.44, 'neck'), (1.51, 'head')])
+    m.add(go, ['cloak', 'cloak_d'], hw(go['V']))
     gi = loft(inner, None, False, ax=axis)
     m.add(gi, 'lining', hw(gi['V']), inv=True)
-    # rim along both window edges
     V, F = [], []
     for k in (0, M - 1):
         base = len(V)
         for r in range(len(R)):
             V += [outer[r][k], inner[r][k]]
         for r in range(len(R) - 1):
-            a = base + 2 * r
-            F += [(a, a + 2, a + 3), (a, a + 3, a + 1)]
+            a_ = base + 2 * r
+            F += [(a_, a_ + 2, a_ + 3), (a_, a_ + 3, a_ + 1)]
     V = A(V)
     m.add(dict(V=V, F=A(F), ax=A([(0, 1.56, -.06)])), 'cloak_l', hw(V))
 
@@ -618,9 +633,9 @@ def build_arms(m, shadow):
 
 
 def sleeve(m, s, d):
-    """Wide cloak sleeve over the upper arm and elbow, torn at the cuff; two-sided."""
+    """Bell sleeve flaring past the elbow, torn at the cuff; two-sided."""
     rg = random.Random(11 + s)
-    xs = [(.20, .066), (.31, .080), (.40, .092)]
+    xs = [(.25, .068), (.36, .094), (.46, .140)]
     N = 9
     rings = [[(s * x, AY(x) + r * math.sin(2 * math.pi * k / N), r * math.cos(2 * math.pi * k / N)) for k in range(N)]
              for x, r in xs]
@@ -762,44 +777,58 @@ def cloak(m):
     axis = [(0, y, cz) for y, rx, rz, cz in R]
     two_sided(m, rings, tatter(rings, rnd, .10), lambda c, n: 'cloak_d' if (c[0] * 7.3 + c[1] * 3.1) % 1 < .3 else 'cloak',
               'lining', cloak_weights(m), axis)
-    # tattered strips hanging down the back from under the mantle
-    for x, y0, ln, w in ((-.15, 1.04, .55, .06), (-.05, 1.02, .78, .07), (.06, 1.04, .66, .06), (.16, 1.03, .48, .055)):
+    # wide ragged panels hanging down the back from under the mantle, three teeth each
+    def surf(xx, y, off):
+        rx, rz, cz = (np.interp(-y, [-q[0] for q in R], [q[i] for q in R]) for i in (1, 2, 3))
+        return cz - rz * math.sqrt(max(0, 1 - (xx / rx) ** 2)) - off
+    for x, y0, ln, w in ((-.14, 1.00, .62, .105), (.0, .98, .80, .115), (.14, 1.00, .54, .10)):
         V, F = [], []
-        rows = 4
+        rows, cols = 3, 4
         for r in range(rows + 1):
             y = y0 - ln * r / rows
-            rx, rz, cz = np.interp(-y, [-q[0] for q in R], [q[1] for q in R]), np.interp(-y, [-q[0] for q in R], [q[2] for q in R]), \
-                np.interp(-y, [-q[0] for q in R], [q[3] for q in R])
-            for sx in (-1, 1):
-                xx = x + sx * w * (1 - .25 * r / rows)
-                zz = cz - rz * math.sqrt(max(0, 1 - (xx / rx) ** 2)) - .010 - .004 * r
-                V.append((xx, y, zz))
-        tip = (x + rnd.uniform(-.01, .01), y0 - ln - .06, V[-1][2])
-        V.append(tip)
+            for c in range(cols):
+                xx = x + w * (2 * c / (cols - 1) - 1) * (1 - .12 * r / rows)
+                V.append((xx, y, surf(xx, y, .012 + .004 * r)))
         for r in range(rows):
-            a = 2 * r
-            F += [(a, a + 1, a + 3), (a, a + 3, a + 2)]
-        F.append((2 * rows, 2 * rows + 1, len(V) - 1))
+            for c in range(cols - 1):
+                a_ = r * cols + c
+                F += [(a_, a_ + 1, a_ + cols + 1), (a_, a_ + cols + 1, a_ + cols)]
+        base = rows * cols
+        for c in range(cols - 1):
+            xa, xb = V[base + c][0], V[base + c + 1][0]
+            yt = y0 - ln - rnd.uniform(.05, .12)
+            V.append(((xa + xb) / 2 + rnd.uniform(-.01, .01), yt, surf((xa + xb) / 2, yt, .028)))
+            F.append((base + c, base + c + 1, len(V) - 1))
         V = A(V)
         m.add(dict(V=V, F=A(F), ax=A([(x, y0 - ln / 2, 0)])), 'cloak_d', cloak_weights(m)(V))
+    # a belt cinching the cloak at the waist (over the panels), ends at the front edges
+    th_b = .90
+    band = [[(rx * math.sin(t), y, cz + rz * math.cos(t)) for t in np.linspace(th_b, 2 * math.pi - th_b, 13)]
+            for y, rx, rz, cz in ((.880, .312, .234, -.044), (.945, .304, .228, -.041))]
+    g = loft(band, None, False, ax=[(0, .88, -.044), (0, .945, -.041)])
+    m.add(g, 'leather_d', 'hips')
 
 
 def mantle(m):
-    """Shoulder cape to the elbows, open at the throat, big ragged points."""
-    rnd = random.Random(31)
-    M = 11
-    R = [(1.40, .150, .130, .000), (1.33, .265, .195, -.010), (1.20, .350, .255, -.020), (1.06, .385, .280, -.030)]
-    th = [.40, .42, .44, .46]
-    rings = open_shell(R, th, M)
-    for k in range(M):  # deeper at the back and over the arms
-        t = th[-1] + (2 * math.pi - 2 * th[-1]) * k / (M - 1)
-        drop = .07 * (.5 - .5 * math.cos(t)) + .05 * abs(math.sin(t))
-        rings[-1][k] = (rings[-1][k][0], rings[-1][k][1] - drop, rings[-1][k][2])
-    axis = [(0, y, cz) for y, rx, rz, cz in R]
-
+    """Broad shoulder cape in two layered tiers (the hood's drape lies over both), open at the
+    throat, big ragged points, the lower tier longer at the back and over the arms."""
     def W(V):
         return m.blend(V[:, 1], [(1.20, 'spine'), (1.32, 'chest')])
-    two_sided(m, rings, tatter(rings, rnd, .15, .45), 'cloak_l', 'lining', W, axis, inset=.012)
+    for seed, R, th, drop_b, drop_s, depth in (
+            (31, [(1.37, .170, .150, .000), (1.25, .335, .245, -.015), (1.13, .425, .305, -.025), (1.02, .462, .330, -.035)],
+             [.40, .42, .44, .46], .03, .05, .14),
+            (33, [(1.39, .205, .175, .000), (1.30, .318, .235, -.010), (1.19, .405, .292, -.020)],
+             [.38, .40, .42], .04, .03, .11)):
+        rnd = random.Random(seed)
+        M = 11
+        rings = open_shell(R, th, M)
+        for k in range(M):
+            t = th[-1] + (2 * math.pi - 2 * th[-1]) * k / (M - 1)
+            drop = drop_b * (.5 - .5 * math.cos(t)) + drop_s * abs(math.sin(t))
+            rings[-1][k] = (rings[-1][k][0], rings[-1][k][1] - drop, rings[-1][k][2])
+        axis = [(0, y, cz) for y, rx, rz, cz in R]
+        two_sided(m, rings, tatter(rings, rnd, depth, .45), 'cloak_l' if seed == 33 else 'cloak', 'lining', W, axis,
+                  inset=.012)
 
 
 def scarf(m):
