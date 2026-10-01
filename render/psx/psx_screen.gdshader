@@ -37,9 +37,6 @@ void fragment() {
 	vec3 halo = (textureLod(screen_texture, uv, 2.0).rgb * 0.5 + textureLod(screen_texture, uv, 3.5).rgb * 0.5);
 	vec3 bloom = max(halo - vec3(0.55), vec3(0.0)) * glow_amount * 1.6;
 	vec3 c = base + bloom;
-	// a soft shoulder: the beam and the sky patch glow without clipping to flat yellow (the reference's
-	// brightest pixels sit near 0.65)
-	c = c / (1.0 + max(c - vec3(0.5), vec3(0.0)) * 1.1);
 	float luma = dot(c, vec3(0.299, 0.587, 0.114));
 	c *= mix(shadow_tint, light_tint, smoothstep(0.1, 0.8, luma));
 	c = mix(vec3(luma), c, 1.2 + magic_amount * 0.2);

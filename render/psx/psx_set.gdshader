@@ -60,6 +60,9 @@ void fragment() {
 	vec3 col = mix(lit + vec3(1.0, 0.78, 0.45) * edge * rim * (COLOR.r + COLOR.g) * 0.5, tint.rgb * 1.15, glow);
 	float haze = (1.0 - exp(-fog_density * v_dist)) * exp(-max(v_height, 0.0) * 0.035) * fog_amount;
 	col = mix(col, fog_color.rgb, clamp(haze, 0.0, 0.9));
+	// a soft shoulder on the set only (never the speech bubbles): sunlit stone glows without clipping to
+	// flat yellow; the reference's brightest set pixels sit near 0.65
+	col = col / (1.0 + max(col - vec3(0.55), vec3(0.0)) * 0.9);
 	// Display-referred on purpose (a PS1 had no linear light): the Compatibility renderer writes
 	// ALBEDO to the screen as is, so what is computed here is what appears.
 	ALBEDO = max(col, vec3(0.0));
