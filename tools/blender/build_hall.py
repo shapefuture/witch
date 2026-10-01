@@ -30,8 +30,8 @@ MACHINE_AT = (-1.6, 0.0, -1.2)
 TOWER_AT = (-6.2, 0.0, -5.4)       # the crooked bookcase tower the raccoon watches from
 PATH_AT = (props_hall.ARCH_X, 0.0, -7.8)   # = ArchiveHall.PATH_AT
 # The wide shot's camera, as set in game/world/archive/archive_hall.gd (see _camera_pose below).
-CAMERA_AT = (0.2, 2.9, -2.2)
-CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 11.0, -10.0, 24.0
+CAMERA_AT = (0.2, 3.3, -2.2)
+CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 11.0, -14.0, 24.0
 CAMERA_FROM = (CAMERA_AT[0] + math.sin(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
                CAMERA_AT[1] + math.sin(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
                CAMERA_AT[2] + math.cos(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE)
@@ -51,7 +51,7 @@ def build(out_dir, samples, do_bake):
     coll = bpy.data.collections.new("Hall")
     scene.collection.children.link(coll)
     mats = bake.make_materials()
-    density = {"rock_a": 0.28, "rock_b": 0.28, "floor": 0.3, "carpet_purple": 0.3, "carpet_gold": 0.3, "shelf": 0.9, "wood": 0.6, "wood_dark": 0.6, "plaster": 0.35,
+    density = {"carpet_dark": 0.3, "rock_a": 0.28, "rock_b": 0.28, "floor": 0.3, "carpet_purple": 0.3, "carpet_gold": 0.3, "shelf": 0.9, "wood": 0.6, "wood_dark": 0.6, "plaster": 0.35,
                "iron": 0.8, "brass": 0.8, "cream": 0.8, "coral": 0.8, "crystal": 0.32, "crystal_grey": 0.5, "scroll": 1.2, "cloak": 0.5,
                "book_red": 1.6, "book_olive": 1.6, "book_purple": 1.6, "book_tan": 1.6, "book_teal": 1.6}
     for name in list(textures.SPECS) + ["box_glyph", "mural_eye"]:
@@ -186,9 +186,9 @@ def build(out_dir, samples, do_bake):
     bake.setup_world(scene, strength=0.9)
     bake.add_sun(scene, "Key", tuple(SUN_DIR), (1.0, 0.85, 0.55), 7.0, 1.2)
     # the limelight: a soft warm fill from the camera's side, so fronts facing us are not black
-    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 900.0, (1.0, 0.89, 0.70))
+    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 600.0, (1.0, 0.89, 0.70))
     # a soft wash on the back wall, so the eye on it is readable without lighting the whole hall
-    bake.add_area(scene, "Wash", (-3.0, 9.0, 4.0), (0.0, 9.0, props_hall.BACK_Z), 7.0, 430.0, (1.0, 0.9, 0.72))
+    bake.add_area(scene, "Wash", (-3.0, 9.0, 4.0), (0.0, 9.0, props_hall.BACK_Z), 7.0, 300.0, (1.0, 0.9, 0.72))
     all_bake = static + dyn + fg_objects
     if do_bake:
         t1 = time.time()
@@ -225,7 +225,7 @@ def build(out_dir, samples, do_bake):
     for o in all_bake:
         frame = o.name.startswith("Fg")
         # the camera frame is a dark crop: bake it in shade and take most of the colour out of it
-        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.42 if frame else 1.0, desaturate=0.45 if frame else 0.0)
+        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.42 if frame else (0.55 if o.name.startswith("Corridor") else 1.0), desaturate=0.45 if frame else 0.0)
         arch = o.name.startswith(("Floor", "Shell", "BackWall", "Corridor", "Ribs", "Pilaster", "Statue", "Tower"))
         bake.facet_tone(o, strength=0.22 if o.name.startswith("Fg") else (0.085 if arch else 0.08), hue=0.03 if arch else 0.022, seed=len(o.name))
         if os.environ.get('STATS'):

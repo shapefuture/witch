@@ -16,10 +16,12 @@ const TEXTURE_DIR := "res://assets/archive/textures/"
 # Painted materials that glow by themselves (windows, lamps, the machine's indicator).
 const GLOWING := {"glow": Color(1.0, 0.86, 0.5), "glow_warm": Color(1.0, 0.6, 0.26), "glow_green": Color(0.5, 1.0, 0.4), "glow_blue": Color(0.4, 0.65, 1.0), "glow_white": Color(0.78, 0.72, 0.56)}
 const SET_SWAY := 0.16
+# Flat ground that the carpet is laid on: snapped vertices would shear the two apart into shards.
+const UNSNAPPED := ["floor", "carpet_purple", "carpet_gold", "carpet_dark"]
 # Surfaces that should look lit even where the bake left them dim: metal and glass catch light.
 # Exposure of the baked set (matches the shader default). The reference is a low-key picture: the
 # sunlit floor tops out around 0.65 luma, so the pool is felt, not blown out.
-const SET_GAIN := 1.25
+const SET_GAIN := 1.05
 const SHINY := {"brass": 1.25, "gold": 1.3, "crystal": 1.1, "crystal_grey": 1.2, "iron": 1.1, "coral": 1.1}
 # Painted sheets cut out by their alpha (ink on the wall, not a poster).
 const CUTOUT := ["mural_eye"]
@@ -59,6 +61,8 @@ static func set_material(tile: String) -> ShaderMaterial:
 		material.set_shader_parameter("fog_amount", 0.5)
 	else:
 		material.set_shader_parameter("sway", SET_SWAY)
+		if tile in UNSNAPPED:
+			material.set_shader_parameter("snap_amount", 0.0)
 		if tile in CUTOUT:
 			material.set_shader_parameter("cutout", 1.0)
 			material.set_shader_parameter("rim", 0.0)

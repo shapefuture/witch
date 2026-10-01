@@ -97,14 +97,16 @@ def shell(oculus, seed=1):
                 bump *= smoothstep(HOLE_RADIUS - 0.3, HOLE_RADIUS + 3.7, near)
                 jz = (math.sin(zj * 12.9 + yi * 78.2 + side) * 43758.5453 % 1.0 - 0.5) * 0.9 if 0 < zj < len(zs) - 1 else 0.0
                 x = side * (w + bump * (0.9 if y < STRAIGHT else 0.8))
-                yy = y + (bump * 0.5 if y > STRAIGHT and not top else 0.0)
+                jy = (math.sin(zj * 4.1 + yi * 31.7 + side * 2.3) * 12345.678 % 1.0 - 0.5) * 0.7 if 0 < yi < len(ys) - 1 else 0.0
+                yy = y + (bump * 0.5 if y > STRAIGHT and not top else 0.0) + jy
                 verts[(side, yi, zj)] = Vector((x if not top else 0.0, yy, z + jz))
     for side in (-1, 1):
         for yi in range(len(ys) - 1):
             for zj in range(len(zs) - 1):
                 a, b, c, d = verts[(side, yi, zj)], verts[(side, yi, zj + 1)], verts[(side, yi + 1, zj + 1)], verts[(side, yi + 1, zj)]
                 centre = (a + b + c + d) / 4.0
-                tris = ((a, b, c), (a, c, d)) if (yi + zj) % 2 else ((a, b, d), (b, c, d))
+                flip = (math.sin(yi * 17.3 + zj * 5.9 + side) * 9871.17 % 1.0) < 0.5
+                tris = ((a, b, c), (a, c, d)) if flip else ((a, b, d), (b, c, d))
                 for tri in tris:
                     mid = (tri[0] + tri[1] + tri[2]) / 3.0
                     if mid.y > 9.0 and (mid - oculus).length < HOLE_RADIUS:
@@ -136,7 +138,7 @@ def floor(seed=3):
         return 0.05 * fbm((x * 0.5, 0, z * 0.5), 2, 5.0)
 
     def material(x, z):
-        return "rock_b" if fbm((x * 0.3, 0, z * 0.3), 2, 8.0) > 0.25 else "floor"
+        return "floor"
 
     part.grid(-HALL_W, HALL_W, BACK_Z, FRONT_Z, 0.8, height, material, jitter=0.3)
     return part
@@ -151,15 +153,16 @@ def back_wall(seed=4):
     for i, x in enumerate(xs):
         for j, y in enumerate(ys):
             bump = 0.0 if (i in (0, len(xs) - 1) or j == 0) else (fbm((x * 0.3, y * 0.3, 9.0), 3, seed) * 0.5 + 0.5) * 0.7
-            jx = (math.sin(i * 12.9 + j * 78.2) * 43758.5453 % 1.0 - 0.5) * 0.35 if 0 < i < len(xs) - 1 and 0 < j < len(ys) - 1 else 0.0
-            verts[(i, j)] = Vector((x + jx, y, BACK_Z - bump))
+            jx = (math.sin(i * 12.9 + j * 78.2) * 43758.5453 % 1.0 - 0.5) * 0.6 if 0 < i < len(xs) - 1 and 0 < j < len(ys) - 1 else 0.0
+            jy = (math.sin(i * 7.3 + j * 41.1) * 22578.31 % 1.0 - 0.5) * 0.55 if 0 < i < len(xs) - 1 and 0 < j < len(ys) - 1 else 0.0
+            verts[(i, j)] = Vector((x + jx, y + jy, BACK_Z - bump))
     for i in range(len(xs) - 1):
         for j in range(len(ys) - 1):
             a, b, c, d = verts[(i, j)], verts[(i + 1, j)], verts[(i + 1, j + 1)], verts[(i, j + 1)]
             cx, cy = (a.x + c.x) / 2, (a.y + c.y) / 2
             if abs(cx) > half_w(cy) + 0.3 or inside_arch(cx, cy):
                 continue
-            tris = ((a, b, c), (a, c, d)) if (i + j) % 2 else ((a, b, d), (b, c, d))
+            tris = ((a, b, c), (a, c, d)) if (math.sin(i * 9.7 + j * 3.3) * 6151.7 % 1.0) < 0.5 else ((a, b, d), (b, c, d))
             for tri in tris:
                 mid = (tri[0] + tri[1] + tri[2]) / 3.0
                 mat = "rock_b" if mid.y > 9.0 or fbm((mid.x * 0.25, mid.y * 0.25, 1.0), 2, 2.0) > 0.3 else "rock_a"
@@ -209,8 +212,8 @@ def corridor(seed=5):
     while y < ARCH_TOP * 0.97:
         y += 0.7
         ys.append(min(y, ARCH_TOP * 0.97))
-    zs = [BACK_Z - 0.4 - 1.3 * i for i in range(int((BACK_Z - CORRIDOR_END) / 1.3) + 1)]
-    cw = lambda yy: arch_hw(yy, 0.92) + 0.0
+    zs = [BACK_Z + 0.5 - 1.3 * i for i in range(int((BACK_Z - CORRIDOR_END) / 1.3) + 2)]
+    cw = lambda yy: arch_hw(yy, 1.0) + 0.0
     verts = {}
     for side in (-1, 1):
         for yi, y in enumerate(ys):
@@ -365,7 +368,7 @@ def hooded_statue(at, yaw, scale=1.0):
     part.box((0, 0.62, 0), (1.7, 0.44, 1.7), "rock_a", rot=(0, 8, 0))
     # robe: long folds, flaring at the hem
     part.lathe([(0.66, 0.84), (0.58, 1.4), (0.50, 2.1), (0.44, 2.7), (0.40, 3.1), (0.34, 3.35)], segs=9, mat="cloak", jitter=0.14, seed=3, closed_top=True)
-    part.lathe([(0.68, 0.84), (0.69, 0.98), (0.66, 1.12)], segs=9, mat="carpet_purple", closed_top=False, closed_bottom=False, jitter=0.04, seed=4)
+    part.lathe([(0.68, 0.84), (0.69, 0.94), (0.66, 1.02)], segs=9, mat="carpet_purple", closed_top=False, closed_bottom=False, jitter=0.04, seed=4)
     # shoulders and the cowl: a heavy drape that peaks back and down, not a pointed cone
     part.blob((0, 3.2, 0), (0.62, 0.3, 0.42), "carpet_purple", subdiv=1, amp=0.12, seed=2)
     part.blob((0, 3.78, 0.0), (0.46, 0.58, 0.46), "cloak", subdiv=2, amp=0.1, seed=6)
@@ -382,7 +385,7 @@ def hooded_statue(at, yaw, scale=1.0):
     for k, ang in enumerate((-62, -42, -21, 0, 21, 42, 62)):
         a = math.radians(ang)
         tall = 1.15 if k in (2, 3, 4) else 0.8
-        part.cyl((math.sin(a) * 0.22, 4.0, -0.38), (math.sin(a) * 0.95, 4.0 + tall * math.cos(a), -0.6), 0.14, 0.0, "cream", segs=4, spin=15)
+        part.cyl((math.sin(a) * 0.22, 4.0, -0.38), (math.sin(a) * 0.95, 4.0 + tall * math.cos(a), -0.6), 0.14, 0.0, "gold", segs=4, spin=15)
     if scale != 1.0:
         part.deform(m, lambda v: Vector((v.x * scale, v.y * scale, v.z * scale)))
     _place(part, m, at, yaw)
@@ -431,7 +434,7 @@ def column(at, h=11.0, seed=0):
     """The carved wooden post that carries the bell's arm."""
     part = Part("Column")
     x, _, z = at
-    part.lathe([(0.9, 0.0), (0.7, 0.4), (0.55, 1.2), (0.5, 3.0), (0.52, 5.0), (0.56, 7.5), (0.62, 9.5), (0.8, h - 0.6), (1.0, h)], segs=6, mat="wood_dark", center=(x, 0, z), jitter=0.05, seed=seed)
+    part.lathe([(0.9, 0.0), (0.7, 0.4), (0.55, 1.2), (0.5, 3.0), (0.52, 5.0), (0.56, 7.5), (0.62, 9.5), (0.8, h - 0.6), (1.0, h)], segs=6, mat="rock_b", center=(x, 0, z), jitter=0.13, seed=seed)
     for yb in (1.6, 5.2, 8.6):
         part.lathe([(0.62 - (0.08 if yb < 5 else 0.0), yb), (0.74, yb + 0.12), (0.62, yb + 0.28)], segs=6, mat="shelf", center=(x, 0, z), jitter=0.03, seed=seed + 1, closed_bottom=False, closed_top=False)
     return part
@@ -508,8 +511,8 @@ def carpet(seed=7):
     """The spiral carpet as real strips of quads laid 1.5 cm above the floor: band edges are mesh
     edges, so the spiral reads as bands (not as the floor's triangulation), with a dark border."""
     part = Part("Carpet")
-    pitch = 2.4
-    turns = 2.7
+    pitch = 3.0
+    turns = 2.2
     steps = int(turns * 72)
 
     def band(ph0, ph1, mat, lift):
@@ -527,8 +530,8 @@ def carpet(seed=7):
             part.quad_out(a0, a1, b1, b0, mat, Vector((a0.x, -5.0, a0.z)))
 
     CARPET_C_V = Vector((CARPET_C[0], 0.0, CARPET_C[1]))
-    band(-0.03, 0.37, "wood_dark", 0.012)      # dark border under the purple
+    band(-0.03, 0.37, "carpet_dark", 0.012)      # dark border under the purple
     band(0.00, 0.34, "carpet_purple", 0.02)
-    band(0.31, 0.67, "wood_dark", 0.012)
+    band(0.31, 0.67, "carpet_dark", 0.012)
     band(0.34, 0.64, "carpet_gold", 0.02)
     return part

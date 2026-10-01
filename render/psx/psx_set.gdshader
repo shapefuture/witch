@@ -16,11 +16,12 @@ global uniform float fog_density;
 
 uniform sampler2D albedo_tex : source_color, filter_nearest_mipmap, repeat_enable;
 uniform vec4 tint : source_color = vec4(1.0);
-uniform float gain = 1.25; // exposure: baked light is stored with the sunlit floor at 1.0
+uniform float gain = 1.05; // exposure: baked light is stored with the sunlit floor at 1.0
 uniform float sway = 0.0;
 uniform float glow = 0.0;
 uniform float fog_amount = 1.0;
 uniform float cutout = 0.0; // 1: texels with alpha < 0.5 are not drawn (the eye on the wall)
+uniform float snap_amount = 1.0; // 0: not snapped (the floor and the carpet inlay must stay coplanar)
 uniform float rim = 0.16; // warm edge light from the key's side: the baked world has no specular
 
 varying float v_dist;
@@ -44,7 +45,7 @@ void vertex() {
 	vec4 mv = MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
 	v_dist = length(mv.xyz);
 	v_height = world.y;
-	POSITION = snap(PROJECTION_MATRIX * mv);
+	POSITION = snap_amount > 0.5 ? snap(PROJECTION_MATRIX * mv) : PROJECTION_MATRIX * mv;
 	POSITION /= abs(POSITION.w); // affine texture mapping
 }
 

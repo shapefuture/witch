@@ -17,7 +17,7 @@ extends Room
 # Layout (x right, z toward the camera, metres):
 #     arch out (-4.2, -10)    tower + raccoon (-6.2, -5.4)      bell post (5.6, -3.0)
 #     bench (-3.2, -2.6)   machine (-1.6, -1.2)   Tomas (-0.1, -0.9)   crate (2.4, -0.4)
-#     witch starts (1.0, 1.0)           statue (2.6, -3.0)      light pool (0.8, -1.5)
+#     witch starts (1.0, 0.3)           statue (2.6, -3.0)      light pool (0.8, -1.5)
 
 const RADIUS := 9.5
 const BELL_POST_AT := Vector3(5.6, 0, -3.0)
@@ -41,7 +41,7 @@ var foreground: Node3D
 
 func _ready() -> void:
 	room_id = "clearing"
-	spawn_position = Vector3(1.0, 0.0, 1.0)
+	spawn_position = Vector3(1.0, 0.0, 0.3)
 	# Low and wide, looking up a little: tall shelves become cliffs, the witch is small among them.
 	var wide := wide_framing()
 	camera_focus = wide["focus"]
@@ -76,7 +76,7 @@ func hero_regions() -> Array:
 # The bolted master shot. tools/blender/build_hall.py bakes the camera-space foreground frame for
 # exactly this pose (CAMERA_AT / CAMERA_DISTANCE / CAMERA_PITCH / CAMERA_YAW): change both together.
 static func wide_framing() -> Dictionary:
-	return {"focus": Vector3(0.2, 2.9, -2.2), "distance": 11.0, "pitch_deg": -10.0, "yaw_deg": 24.0, "fov": 52.0, "roll_deg": 3.5}
+	return {"focus": Vector3(0.2, 3.3, -2.2), "distance": 11.0, "pitch_deg": -14.0, "yaw_deg": 24.0, "fov": 52.0, "roll_deg": 3.5}
 
 # Where the witch may walk: the open floor between the shelves, trimmed so that she is always inside
 # the frame of the bolted wide shot at 4:3 (the tightest aspect). The camera sits to the right, so
@@ -86,7 +86,7 @@ static func stage_allows(x: float, z: float) -> bool:
 	if z > 4.3:
 		return false
 	var left := maxf(-6.8, -4.4 + (z - 1.0) * 1.5)
-	var right := 6.8 if z <= -3.0 else 6.8 - (z + 3.0) * 0.6
+	var right := 6.4 if z <= -3.0 else 6.4 - (z + 3.0) * 0.8
 	return x >= left and x <= right
 
 func _build_environment() -> void:

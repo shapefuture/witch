@@ -115,11 +115,17 @@ func test_clicking_empty_ground_walks_there_and_closes_the_surface() -> void:
 	# any floor spot the option plaques are not hanging over (a tap on a plaque chooses it instead)
 	var ground := Vector3.ZERO
 	var size := game.get_viewport().get_visible_rect().size
-	for z in range(3, -6, -1):
-		for x in range(-6, 7):
-			var candidate := Vector3(x, 0, z)
+	var busy: Array[Vector3] = [game.witch.global_position]
+	for target in ["machine", "tomas", "bell", "path_out"]:
+		var at_target: Variant = game.room.focus_position(target)
+		if at_target is Vector3:
+			busy.append(Vector3(at_target.x, 0.0, at_target.z))
+	for zi in range(6, -11, -1):
+		for xi in range(-12, 13):
+			var candidate := Vector3(xi * 0.5, 0, zi * 0.5)
 			var at := game.camera.unproject_position(candidate)
-			if ground == Vector3.ZERO and ArchiveHall.stage_allows(x, z) and not game.camera.is_position_behind(candidate) and Rect2(Vector2.ZERO, size).grow(-10).has_point(at) and game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
+			var clear := busy.all(func(b: Vector3) -> bool: return b.distance_to(candidate) > 1.8)
+			if ground == Vector3.ZERO and clear and ArchiveHall.stage_allows(candidate.x, candidate.z) and not game.camera.is_position_behind(candidate) and Rect2(Vector2.ZERO, size).grow(-10).has_point(at) and game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
 				ground = candidate
 	ok(ground != Vector3.ZERO, "found floor the plaques do not cover")
 	_click(game, game.camera.unproject_position(ground))
