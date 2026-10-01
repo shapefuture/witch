@@ -23,8 +23,8 @@ import tomas  # noqa: E402
 BG = np.array((.14, .14, .14))
 
 
-def posed(surfaces, pose=None, hips=(0, 0, 0)):
-	m = tomas.skin_matrices(pose, hips)
+def posed(surfaces, pose=None, offsets=None):
+	m = tomas.skin_matrices(pose, offsets)
 	out = {}
 	for k, d in surfaces.items():
 		p = np.c_[d['P'], np.ones(len(d['P']))]

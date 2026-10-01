@@ -34,11 +34,11 @@ PALETTE = {
 	'skin': (.78, .56, .45), 'skin_d': (.64, .44, .36), 'neck': (.70, .49, .40),
 	'hair': (.50, .32, .19), 'hair_l': (.61, .41, .26), 'hair_d': (.36, .22, .14),
 	'shirt': (.80, .74, .63), 'shirt_d': (.68, .61, .52),
-	'vest': (.37, .24, .32), 'vest_d': (.29, .19, .26), 'vest_in': (.18, .12, .16),
+	'vest': (.35, .24, .30), 'vest_d': (.28, .19, .24), 'vest_in': (.18, .12, .16),
 	'belt': (.37, .22, .15), 'belt_d': (.25, .15, .11),
 	'pouch': (.53, .33, .19), 'pouch_d': (.43, .26, .15),
 	'metal': (.60, .59, .56), 'metal_d': (.40, .40, .39), 'handle': (.22, .15, .12),
-	'trousers': (.34, .32, .21), 'trousers_d': (.28, .26, .18), 'cuff': (.31, .27, .19),
+	'trousers': (.32, .30, .20), 'trousers_d': (.26, .24, .17), 'cuff': (.31, .27, .19),
 	'boot': (.34, .22, .15), 'boot_d': (.26, .17, .12), 'sole': (.14, .11, .09),
 	'white': (1., 1., 1.),
 }
@@ -63,6 +63,12 @@ for _s, _d in ((1, '_l'), (-1, '_r')):
 	BONES['thigh' + _d] = ('hips', (_s * .105, .62, 0))
 	BONES['shin' + _d] = ('thigh' + _d, (_s * .113, .345, .01))
 	BONES['foot' + _d] = ('shin' + _d, (_s * .118, .085, -.01))
+WRENCH_AXIS = A((-.12, -.26, .96)) / np.linalg.norm((-.12, -.26, .96))   # back end up, front end down
+WRENCH_HALF = .232                        # grip (the wrench's middle) to each jaw's centre is HALF + .030
+# the wrench hangs off its own bone at the fist, so `work` can choke up on it like a hammer
+BONES['wrench'] = ('hand_l', tuple(A(BONES['hand_l'][1]) + A((.12, -1, .03)) / np.linalg.norm((.12, -1, .03)) * .070
+	+ A((-.024, 0, 0))))
+TRANSLATED = ('hips', 'wrench')           # bones whose animations also move them
 BONE_NAMES = list(BONES)
 BONE_INDEX = {n: i for i, n in enumerate(BONE_NAMES)}
 
@@ -646,12 +652,8 @@ def build_belt(b):
 			'metal_d', 'hips')
 
 
-WRENCH_AXIS = unit((-.12, -.26, .96))     # back end up, front end down and a little in (the sheet)
-WRENCH_HALF = .232                        # grip to each jaw's centre is HALF + .030
-
-
 def wrench_grip():
-	return bone_pos('hand_l') + unit((.12, -1, .03)) * .070 + A((-.024, 0, 0))
+	return bone_pos('wrench')
 
 
 def build_wrench(b):
@@ -676,7 +678,7 @@ def build_wrench(b):
 			c, dd = idx(i + 1, ow, on), idx(i + 1, sw, sn)
 			sf += [(a, bb, c), (a, c, dd)]
 	shaft = dict(V=sv, F=A(sf, int), ax=A([grip + ax * t for t in np.linspace(-half, half, 5)]))
-	b.add(shaft, 'metal', 'hand_l')
+	b.add(shaft, 'metal', 'wrench')
 	for end in (-1, 1):
 		centre = grip + ax * end * (half + .030)
 		tilt = math.radians(15 * end)            # open side faces away from the shaft, tilted 15 deg
@@ -705,7 +707,7 @@ def build_wrench(b):
 		g = dict(V=vv, F=A(ff, int), ax=centre[None])
 		if np.dot(np.cross(u2, v2), nrm) < 0:    # the winding above assumes (u2, v2, nrm) right-handed
 			g['F'] = g['F'][:, [0, 2, 1]]
-		b.add(g, lambda c, n: 'metal_d' if abs(n @ nrm) < .5 else 'metal', 'hand_l', orient='keep')
+		b.add(g, lambda c, n: 'metal_d' if abs(n @ nrm) < .5 else 'metal', 'wrench', orient='keep')
 
 
 # ------------------------------------------------------------------------------------- assembly
@@ -893,7 +895,7 @@ def pose_idle(t, dur):
 		p['shoulder' + d] = side(s, 0, 0, .8 * b)
 		p['thigh' + d] = side(s, 0, 0, -1.0 * math.sin(w) * s)
 	p['hand_l'] = (0, 0, 0)
-	return p, (0, -.002 * (1 - b) * .5, 0)
+	return p, {'hips': (0, -.001 * (1 - b), 0)}
 
 
 def pose_walk(t, dur):
@@ -914,7 +916,7 @@ def pose_walk(t, dur):
 		p['forearm' + d] = side(s, -14 - 10 * max(0., -c), 0, 0)
 		p['shoulder' + d] = side(s, 0, 0, 0)
 	bob = .022 * math.cos(2 * w) - .006
-	return p, (0, bob, 0)
+	return p, {'hips': (0, bob, 0)}
 
 
 def pose_talk(t, dur):
@@ -933,16 +935,18 @@ def pose_talk(t, dur):
 	p['forearm_l'] = side(1, -8 + 4 * math.sin(w), 0, 0)
 	for s, d in ((1, '_l'), (-1, '_r')):
 		p['shoulder' + d] = side(s, 0, 0, 9 * shrug)
-	return p, (0, 0, 0)
+	return p, {}
 
 
-WORK_KEYS = [  # (phase, upper_arm_l, forearm_l, hand_l, chest, spine)
-	(0.00, (-35, 0, -16), (-50, 0, 0), (0, 0, 0), (0, 4, 0), (0, 0, 0)),
-	(0.40, (-122, -10, -26), (-105, 0, 0), (-38, 0, 0), (-4, 14, 0), (-3, 4, 0)),      # wind up
-	(0.55, (-78, -6, -22), (-34, 0, 0), (32, 0, 0), (6, -10, 0), (4, -4, 0)),          # strike
-	(0.60, (-74, -6, -22), (-30, 0, 0), (36, 0, 0), (7, -12, 0), (4, -5, 0)),          # impact
-	(0.70, (-80, -6, -20), (-42, 0, 0), (24, 0, 0), (5, -9, 0), (3, -3, 0)),           # recoil
-	(1.00, (-35, 0, -16), (-50, 0, 0), (0, 0, 0), (0, 4, 0), (0, 0, 0)),
+WORK_CHOKE = .10        # he chokes up: the fist slides this far behind the wrench's middle
+WORK_TURN = (30, 0, 0)  # and turns it in the fist so it continues his forearm like a hammer
+WORK_KEYS = [  # (phase, upper_arm_l, forearm_l, hand_l, chest, spine); an elbow-pivot chop
+	(0.00, (5, -6, 5), (-100, 0, 0), (0, 0, 0), (0, 4, 0), (0, 0, 0)),               # ready
+	(0.40, (-45, -6, 5), (-110, 0, 0), (-10, 0, 0), (-4, 14, 0), (-3, 4, 0)),         # wind up
+	(0.54, (-10, -6, -12), (-104, 0, 0), (-18, 0, 0), (5, -8, 0), (3, -3, 0)),        # strike
+	(0.60, (10, -6, -25), (-95, 0, 0), (-10, 0, 0), (7, -12, 0), (4, -5, 0)),         # impact: jaw at chest height
+	(0.70, (10, -6, 5), (-100, 0, 0), (-10, 0, 0), (5, -9, 0), (3, -3, 0)),           # recoil
+	(1.00, (5, -6, 5), (-100, 0, 0), (0, 0, 0), (0, 4, 0), (0, 0, 0)),
 ]
 
 
@@ -956,12 +960,13 @@ def pose_work(t, dur):
 	sp = keyed(ph, [(k[0], k[5]) for k in WORK_KEYS])
 	hit = float(keyed(ph, [(0, 0), (.58, 0), (.61, 1), (.75, 0), (1, 0)]))
 	p = {'upper_arm_l': tuple(ua), 'forearm_l': tuple(fa), 'hand_l': tuple(ha), 'chest': tuple(ch), 'spine': tuple(sp),
+		'wrench': WORK_TURN,
 		'hips': (0, -4, 0), 'neck': (6, 0, 0), 'head': (8 + 3 * hit, -4, 0),
-		'upper_arm_r': side(-1, -58, 0, -6), 'forearm_r': side(-1, -40, 0, 0), 'hand_r': side(-1, -20, 0, 0),
+		'upper_arm_r': (-50, 40, 60), 'forearm_r': (-20, 0, 0), 'hand_r': (-10, 0, 0),   # braced on the machine
 		'thigh_l': (-8, 0, 0), 'shin_l': (10, 0, 0), 'foot_l': (-2, 0, 0),
 		'thigh_r': (6, 0, 0), 'shin_r': (4, 0, 0), 'foot_r': (-10, 0, 0),
 		'shoulder_l': side(1, 0, 0, 4 - 6 * hit)}
-	return p, (0, -.01 - .006 * hit, .005)
+	return p, {'hips': (0, -.01 - .006 * hit, .005), 'wrench': wrench_slide(p['wrench'], WORK_CHOKE)}
 
 
 ANIMATIONS = {  # name: (pose function, seconds) - every loop starts where it ends
@@ -977,8 +982,15 @@ def local_rotations(pose):
 	return {n: qeuler(*pose.get(n, (0, 0, 0))) for n in BONE_NAMES}
 
 
-def bone_matrices(pose=None, hips_offset=(0, 0, 0)):
-	"""Global 4x4 per bone for a pose ({bone: euler degrees}); rest when pose is None."""
+def wrench_slide(euler, choke):
+	"""Offset that keeps the fist on the shaft `choke` metres behind the middle after turning it."""
+	return tuple(qmat(qeuler(*euler)) @ (WRENCH_AXIS * choke))
+
+
+def bone_matrices(pose=None, offsets=None):
+	"""Global 4x4 per bone for a pose ({bone: euler degrees}) plus translation offsets
+	({bone: xyz} for TRANSLATED bones); rest when both are None."""
+	offsets = offsets or {}
 	rots = local_rotations(pose or {})
 	g = {}
 	for n in BONE_NAMES:
@@ -986,14 +998,14 @@ def bone_matrices(pose=None, hips_offset=(0, 0, 0)):
 		m = np.eye(4)
 		m[:3, :3] = qmat(rots[n])
 		m[:3, 3] = A(p, float) - (A(BONES[parent][1], float) if parent else 0)
-		if n == 'hips':
-			m[:3, 3] += A(hips_offset, float)
+		if n in offsets:
+			m[:3, 3] += A(offsets[n], float)
 		g[n] = g[parent] @ m if parent else m
 	return g
 
 
-def skin_matrices(pose=None, hips_offset=(0, 0, 0)):
-	g = bone_matrices(pose, hips_offset)
+def skin_matrices(pose=None, offsets=None):
+	g = bone_matrices(pose, offsets)
 	out = np.zeros((len(BONE_NAMES), 4, 4))
 	for i, n in enumerate(BONE_NAMES):
 		inv = np.eye(4)
@@ -1002,11 +1014,12 @@ def skin_matrices(pose=None, hips_offset=(0, 0, 0)):
 	return out
 
 
-def wrench_tip(pose, hips_offset=(0, 0, 0)):
-	"""World position of the wrench's front jaw centre in a pose (for tuning the work hit)."""
-	tip = wrench_grip() + WRENCH_AXIS * (WRENCH_HALF + .030)
-	m = skin_matrices(pose, hips_offset)[BONE_INDEX['hand_l']]
-	return (m @ np.append(tip, 1))[:3]
+def wrench_tip(pose, offsets=None):
+	"""World positions of the wrench's front jaw centre and of the fist, in a pose."""
+	m = skin_matrices(pose, offsets)
+	tip = m[BONE_INDEX['wrench']] @ np.append(wrench_grip() + WRENCH_AXIS * (WRENCH_HALF + .030), 1)
+	fist = m[BONE_INDEX['hand_l']] @ np.append(wrench_grip(), 1)
+	return tip[:3], fist[:3]
 
 
 # --------------------------------------------------------------------------------------- export
@@ -1082,13 +1095,14 @@ def export_glb(surfaces, face_png, path):
 			if bn == 'root':
 				continue
 			q = A([qeuler(*s[0].get(bn, (0, 0, 0))) for s in samples], np.float32)
-			if np.allclose(q, A([0, 0, 0, 1], np.float32), atol=1e-6):
-				continue
 			samplers.append({'input': tin, 'output': accessor(q, 5126, 'VEC4'), 'interpolation': 'LINEAR'})
 			channels.append({'sampler': len(samplers) - 1, 'target': {'node': BONE_INDEX[bn], 'path': 'rotation'}})
-		tr = A([bone_pos('hips') + A(s[1], float) for s in samples], np.float32)
-		samplers.append({'input': tin, 'output': accessor(tr, 5126, 'VEC3'), 'interpolation': 'LINEAR'})
-		channels.append({'sampler': len(samplers) - 1, 'target': {'node': BONE_INDEX['hips'], 'path': 'translation'}})
+		for bn in TRANSLATED:                 # every animation keys every moving bone: no stale poses
+			parent = BONES[bn][0]
+			rest = bone_pos(bn) - bone_pos(parent)
+			tr = A([rest + A(s[1].get(bn, (0, 0, 0)), float) for s in samples], np.float32)
+			samplers.append({'input': tin, 'output': accessor(tr, 5126, 'VEC3'), 'interpolation': 'LINEAR'})
+			channels.append({'sampler': len(samplers) - 1, 'target': {'node': BONE_INDEX[bn], 'path': 'translation'}})
 		anims.append({'name': aname, 'samplers': samplers, 'channels': channels})
 
 	gltf = {'asset': {'version': '2.0', 'generator': 'witch tools/characters/tomas.py'},
