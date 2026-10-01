@@ -8,8 +8,8 @@ extends Node3D
 
 signal chosen(index: int)
 
-const ROW_HEIGHT := 28.0   # render pixels; about 8 mm on a phone held in landscape
-const GAP := 5.0
+const ROW_HEIGHT := 26.0   # render pixels; about 7 mm on a phone held in landscape
+const GAP := 4.0
 const PAD := 8.0
 const MIN_WIDTH := 112.0
 const WOOD := Color(1.18, 1.0, 0.86)

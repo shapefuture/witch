@@ -6,7 +6,7 @@ extends RefCounted
 # translated; callers fetch it from data/text/ru.json with the tr function.
 
 const FONT_PATH := "res://game/ui/fonts/pixel.ttf"
-const FONT_SIZE := 8
+const FONT_SIZE := 12
 const TITLE_SIZE := 16
 const ACCENT := Color(1.0, 0.62, 0.18)
 const PANEL_BG := Color(0.03, 0.03, 0.07, 0.86)

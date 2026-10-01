@@ -357,29 +357,30 @@ def tower(at, yaw, w, d, h, taper, seed, lean=0.0, tier_h=0.85, skip_tiers=None,
 
 
 def hooded_statue(at, yaw):
-    """A robed, hooded figure on a plinth, holding an open scroll, with a crown of crystals behind
-    its head. Cut from big flat folds so it reads as a statue even in shade."""
+    """A tall, slim robed figure with a pointed hood, an empty face and an open scroll held at the chest,
+    on a stepped plinth, with a crown of crystals behind its head. Big flat folds so it reads as a
+    statue (not a cone) even in shade."""
     part = Part("Statue")
     m = part.mark()
-    part.box((0, 0.2, 0), (2.4, 0.4, 2.4), "rock_b")
-    part.box((0, 0.65, 0), (1.8, 0.5, 1.8), "rock_a", rot=(0, 8, 0))
-    # the robe: an 11-sided cone with alternating deep and shallow facets (folds), a hem and a belt
-    folds = []
-    for ring in [(0.98, 0.9), (0.86, 1.3), (0.70, 2.0), (0.56, 2.6), (0.46, 3.0), (0.38, 3.35)]:
-        folds.append(ring)
-    part.lathe(folds, segs=11, mat="cloak", jitter=0.16, seed=3, closed_top=True)
-    part.lathe([(0.99, 0.9), (1.0, 1.0), (0.97, 1.08)], segs=11, mat="gold", closed_top=False, closed_bottom=False, jitter=0.05, seed=4)
-    part.lathe([(0.55, 2.52), (0.58, 2.62), (0.54, 2.7)], segs=11, mat="gold", closed_top=False, closed_bottom=False, jitter=0.03, seed=5)
-    part.blob((0, 3.15, 0), (0.66, 0.36, 0.48), "cloak", subdiv=1, amp=0.12, seed=2)
-    part.blob((0, 3.78, 0), (0.44, 0.58, 0.47), "cloak", subdiv=2, amp=0.12, seed=6)
-    part.blob((0, 3.7, 0.36), (0.25, 0.34, 0.16), "iron", subdiv=1, amp=0.05, seed=1)
+    part.box((0, 0.18, 0), (1.9, 0.36, 1.9), "rock_b")
+    part.box((0, 0.56, 0), (1.45, 0.4, 1.45), "rock_a", rot=(0, 8, 0))
+    # robe: long folds, flaring at the hem
+    part.lathe([(0.66, 0.76), (0.58, 1.3), (0.50, 2.0), (0.44, 2.6), (0.40, 3.05), (0.34, 3.3)], segs=9, mat="rock_a", jitter=0.14, seed=3, closed_top=True)
+    part.lathe([(0.68, 0.76), (0.69, 0.86), (0.66, 0.95)], segs=9, mat="gold", closed_top=False, closed_bottom=False, jitter=0.04, seed=4)
+    part.lathe([(0.45, 2.34), (0.47, 2.42), (0.44, 2.5)], segs=9, mat="gold", closed_top=False, closed_bottom=False, jitter=0.03, seed=5)
+    # shoulders, hood and the dark empty face
+    part.blob((0, 3.15, 0), (0.62, 0.3, 0.42), "rock_a", subdiv=1, amp=0.12, seed=2)
+    part.blob((0, 3.7, 0.02), (0.38, 0.52, 0.4), "rock_a", subdiv=2, amp=0.12, seed=6)
+    part.cyl((0, 4.05, 0.02), (0, 4.75, 0.14), 0.33, 0.0, "rock_a", segs=7)
+    part.blob((0, 3.66, 0.3), (0.24, 0.32, 0.18), "iron", subdiv=1, amp=0.05, seed=1)
+    # arms folded forward around the scroll
     for sx in (-1, 1):
-        part.cyl((sx * 0.52, 3.0, 0.1), (sx * 0.30, 2.45, 0.62), 0.15, 0.12, "cloak", segs=5)
-    part.cyl((-0.46, 2.45, 0.66), (0.46, 2.45, 0.66), 0.11, 0.11, "scroll", segs=6)
-    part.box((0.0, 2.02, 0.7), (0.66, 0.74, 0.03), "scroll", rot=(8, 0, 2))
+        part.cyl((sx * 0.46, 3.0, 0.05), (sx * 0.26, 2.5, 0.52), 0.13, 0.11, "rock_b", segs=5)
+    part.cyl((-0.4, 2.48, 0.56), (0.4, 2.48, 0.56), 0.1, 0.1, "scroll", segs=6)
+    part.box((0.0, 2.1, 0.62), (0.62, 0.7, 0.03), "scroll", rot=(8, 0, 2))
     for k, ang in enumerate((-55, -28, 0, 28, 55)):
         a = math.radians(ang)
-        part.cyl((math.sin(a) * 0.3, 4.0, -0.35), (math.sin(a) * 1.0, 4.0 + 1.0 * math.cos(a) + (0.3 if k in (1, 3) else 0.0), -0.55), 0.17, 0.0, "crystal", segs=4, spin=15)
+        part.cyl((math.sin(a) * 0.3, 4.2, -0.34), (math.sin(a) * 1.05, 4.2 + 1.0 * math.cos(a) + (0.3 if k in (1, 3) else 0.0), -0.55), 0.16, 0.0, "crystal", segs=4, spin=15)
     _place(part, m, at, yaw)
     return part
 
