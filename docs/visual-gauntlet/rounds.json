@@ -68,14 +68,37 @@
   {
     "round": 5,
     "dir": "r05",
-    "verdict": "pending",
-    "gap": "Awaiting the first blind judgement against the real reference.",
+    "verdict": "NO",
+    "gap": "Blind A/B against the real reference: the critic picked the reference and named the missing shaft of light as the biggest gap. With the closer camera the oculus was out of frame, so the beam read as a yellow haze with no source and the eye had nowhere to land.",
     "fixed": [
       "Camera from 17 m / 52 degrees to 11 m: pool, statue, arch and eye in one picture",
       "Calm architecture tiles, coarser irregular shell and floor, facets from orientation; median luma 0.28 to 0.21",
       "One bold pixel-stepped eye on a plaster patch (it had been repeated 5x4 by a UV bug)",
       "Statue rebuilt: its robe was never placed with its head because of a vertex-tracking bug; black hood void, scroll, crystal crown",
       "Chunkier shelf props, faceted purple orb in the foreground, pale sky patch, softer shaft and pool"
+    ],
+    "next": [
+      "A shaft with a visible source, defined edges and a landing on the characters",
+      "Arch stones read as a voxel checker, with light seams along the arch",
+      "Hood reads as a capirote, crystals as a mohawk, scroll as a flat card",
+      "Brass machine, violet gem and gold pips too hot; palette runs mustard and electric purple",
+      "Foreground gem and boulder mean nothing; shelves are uniform book blocks",
+      "Tap targets 25 px (4.7 mm): too small for a fingertip"
+    ]
+  },
+  {
+    "round": 6,
+    "dir": "r06",
+    "verdict": "pending",
+    "gap": "Awaiting the second blind judgement.",
+    "fixed": [
+      "Sun at 57 degrees, its hole at the top of the frame: a diagonal god-ray from a visible source raking behind the statue, 1 m clear of it",
+      "Arch back-left, tower moved off the path, one-material arch stones that overlap the opening, compass plate (it read as a halo) removed",
+      "Statue: draped cowl, rolled scrolls at the chest, pale crystal candelabra, 30% taller",
+      "Palette: olive gold, mauve purple, dusty books, dimmer brass and gem, cooler corridor spill",
+      "Faceted purple orb on a brass stand; chunkier shelf contents with more glyph crates and scroll piles",
+      "Plaques 38 px with 8 px gaps and a small brass title tag; safe margin 4.5% of width; lens warp folds instead of smearing",
+      "Touch re-verified in the Web build: tap the machine, plaques open, choose one"
     ],
     "next": [
       "Critic's list"
