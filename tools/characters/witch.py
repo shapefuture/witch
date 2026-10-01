@@ -315,21 +315,7 @@ def build_parts(M, face_tex_name='face', spec=None):
         for (r, c, k, sz, fu, fv) in dec:
             stamp(sg, r, c, fu, fv, k, sz, (.4 if k == 'm' else 0) + rnd.uniform(-.3, .3), up=(s * 1., 0, 0) if c in (2, 6) else (0, 1, 0),
                   bone=('arm_upper' + d if r < 2 else 'arm_lower' + d), off=.009, lo=True)
-    # right hand (-X): fist, finger bars, thumb, wand through the fingers
-    add(blob((-1.0, 2.13, -.005), (.056, .074, .062), (0, 1, 0), 7, 3, .002, 3.0), 'skin', bone='hand.R')
-    for yy in (2.175, 2.135, 2.095, 2.055):
-        add(blob((-1.08, yy, .02), (.052, .0155, .042), (0, 1, 0), 5, 2, .0, 3.), 'skin', bone='hand.R')
-    add(blob((-1.045, 2.222, .03), (.04, .03, .036), (.6, 1, .3), 5, 2), 'skin', bone='hand.R')
-    wd = tube([(-.998, 1.98, .055), (-1.20, 2.49, .055)], [.016, .013], 5, 1., (0, 0, 1), cap=(.01, .012))
-    add(wd, 'wand', bone='hand.R')
-    sv = [(0, 0, .045)] + [((.13 if k % 2 == 0 else .058) * math.cos(math.pi / 2 + k * math.pi / 5), (.13 if k % 2 == 0 else .058) * math.sin(math.pi / 2 + k * math.pi / 5), 0) for k in range(10)] + [(0, 0, -.045)]
-    sF = [(0, 1 + k, 1 + (k + 1) % 10) for k in range(10)] + [(11, 1 + (k + 1) % 10, 1 + k) for k in range(10)]
-    sv = [(x - 1.215, y + 2.58, z + .055) for x, y, z in sv]
-    add(dict(V=A(sv), F=A(sF, int), ax=A([(-1.215, 2.58, .055)]), fb=None), 'wandstar', bone='hand.R')
-    # left hand (+X): flat slab of joined fingers, separate thumb; the bird stands on it
-    add(loft([((.95, 2.128, 0), (0, .032, 0), (0, 0, .062)), ((1.06, 2.12, 0), (0, .030, 0), (0, 0, .07)), ((1.18, 2.105, 0), (0, .024, 0), (0, 0, .062)),
-              ((1.30, 2.083, 0), (0, .012, 0), (0, 0, .03))], 7, 2.4, cap=(.03, .014), j=.002), 'skin', bone='hand.L')
-    add(blob((1.09, 2.075, .075), (.017, .05, .018), (.7, -.6, .4), 5, 2), 'skin', bone='hand.L')
+    build_hands_wand(M)
 
     # ===== bird: songbird standing on the back of her left hand, beak along +Z in rest
     build_bird(M, A((1.12, 2.155, 0)), face=(0, 0, 1))
@@ -398,6 +384,25 @@ def build_parts(M, face_tex_name='face', spec=None):
     return M
 
 
+def build_hands_wand(M):
+    add = M.add
+    # right hand (-X): fist, finger bars, thumb, wand through the fingers
+    add(blob((-1.0, 2.13, -.005), (.056, .074, .062), (0, 1, 0), 7, 3, .002, 3.0), 'skin', bone='hand.R')
+    for yy in (2.175, 2.135, 2.095, 2.055):
+        add(blob((-1.08, yy, .02), (.052, .0155, .042), (0, 1, 0), 5, 2, .0, 3.), 'skin', bone='hand.R')
+    add(blob((-1.045, 2.222, .03), (.04, .03, .036), (.6, 1, .3), 5, 2), 'skin', bone='hand.R')
+    wd = tube([(-.998, 1.98, .055), (-1.20, 2.49, .055)], [.016, .013], 5, 1., (0, 0, 1), cap=(.01, .012))
+    add(wd, 'wand', bone='hand.R')
+    sv = [(0, 0, .045)] + [((.13 if k % 2 == 0 else .058) * math.cos(math.pi / 2 + k * math.pi / 5), (.13 if k % 2 == 0 else .058) * math.sin(math.pi / 2 + k * math.pi / 5), 0) for k in range(10)] + [(0, 0, -.045)]
+    sF = [(0, 1 + k, 1 + (k + 1) % 10) for k in range(10)] + [(11, 1 + (k + 1) % 10, 1 + k) for k in range(10)]
+    sv = [(x - 1.215, y + 2.58, z + .055) for x, y, z in sv]
+    add(dict(V=A(sv), F=A(sF, int), ax=A([(-1.215, 2.58, .055)]), fb=None), 'wandstar', bone='hand.R')
+    # left hand (+X): flat slab of joined fingers, separate thumb; the bird stands on it
+    add(loft([((.95, 2.128, 0), (0, .032, 0), (0, 0, .062)), ((1.06, 2.12, 0), (0, .030, 0), (0, 0, .07)), ((1.18, 2.105, 0), (0, .024, 0), (0, 0, .062)),
+              ((1.30, 2.083, 0), (0, .012, 0), (0, 0, .03))], 7, 2.4, cap=(.03, .014), j=.002), 'skin', bone='hand.L')
+    add(blob((1.09, 2.075, .075), (.017, .05, .018), (.7, -.6, .4), 5, 2), 'skin', bone='hand.L')
+
+
 def build_bird(M, bs, face=(0, 0, 1), sc=1.1):
     """Upright songbird: pale head, folded wings, tail swept up and back, pink feet.
     Authored with the beak along -X (the source), then turned so it looks along `face`."""
@@ -424,32 +429,64 @@ def build_bird(M, bs, face=(0, 0, 1), sc=1.1):
         xf(p, R, bs)
 
 
+def hairmat(R, mats=('hair_d', 'hair')):
+    return [mats[0]] * (R // 3) + [mats[1]] * (R - R // 3)
+
+
+def wavy(pts, nd, amp, fr, axis=0):
+    pts = [list(p) for p in pts]
+    for i in range(min(nd, len(pts))):
+        pts[i][axis] += math.sin(fr * i) * amp * min(1, i / 4.)
+    return pts
+
+
+def rcurve(Mn, r0, r1, swell=.10, fr=.6, pw=.85):
+    return [(r0 + (r1 - r0) * (i / (Mn - 1)) ** pw) * (1 + swell * math.sin(fr * i)) for i in range(Mn)]
+
+
+def hair_lock(M, pts, rad, s, bone, chain=False, ratio=.5):
+    """A flat paper-strip ribbon along `pts` (x mirrored by s), root darker than the rest."""
+    pts = A(pts, float)
+    pts[:, 0] *= s
+    R = len(pts)
+    tb = tube(pts, rad, 4, ratio, (0, 0, 1), cap=(.05, rad[-1] * 2.6), e=2., o=.5)
+    if chain:
+        d = '.L' if s > 0 else '.R'
+        J, W = M.chainw(tb['rid'] / (R - 1), [.45], ['hairB' + d, 'hairT' + d], [.25])
+        M.add(tb, hairmat(R), J, W)
+    else:
+        M.add(tb, hairmat(R), bone=bone)
+
+
+def hair_face(M, s, lock):
+    """Head-space hair around the face: cheek ringlet, side curtain, fringe, temple curls."""
+    d = [(.235, 2.80, .12), (.25, 2.70, .15), (.262, 2.60, .165), (.255, 2.50, .16), (.28, 2.40, .15), (.33, 2.32, .13)]
+    pts = list(catmull(d, 3))
+    pts = wavy(pts, len(pts), .008, .8)
+    pts += spiral_e(pts[-1], (.42, 2.29), .08, .08, 1.3, 1, 9, (-.03 if s > 0 else .08))
+    lock(pts, rcurve(len(pts), .10, .04, .10, .7, .7), s, 'head', False, .5)
+    # side curtain: hair filling the gap between the face and the hood's edge
+    d = [(.27, 2.80, .02), (.30, 2.66, .06), (.31, 2.52, .07), (.31, 2.40, .04), (.33, 2.31, -.01)]
+    lock(catmull(d, 2), [.07, .09, .09, .08, .05], s, 'head', False, .45)
+    # fringe band under the flower crown
+    d = [(.0, 2.83, .195), (.09, 2.815, .205), (.17, 2.775, .205), (.225, 2.70, .195)]
+    lock(catmull(d, 2), [.02, .05, .05, .03], s, 'head', False, .4)
+    # temple curls growing from behind the hood
+    d = [(.25, 2.58, -.02), (.29, 2.69, -.06), (.31, 2.78, -.08)]
+    pts = list(catmull(d, 2))
+    pts += spiral_e(pts[-1], (.415, 2.82), .10, .10, 1.2, -1, 9, -.03)
+    lock(pts, rcurve(len(pts), .115, .035), s, 'head', False, .5)
+    d = [(.30, 2.50, -.06), (.36, 2.55, -.07), (.42, 2.58, -.07)]
+    pts = list(catmull(d, 2))
+    pts += spiral_e(pts[-1], (.50, 2.49), .10, .10, 1.25, 1, 9, -.04)
+    lock(pts, rcurve(len(pts), .105, .032), s, 'head', False, .5)
+
+
 def build_hair(M):
     """Flat paper-strip ribbons: fringe, cheek ringlets and side curls (rigid on the head, head
     space), and the mass of back locks ending in spirals (chained hairB -> hairT, model space)."""
-    def hairmat(R):
-        return ['hair_d'] * (R // 3) + ['hair'] * (R - R // 3)
-
-    def wavy(pts, nd, amp, fr, axis=0):
-        pts = [list(p) for p in pts]
-        for i in range(min(nd, len(pts))):
-            pts[i][axis] += math.sin(fr * i) * amp * min(1, i / 4.)
-        return pts
-
-    def rcurve(Mn, r0, r1, swell=.10, fr=.6, pw=.85):
-        return [(r0 + (r1 - r0) * (i / (Mn - 1)) ** pw) * (1 + swell * math.sin(fr * i)) for i in range(Mn)]
-
-    def lock(pts, rad, s, bone, chain=False, ratio=.5, side=None):
-        pts = A(pts, float)
-        pts[:, 0] *= s
-        R = len(pts)
-        tb = tube(pts, rad, 4, ratio, (0, 0, 1), cap=(.05, rad[-1] * 2.6), e=2., o=.5)
-        if chain:
-            d = '.L' if s > 0 else '.R'
-            J, W = M.chainw(tb['rid'] / (R - 1), [.45], ['hairB' + d, 'hairT' + d], [.25])
-            M.add(tb, hairmat(R), J, W)
-        else:
-            M.add(tb, hairmat(R), bone=bone)
+    def lock(pts, rad, s, bone, chain=False, ratio=.5):
+        hair_lock(M, pts, rad, s, bone, chain, ratio)
 
     def cz(x, y, off):
         """z just behind the cape's back surface at (x, y), lifted `off`."""
@@ -485,28 +522,7 @@ def build_hair(M):
         pts += spiral_e(pts[-1], (.50, 1.60), .10, .11, 1.2, -1, 7, d[-1][2] - .02)
         lock(pts, rcurve(len(pts), .15, .04), s, None, True, .45)
 
-        # --- head space (rigid on head, scaled with it)
-        # front ringlet hugging the cheek, S-wave, curling out at the shoulder
-        d = [(.235, 2.80, .12), (.25, 2.70, .15), (.262, 2.60, .165), (.255, 2.50, .16), (.28, 2.40, .15), (.33, 2.32, .13)]
-        pts = list(catmull(d, 3))
-        pts = wavy(pts, len(pts), .008, .8)
-        pts += spiral_e(pts[-1], (.42, 2.29), .08, .08, 1.3, 1, 9, (-.03 if s > 0 else .08))
-        lock(pts, rcurve(len(pts), .10, .04, .10, .7, .7), s, 'head', False, .5)
-        # side curtain: hair filling the gap between the face and the hood's edge
-        d = [(.27, 2.80, .02), (.30, 2.66, .06), (.31, 2.52, .07), (.31, 2.40, .04), (.33, 2.31, -.01)]
-        lock(catmull(d, 2), [.07, .09, .09, .08, .05], s, 'head', False, .45)
-        # fringe band under the flower crown
-        d = [(.0, 2.83, .195), (.09, 2.815, .205), (.17, 2.775, .205), (.225, 2.70, .195)]
-        lock(catmull(d, 2), [.02, .05, .05, .03], s, 'head', False, .4)
-        # side curls growing from behind the hood at temple height (both sides, as the sheet)
-        d = [(.25, 2.58, -.02), (.29, 2.69, -.06), (.31, 2.78, -.08)]
-        pts = list(catmull(d, 2))
-        pts += spiral_e(pts[-1], (.415, 2.82), .10, .10, 1.2, -1, 9, -.03)
-        lock(pts, rcurve(len(pts), .115, .035), s, 'head', False, .5)
-        d = [(.30, 2.50, -.06), (.36, 2.55, -.07), (.42, 2.58, -.07)]
-        pts = list(catmull(d, 2))
-        pts += spiral_e(pts[-1], (.50, 2.49), .10, .10, 1.25, 1, 9, -.04)
-        lock(pts, rcurve(len(pts), .105, .032), s, 'head', False, .5)
+        hair_face(M, s, lock)
 
 
 def remap_y(M, y0, y1, k):
@@ -574,19 +590,23 @@ def base_pose(t=0., breathe=0.):
     return combine(R, L)
 
 
-def clip_set(M):
+def clip_set(M, base=None, extra=None):
+    """idle, walk, talk, cast. `base()` gives the arm pose; `extra(name, t, r)` adds bones."""
+    base = base or base_pose
     names = M.names
     S = math.sin
     tau = 2 * math.pi
 
-    def full(r):
+    def full(r, name=None, t=0.):
+        if extra and name:
+            extra(name, t, r)
         for n in names:
             r.setdefault(n, np.eye(3))
         return r
 
     def idle(t):
         p = t / 4.0
-        r = dict(base_pose())
+        r = dict(base())
         r['spine'] = rx_(1.2 * S(tau * p)) @ rz_(.6 * S(tau * p * 2 + .4))
         r['neck'] = ry_(4 * S(tau * p - .3))
         r['head'] = rz_(3 * S(tau * p + .8)) @ rx_(1.5 * S(tau * p * 2))
@@ -596,12 +616,12 @@ def clip_set(M):
             r['hairB' + d] = rz_(sg * 2.5 * S(tau * p + .2))
             r['hairT' + d] = rz_(sg * 4 * S(tau * p - .4)) @ rx_(2 * S(tau * p))
             r['arm_upper' + d] = r['arm_upper' + d] @ rx_(1.5 * S(tau * p + .3 * sg))
-        return full(r), {'hips': (0, .006 * S(tau * p * 2), 0)}
+        return full(r, 'idle', t), {'hips': (0, .006 * S(tau * p * 2), 0)}
 
     def walk(t):
         p = t / 1.0                      # one full cycle (two steps) per second, in place
         ph = tau * p
-        r = dict(base_pose())
+        r = dict(base())
         sw = 24 * S(ph)
         r['leg.L'] = rx_(-sw)
         r['leg.R'] = rx_(sw)
@@ -618,12 +638,12 @@ def clip_set(M):
             r['hairT' + d] = rz_(sg * 5 * S(2 * ph - .8)) @ rx_(6 + 3 * S(2 * ph))
             r['arm_upper' + d] = r['arm_upper' + d] @ rx_(-sg * 6 * S(ph))
         bob = .035 * (1 - math.cos(2 * ph)) / 2
-        return full(r), {'hips': (0, bob - .02, 0)}
+        return full(r, 'walk', t), {'hips': (0, bob - .02, 0)}
 
     def talk(t):
         p = t / 3.0
         ph = tau * p
-        r = dict(base_pose())
+        r = dict(base())
         r['head'] = rx_(4 * S(ph * 3) * (.6 + .4 * S(ph))) @ rz_(5 * S(ph + .5))
         r['neck'] = ry_(6 * S(ph))
         r['spine'] = rx_(1.5 * S(ph * 2)) @ ry_(3 * S(ph))
@@ -636,13 +656,13 @@ def clip_set(M):
         for d, sg in (('.L', 1), ('.R', -1)):
             r['hairB' + d] = rz_(sg * 2 * S(ph + .2))
             r['hairT' + d] = rz_(sg * 3 * S(ph - .4))
-        return full(r), {'hips': (0, .004 * S(ph * 2), 0)}
+        return full(r, 'talk', t), {'hips': (0, .004 * S(ph * 2), 0)}
 
     def cast(t):
         # 0-.35 s raise the wand overhead, then hold it there with a small flourish (ends raised)
         k = min(1., t / .35)
         k = k * k * (3 - 2 * k)
-        r = dict(base_pose())
+        r = dict(base())
         up = arm_pose(-1, (-.30, .78, .30), (-.10, .95, .30))
         lo = arm_pose(-1, (-.50, -.84, .20), (-.42, .22, .88))
         for n_ in up:
@@ -657,7 +677,7 @@ def clip_set(M):
         for d, sg in (('.L', 1), ('.R', -1)):
             r['hairB' + d] = rz_(sg * 6 * k) @ rx_(5 * k)
             r['hairT' + d] = rz_(sg * (9 * k + 2 * S(fl * 8))) @ rx_(8 * k)
-        return full(r), {'hips': (0, .02 * k, 0)}
+        return full(r, 'cast', t), {'hips': (0, .02 * k, 0)}
 
     return [glb.Clip('idle', 4.0, idle), glb.Clip('walk', 1.0, walk), glb.Clip('talk', 3.0, talk), glb.Clip('cast', 1.6, cast, loop=False)]
 
@@ -694,7 +714,7 @@ def export_character(name, M, at, clips, out_dir, preview, extras, mesh_name):
     arr = bake_uvs(tris, at, M.COL)
     top = arr['P'][:, 1].max()
     # the hood top (not antlers) sets the scale: measure only hood/hat materials
-    hood_keys = {'purple', 'hood', 'felt_hood'}
+    hood_keys = {'purple', 'maroon'}
     keys = [t['key'] for t in tris for _ in range(3)]
     tex = [t['tex'] or '' for t in tris for _ in range(3)]
     hood_y = [p[1] for p, k, tx in zip(arr['P'], keys, tex) if k in hood_keys or tx.startswith('hood')]
