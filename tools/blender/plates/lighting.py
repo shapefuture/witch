@@ -135,7 +135,7 @@ def rig(scene, coll, mats, candles, sun_dir=None, dusk=False):
     area(scene, "StairLight", (sx - 3.4, 4.3, sz), (sx + 0.4, 1.2, sz), 1.6, 160.0, (1.0, 0.74, 0.45))
     # light spilling down the stair washes the passage's left wall, the one the camera sees
     ax = L.ARCH_X
-    area(scene, "PassageLight", (ax + PASS_HW - 0.35, 3.6, L.ARCH_WALL_Z - 0.9), (ax - PASS_HW, 2.4, L.ARCH_WALL_Z - 1.6), 0.6, 280.0, (1.0, 0.88, 0.7))
+    area(scene, "PassageLight", (ax + PASS_HW - 0.35, 3.6, L.ARCH_WALL_Z - 0.9), (ax - PASS_HW, 2.4, L.ARCH_WALL_Z - 1.6), 0.6, 600.0, (1.0, 0.88, 0.7))
     # the second room: a lamp over its shelves
     from .hall import THIRD_X, PASS_END_Z, ROOM2_BACK_Z
     area(scene, "Room2Light", (THIRD_X + 0.4, 4.2, PASS_END_Z - 1.2), (THIRD_X, 1.2, ROOM2_BACK_Z), 1.4, 20.0, (1.0, 0.72, 0.42))

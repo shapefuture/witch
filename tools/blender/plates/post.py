@@ -94,8 +94,10 @@ def paint_over(img, z, key_share, glow_share, fov_v, haze_col=(0.62, 0.53, 0.38)
     bloom += (blur(edge, 6 * s) * 0.18 * strength)[..., None] * np.array([1.0, 0.86, 0.6], np.float32)
     bloom += (blur(glow_share * l, 8 * s) * 0.25 * strength)[..., None] * np.array([1.0, 0.7, 0.4], np.float32)
     out = out + bloom * strength
-    # darker corners, measured in units of the frame height so every aspect agrees
+    # darker corners, measured in units of the frame height so every aspect agrees; the near floor
+    # at the bottom of the frame sinks into shade like the reference's
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    out = out * (1.0 - 0.3 * strength * smoothstep(0.8, 1.0, yy / h))[..., None]
     r = np.hypot((xx - w / 2) / (h / 2), (yy - h / 2) / (h / 2)) / math.hypot(16 / 9, 1.0)
     out = out * (1.0 - 0.38 * strength * smoothstep(0.45, 1.05, r))[..., None]
     return np.clip(out, 0, 1)

@@ -37,13 +37,13 @@ class Library:
 
     def _build(self):
         # scroll bundles: 3-2-1 pyramids of scrolls, rolled ends facing out
-        for k, (r, n) in enumerate(((0.085, 3), (0.1, 2), (0.075, 4))):
+        for k, (r, n) in enumerate(((0.12, 3), (0.145, 2), (0.105, 4))):
             b = Builder("scrolls%d" % k)
             row, y = n, r
             while row > 0:
                 for i in range(row):
                     x = (i - (row - 1) / 2) * 2 * r * 1.02
-                    faces = b.cyl((x, y, -0.27), (x, y, 0.27), r, r, "scroll", segs=7, spin=10 * i)
+                    faces = b.cyl((x, y, -0.3), (x, y, 0.3), r, r, "scroll", segs=7, spin=10 * i)
                     caps = [f for f in faces if len(f.verts) == 7]
                     end = b._mi("scroll_end")
                     for f in caps:
@@ -60,22 +60,22 @@ class Library:
         # glyph crates: the front carries one glyph of the atlas
         for k in range(6):
             b = Builder("crate%d" % k)
-            faces = b.box((0, 0.21, 0), (0.46, 0.42, 0.46), "crate", r=(0, 0, 0), skip=("-y",))
+            faces = b.box((0, 0.27, 0), (0.58, 0.54, 0.56), "crate", r=(0, 0, 0), skip=("-y",))
             front = [f for f in faces if f.normal.z > 0.9]
             gi = b._mi("crate_glyph")
             for f in front:
                 f.material_index = gi
             b.face_uv(front, cell=(k % 4, k // 4 + (1 if k > 3 else 0)), cells=4, inset=0.06)
-            b.box((0, 0.425, 0), (0.48, 0.03, 0.48), "wood_dark")
+            b.box((0, 0.545, 0), (0.6, 0.03, 0.58), "wood_dark")
             self._proto("crate%d" % k, b)
         # octagon rings on a foot
         for k, mat in enumerate(("stone_warm", "brass", "wood")):
             b = Builder("ring%d" % k)
-            R, t = 0.19, 0.055
+            R, t = 0.26, 0.07
             for i in range(8):
                 a = math.tau * (i + 0.5) / 8
                 seg = 2 * R * math.tan(math.pi / 8) + 0.012
-                b.box((math.cos(a) * R, 0.27 + math.sin(a) * R, 0), (t, seg, 0.07), mat, r=(0, 0, math.degrees(a)))
+                b.box((math.cos(a) * R, 0.36 + math.sin(a) * R, 0), (t, seg, 0.09), mat, r=(0, 0, math.degrees(a)))
             b.box((0, 0.04, 0), (0.18, 0.08, 0.14), "wood_dark")
             self._proto("ring%d" % k, b)
         # finials: a short spire with a purple gem
@@ -111,7 +111,7 @@ class Library:
 
 
 KINDS = ["books", "scrolls", "crates", "rings", "finials", "candles", "jars"]
-WEIGHTS = [0.30, 0.26, 0.20, 0.07, 0.06, 0.04, 0.07]
+WEIGHTS = [0.16, 0.36, 0.28, 0.08, 0.05, 0.03, 0.04]
 
 
 def fill_board(lib, origin, along, out, length, depth, clear, rng, run_id, skip=None, gap_rate=0.12, candles=None):
@@ -142,8 +142,8 @@ def fill_board(lib, origin, along, out, length, depth, clear, rng, run_id, skip=
             if x >= length - 0.12 or (skip and skip[0] - 0.05 <= x <= skip[1]):
                 break
             if kind == "books":
-                w = rng.uniform(0.07, 0.15)
-                h = min(clear - 0.06, rng.uniform(0.45, 0.82) * (0.8 + 0.4 * (i % 3 == 1)))
+                w = rng.uniform(0.09, 0.18)
+                h = min(clear - 0.06, rng.uniform(0.55, 0.88) * (0.85 + 0.3 * (i % 3 == 1)))
                 d = min(depth - 0.08, rng.uniform(0.36, 0.5))
                 lean = 0.0
                 c = colours[0] if rng.random() < 0.7 else colours[1]
@@ -152,21 +152,21 @@ def fill_board(lib, origin, along, out, length, depth, clear, rng, run_id, skip=
                 x += w + 0.008
             elif kind == "scrolls":
                 proto = "scrolls%d" % (variant % 3)
-                width = {0: 0.52, 1: 0.41, 2: 0.62}[variant % 3]
+                width = {0: 0.74, 1: 0.6, 2: 0.88}[variant % 3]
                 if x + width > length:
                     break
-                p = origin + along * (x + width / 2) + out * (-0.3)
+                p = origin + along * (x + width / 2) + out * (-0.33)
                 lib.place(proto, p, yaw, (1, 1, 1), tag)
                 x += width + rng.uniform(0.02, 0.08)
             elif kind == "crates":
-                s = rng.uniform(0.85, 1.15) * min(1.0, (clear - 0.08) / 0.44)
-                p = origin + along * (x + 0.24 * s) + out * (-0.26 * s - 0.02)
+                s = rng.uniform(0.85, 1.12) * min(1.0, (clear - 0.08) / 0.56)
+                p = origin + along * (x + 0.3 * s) + out * (-0.3 * s - 0.02)
                 lib.place("crate%d" % ((variant + i) % 6 if rng.random() < 0.3 else variant), p, yaw + rng.uniform(-5, 5), (s, s, s), tag)
-                x += 0.48 * s + rng.uniform(0.02, 0.06)
+                x += 0.6 * s + rng.uniform(0.02, 0.06)
             elif kind == "rings":
-                p = origin + along * (x + 0.21) + out * (-0.18)
+                p = origin + along * (x + 0.3) + out * (-0.2)
                 lib.place("ring%d" % (variant % 3), p, yaw, (1, 1, 1), tag)
-                x += 0.46
+                x += 0.64
             elif kind == "finials":
                 p = origin + along * (x + 0.1) + out * (-0.2)
                 lib.place("finial", p, yaw, (1, 1, 1), tag)

@@ -473,7 +473,7 @@ def tower_frame(name, at, yaw, w, d, h, spire, coll, mats, taper=0.16, seed=0):
     return obj, tiers
 
 
-def right_post(coll, mats, z=-0.35):
+def right_post(coll, mats, z=0.3):
     """A pale stone post standing proud of the right bookcases (the lit vertical in the reference)."""
     b = Builder("RightPost")
     x = L.NAVE_RIGHT + 0.02
