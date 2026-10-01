@@ -74,6 +74,10 @@ func present(speaker: String, text: String, anchor_world: Vector3, narration: bo
 	add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.offset(outline, Vector2(2, -2))), Diegetic.slab_material(Color(0, 0, 0, 0.5), "", 10), -0.2))
 	add_child(Diegetic.mesh_instance(SlabMesh.fill(outline), Diegetic.slab_material(border, "wood_dark", 11), -0.1))
 	add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.inset(outline, 2.0)), Diegetic.slab_material(tint, "scroll", 12), 0.0))
+	# a lit bevel: a lighter slab nudged up-left and a darker one down-right under the face, so the
+	# bubble reads as a thick carved piece rather than a flat sticker
+	add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.offset(SlabMesh.inset(outline, 2.0), Vector2(-1, 1))), Diegetic.slab_material(Color(1.0, 1.0, 0.95, 0.55), "", 12), 0.05))
+	add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.offset(SlabMesh.inset(outline, 2.0), Vector2(1.5, -1.5))), Diegetic.slab_material(Color(0.25, 0.17, 0.10, 0.45), "", 12), -0.02))
 	if narration:
 		# the trail of thought: three shrinking dots from the cloud toward the thinker
 		for k in range(3):
@@ -141,7 +145,7 @@ func _place() -> void:
 		return
 	var overshoot := 1.0 + sin(minf(_grow, 1.0) * PI) * 0.06 * (1.0 - _grow)
 	var bob := floorf(sin(_clock * 2.4) * 0.5 + 0.5)
-	global_transform = Diegetic.transform_for(camera, get_viewport().get_visible_rect().size, _rect.position + Vector2(0, bob), _grow * overshoot, _pivot)
+	global_transform = Diegetic.transform_for(camera, get_viewport().get_visible_rect().size, _rect.position + Vector2(0, bob), _grow * overshoot, _pivot, true)
 
 func _clear() -> void:
 	for child in get_children():

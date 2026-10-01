@@ -15,8 +15,8 @@ from .common import Part, fbm, smoothstep
 HALL_W = 9.5
 BACK_Z = -10.0
 FRONT_Z = 13.0
-STRAIGHT = 10.0      # walls are vertical this high, then the vault closes in
-H = 15.5
+STRAIGHT = 9.0       # walls are vertical this high, then the vault closes in
+H = 14.0
 CARPET_C = (0.8, -1.8)
 ARCH_W = 2.4
 ARCH_STRAIGHT = 4.2
@@ -139,17 +139,17 @@ def floor(seed=3):
         if r < 7.0:
             if r < 0.6:
                 return "carpet_gold"
-            ph = (r / 1.3 - math.atan2(dz, dx) / math.tau) % 1.0
-            if ph < 0.30:
+            ph = (r / 1.9 - math.atan2(dz, dx) / math.tau) % 1.0
+            if ph < 0.34:
                 return "carpet_purple"
-            if ph < 0.62:
+            if ph < 0.64:
                 return "carpet_gold"
             return "floor"
         if 7.2 < r < 7.8:
             return "carpet_purple"
         return "rock_b" if fbm((x * 0.3, 0, z * 0.3), 2, 8.0) > 0.25 else "floor"
 
-    part.grid(-HALL_W, HALL_W, BACK_Z, FRONT_Z, 0.55, height, material, jitter=0.28)
+    part.grid(-HALL_W, HALL_W, BACK_Z, FRONT_Z, 0.45, height, material, jitter=0.22)
     return part
 
 
@@ -252,7 +252,7 @@ def corridor(seed=5):
     return part
 
 
-def pilaster(x, z, h=10.2, seed=0):
+def pilaster(x, z, h=12.0, seed=0):
     part = Part("Pilaster")
     part.box((x, 0.35, z), (1.9, 0.7, 1.9), "rock_b", bevel=0.08)
     part.lathe([(0.78, 0.7), (0.66, 1.5), (0.6, 5.0), (0.66, h - 1.2), (0.92, h - 0.3), (1.0, h)], segs=8, mat="rock_a", center=(x, 0, z), jitter=0.07, seed=seed)
@@ -422,13 +422,13 @@ def rubble(at, size, seed):
     return part
 
 
-def column(at, h=14.0, seed=0):
+def column(at, h=11.0, seed=0):
     """The carved wooden post that carries the bell's arm."""
     part = Part("Column")
     x, _, z = at
-    part.lathe([(0.9, 0.0), (0.7, 0.4), (0.55, 1.2), (0.5, 3.0), (0.52, 6.0), (0.56, 9.0), (0.62, 11.5), (0.8, 13.0), (1.0, h)], segs=7, mat="wood", center=(x, 0, z), jitter=0.06, seed=seed)
-    for yb in (1.6, 6.2, 10.2):
-        part.lathe([(0.62 - (0.08 if yb < 5 else 0.0), yb), (0.74, yb + 0.12), (0.62, yb + 0.28)], segs=7, mat="wood_dark", center=(x, 0, z), jitter=0.04, seed=seed + 1, closed_bottom=False, closed_top=False)
+    part.lathe([(0.9, 0.0), (0.7, 0.4), (0.55, 1.2), (0.5, 3.0), (0.52, 5.0), (0.56, 7.5), (0.62, 9.5), (0.8, h - 0.6), (1.0, h)], segs=7, mat="wood_dark", center=(x, 0, z), jitter=0.07, seed=seed)
+    for yb in (1.6, 5.2, 8.6):
+        part.lathe([(0.62 - (0.08 if yb < 5 else 0.0), yb), (0.74, yb + 0.12), (0.62, yb + 0.28)], segs=7, mat="shelf", center=(x, 0, z), jitter=0.04, seed=seed + 1, closed_bottom=False, closed_top=False)
     return part
 
 
@@ -471,3 +471,19 @@ def foreground_right(seed=41):
     rock.blob((0, 0.6, 0), (1.7, 1.0, 1.3), "rock_b", subdiv=1, amp=0.45, seed=8, flat_bottom=-0.2)
     parts.append((rock, (4.6, -3.7, -3.0)))
     return parts
+
+
+def oculus_ring(oculus, sun_dir, radius=3.3, seed=9):
+    """Rough stones around the hole in the vault, so it reads as an opening cut through rock."""
+    part = Part("OculusRing")
+    rnd = random.Random(seed)
+    axis = Vector(sun_dir).normalized()
+    u = axis.cross(Vector((0, 1, 0))).normalized()
+    v = axis.cross(u).normalized()
+    count = 11
+    for k in range(count):
+        a = math.tau * k / count + rnd.uniform(-0.15, 0.15)
+        centre = oculus + (u * math.cos(a) + v * math.sin(a)) * (radius + rnd.uniform(0.0, 0.5)) - axis * rnd.uniform(0.0, 0.6)
+        r = rnd.uniform(0.7, 1.15)
+        part.blob((centre.x, centre.y, centre.z), (r, r * 0.8, r), "rock_a" if k % 2 else "rock_b", subdiv=1, amp=0.4, seed=seed + k)
+    return part

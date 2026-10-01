@@ -29,15 +29,18 @@ BELL_PILLAR_AT = (5.6, 0.0, -3.0)
 MACHINE_AT = (-1.6, 0.0, -1.2)
 TOWER_AT = (-4.4, 0.0, -5.0)       # the crooked bookcase tower the raccoon watches from
 PATH_AT = (0.0, 0.0, -7.8)
-# The wide shot's camera, as set in game/world/archive/archive_hall.gd (yaw 22, pitch -4, distance 12).
-CAMERA_FROM = (3.885, 1.763, 8.10)
-CAMERA_AT = (-0.6, 2.6, -3.0)
+# The wide shot's camera, as set in game/world/archive/archive_hall.gd (see _camera_pose below).
+CAMERA_AT = (-0.6, 3.5, -3.0)
+CAMERA_DISTANCE, CAMERA_PITCH, CAMERA_YAW = 13.5, -8.0, 22.0
+CAMERA_FROM = (CAMERA_AT[0] + math.sin(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
+               CAMERA_AT[1] + math.sin(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE,
+               CAMERA_AT[2] + math.cos(math.radians(CAMERA_YAW)) * math.cos(math.radians(CAMERA_PITCH)) * CAMERA_DISTANCE)
 CRATE_AT = (2.4, 0.0, -0.4)
 BENCH_AT = (-3.2, 0.0, -2.6)
 
 # The key light: a steep late-afternoon beam from the right-back, through a hole in the vault.
-SUN_DIR = Vector((0.14, 0.88, -0.45)).normalized()
-POOL = Vector((1.2, 0.0, -2.0))   # where the shaft lands: Tomas, the machine's edge, the spiral, the statue's side
+SUN_DIR = Vector((0.246, 0.913, -0.326)).normalized()
+POOL = Vector((0.8, 0.0, -1.5))   # where the shaft lands: Tomas, the machine, the spiral, the statue's side
 AMBIENT_LIFT = np.array([0.045, 0.038, 0.030], dtype=np.float32)   # shade is never black: warm olive air
 
 
@@ -70,35 +73,37 @@ def build(out_dir, samples, do_bake):
     add(props_hall.shell(oculus))
     add(props_hall.floor())
     add(props_hall.back_wall())
-    add(props_hall.mural_eye())
+    add(props_hall.mural_eye(), max_edge=1.6)
+    add(props_hall.vault_ribs())
+    add(props_hall.oculus_ring(oculus, SUN_DIR))
     add(props_hall.corridor())
     for sx in (-1, 1):
         add(props_hall.pilaster(sx * 4.3, props_hall.BACK_Z + 0.9, seed=sx + 3))
         add(props_hall.sconce((sx * 4.3, 4.6, props_hall.BACK_Z + 1.7), 0.0))
-    add(props_hall.compass_plate((-6.3, 11.4, props_hall.BACK_Z + 0.12)))
+    add(props_hall.compass_plate((-6.3, 10.6, props_hall.BACK_Z + 0.12)))
 
     # ---- shelves: walls of them -----------------------------------------------------------------------
     zs = [-8.4, -6.0, -3.6, -1.2, 1.2, 3.6, 6.0]
     for i, z in enumerate(zs):
-        add(props_hall.bookcase((8.95, 0, z), -90, 2.3, 10.0, 1.1, seed=100 + i))
-        add(props_hall.bookcase((-8.95, 0, z), 90, 2.3, 10.0, 1.1, seed=200 + i, density=0.8))
+        add(props_hall.bookcase((8.95, 0, z), -90, 2.3, 9.0, 1.1, seed=100 + i))
+        add(props_hall.bookcase((-8.95, 0, z), 90, 2.3, 9.0, 1.1, seed=200 + i, density=0.8))
     for sx in (-1, 1):
-        add(props_hall.bookcase((sx * 6.9, 0, props_hall.BACK_Z + 0.55), 0, 3.0, 10.0, 1.1, seed=300 + sx))
+        add(props_hall.bookcase((sx * 6.9, 0, props_hall.BACK_Z + 0.55), 0, 3.0, 9.0, 1.1, seed=300 + sx))
     for (x, z) in ((8.95, 8.4), (-8.95, 8.4)):
         pass
 
     # ---- the towers and the statue ---------------------------------------------------------------------
     lean = 0.012
     yaw = 8.0
-    add(props_hall.tower(TOWER_AT, yaw, 2.6, 1.7, 7.6, 0.38, seed=11, lean=lean, skip_tiers={2: (0.0, 1.2)}))
+    add(props_hall.tower(TOWER_AT, yaw, 2.4, 1.7, 8.8, 0.5, seed=11, lean=lean, skip_tiers={2: (0.0, 1.2)}))
     th = math.radians(yaw)
     perch_local = (0.55, 0.6)
     px = TOWER_AT[0] + perch_local[0] * math.cos(th) + perch_local[1] * math.sin(th) + lean * 2.2 * 2.2
     pz = TOWER_AT[2] - perch_local[0] * math.sin(th) + perch_local[1] * math.cos(th)
     anchors["raccoon_perch"] = [px, 2.2, pz]
-    add(props_hall.tower((3.9, 0, -8.3), -6, 2.4, 1.6, 8.6, 0.4, seed=12))
-    add(props_hall.tower((-6.4, 0, -7.7), 4, 2.4, 1.6, 9.4, 0.42, seed=13))
-    add(props_hall.hooded_statue((3.3, 0, -4.0), -40))
+    add(props_hall.tower((4.3, 0, -8.3), -6, 2.2, 1.6, 10.4, 0.55, seed=12))
+    add(props_hall.tower((-6.4, 0, -7.7), 4, 2.2, 1.6, 10.8, 0.55, seed=13))
+    add(props_hall.hooded_statue((2.9, 0, -3.3), -48))
     add(props_hall.rubble((-7.2, 0, 6.6), 0.9, 21))
     add(props_hall.rubble((7.6, 0, 7.0), 0.8, 23))
 
@@ -216,7 +221,9 @@ def build(out_dir, samples, do_bake):
             bake.write_corner_colours(o, arr)
 
     for o in all_bake:
-        bake.normalise(o, gain, None, lift=AMBIENT_LIFT)
+        frame = o.name.startswith("Fg")
+        # the camera frame is a dark crop: bake it in shade and take most of the colour out of it
+        bake.normalise(o, gain, None, lift=AMBIENT_LIFT, dim=0.42 if frame else 1.0, desaturate=0.55 if frame else 0.0)
         bake.facet_tone(o, strength=0.085, hue=0.025, seed=len(o.name))
         if os.environ.get('STATS'):
             c = bake.read_corner_colours(o)

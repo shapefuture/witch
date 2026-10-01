@@ -196,7 +196,7 @@ def facet_tone(obj, strength=0.05, hue=0.02, seed=1):
     write_corner_colours(obj, arr)
 
 
-def normalise(obj, gain, sway=None, lift=None):
+def normalise(obj, gain, sway=None, lift=None, dim=1.0, desaturate=0.0):
     """Scale baked light to the game's range, lift the shadows a little, set the alpha channel."""
     arr = read_corner_colours(obj)
     lit = arr[:, :3] * gain
@@ -204,6 +204,10 @@ def normalise(obj, gain, sway=None, lift=None):
         lit = lit + lift
     # display-referred, like a PS1 framebuffer: the game multiplies these straight into painted tiles
     arr[:, :3] = np.clip(lit, 0.0, 1.6) ** (1.0 / 2.2)
+    if desaturate > 0.0:
+        grey = (arr[:, :3] @ np.array([0.3, 0.55, 0.15], dtype=np.float32))[:, None]
+        arr[:, :3] = grey + (arr[:, :3] - grey) * (1.0 - desaturate)
+    arr[:, :3] *= dim
     arr[:, 3] = 0.0 if sway is None else sway(obj, arr)
     write_corner_colours(obj, arr)
 

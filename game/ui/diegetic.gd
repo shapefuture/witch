@@ -14,9 +14,18 @@ static func metres_per_pixel(camera: Camera3D, viewport_height: float, depth: fl
 
 # Transform that puts a node's local origin (the top-left of its rectangle) at `screen_px`, growing
 # by `grow` about `pivot` (local pixel coordinates).
-static func transform_for(camera: Camera3D, viewport_size: Vector2, screen_px: Vector2, grow: float = 1.0, pivot: Vector2 = Vector2.ZERO) -> Transform3D:
+# `upright`: keep the slab's "up" on the WORLD's up while it still faces the camera, so a rolled camera
+# (the Dutch tilt, the spell's 45 degrees) tips speech and plaques with the world instead of leaving
+# them as a flat overlay. Menus use the camera's own axes.
+static func transform_for(camera: Camera3D, viewport_size: Vector2, screen_px: Vector2, grow: float = 1.0, pivot: Vector2 = Vector2.ZERO, upright: bool = false) -> Transform3D:
 	var unit := metres_per_pixel(camera, viewport_size.y)
 	var cam_basis := camera.global_transform.basis.orthonormalized()
+	if upright:
+		var back := cam_basis.z
+		var right := Vector3.UP.cross(back)
+		if right.length() > 0.001:
+			right = right.normalized()
+			cam_basis = Basis(right, back.cross(right).normalized(), back)
 	var origin := camera.project_position(screen_px.round(), DEPTH)
 	origin += cam_basis * Vector3(pivot.x, pivot.y, 0.0) * unit * (1.0 - grow)
 	return Transform3D(cam_basis * Basis.from_scale(Vector3.ONE * unit * grow), origin)

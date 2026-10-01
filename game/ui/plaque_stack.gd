@@ -8,8 +8,8 @@ extends Node3D
 
 signal chosen(index: int)
 
-const ROW_HEIGHT := 19.0
-const GAP := 3.0
+const ROW_HEIGHT := 28.0   # render pixels; about 8 mm on a phone held in landscape
+const GAP := 5.0
 const PAD := 8.0
 const MIN_WIDTH := 112.0
 const WOOD := Color(1.18, 1.0, 0.86)
@@ -19,6 +19,8 @@ const DIM_CREAM := Color(0.78, 0.72, 0.60)
 const INK := Color(0.16, 0.11, 0.08)
 
 var camera: Camera3D
+# Option plaques hang in the world (tip with the Dutch roll); menus stay square to the screen.
+var upright := true
 
 var _items: Array[Dictionary] = []
 var _title_rect := Rect2()
@@ -128,7 +130,7 @@ func hover(px: Vector2) -> void:
 
 func _index_at(px: Vector2) -> int:
 	for item in _items:
-		if (item["rect"] as Rect2).grow(2.0).has_point(px):
+		if (item["rect"] as Rect2).grow(3.0).has_point(px):
 			return item["index"]
 	return -1
 
@@ -168,14 +170,14 @@ func _place_all() -> void:
 	if _dim != null:
 		_dim.global_transform = Diegetic.transform_for(camera, viewport_size, Vector2.ZERO)
 	if _title_node != null:
-		_title_node.global_transform = Diegetic.transform_for(camera, viewport_size, _title_rect.position, _pop(0), _title_rect.size * Vector2(0.5, -0.5))
+		_title_node.global_transform = Diegetic.transform_for(camera, viewport_size, _title_rect.position, _pop(0), _title_rect.size * Vector2(0.5, -0.5), upright)
 	for k in range(_items.size()):
 		var item: Dictionary = _items[k]
 		var rect: Rect2 = item["rect"]
 		var grow := _pop(k + 1)
 		if item["index"] == _pulse_index:
 			grow *= 1.0 + 0.1 * sin(clampf(_pulse / 0.14, 0.0, 1.0) * PI) - 0.06 * clampf(_pulse / 0.14, 0.0, 1.0)
-		(item["node"] as Node3D).global_transform = Diegetic.transform_for(camera, viewport_size, rect.position, grow, rect.size * Vector2(0.5, -0.5))
+		(item["node"] as Node3D).global_transform = Diegetic.transform_for(camera, viewport_size, rect.position, grow, rect.size * Vector2(0.5, -0.5), upright)
 
 # Each plaque pops in a beat after the one above it.
 func _pop(row: int) -> float:

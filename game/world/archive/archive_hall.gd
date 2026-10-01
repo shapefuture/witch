@@ -17,7 +17,7 @@ extends Room
 # Layout (x right, z toward the camera, metres):
 #     arch out (0, -10)       tower + raccoon (-4.4, -5.0)      bell post (5.6, -3.0)
 #     bench (-3.2, -2.6)   machine (-1.6, -1.2)   Tomas (-0.1, -0.9)   crate (2.4, -0.4)
-#     witch starts (0.6, 2.5)           statue (3.3, -4.0)      light pool (1.2, -2.0)
+#     witch starts (0.6, 2.5)           statue (2.9, -3.3)      light pool (0.8, -1.5)
 
 const RADIUS := 9.5
 const BELL_POST_AT := Vector3(5.6, 0, -3.0)
@@ -42,11 +42,13 @@ func _ready() -> void:
 	room_id = "clearing"
 	spawn_position = Vector3(0.6, 0.0, 2.5)
 	# Low and wide, looking up a little: tall shelves become cliffs, the witch is small among them.
-	camera_focus = Vector3(-0.6, 2.6, -3.0)
-	camera_distance = 12.0
-	camera_pitch_deg = -4.0
-	camera_yaw_deg = 22.0
-	camera_fov = 60.0
+	var wide := wide_framing()
+	camera_focus = wide["focus"]
+	camera_distance = wide["distance"]
+	camera_pitch_deg = wide["pitch_deg"]
+	camera_yaw_deg = wide["yaw_deg"]
+	camera_fov = wide["fov"]
+	camera_roll_deg = wide["roll_deg"]
 	navigator = GridNavigator.new(Rect2(-11.0, -11.0, 22.0, 22.0))
 	navigator.block_outside(8.6, PATH_AT + Vector3(0, 0, -1.2), 1.5)
 	# The camera never follows her, so she must stay where the frame shows her (4:3 is the tightest).
@@ -59,6 +61,11 @@ func _ready() -> void:
 		add_child(HallAtmosphere.new())
 	_build_tomas()
 	_build_interactables()
+
+# The bolted master shot. tools/blender/build_hall.py bakes the camera-space foreground frame for
+# exactly this pose (CAMERA_AT / CAMERA_DISTANCE / CAMERA_PITCH / CAMERA_YAW): change both together.
+static func wide_framing() -> Dictionary:
+	return {"focus": Vector3(-0.6, 3.5, -3.0), "distance": 13.5, "pitch_deg": -8.0, "yaw_deg": 22.0, "fov": 60.0, "roll_deg": 2.5}
 
 # Where the witch may walk: the open floor between the shelves, trimmed so that she is always inside
 # the frame of the bolted wide shot at 4:3 (the tightest aspect). The camera sits to the right, so
@@ -139,7 +146,7 @@ func _build_props() -> void:
 	add_obstacle(TOWER_AT, 1.7, 2.4)
 	add_obstacle(Vector3(3.9, 0, -8.3), 1.3, 3.0)
 	add_obstacle(Vector3(-6.4, 0, -7.7), 1.3, 3.0)
-	add_obstacle(Vector3(3.3, 0, -4.0), 1.2, 3.0)
+	add_obstacle(Vector3(2.9, 0, -3.3), 1.2, 3.0)
 	add_obstacle(Vector3(2.4, 0, -0.4), 0.5, 0.6)
 	add_obstacle(Vector3(-3.2, 0, -2.6), 1.0, 1.0)
 	raccoon = Placeholders.raccoon()

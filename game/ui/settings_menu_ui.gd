@@ -15,6 +15,7 @@ func _ready() -> void:
 	_stack = PlaqueStack.new()
 	_stack.process_mode = Node.PROCESS_MODE_ALWAYS
 	_stack.camera = camera
+	_stack.upright = false
 	_stack.chosen.connect(_on_chosen)
 	add_child(_stack)
 	var labels: Array[String] = [tr("ui.volume_down"), tr("ui.volume_up"), tr("ui.back")]

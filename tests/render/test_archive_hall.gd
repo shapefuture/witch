@@ -84,7 +84,7 @@ func test_the_bolted_wide_shot_shows_everywhere_the_witch_may_stand() -> void:
 	Engine.get_main_loop().root.add_child(viewport)
 	track(viewport)
 	await Engine.get_main_loop().process_frame
-	var framing := {"focus": Vector3(-0.6, 2.6, -3.0), "distance": 12.0, "pitch_deg": -4.0, "yaw_deg": 22.0, "fov": 60.0, "roll_deg": 0.0}
+	var framing := ArchiveHall.wide_framing()
 	camera.set_pose(CameraDirector.compute_pose("wide", [], framing), true)
 	var seen := 0
 	var checked := 0

@@ -31,6 +31,10 @@ func is_open() -> bool:
 func current_options() -> Array[InteractionOption]:
 	return _options
 
+# Where the plaques are on screen (viewport pixels): a tap there chooses, a tap elsewhere is a walk order.
+func plaque_rects() -> Array[Rect2]:
+	return _stack.item_rects() if _stack != null else []
+
 # `title` is what is being pointed at, already translated (an object name from the text table).
 # `anchor` is where it is in the world; the plaques hang beside it on the roomier side.
 func show_options(title: String, options: Array[InteractionOption], anchor: Vector3 = Vector3.INF) -> void:

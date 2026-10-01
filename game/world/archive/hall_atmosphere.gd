@@ -17,8 +17,8 @@ func _ready() -> void:
 	var sun := StageLight.sun_dir()
 	var pool := StageLight.anchor_vector("pool", Vector3(0.5, 0, -0.5))
 	var oculus := StageLight.anchor_vector("oculus", pool + sun * 16.0)
-	_add_shaft(oculus, pool, 2.8, 0.8, 1.0)
-	_add_shaft(oculus, pool, 4.2, 0.26, 0.4)
+	_add_shaft(oculus, pool, 2.3, 0.5, 1.0)
+	_add_shaft(oculus, pool, 3.6, 0.15, 0.4)
 	_add_pool_glow(pool, sun)
 	_add_dust(oculus, pool)
 

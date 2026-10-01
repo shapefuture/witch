@@ -20,6 +20,7 @@ uniform float gain = 1.55; // exposure: baked light is stored with the sunlit fl
 uniform float sway = 0.0;
 uniform float glow = 0.0;
 uniform float fog_amount = 1.0;
+uniform float cutout = 0.0; // 1: texels with alpha < 0.5 are not drawn (the eye on the wall)
 uniform float rim = 0.16; // warm edge light from the key's side: the baked world has no specular
 
 varying float v_dist;
@@ -48,7 +49,11 @@ void vertex() {
 }
 
 void fragment() {
-	vec3 tex = texture(albedo_tex, UV).rgb;
+	vec4 sample_ = texture(albedo_tex, UV);
+	if (cutout > 0.5 && sample_.a < 0.5) {
+		discard;
+	}
+	vec3 tex = sample_.rgb;
 	vec3 lit = tex * COLOR.rgb * tint.rgb * gain;
 	float edge = pow(clamp(1.0 - abs(dot(normalize(NORMAL), normalize(VIEW))), 0.0, 1.0), 3.0);
 	vec3 col = mix(lit + vec3(1.0, 0.78, 0.45) * edge * rim * (COLOR.r + COLOR.g) * 0.5, tint.rgb * 1.15, glow);

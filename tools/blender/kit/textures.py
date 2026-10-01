@@ -139,8 +139,8 @@ def make_glyph_sheet(base="wood", size=128):
 
 
 def make_mural_eye(w=256, h=128):
-    """The wall's watching eye: almond lid, iris rings, a fan of lashes. 64x32 logical pixels."""
-    base = make_tile("rock_a", 128, seed=5).convert("RGB").resize((w, h), Image.NEAREST)
+    """The wall's watching eye, as ink on a transparent sheet: it is cut out by the shader and sits IN
+    the wall's own stone and light instead of on a lighter rectangle. 64x32 logical pixels."""
     mask = Image.new("L", (64, 32), 0)
     d = ImageDraw.Draw(mask)
     cx, cy = 32, 17
@@ -166,11 +166,10 @@ def make_mural_eye(w=256, h=128):
             d.point((x, top - j), 255)
             if j < length - 2:
                 d.point((x + (1 if k >= 0 else -1) * (j // 2 == 0), top - j), 255)
-    ink = Image.new("RGB", (64, 32), GLYPH_INK)
-    layer = Image.composite(ink, Image.new("RGB", (64, 32), (0, 0, 0)), mask).resize((w, h), Image.NEAREST)
-    big_mask = mask.resize((w, h), Image.NEAREST)
-    base.paste(layer, (0, 0), big_mask)
-    return base
+    big = mask.resize((w, h), Image.NEAREST)
+    out = Image.new("RGBA", (w, h), GLYPH_INK + (0,))
+    out.putalpha(big)
+    return out
 
 
 def mean_colour(name):

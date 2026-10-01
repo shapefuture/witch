@@ -14,8 +14,8 @@ uniform float streaks = 1.0;
 
 void fragment() {
 	float facing = abs(dot(normalize(NORMAL), normalize(VIEW)));
-	float body = pow(facing, 1.6);
-	float along = smoothstep(0.0, 0.06, UV.y) * mix(1.0, 0.3, smoothstep(0.1, 1.0, UV.y));
+	float body = smoothstep(0.0, 0.5, facing);
+	float along = smoothstep(0.0, 0.06, UV.y) * mix(1.0, 0.55, smoothstep(0.1, 0.9, UV.y)) * (1.0 - smoothstep(0.78, 1.0, UV.y));
 	float band = sin(UV.x * 37.7 + stage_time * 0.22 + sin(UV.x * 11.0 + stage_time * 0.1) * 2.2);
 	float streak = 1.0 - streaks * 0.28 * (0.5 + 0.5 * band);
 	ALBEDO = colour * strength * body * along * streak * (1.0 + magic_amount * 0.4);
