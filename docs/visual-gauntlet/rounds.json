@@ -150,5 +150,23 @@
       "Crisper facets; calmer tiles; olive rather than ochre",
       "Bell bracket and arms attach to nothing; the bubble pinned to the frame edge reads as an overlay"
     ]
+  },
+  {
+    "round": 9,
+    "dir": "",
+    "verdict": "not judged by a critic",
+    "gap": "The hall is now pre-rendered plates (Cycles) projected onto a proxy, with live characters on top. Squint score against the reference (tools/visual_gauntlet/squint.py): 0.37 for the game frame, against 0.32 for round 8's real-time hall. No blind critic round was run. By eye the composition is close (low camera, eye over the arch, statue and beam at right, spiral carpet) but the frame is yellower and brighter than the olive, low-key reference, the nave is narrower, the vault and its oculus are barely visible, and the passage behind the arch has less depth.",
+    "fixed": [
+      "Hall rebuilt as Cycles plates from a camera recovered from the reference (tools/blender/build_plates.py, docs/art/plates.md)",
+      "Real character models (witch, Tomas, raccoon) with photo faces replace the placeholder primitives",
+      "Live machine and bell props; actors lit by a pool of sun instead of blowing out in it"
+    ],
+    "next": [
+      "Darken and olive-grade the plates; keep the beam subtle",
+      "Widen the nave and show the vault and oculus",
+      "Nested arches and a lit stair behind the arch",
+      "Blind critic round against the reference",
+      "Hand-balance the lighting of the inspect and cover plates"
+    ]
   }
 ]
