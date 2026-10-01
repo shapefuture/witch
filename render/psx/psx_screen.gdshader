@@ -18,7 +18,7 @@ uniform sampler2D dither_tex : hint_default_white, repeat_enable, filter_nearest
 uniform float col_depth = 31.0;
 uniform float magic_col_depth = 127.0;
 uniform float glow_amount = 0.55;
-uniform float vignette = 0.62;
+uniform float vignette = 0.78;
 uniform vec3 shadow_tint : source_color = vec3(0.86, 0.80, 1.0);
 uniform vec3 light_tint : source_color = vec3(1.06, 0.99, 0.88);
 

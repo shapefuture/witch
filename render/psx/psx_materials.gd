@@ -16,6 +16,8 @@ const TEXTURE_DIR := "res://assets/archive/textures/"
 # Painted materials that glow by themselves (windows, lamps, the machine's indicator).
 const GLOWING := {"glow": Color(1.0, 0.86, 0.5), "glow_warm": Color(1.0, 0.6, 0.26), "glow_green": Color(0.5, 1.0, 0.4), "glow_blue": Color(0.4, 0.65, 1.0), "glow_white": Color(1.0, 0.95, 0.8)}
 const SET_SWAY := 0.16
+# Surfaces that should look lit even where the bake left them dim: metal and glass catch light.
+const SHINY := {"brass": 2.1, "gold": 2.1, "crystal": 1.9, "crystal_grey": 1.6, "iron": 1.25, "coral": 1.3}
 
 static var _shaders: Dictionary = {}
 static var _set_materials: Dictionary = {}
@@ -52,6 +54,8 @@ static func set_material(tile: String) -> ShaderMaterial:
 		material.set_shader_parameter("fog_amount", 0.5)
 	else:
 		material.set_shader_parameter("sway", SET_SWAY)
+		if SHINY.has(tile):
+			material.set_shader_parameter("gain", 1.55 * float(SHINY[tile]) / 1.5)
 	material.set_shader_parameter("albedo_tex", tile_texture(tile))
 	_set_materials[tile] = material
 	return material

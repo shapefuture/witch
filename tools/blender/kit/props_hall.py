@@ -92,7 +92,7 @@ def shell(oculus, seed=1):
                 bump = 0.0 if (top or yi == 0) else (fbm((side * 3.0 + w * 0.2, y * 0.33, z * 0.3), 3, seed) * 0.5 + 0.5) * (1.0 if y < STRAIGHT else 1.6)
                 # keep the rock around the oculus smooth, so the light that enters is where it was aimed
                 near = (Vector((side * w, y, z)) - oculus).length
-                bump *= smoothstep(2.5, 6.0, near)
+                bump *= smoothstep(3.0, 7.0, near)
                 jz = (math.sin(zj * 12.9 + yi * 78.2 + side) * 43758.5453 % 1.0 - 0.5) * 0.5 if 0 < zj < len(zs) - 1 else 0.0
                 x = side * (w + bump * (0.9 if y < STRAIGHT else 0.8))
                 yy = y + (bump * 0.5 if y > STRAIGHT and not top else 0.0)
@@ -105,7 +105,7 @@ def shell(oculus, seed=1):
                 tris = ((a, b, c), (a, c, d)) if (yi + zj) % 2 else ((a, b, d), (b, c, d))
                 for tri in tris:
                     mid = (tri[0] + tri[1] + tri[2]) / 3.0
-                    if mid.y > 9.0 and (mid - oculus).length < 2.7:
+                    if mid.y > 9.0 and (mid - oculus).length < 3.3:
                         continue
                     n = fbm((mid.x * 0.2, mid.y * 0.2, mid.z * 0.2), 2, 3.0)
                     mat = "rock_b" if (mid.y > STRAIGHT - 0.5 or n > 0.3) else "rock_a"
@@ -205,7 +205,7 @@ def mural_eye(centre=(0.0, 11.4, BACK_Z + 0.04), size=(8.4, 4.2)):
     part = Part("Mural")
     cx, cy, cz = centre
     hw, hh = size[0] / 2, size[1] / 2
-    part.quad_out((cx - hw, cy - hh, cz), (cx + hw, cy - hh, cz), (cx + hw, cy + hh, cz), (cx - hw, cy + hh, cz), "mural_eye", (cx, cy, cz + 5.0))
+    part.quad_out((cx - hw, cy - hh, cz), (cx + hw, cy - hh, cz), (cx + hw, cy + hh, cz), (cx - hw, cy + hh, cz), "mural_eye", (cx, cy, cz - 5.0))
     return part
 
 
@@ -248,7 +248,7 @@ def corridor(seed=5):
         part.box(((x0 + x1) / 2 + (-0.4 if (x0 + x1) < 0 else 0.4 if (x0 + x1) > 0 else 0), (y0 + y1) / 2 + (0.3 if abs(x0 + x1) < 0.2 else 0), -15.0),
                  (max(math.hypot(x1 - x0, y1 - y0), 0.5) * 1.1, 0.7, 0.9), "rock_b" if k % 2 else "rock_a", rot=(0, 0, math.degrees(math.atan2(y1 - y0, x1 - x0))), bevel=0.05)
     # end wall: the blaze
-    part.quad_out((-2.6, 0.0, CORRIDOR_END), (2.6, 0.0, CORRIDOR_END), (2.6, 8.0, CORRIDOR_END), (-2.6, 8.0, CORRIDOR_END), "glow_white", (0, 3, 0))
+    part.quad_out((-2.6, 0.0, CORRIDOR_END), (2.6, 0.0, CORRIDOR_END), (2.6, 8.0, CORRIDOR_END), (-2.6, 8.0, CORRIDOR_END), "glow_white", (0, 3, CORRIDOR_END - 5.0))
     return part
 
 
@@ -357,21 +357,29 @@ def tower(at, yaw, w, d, h, taper, seed, lean=0.0, tier_h=0.85, skip_tiers=None,
 
 
 def hooded_statue(at, yaw):
+    """A robed, hooded figure on a plinth, holding an open scroll, with a crown of crystals behind
+    its head. Cut from big flat folds so it reads as a statue even in shade."""
     part = Part("Statue")
     m = part.mark()
-    part.box((0, 0.2, 0), (2.4, 0.4, 2.4), "rock_b", bevel=0.08)
-    part.box((0, 0.65, 0), (1.8, 0.5, 1.8), "rock_a", bevel=0.08, rot=(0, 8, 0))
-    part.lathe([(0.95, 0.9), (0.82, 1.5), (0.6, 2.4), (0.46, 3.0), (0.36, 3.35)], segs=8, mat="cloak", jitter=0.06, seed=3, closed_top=True)
-    part.blob((0, 3.15, 0), (0.62, 0.34, 0.45), "cloak", subdiv=1, amp=0.1, seed=2)
-    part.blob((0, 3.75, 0), (0.42, 0.55, 0.45), "cloak", subdiv=2, amp=0.1, seed=6)
-    part.blob((0, 3.68, 0.34), (0.22, 0.3, 0.12), "iron", subdiv=1, amp=0.05, seed=1)
+    part.box((0, 0.2, 0), (2.4, 0.4, 2.4), "rock_b")
+    part.box((0, 0.65, 0), (1.8, 0.5, 1.8), "rock_a", rot=(0, 8, 0))
+    # the robe: an 11-sided cone with alternating deep and shallow facets (folds), a hem and a belt
+    folds = []
+    for ring in [(0.98, 0.9), (0.86, 1.3), (0.70, 2.0), (0.56, 2.6), (0.46, 3.0), (0.38, 3.35)]:
+        folds.append(ring)
+    part.lathe(folds, segs=11, mat="cloak", jitter=0.16, seed=3, closed_top=True)
+    part.lathe([(0.99, 0.9), (1.0, 1.0), (0.97, 1.08)], segs=11, mat="gold", closed_top=False, closed_bottom=False, jitter=0.05, seed=4)
+    part.lathe([(0.55, 2.52), (0.58, 2.62), (0.54, 2.7)], segs=11, mat="gold", closed_top=False, closed_bottom=False, jitter=0.03, seed=5)
+    part.blob((0, 3.15, 0), (0.66, 0.36, 0.48), "cloak", subdiv=1, amp=0.12, seed=2)
+    part.blob((0, 3.78, 0), (0.44, 0.58, 0.47), "cloak", subdiv=2, amp=0.12, seed=6)
+    part.blob((0, 3.7, 0.36), (0.25, 0.34, 0.16), "iron", subdiv=1, amp=0.05, seed=1)
     for sx in (-1, 1):
-        part.cyl((sx * 0.5, 3.0, 0.1), (sx * 0.28, 2.45, 0.6), 0.14, 0.12, "cloak", segs=5)
-    part.cyl((-0.42, 2.45, 0.62), (0.42, 2.45, 0.62), 0.1, 0.1, "scroll", segs=6)
-    part.box((0.0, 2.05, 0.66), (0.62, 0.7, 0.03), "scroll", rot=(8, 0, 2))
-    for k, ang in enumerate((-50, -25, 0, 25, 50)):
+        part.cyl((sx * 0.52, 3.0, 0.1), (sx * 0.30, 2.45, 0.62), 0.15, 0.12, "cloak", segs=5)
+    part.cyl((-0.46, 2.45, 0.66), (0.46, 2.45, 0.66), 0.11, 0.11, "scroll", segs=6)
+    part.box((0.0, 2.02, 0.7), (0.66, 0.74, 0.03), "scroll", rot=(8, 0, 2))
+    for k, ang in enumerate((-55, -28, 0, 28, 55)):
         a = math.radians(ang)
-        part.cyl((math.sin(a) * 0.3, 4.0, -0.35), (math.sin(a) * 0.95, 4.0 + 0.95 * math.cos(a) + (0.3 if k in (1, 3) else 0.0), -0.5), 0.16, 0.0, "crystal", segs=4, spin=15)
+        part.cyl((math.sin(a) * 0.3, 4.0, -0.35), (math.sin(a) * 1.0, 4.0 + 1.0 * math.cos(a) + (0.3 if k in (1, 3) else 0.0), -0.55), 0.17, 0.0, "crystal", segs=4, spin=15)
     _place(part, m, at, yaw)
     return part
 

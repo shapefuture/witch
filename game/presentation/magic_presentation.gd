@@ -27,6 +27,9 @@ func play(effect: String, at: Vector3) -> void:
 	var column := _column(spec["tint"], at)
 	var tween := create_tween()
 	tween.tween_method(_set_magic, 0.0, float(spec["peak"]), float(spec["rise"]) * scale)
+	# the lens swings out to a fisheye as the spell rises (the camera tilts with it: see the
+	# director's magic_reveal shot) and everything snaps back at once when it ends
+	tween.parallel().tween_method(PSXGlobals.set_lens, 0.0, 1.0, float(spec["rise"]) * scale)
 	tween.parallel().tween_property(column, "scale", Vector3(1.0, 1.0, 1.0), float(spec["rise"]) * scale).from(Vector3(0.2, 0.01, 0.2))
 	tween.tween_callback(func() -> void: peaked.emit(effect))
 	tween.tween_interval(float(spec["hold"]) * scale)

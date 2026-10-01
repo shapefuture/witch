@@ -12,6 +12,8 @@ extends Node
 #   --show-options target       open the action surface for a target without walking (capture aid)
 #   --load                      continue from save slot 1
 #   --magic amount              hold the magic shader globals at 0..1 (capture aid: shows the break)
+#   --shot mode                 hold the camera on a director shot (wide, inspect, conversation, magic_reveal ...)
+#   --lens amount               hold the fisheye lens swing at 0..1 (capture aid)
 #   --no-fx                     leave out the light shaft, dust and glow (capture aid)
 #   --cam x,y,z,tx,ty,tz[,fov] put the camera there, looking at t (capture aid: inspect the set)
 
@@ -179,6 +181,17 @@ func _build() -> void:
 	_on_resized()
 	if args.has("magic"):
 		PSXGlobals.set_magic(float(str(args["magic"])))
+	if args.has("lens"):
+		PSXGlobals.set_lens(float(str(args["lens"])))
+	if args.has("shot"):
+		var focus: Array = ["tomas"] if str(args["shot"]) in ["inspect", "conversation", "consequence"] else []
+		var points: Array = []
+		for id in focus:
+			var at: Variant = _focus_position(str(id))
+			if at is Vector3:
+				points.append(at)
+		camera.set_pose(CameraDirector.compute_pose(str(args["shot"]), points, room.framing()), true)
+		camera.locked = true
 	if args.has("cam"):
 		var v := str(args["cam"]).split_floats(",")
 		if v.size() >= 6:

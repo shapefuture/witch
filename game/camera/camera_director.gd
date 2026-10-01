@@ -6,7 +6,8 @@ extends Node
 # so framing is authored alongside the content it serves.
 #
 # Modes: wide (the room), inspect (close on a thing), conversation (two-shot),
-# magic_reveal (low and wide, reality opening), consequence (hold on the result),
+# magic_reveal (low, wide and tipped 45 degrees while the lens swings to a fisheye; the cut back
+# to the wide shot is the snap), consequence (hold on the result),
 # stay (freeze: the camera does not follow; the ending contract).
 #
 # Stage-play grammar: the camera is bolted, so changing shot is a CUT, not a move. Only the
@@ -48,7 +49,7 @@ static func compute_pose(pose_mode: String, focus_points: Array, room_framing: D
 		"conversation":
 			return {"look_at": center + Vector3(0, 1.0, 0), "distance": base_distance * 0.46, "pitch_deg": base_pitch - 3.0, "yaw_deg": base_yaw + 16.0, "roll_deg": base_roll + 2.2, "fov": base_fov - 10.0}
 		"magic_reveal":
-			return {"look_at": center + Vector3(0, 1.2, 0), "distance": base_distance * 0.8, "pitch_deg": base_pitch - 11.0, "yaw_deg": base_yaw, "roll_deg": base_roll - 4.0, "fov": base_fov + 8.0}
+			return {"look_at": center + Vector3(0, 1.2, 0), "distance": base_distance * 0.8, "pitch_deg": base_pitch - 11.0, "yaw_deg": base_yaw, "roll_deg": base_roll - 45.0, "fov": base_fov + 8.0}
 		"consequence":
 			return {"look_at": center + Vector3(0, 0.9, 0), "distance": base_distance * 0.55, "pitch_deg": base_pitch - 2.0, "yaw_deg": base_yaw - 10.0, "roll_deg": base_roll - 1.2, "fov": base_fov - 6.0}
 	return {"look_at": room_focus, "distance": base_distance, "pitch_deg": base_pitch, "yaw_deg": base_yaw, "roll_deg": base_roll, "fov": base_fov}

@@ -17,8 +17,8 @@ func _ready() -> void:
 	var sun := StageLight.sun_dir()
 	var pool := StageLight.anchor_vector("pool", Vector3(0.5, 0, -0.5))
 	var oculus := StageLight.anchor_vector("oculus", pool + sun * 16.0)
-	_add_shaft(oculus, pool, 2.35, 0.55, 1.0)
-	_add_shaft(oculus, pool, 3.6, 0.22, 0.4)
+	_add_shaft(oculus, pool, 2.8, 0.8, 1.0)
+	_add_shaft(oculus, pool, 4.2, 0.26, 0.4)
 	_add_pool_glow(pool, sun)
 	_add_dust(oculus, pool)
 
@@ -68,7 +68,7 @@ func _add_shaft(top: Vector3, bottom: Vector3, radius: float, strength: float, s
 
 func _add_pool_glow(pool: Vector3, sun: Vector3) -> void:
 	var plane := PlaneMesh.new()
-	plane.size = Vector2(6.0, 4.4)
+	plane.size = Vector2(7.6, 5.6)
 	var material := ShaderMaterial.new()
 	material.shader = load("res://render/psx/pool_glow.gdshader")
 	var instance := MeshInstance3D.new()

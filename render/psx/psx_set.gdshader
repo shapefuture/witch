@@ -20,6 +20,7 @@ uniform float gain = 1.55; // exposure: baked light is stored with the sunlit fl
 uniform float sway = 0.0;
 uniform float glow = 0.0;
 uniform float fog_amount = 1.0;
+uniform float rim = 0.16; // warm edge light from the key's side: the baked world has no specular
 
 varying float v_dist;
 varying float v_height;
@@ -49,7 +50,8 @@ void vertex() {
 void fragment() {
 	vec3 tex = texture(albedo_tex, UV).rgb;
 	vec3 lit = tex * COLOR.rgb * tint.rgb * gain;
-	vec3 col = mix(lit, tint.rgb * 1.15, glow);
+	float edge = pow(clamp(1.0 - abs(dot(normalize(NORMAL), normalize(VIEW))), 0.0, 1.0), 3.0);
+	vec3 col = mix(lit + vec3(1.0, 0.78, 0.45) * edge * rim * (COLOR.r + COLOR.g) * 0.5, tint.rgb * 1.15, glow);
 	float haze = (1.0 - exp(-fog_density * v_dist)) * exp(-max(v_height, 0.0) * 0.035) * fog_amount;
 	col = mix(col, fog_color.rgb, clamp(haze, 0.0, 0.9));
 	// Display-referred on purpose (a PS1 had no linear light): the Compatibility renderer writes

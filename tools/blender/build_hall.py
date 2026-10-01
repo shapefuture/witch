@@ -180,6 +180,8 @@ def build(out_dir, samples, do_bake):
     # ---- light --------------------------------------------------------------------------------------------
     bake.setup_world(scene, strength=0.9)
     bake.add_sun(scene, "Key", tuple(SUN_DIR), (1.0, 0.70, 0.36), 7.0, 1.2)
+    # the limelight: a soft warm fill from the camera's side, so fronts facing us are not black
+    bake.add_area(scene, "Limelight", (5.0, 7.5, 6.5), (0.5, 2.5, -4.0), 6.0, 900.0, (1.0, 0.80, 0.55))
     all_bake = static + dyn + fg_objects
     if do_bake:
         t1 = time.time()
@@ -215,7 +217,7 @@ def build(out_dir, samples, do_bake):
 
     for o in all_bake:
         bake.normalise(o, gain, None, lift=AMBIENT_LIFT)
-        bake.facet_tone(o, strength=0.05, hue=0.02, seed=len(o.name))
+        bake.facet_tone(o, strength=0.085, hue=0.025, seed=len(o.name))
         if os.environ.get('STATS'):
             c = bake.read_corner_colours(o)
             print('STAT %-12s mean %s max %.2f nan %d' % (o.name, c[:, :3].mean(axis=0).round(3), c[:, :3].max(), int(np.isnan(c).sum())))

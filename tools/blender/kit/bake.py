@@ -84,6 +84,22 @@ def add_sun(scene, name, direction_to_light, colour, energy, angle_deg, shadows=
     return obj
 
 
+def add_area(scene, name, location, target, size, energy, colour):
+    """A soft area light (Godot-space location and target) that shines from `location` toward `target`:
+    the "limelight" that keeps the camera-facing sides of things readable."""
+    light = bpy.data.lights.new(name, "AREA")
+    light.shape = "DISK"
+    light.size = size
+    light.energy = energy
+    light.color = colour
+    obj = bpy.data.objects.new(name, light)
+    scene.collection.objects.link(obj)
+    obj.location = common.TO_BL @ Vector(location)
+    direction = common.TO_BL.to_3x3() @ (Vector(target) - Vector(location))
+    obj.rotation_euler = direction.to_track_quat("-Z", "Y").to_euler()
+    return obj
+
+
 def bake_lighting(objs, samples=64):
     scene = bpy.context.scene
     scene.render.engine = "CYCLES"
