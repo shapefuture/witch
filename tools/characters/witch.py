@@ -663,7 +663,7 @@ def clip_set(M, base=None, extra=None):
         k = min(1., t / .35)
         k = k * k * (3 - 2 * k)
         r = dict(base())
-        up = arm_pose(-1, (-.30, .78, .30), (-.10, .95, .30))
+        up = arm_pose(-1, (-.80, .55, .22), (-.55, .80, .25))
         lo = arm_pose(-1, (-.50, -.84, .20), (-.42, .22, .88))
         for n_ in up:
             r[n_] = slerp(lo[n_], up[n_], k)
