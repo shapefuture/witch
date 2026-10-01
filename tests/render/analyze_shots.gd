@@ -18,8 +18,9 @@ func _initialize() -> void:
 	var failures: Array[String] = []
 	for name in stats.keys():
 		var s: Dictionary = stats[name]
-		if s["width"] != 320 or s["height"] != 240:
-			failures.append("%s: expected the 320x240 internal resolution, got %dx%d" % [name, s["width"], s["height"]])
+		# 360 internal rows whatever the window shape; the width expands from 480 (4:3) with the aspect.
+		if s["height"] != 360 or s["width"] < 480:
+			failures.append("%s: expected the 360-row internal resolution (>= 480 wide), got %dx%d" % [name, s["width"], s["height"]])
 		if s["distinct_colors"] < 40:
 			failures.append("%s: only %d distinct colours (blank or broken render?)" % [name, s["distinct_colors"]])
 		if s["lit_fraction"] < 0.25:

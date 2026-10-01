@@ -12,6 +12,7 @@ extends Node
 #   --show-options target       open the action surface for a target without walking (capture aid)
 #   --load                      continue from save slot 1
 #   --magic amount              hold the magic shader globals at 0..1 (capture aid: shows the break)
+#   --cam x,y,z,tx,ty,tz[,fov] put the camera there, looking at t (capture aid: inspect the set)
 
 const SLOT := 1
 
@@ -22,7 +23,7 @@ var args: Dictionary = {}
 var auto_advance := -1.0
 var magic_time_scale := 1.0
 
-var room: Clearing
+var room: ArchiveHall
 var witch: Witch
 var camera: DioramaCamera
 var director: CameraDirector
@@ -39,6 +40,8 @@ var presentation := PresentationDirector.new()
 var hover_target := ""
 var _outlined: Node3D
 var _started := false
+var _frames := 0
+var _clock := 0.0
 
 static func parse_args(raw: PackedStringArray) -> Dictionary:
 	var out := {}
@@ -84,8 +87,8 @@ func _acquire_runtime() -> void:
 
 func _build() -> void:
 	PSXGlobals.reset()
-	room = Clearing.new()
-	room.name = "Clearing"
+	room = ArchiveHall.new()
+	room.name = "ArchiveHall"
 	add_child(room)
 
 	witch = Witch.new()
@@ -109,7 +112,7 @@ func _build() -> void:
 	post.name = "PSXScreen"
 	post.layer = 1
 	var grade := ColorRect.new()
-	grade.size = Vector2(320, 240)
+	grade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	grade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	grade.material = PSXMaterials.screen()
 	post.add_child(grade)
@@ -156,8 +159,15 @@ func _build() -> void:
 	pause_menu.quit_requested.connect(func() -> void: get_tree().quit())
 	runtime.presenter = _present
 	_register_presentation()
+	get_viewport().size_changed.connect(_on_resized)
+	_on_resized()
 	if args.has("magic"):
 		PSXGlobals.set_magic(float(str(args["magic"])))
+	if args.has("cam"):
+		var v := str(args["cam"]).split_floats(",")
+		if v.size() >= 6:
+			director.frozen = true
+			camera.debug_place(Vector3(v[0], v[1], v[2]), Vector3(v[3], v[4], v[5]), v[6] if v.size() > 6 else 62.0)
 
 func _register_presentation() -> void:
 	presentation.register("line", _play_line)
@@ -226,14 +236,18 @@ func _run_debug_sim() -> void:
 
 # ---- per-frame --------------------------------------------------------------------------------
 
-func _process(_delta: float) -> void:
-	if camera == null or director.mode != "wide" or director.frozen or runtime.is_busy():
-		return
-	var pose := CameraDirector.compute_pose("wide", [], room.framing())
-	pose["look_at"] = (pose["look_at"] as Vector3).lerp(witch.global_position + Vector3(0, 0.8, 0), 0.25)
-	camera.set_pose(pose)
-	if input != null:
-		input.enabled = not subtitles.is_active() and not runtime.is_busy() and not pause_menu.is_open()
+func _process(delta: float) -> void:
+	# The diorama's own clock drives wind, shimmer and the vertex wobble. Captures use the frame
+	# count instead of wall time, so the same frame number is the same picture, every run.
+	_frames += 1
+	_clock = float(_frames) / 60.0 if args.has("capture") else _clock + delta
+	PSXGlobals.set_time(_clock)
+	# The camera is bolted: it never follows the witch. Only the director moves it.
+	if input != null and camera != null and not runtime.is_busy():
+		input.enabled = not subtitles.is_active() and not pause_menu.is_open()
+
+func _on_resized() -> void:
+	PSXGlobals.set_render_size(get_viewport().get_visible_rect().size)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and probe != null and not surface.is_open() and not subtitles.is_active():

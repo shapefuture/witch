@@ -60,7 +60,7 @@ func _run() -> void:
 	r.engine.audit_integrity()
 	print("audit_integrity (full re-hash)          %s" % _ms(t))
 
-	var room := Clearing.new()
+	var room := ArchiveHall.new()
 	root.add_child(room)
 	await process_frame
 	var meshes := 0

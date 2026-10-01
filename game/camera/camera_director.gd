@@ -8,8 +8,15 @@ extends Node
 # Modes: wide (the room), inspect (close on a thing), conversation (two-shot),
 # magic_reveal (low and wide, reality opening), consequence (hold on the result),
 # stay (freeze: the camera does not follow; the ending contract).
+#
+# Stage-play grammar: the camera is bolted, so changing shot is a CUT, not a move. Only the
+# magic reveal eases (the lens swinging out is the point). Each shot carries a small Dutch roll so
+# the frame feels staged rather than level.
 
 const MODES := ["wide", "inspect", "conversation", "magic_reveal", "consequence", "stay"]
+const EASED_MODES := ["magic_reveal"]
+
+signal cut(mode: String)
 
 var camera: DioramaCamera
 # func() -> Dictionary                 the room's default framing (Room.framing())
@@ -34,16 +41,17 @@ static func compute_pose(pose_mode: String, focus_points: Array, room_framing: D
 	var base_pitch: float = room_framing["pitch_deg"]
 	var base_yaw: float = room_framing["yaw_deg"]
 	var base_fov: float = room_framing["fov"]
+	var base_roll: float = room_framing.get("roll_deg", 0.0)
 	match pose_mode:
 		"inspect":
-			return {"look_at": center + Vector3(0, 0.6, 0), "distance": base_distance * 0.55, "pitch_deg": base_pitch - 6.0, "yaw_deg": base_yaw, "fov": base_fov - 6.0}
+			return {"look_at": center + Vector3(0, 0.6, 0), "distance": base_distance * 0.5, "pitch_deg": base_pitch - 3.0, "yaw_deg": base_yaw, "roll_deg": base_roll - 1.5, "fov": base_fov - 8.0}
 		"conversation":
-			return {"look_at": center + Vector3(0, 1.0, 0), "distance": base_distance * 0.5, "pitch_deg": base_pitch - 14.0, "yaw_deg": base_yaw + 18.0, "fov": base_fov - 8.0}
+			return {"look_at": center + Vector3(0, 1.0, 0), "distance": base_distance * 0.46, "pitch_deg": base_pitch - 3.0, "yaw_deg": base_yaw + 16.0, "roll_deg": base_roll + 2.2, "fov": base_fov - 10.0}
 		"magic_reveal":
-			return {"look_at": center + Vector3(0, 1.2, 0), "distance": base_distance * 0.75, "pitch_deg": base_pitch - 17.0, "yaw_deg": base_yaw, "fov": base_fov + 6.0}
+			return {"look_at": center + Vector3(0, 1.2, 0), "distance": base_distance * 0.8, "pitch_deg": base_pitch - 11.0, "yaw_deg": base_yaw, "roll_deg": base_roll - 4.0, "fov": base_fov + 8.0}
 		"consequence":
-			return {"look_at": center + Vector3(0, 0.9, 0), "distance": base_distance * 0.62, "pitch_deg": base_pitch - 10.0, "yaw_deg": base_yaw - 12.0, "fov": base_fov - 4.0}
-	return {"look_at": room_focus, "distance": base_distance, "pitch_deg": base_pitch, "yaw_deg": base_yaw, "fov": base_fov}
+			return {"look_at": center + Vector3(0, 0.9, 0), "distance": base_distance * 0.55, "pitch_deg": base_pitch - 2.0, "yaw_deg": base_yaw - 10.0, "roll_deg": base_roll - 1.2, "fov": base_fov - 6.0}
+	return {"look_at": room_focus, "distance": base_distance, "pitch_deg": base_pitch, "yaw_deg": base_yaw, "roll_deg": base_roll, "fov": base_fov}
 
 # Camera position for a look-at point, distance and angles. yaw 0 puts the camera on the +Z
 # side looking toward -Z; pitch is the downward angle.
@@ -72,7 +80,8 @@ func frame(new_mode: String, focus_ids: Array = [], instant: bool = false) -> vo
 			points.append(resolved)
 	var pose := compute_pose(new_mode, points, framing_provider.call())
 	if camera != null:
-		camera.set_pose(pose, instant)
+		camera.set_pose(pose, instant or new_mode not in EASED_MODES)
+	cut.emit(new_mode)
 
 func return_to_wide(instant: bool = false) -> void:
 	if not frozen:

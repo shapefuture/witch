@@ -40,6 +40,14 @@ func block_outside(radius: float, gap_center: Vector3, gap_half_width: float) ->
 			if p.length() > radius and p.distance_to(Vector2(gap_center.x, gap_center.z)) > gap_half_width:
 				_grid.set_point_solid(Vector2i(x, y), true)
 
+# Blocks every cell whose centre (world XZ) satisfies `predicate(Vector2) -> bool`. Used to keep the
+# witch inside what the bolted camera can see.
+func block_where(predicate: Callable) -> void:
+	for x in range(_size.x):
+		for y in range(_size.y):
+			if predicate.call(_cell_center(Vector2i(x, y))):
+				_grid.set_point_solid(Vector2i(x, y), true)
+
 func is_blocked(point: Vector3) -> bool:
 	var cell := _to_cell(Vector2(point.x, point.z))
 	return not _in_grid(cell) or _grid.is_point_solid(cell)

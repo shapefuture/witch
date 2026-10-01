@@ -11,8 +11,15 @@ const OUTLINE := "res://render/psx/focus_outline.gdshader"
 const MAGIC := "res://render/psx/magic_break.gdshader"
 const SCREEN := "res://render/psx/psx_screen.gdshader"
 const DITHER := "res://render/psx/psxdither.png"
+const SET := "res://render/psx/psx_set.gdshader"
+const TEXTURE_DIR := "res://assets/archive/textures/"
+# Painted materials that glow by themselves (windows, lamps, the machine's indicator).
+const GLOWING := {"glow": Color(1.0, 0.86, 0.5), "glow_warm": Color(1.0, 0.6, 0.26), "glow_green": Color(0.5, 1.0, 0.4), "glow_blue": Color(0.4, 0.65, 1.0), "glow_white": Color(1.0, 0.95, 0.8)}
+const SET_SWAY := 0.16
 
 static var _shaders: Dictionary = {}
+static var _set_materials: Dictionary = {}
+static var _tiles: Dictionary = {}
 
 static func shader(path: String) -> Shader:
 	if not _shaders.has(path):
@@ -29,7 +36,43 @@ static func unlit(color: Color) -> ShaderMaterial:
 static func actor(color: Color, wobble: float = 0.004) -> ShaderMaterial:
 	var material := _colored(ACTOR, color)
 	material.set_shader_parameter("wobble_amount", wobble)
+	StageLight.apply(material)
 	return material
+
+# A baked-set material by its painted-tile name ("grass_a", "bark", "glow_warm" ...). Shared.
+static func set_material(tile: String) -> ShaderMaterial:
+	if _set_materials.has(tile):
+		return _set_materials[tile]
+	var material := ShaderMaterial.new()
+	material.shader = shader(SET)
+	if GLOWING.has(tile):
+		material.set_shader_parameter("glow", 1.0)
+		material.set_shader_parameter("tint", GLOWING[tile])
+		material.set_shader_parameter("sway", 0.0)
+		material.set_shader_parameter("fog_amount", 0.5)
+	else:
+		material.set_shader_parameter("sway", SET_SWAY)
+	material.set_shader_parameter("albedo_tex", tile_texture(tile))
+	_set_materials[tile] = material
+	return material
+
+# Textures are nearest-filtered for the chunky look, but with a mip chain so the busy painted
+# noise does not crawl on far surfaces. Built from the imported image at first use.
+static func tile_texture(tile: String) -> Texture2D:
+	if _tiles.has(tile):
+		return _tiles[tile]
+	var path := TEXTURE_DIR + tile + ".png"
+	var texture: Texture2D = null
+	if ResourceLoader.exists(path):
+		var source := load(path) as Texture2D
+		var image := source.get_image()
+		if image.is_compressed():
+			image.decompress()
+		image.convert(Image.FORMAT_RGBA8)
+		image.generate_mipmaps()
+		texture = ImageTexture.create_from_image(image)
+	_tiles[tile] = texture
+	return texture
 
 static func outline(width: float = 0.03) -> ShaderMaterial:
 	var material := ShaderMaterial.new()
