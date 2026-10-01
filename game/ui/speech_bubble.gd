@@ -1,0 +1,151 @@
+class_name SpeechBubble
+extends Node3D
+
+# One speech (or thought) bubble, hung in the scene next to whoever is talking. A faceted
+# parchment slab with a pointed tail, a brass name tab, ink text typed out by SubtitleUI, and a
+# blinking "next" mark. Speech gets a tail to the speaker; narration is a scalloped cloud with a
+# trail of dots to the witch. See Diegetic for how it is placed.
+
+const PAD := 6.0
+const MAX_WIDTH := 220.0
+const PARCHMENT := Color(1.0, 0.97, 0.88)
+const BORDER := Color(0.30, 0.21, 0.15)
+const INK := Color(0.15, 0.10, 0.08)
+const THOUGHT_TINT := Color(0.90, 0.86, 0.99)
+const THOUGHT_BORDER := Color(0.27, 0.19, 0.38)
+const THOUGHT_INK := Color(0.16, 0.11, 0.26)
+const BRASS := Color(0.84, 0.66, 0.28)
+
+var camera: Camera3D
+
+var _rect := Rect2()
+var _pivot := Vector2.ZERO
+var _label: Label3D
+var _wrapped := ""
+var _prompt: Label3D
+var _grow := 1.0
+var _clock := 0.0
+var _active := false
+
+func _ready() -> void:
+	visible = false
+
+func is_showing() -> bool:
+	return _active
+
+# Builds the bubble for one line and pops it in. `anchor_world` is where the speaker's head is.
+func present(speaker: String, text: String, anchor_world: Vector3, narration: bool) -> void:
+	_clear()
+	var viewport_size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2(480, 360)
+	var font := UIKit.font()
+	var wrap := minf(MAX_WIDTH, viewport_size.x * 0.58) - PAD * 2.0
+	# Lines are broken HERE, once, so the typewriter reveals characters without the text reflowing.
+	var paragraph := TextParagraph.new()
+	paragraph.width = wrap
+	paragraph.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND
+	paragraph.add_string(text, font, UIKit.FONT_SIZE)
+	var lines := PackedStringArray()
+	for i in range(paragraph.get_line_count()):
+		var span := paragraph.get_line_range(i)
+		lines.append(text.substr(span.x, span.y - span.x).strip_edges(false, true))
+	_wrapped = "\n".join(lines)
+	var measured := paragraph.get_size()
+	var w := maxf(ceilf(measured.x) + PAD * 2.0 + 2.0, 60.0)
+	var h := ceilf(measured.y) + PAD * 2.0 + 8.0
+	var anchor_px := viewport_size * 0.5
+	if camera != null:
+		anchor_px = camera.unproject_position(anchor_world)
+	var safe := Diegetic.safe_rect(viewport_size)
+	var x := clampf(anchor_px.x - w * 0.35, safe.position.x, maxf(safe.position.x, safe.end.x - w))
+	var y := anchor_px.y - h - 24.0
+	if y < safe.position.y:
+		y = anchor_px.y + 34.0
+	y = clampf(y, safe.position.y, maxf(safe.position.y, safe.end.y - h))
+	_rect = Rect2(x, y, w, h)
+	var to_anchor := Vector2(anchor_px.x - x, -(anchor_px.y - y))
+	var centre := Vector2(w * 0.5, -h * 0.5)
+	var direction := (to_anchor - centre).normalized()
+	var tip := to_anchor - direction * 9.0
+	_pivot = tip
+	var tint := THOUGHT_TINT if narration else PARCHMENT
+	var border := THOUGHT_BORDER if narration else BORDER
+	var ink := THOUGHT_INK if narration else INK
+	var outline := SlabMesh.cloud(w, h) if narration else SlabMesh.with_tail(w, h, tip)
+	add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.offset(outline, Vector2(2, -2))), Diegetic.slab_material(Color(0, 0, 0, 0.5), "", 10), -0.2))
+	add_child(Diegetic.mesh_instance(SlabMesh.fill(outline), Diegetic.slab_material(border, "wood_dark", 11), -0.1))
+	add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.inset(outline, 2.0)), Diegetic.slab_material(tint, "scroll", 12), 0.0))
+	if narration:
+		# the trail of thought: three shrinking dots from the cloud toward the thinker
+		for k in range(3):
+			var t := (k + 1.0) / 4.0
+			var at := centre.lerp(tip, 0.55 + t * 0.45)
+			var radius := 3.4 - k * 0.9
+			add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.dot(at, radius + 1.0)), Diegetic.slab_material(border, "", 11), -0.1))
+			add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.dot(at, radius)), Diegetic.slab_material(tint, "scroll", 12), 0.0))
+	if not speaker.is_empty():
+		var tab_w := ceilf(font.get_string_size(speaker, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.FONT_SIZE).x) + 8.0
+		var tab := PackedVector2Array([Vector2(5, 0), Vector2(5, 11), Vector2(9, 13), Vector2(5 + tab_w - 4, 13), Vector2(5 + tab_w, 11), Vector2(5 + tab_w, 0)])
+		add_child(Diegetic.mesh_instance(SlabMesh.fill(tab), Diegetic.slab_material(BRASS, "brass", 11), -0.05))
+		var name_label := Diegetic.label(speaker, INK, 13)
+		name_label.position = Vector3(9, 11, 0.2)
+		add_child(name_label)
+	_label = Diegetic.label(_wrapped, ink, 13)
+	_label.position = Vector3(PAD, -PAD, 0.2)
+	add_child(_label)
+	_prompt = Diegetic.label("▼", border, 13)
+	_prompt.position = Vector3(w - PAD - 8.0, -(h - 10.0), 0.2)
+	_prompt.visible = false
+	add_child(_prompt)
+	_grow = 0.35
+	_clock = 0.0
+	_active = true
+	visible = true
+	_place()
+
+# The text as broken into lines for this bubble (what SubtitleUI types out).
+func wrapped_text() -> String:
+	return _wrapped
+
+func set_shown(count: int) -> void:
+	if _label != null:
+		_label.text = _wrapped.substr(0, count)
+
+func show_all() -> void:
+	if _label != null:
+		_label.text = _wrapped
+
+func set_prompt(on: bool) -> void:
+	if _prompt != null:
+		_prompt.visible = on
+
+func dismiss() -> void:
+	_active = false
+	visible = false
+	_clear()
+
+# The bubble's rectangle in viewport pixels (for tests and for keeping other UI clear of it).
+func screen_rect() -> Rect2:
+	return _rect
+
+func _process(delta: float) -> void:
+	if not _active:
+		return
+	_clock += delta
+	_grow = minf(1.0, _grow + delta * 5.5)
+	_place()
+	if _prompt != null and _prompt.visible:
+		_prompt.modulate.a = 1.0 if fmod(_clock, 0.9) < 0.55 else 0.25
+
+func _place() -> void:
+	if camera == null or not is_inside_tree():
+		return
+	var overshoot := 1.0 + sin(minf(_grow, 1.0) * PI) * 0.06 * (1.0 - _grow)
+	var bob := floorf(sin(_clock * 2.4) * 0.5 + 0.5)
+	global_transform = Diegetic.transform_for(camera, get_viewport().get_visible_rect().size, _rect.position + Vector2(0, bob), _grow * overshoot, _pivot)
+
+func _clear() -> void:
+	for child in get_children():
+		child.queue_free()
+		remove_child(child)
+	_label = null
+	_prompt = null

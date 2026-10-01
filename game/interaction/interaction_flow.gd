@@ -53,7 +53,7 @@ func _inspect(target_id: String) -> void:
 	if options.is_empty():
 		_focus("")
 		return
-	surface.show_options(interactable.display_name(), options)
+	surface.show_options(interactable.display_name(), options, interactable.focus_point())
 
 func choose_option_id(option_id: String) -> void:
 	for option in surface.current_options():

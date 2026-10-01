@@ -11,6 +11,8 @@ const MOUSE_ID := -1
 # func(screen_position: Vector2) -> Dictionary
 #   {"target_id": String ("" if none), "ground": Vector3 (valid when has_ground)}, "has_ground": bool
 var picker: Callable
+# func(screen_position: Vector2) -> bool: true when something else (an option plaque) took the tap.
+var intercept: Callable
 var enabled := true
 var tracker := PointerTracker.new()
 # Injectable clock so tests are deterministic.
@@ -52,6 +54,8 @@ func handle_event(event: InputEvent) -> PlayerIntent:
 
 func _finish(tap: Variant, source: String) -> PlayerIntent:
 	if tap == null or not picker.is_valid():
+		return null
+	if intercept.is_valid() and intercept.call(tap):
 		return null
 	var hit: Dictionary = picker.call(tap)
 	var target_id := str(hit.get("target_id", ""))

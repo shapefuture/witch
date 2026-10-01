@@ -17,7 +17,7 @@ BACK_Z = -10.0
 FRONT_Z = 13.0
 STRAIGHT = 10.0      # walls are vertical this high, then the vault closes in
 H = 15.5
-CARPET_C = (0.4, -1.6)
+CARPET_C = (0.8, -1.8)
 ARCH_W = 2.4
 ARCH_STRAIGHT = 4.2
 ARCH_TOP = 7.9
@@ -422,3 +422,44 @@ def column(at, h=14.0, seed=0):
     for yb in (1.6, 6.2, 10.2):
         part.lathe([(0.62 - (0.08 if yb < 5 else 0.0), yb), (0.74, yb + 0.12), (0.62, yb + 0.28)], segs=7, mat="wood_dark", center=(x, 0, z), jitter=0.04, seed=seed + 1, closed_bottom=False, closed_top=False)
     return part
+
+
+# ---- foreground frame ---------------------------------------------------------------------------------
+# Big dark things cropped by the edges of the picture, like the shelf and the glass globe in the
+# reference. They are authored in CAMERA space (x right, y up, -z forward) and ride on the camera
+# in the game, so the frame is there at every aspect ratio and every shot that wants it.
+
+def foreground_left(seed=40):
+    """A tall shelf seen edge-on, a purple glass globe on a turned stand, a wooden tablet, a rock."""
+    parts = []
+    shelf = bookcase((0, 0, 0), 20, 2.6, 11.0, 1.4, seed=seed, tier_h=1.0)
+    shelf.name = "FgShelfL"
+    parts.append((shelf, (-4.9, -4.6, -4.5)))
+    globe = Part("FgGlobe")
+    globe.lathe([(0.7, 0.0), (0.45, 0.2), (0.22, 0.55), (0.3, 0.95), (0.62, 1.15), (0.5, 1.2)], segs=8, mat="wood", jitter=0.03, seed=2)
+    globe.blob((0, 2.2, 0), (1.0, 1.0, 1.0), "crystal", subdiv=2, amp=0.06, seed=9)
+    globe.cyl((0, 1.15, 0), (0, 1.35, 0), 0.55, 0.5, "brass", segs=9)
+    parts.append((globe, (-3.0, -3.7, -3.9)))
+    tablet = Part("FgTablet")
+    tablet.box((0, 0.75, 0), (1.05, 1.5, 0.14), "box_glyph", rot=(-18, 8, 3))
+    tablet.box((0, 0.75, -0.1), (1.15, 1.6, 0.1), "wood_dark", rot=(-18, 8, 3))
+    parts.append((tablet, (-1.55, -3.1, -3.3)))
+    rock = Part("FgRockL")
+    rock.blob((0, 0.7, 0), (1.9, 1.1, 1.4), "rock_b", subdiv=1, amp=0.45, seed=5, flat_bottom=-0.2)
+    parts.append((rock, (-4.4, -3.6, -3.2)))
+    return parts
+
+
+def foreground_right(seed=41):
+    """The other edge: the end of a shelf, a stone pedestal with a grey crystal, more rubble."""
+    parts = []
+    shelf = bookcase((0, 0, 0), -22, 2.6, 11.0, 1.4, seed=seed, tier_h=1.0)
+    shelf.name = "FgShelfR"
+    parts.append((shelf, (4.9, -4.6, -4.5)))
+    gem = pedestal_gem((0, 0, 0), 1.25)
+    gem.name = "FgGem"
+    parts.append((gem, (3.2, -3.7, -3.6)))
+    rock = Part("FgRockR")
+    rock.blob((0, 0.6, 0), (1.7, 1.0, 1.3), "rock_b", subdiv=1, amp=0.45, seed=8, flat_bottom=-0.2)
+    parts.append((rock, (4.6, -3.7, -3.0)))
+    return parts

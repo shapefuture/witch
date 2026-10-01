@@ -175,7 +175,7 @@ def make_mural_eye(w=256, h=128):
 
 def mean_colour(name):
     if name in ("box_glyph", "mural_eye"):
-        name = "shelf" if name == "box_glyph" else "rock_a"
+        name = "wood" if name == "box_glyph" else "rock_a"
     p = SPECS[name]["p"]
     return tuple(float(np.mean([c[i] for c in p])) for i in range(3))
 

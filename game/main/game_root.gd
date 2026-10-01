@@ -12,6 +12,7 @@ extends Node
 #   --show-options target       open the action surface for a target without walking (capture aid)
 #   --load                      continue from save slot 1
 #   --magic amount              hold the magic shader globals at 0..1 (capture aid: shows the break)
+#   --no-fx                     leave out the light shaft, dust and glow (capture aid)
 #   --cam x,y,z,tx,ty,tz[,fov] put the camera there, looking at t (capture aid: inspect the set)
 
 const SLOT := 1
@@ -39,6 +40,10 @@ var dialogue: DialogueBridge
 var presentation := PresentationDirector.new()
 var hover_target := ""
 var _outlined: Node3D
+var _frame_left: Node3D
+var _frame_right: Node3D
+var _frame_left_x := 0.0
+var _frame_right_x := 0.0
 var _started := false
 var _frames := 0
 var _clock := 0.0
@@ -87,6 +92,7 @@ func _acquire_runtime() -> void:
 
 func _build() -> void:
 	PSXGlobals.reset()
+	ArchiveHall.atmosphere_enabled = not args.has("no-fx")
 	room = ArchiveHall.new()
 	room.name = "ArchiveHall"
 	add_child(room)
@@ -101,12 +107,17 @@ func _build() -> void:
 	camera.name = "DioramaCamera"
 	camera.current = true
 	add_child(camera)
+	_mount_foreground()
 	director = CameraDirector.new()
 	director.camera = camera
 	director.framing_provider = room.framing
 	director.focus_resolver = _focus_position
 	add_child(director)
 	director.frame("wide", [], true)
+	director.cut.connect(func(mode: String) -> void:
+		# the frame suits the wide and the spell; close-ups need the space
+		if room.foreground != null:
+			room.foreground.visible = mode in ["wide", "magic_reveal", "stay"])
 
 	var post := CanvasLayer.new()
 	post.name = "PSXScreen"
@@ -120,12 +131,16 @@ func _build() -> void:
 
 	surface = InteractionPresenter.new()
 	surface.name = "InteractionPresenter"
+	surface.camera = camera
 	add_child(surface)
 	subtitles = SubtitleUI.new()
 	subtitles.name = "SubtitleUI"
+	subtitles.camera = camera
+	subtitles.anchor_provider = _bubble_anchor
 	add_child(subtitles)
 	pause_menu = PauseMenuUI.new()
 	pause_menu.name = "PauseMenu"
+	pause_menu.camera = camera
 	add_child(pause_menu)
 	inspector = MirrorInspector.new()
 	inspector.name = "MirrorInspector"
@@ -141,6 +156,7 @@ func _build() -> void:
 	input = IntentInput.new()
 	input.name = "IntentInput"
 	input.picker = probe.pick
+	input.intercept = func(px: Vector2) -> bool: return surface.handle_tap(px)
 	add_child(input)
 	flow = InteractionFlow.new()
 	flow.name = "InteractionFlow"
@@ -169,6 +185,36 @@ func _build() -> void:
 			director.frozen = true
 			camera.debug_place(Vector3(v[0], v[1], v[2]), Vector3(v[3], v[4], v[5]), v[6] if v.size() > 6 else 62.0)
 
+# The dark shelf/globe/rock frame rides on the camera: it is authored in camera space.
+func _mount_foreground() -> void:
+	var frame := room.foreground
+	if frame == null:
+		return
+	room.remove_child(frame)
+	camera.add_child(frame)
+	frame.transform = Transform3D.IDENTITY
+	for child in frame.get_children():
+		if child.name == "FgLeft":
+			_frame_left = child as Node3D
+			_frame_left_x = _frame_left.position.x
+		elif child.name == "FgRight":
+			_frame_right = child as Node3D
+			_frame_right_x = _frame_right.position.x
+	_fit_foreground()
+
+# Keeps the two edges of the frame at the two edges of the picture at any aspect ratio. The pieces
+# were authored for 16:9; a narrower screen pulls them in, a wider one pushes them out.
+func _fit_foreground() -> void:
+	if _frame_left == null or camera == null:
+		return
+	var size := get_viewport().get_visible_rect().size
+	var aspect := size.x / maxf(size.y, 1.0)
+	var depth := 4.4
+	var half_actual := depth * tan(deg_to_rad(camera.fov) * 0.5) * aspect
+	var half_authored := depth * tan(deg_to_rad(60.0) * 0.5) * (16.0 / 9.0)
+	_frame_left.position.x = _frame_left_x - (half_actual - half_authored)
+	_frame_right.position.x = _frame_right_x + (half_actual - half_authored)
+
 func _register_presentation() -> void:
 	presentation.register("line", _play_line)
 	presentation.register("dialogue", _play_dialogue)
@@ -194,7 +240,7 @@ func _begin() -> void:
 		var target := str(args["show-options"])
 		var interactable := room.get_interactable(target)
 		if interactable != null:
-			surface.show_options(interactable.display_name(), runtime.options_for(target))
+			surface.show_options(interactable.display_name(), runtime.options_for(target), interactable.focus_point())
 		return
 	var story := runtime.next_story()
 	if story.get("ok", false):
@@ -248,8 +294,11 @@ func _process(delta: float) -> void:
 
 func _on_resized() -> void:
 	PSXGlobals.set_render_size(get_viewport().get_visible_rect().size)
+	_fit_foreground()
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and surface != null:
+		surface.hover(event.position)
 	if event is InputEventMouseMotion and probe != null and not surface.is_open() and not subtitles.is_active():
 		var hit := probe.pick(event.position)
 		if str(hit.get("target_id", "")) != hover_target:
@@ -280,6 +329,12 @@ func _update_outline() -> void:
 	_outlined = node
 	if _outlined != null:
 		FocusOutline.set_focus(_outlined, true)
+
+# Where a speaker's head is, for the bubble's tail. The narrator is the witch's own thought.
+func _bubble_anchor(speaker_id: String) -> Vector3:
+	if speaker_id == "tomas" and room != null and room.tomas != null:
+		return room.tomas.global_position + Vector3(0, 1.45, 0)
+	return witch.global_position + Vector3(0, 1.8, 0)
 
 func _focus_position(id: String) -> Variant:
 	if id == "player":

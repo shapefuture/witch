@@ -1,45 +1,47 @@
 class_name SettingsMenuUI
-extends CanvasLayer
+extends Node3D
 
-# Volume, and nothing else: the game has a single language.
+# Volume, and nothing else: the game has a single language. Three plaques over the veil.
 
 signal closed
 
-var _title: Label
-var _volume_label: Label
-var _slider: HSlider
-var _back: Button
+const STEP := 0.1
+
+var camera: Camera3D
+var _stack: PlaqueStack
 
 func _ready() -> void:
-	layer = 16
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.78)
-	dim.size = Vector2(320, 240)
-	add_child(dim)
-	_title = UIKit.label(tr("ui.settings"), UIKit.TITLE_SIZE)
-	_title.position = Vector2(0, 32)
-	_title.size = Vector2(320, 24)
-	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	add_child(_title)
-	_volume_label = UIKit.label(tr("ui.volume"))
-	_volume_label.position = Vector2(60, 100)
-	add_child(_volume_label)
-	_slider = HSlider.new()
-	_slider.min_value = 0.0
-	_slider.max_value = 1.0
-	_slider.step = 0.05
-	_slider.value = SettingsState.master_volume
-	_slider.position = Vector2(60, 116)
-	_slider.size = Vector2(200, 16)
-	_slider.value_changed.connect(SettingsState.set_master_volume)
-	add_child(_slider)
-	_back = UIKit.button(tr("ui.back"))
-	_back.position = Vector2(110, 180)
-	_back.size = Vector2(100, 18)
-	_back.pressed.connect(_on_back)
-	add_child(_back)
+	_stack = PlaqueStack.new()
+	_stack.process_mode = Node.PROCESS_MODE_ALWAYS
+	_stack.camera = camera
+	_stack.chosen.connect(_on_chosen)
+	add_child(_stack)
+	var labels: Array[String] = [tr("ui.volume_down"), tr("ui.volume_up"), tr("ui.back")]
+	_stack.open(_title(), labels, Vector2.ZERO, true, true, true)
 
-func _on_back() -> void:
-	closed.emit()
-	queue_free()
+func _title() -> String:
+	return "%s: %d%%" % [tr("ui.volume"), roundi(SettingsState.master_volume * 100.0)]
+
+func _input(event: InputEvent) -> void:
+	var mouse := event as InputEventMouseButton
+	if mouse != null and not mouse.pressed and mouse.button_index == MOUSE_BUTTON_LEFT and mouse.device != InputEvent.DEVICE_ID_EMULATION:
+		_stack.handle_tap(mouse.position)
+	var touch := event as InputEventScreenTouch
+	if touch != null and not touch.pressed:
+		_stack.handle_tap(touch.position)
+	var motion := event as InputEventMouseMotion
+	if motion != null:
+		_stack.hover(motion.position)
+
+func _on_chosen(index: int) -> void:
+	match index:
+		0:
+			SettingsState.set_master_volume(SettingsState.master_volume - STEP)
+			_stack.set_title(_title())
+		1:
+			SettingsState.set_master_volume(SettingsState.master_volume + STEP)
+			_stack.set_title(_title())
+		2:
+			closed.emit()
+			queue_free()

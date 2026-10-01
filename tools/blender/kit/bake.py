@@ -30,8 +30,15 @@ def make_materials(extra_glow=("glow", "glow_warm", "glow_green", "glow_blue", "
         bsdf.inputs["Emission Color"].default_value = glow_colours[name] + (1.0,)
         bsdf.inputs["Emission Strength"].default_value = 1.2 if name == "glow_white" else 2.5
         mats[name] = m
-    mats["box_glyph"] = mats["shelf"]
-    mats["mural_eye"] = mats["rock_a"]
+    # Painted sheets that reuse a base tile's colour for bounce light but need their OWN material
+    # name, because the game picks its texture by material name.
+    for name, base in (("box_glyph", "wood"), ("mural_eye", "rock_a")):
+        m = bpy.data.materials.new(name)
+        m.use_nodes = True
+        r, g, b = textures.mean_colour(base)
+        m.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (r, g, b, 1.0)
+        m.node_tree.nodes["Principled BSDF"].inputs["Roughness"].default_value = 1.0
+        mats[name] = m
     return mats
 
 

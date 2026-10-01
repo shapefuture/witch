@@ -6,6 +6,8 @@ extends RefCounted
 #   batch    one static mesh: hall, shelves, towers, statue, corridor (a handful of draw calls)
 #   machine  the machine with its named, animatable parts (BigGear, SmallGear, Lever, Cam, ...)
 #   bell     the brass bell on its yoke (a separate node so it can swing and be outlined)
+#   foreground  dark shelf, globe and rock edges authored in CAMERA space: the owner parents them
+#            to the camera so the picture is framed like the reference at every aspect ratio
 # Every surface gets the PSX set material for its painted tile; the glTF's own materials are
 # only used for their NAMES.
 
@@ -15,6 +17,7 @@ var root: Node3D
 var batch: MeshInstance3D
 var machine: Node3D
 var bell: MeshInstance3D
+var foreground: Node3D
 
 static func available() -> bool:
 	return ResourceLoader.exists(SCENE_PATH)
@@ -27,6 +30,7 @@ func load_set() -> bool:
 	batch = root.get_node_or_null("StaticSet") as MeshInstance3D
 	machine = root.get_node_or_null("Machine") as Node3D
 	bell = root.get_node_or_null("Bell") as MeshInstance3D
+	foreground = root.get_node_or_null("ForegroundRig") as Node3D
 	_restyle(root)
 	return batch != null and machine != null and bell != null
 

@@ -25,17 +25,20 @@ from kit import bake, common, props_built, props_hall, textures  # noqa: E402
 from kit.common import Part, empty  # noqa: E402
 
 # Gameplay anchors: identical to game/world/archive/archive_hall.gd.
-BELL_PILLAR_AT = (3.6, 0.0, -3.2)
+BELL_PILLAR_AT = (5.6, 0.0, -3.0)
 MACHINE_AT = (-1.6, 0.0, -1.2)
 TOWER_AT = (-4.4, 0.0, -5.0)       # the crooked bookcase tower the raccoon watches from
 PATH_AT = (0.0, 0.0, -7.8)
+# The wide shot's camera, as set in game/world/archive/archive_hall.gd (yaw 22, pitch -4, distance 12).
+CAMERA_FROM = (3.885, 1.763, 8.10)
+CAMERA_AT = (-0.6, 2.6, -3.0)
 CRATE_AT = (2.4, 0.0, -0.4)
 BENCH_AT = (-3.2, 0.0, -2.6)
 
 # The key light: a steep late-afternoon beam from the right-back, through a hole in the vault.
 SUN_DIR = Vector((0.14, 0.88, -0.45)).normalized()
-POOL = Vector((0.5, 0.0, -0.5))   # where the shaft lands: the spiral, the machine, Tomas
-AMBIENT_LIFT = np.array([0.080, 0.066, 0.050], dtype=np.float32)   # shade is never black: warm olive air
+POOL = Vector((1.2, 0.0, -2.0))   # where the shaft lands: Tomas, the machine's edge, the spiral, the statue's side
+AMBIENT_LIFT = np.array([0.045, 0.038, 0.030], dtype=np.float32)   # shade is never black: warm olive air
 
 
 def build(out_dir, samples, do_bake):
@@ -93,9 +96,9 @@ def build(out_dir, samples, do_bake):
     px = TOWER_AT[0] + perch_local[0] * math.cos(th) + perch_local[1] * math.sin(th) + lean * 2.2 * 2.2
     pz = TOWER_AT[2] - perch_local[0] * math.sin(th) + perch_local[1] * math.cos(th)
     anchors["raccoon_perch"] = [px, 2.2, pz]
-    add(props_hall.tower((4.9, 0, -7.4), -6, 2.4, 1.6, 8.6, 0.4, seed=12))
+    add(props_hall.tower((3.9, 0, -8.3), -6, 2.4, 1.6, 8.6, 0.4, seed=12))
     add(props_hall.tower((-6.4, 0, -7.7), 4, 2.4, 1.6, 9.4, 0.42, seed=13))
-    add(props_hall.hooded_statue((7.0, 0, -3.6), -64))
+    add(props_hall.hooded_statue((3.3, 0, -4.0), -40))
     add(props_hall.rubble((-7.2, 0, 6.6), 0.9, 21))
     add(props_hall.rubble((7.6, 0, 7.0), 0.8, 23))
 
@@ -117,6 +120,31 @@ def build(out_dir, samples, do_bake):
     bell_obj = bell_part.build(coll, mats, max_edge=None, location=hang, rotation=(0, 0, 0))
     bell_obj.name = "Bell"
     dyn.append(bell_obj)
+
+    # ---- foreground frame: authored in camera space, baked where the camera really is -------------------------
+    cam_pos = Vector(CAMERA_FROM)
+    forward = (Vector(CAMERA_AT) - cam_pos).normalized()
+    right = forward.cross(Vector((0, 1, 0))).normalized()
+    up = right.cross(forward).normalized()
+    from mathutils import Matrix
+    cam_m = Matrix(((right.x, up.x, -forward.x, cam_pos.x), (right.y, up.y, -forward.y, cam_pos.y), (right.z, up.z, -forward.z, cam_pos.z), (0, 0, 0, 1)))
+    rig = empty("ForegroundRig", coll)
+    rig.matrix_basis = common.TO_BL @ cam_m @ common.TO_GD
+    fg_objects = []
+    for group_name, parts in (("FgLeft", props_hall.foreground_left()), ("FgRight", props_hall.foreground_right())):
+        members = []
+        for part, loc in parts:
+            members.append(part.build(coll, mats, max_edge=None, parent=rig, location=loc, rotation=(0, 0, 0)))
+        bpy.ops.object.select_all(action="DESELECT")
+        for o in members:
+            o.select_set(True)
+        bpy.context.view_layer.objects.active = members[0]
+        bpy.ops.object.join()
+        joined = bpy.context.view_layer.objects.active
+        joined.name = group_name
+        # the frame receives the hall's shade but must not throw shadows into the hall
+        joined.visible_shadow = False
+        fg_objects.append(joined)
 
     # ---- bake-only: close the hall behind the camera so light and bounce behave --------------------------------
     closer = Part("Closer")
@@ -152,7 +180,7 @@ def build(out_dir, samples, do_bake):
     # ---- light --------------------------------------------------------------------------------------------
     bake.setup_world(scene, strength=0.9)
     bake.add_sun(scene, "Key", tuple(SUN_DIR), (1.0, 0.70, 0.36), 7.0, 1.2)
-    all_bake = static + dyn
+    all_bake = static + dyn + fg_objects
     if do_bake:
         t1 = time.time()
         bake.bake_lighting(all_bake, samples)
@@ -176,8 +204,8 @@ def build(out_dir, samples, do_bake):
             big = o.name.startswith(("Floor", "Shell", "BackWall", "Corridor", "Mural"))
             bake.smooth_light(o, radius=0.65 if big else 0.22)
         gcol = bake.read_corner_colours(floor_obj)[:, :3]
-        gain = 1.0 / max(float(np.percentile(gcol @ w, 99.5)), 1e-4)
-        print("exposure: floor p99.5 -> gain %.2f" % gain)
+        gain = 1.0 / max(float(np.percentile(gcol @ w, 98.0)), 1e-4)
+        print("exposure: floor p98 -> gain %.2f" % gain)
     else:
         gain = 1.0
         for o in all_bake:
@@ -241,7 +269,7 @@ def build(out_dir, samples, do_bake):
     batch.name = "StaticSet"
     print("static tris:", sum(len(p.vertices) - 2 for p in batch.data.polygons), "materials:", len(batch.data.materials))
     textures.write_all(os.path.join(out_dir, "textures"))
-    bake.export([batch] + dyn + [machine_root], os.path.join(out_dir, "archive_set.glb"))
+    bake.export([batch] + dyn + fg_objects + [machine_root, rig], os.path.join(out_dir, "archive_set.glb"))
     with open(os.path.join(out_dir, "anchors.json"), "w") as f:
         json.dump(anchors, f, indent=1)
     print("done in %.1fs" % (time.time() - t0))

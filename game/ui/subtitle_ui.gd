@@ -1,9 +1,10 @@
 class_name SubtitleUI
-extends CanvasLayer
+extends Node3D
 
-# Bottom-of-screen subtitles: a typewriter with a per-speaker blip. One tap (or click, or
-# Enter) completes the line being typed; the next tap dismisses it. show_line() is awaitable,
-# so the presentation director simply waits for the player.
+# Dialogue and narration as speech bubbles hung in the scene next to whoever is talking (see
+# SpeechBubble): a typewriter with a per-speaker blip. One tap (or click, or Enter) completes the
+# line being typed; the next tap dismisses it. show_line() is awaitable, so the presentation
+# director simply waits for the player.
 
 signal line_finished
 signal active_changed(active: bool)
@@ -12,19 +13,17 @@ const CHAR_INTERVAL := 0.03
 const BLIP_RATE := 11025.0
 const BLIP_DURATION := 0.05
 const BLIP_FREQ := 520.0
-const PANEL_POSITION := Vector2(8, 184)
-const PANEL_SIZE := Vector2(304, 50)
 
 # >= 0: the line advances by itself this many seconds after it finishes typing. Used by the
 # headless capture mode and tests; the shipped game leaves it at -1 (the player advances).
 var auto_advance_delay := -1.0
 # Speaker id -> blip pitch. Narration (no speaker) is silent.
 var voice_pitch := {"tomas": 0.78}
+# The camera the bubble is placed against, and where each speaker's head is: func(id) -> Vector3.
+var camera: Camera3D
+var anchor_provider: Callable
 
-var _panel: PanelContainer
-var _speaker: Label
-var _text: Label
-var _prompt: Label
+var _bubble: SpeechBubble
 var _audio: AudioStreamPlayer
 var _timer: Timer
 var _full := ""
@@ -34,29 +33,9 @@ var _active := false
 var _pitch := 1.0
 
 func _ready() -> void:
-	layer = 5
-	_panel = PanelContainer.new()
-	_panel.position = PANEL_POSITION
-	_panel.custom_minimum_size = PANEL_SIZE
-	_panel.size = PANEL_SIZE
-	_panel.add_theme_stylebox_override("panel", UIKit.panel_style())
-	_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_panel.visible = false
-	add_child(_panel)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 2)
-	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_panel.add_child(column)
-	_speaker = UIKit.label("", UIKit.FONT_SIZE, UIKit.ACCENT)
-	column.add_child(_speaker)
-	_text = UIKit.label("", UIKit.FONT_SIZE)
-	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	column.add_child(_text)
-	_prompt = UIKit.label("▼", UIKit.FONT_SIZE)
-	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_prompt.visible = false
-	column.add_child(_prompt)
+	_bubble = SpeechBubble.new()
+	_bubble.name = "SpeechBubble"
+	add_child(_bubble)
 	var generator := AudioStreamGenerator.new()
 	generator.mix_rate = BLIP_RATE
 	generator.buffer_length = BLIP_DURATION + 0.02
@@ -72,18 +51,23 @@ func _ready() -> void:
 func is_active() -> bool:
 	return _active
 
+func bubble() -> SpeechBubble:
+	return _bubble
+
 # Shows one line and resolves when the player dismisses it.
 func show_line(speaker: String, text: String, speaker_id: String = "") -> void:
 	_full = text
 	_shown = 0
 	_typing = true
 	_pitch = float(voice_pitch.get(speaker_id, 0.0))
-	_speaker.text = speaker
-	_speaker.visible = not speaker.is_empty()
-	UIKit.style_label(_text, UIKit.FONT_SIZE, Color.WHITE if not speaker.is_empty() else Color(0.78, 0.82, 0.95))
-	_text.text = ""
-	_prompt.visible = false
-	_panel.visible = true
+	var anchor := Vector3.ZERO
+	if anchor_provider.is_valid():
+		anchor = anchor_provider.call(speaker_id)
+	_bubble.camera = camera
+	_bubble.present(speaker, text, anchor, speaker.is_empty())
+	_full = _bubble.wrapped_text()
+	_bubble.set_shown(0)
+	_bubble.set_prompt(false)
 	_set_active(true)
 	_timer.start()
 	await line_finished
@@ -93,15 +77,15 @@ func _on_tick() -> void:
 		_finish_typing()
 		return
 	_shown += 1
-	_text.text = _full.substr(0, _shown)
+	_bubble.set_shown(_shown)
 	if _pitch > 0.0 and _full[_shown - 1] != " ":
 		_blip()
 
 func _finish_typing() -> void:
 	_timer.stop()
-	_text.text = _full
+	_bubble.show_all()
 	_typing = false
-	_prompt.visible = true
+	_bubble.set_prompt(true)
 	if auto_advance_delay >= 0.0:
 		await get_tree().create_timer(auto_advance_delay).timeout
 		if _active and not _typing:
@@ -132,8 +116,7 @@ func advance() -> void:
 
 func _dismiss() -> void:
 	_timer.stop()
-	_panel.visible = false
-	_prompt.visible = false
+	_bubble.dismiss()
 	_set_active(false)
 	line_finished.emit()
 

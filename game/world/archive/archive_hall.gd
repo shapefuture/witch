@@ -15,16 +15,19 @@ extends Room
 # stable data; the look of the place is not).
 #
 # Layout (x right, z toward the camera, metres):
-#     arch out (0, -10)       tower + raccoon (-4.4, -5.0)      bell post (3.6, -3.2)
+#     arch out (0, -10)       tower + raccoon (-4.4, -5.0)      bell post (5.6, -3.0)
 #     bench (-3.2, -2.6)   machine (-1.6, -1.2)   Tomas (-0.1, -0.9)   crate (2.4, -0.4)
-#     witch starts (0.6, 2.5)           statue (7.0, -3.6)      light pool (0.5, -0.5)
+#     witch starts (0.6, 2.5)           statue (3.3, -4.0)      light pool (1.2, -2.0)
 
 const RADIUS := 9.5
-const BELL_POST_AT := Vector3(3.6, 0, -3.2)
+const BELL_POST_AT := Vector3(5.6, 0, -3.0)
 const MACHINE_AT := Vector3(-1.6, 0, -1.2)
 const TOWER_AT := Vector3(-4.4, 0, -5.0)
 const PATH_AT := Vector3(0, 0, -7.8)
 const BELL_TILT_DEG := 24.0
+
+# Capture aid (--no-fx): leave out the shaft, dust and glow to see the bare baked set.
+static var atmosphere_enabled := true
 
 var machine_view: MachineView
 var tomas: NPC
@@ -32,16 +35,18 @@ var raccoon: Node3D
 var bell: Node3D
 var set_parts := ArchiveSet.new()
 var sky: MeshInstance3D
+# Camera-space frame pieces (see ArchiveSet). GameRoot parents them to the camera.
+var foreground: Node3D
 
 func _ready() -> void:
 	room_id = "clearing"
 	spawn_position = Vector3(0.6, 0.0, 2.5)
 	# Low and wide, looking up a little: tall shelves become cliffs, the witch is small among them.
-	camera_focus = Vector3(0.0, 3.4, -1.5)
-	camera_distance = 13.0
-	camera_pitch_deg = -9.0
-	camera_yaw_deg = 14.0
-	camera_fov = 62.0
+	camera_focus = Vector3(-0.6, 2.6, -3.0)
+	camera_distance = 12.0
+	camera_pitch_deg = -4.0
+	camera_yaw_deg = 22.0
+	camera_fov = 60.0
 	navigator = GridNavigator.new(Rect2(-11.0, -11.0, 22.0, 22.0))
 	navigator.block_outside(8.6, PATH_AT + Vector3(0, 0, -1.2), 1.5)
 	# The camera never follows her, so she must stay where the frame shows her (4:3 is the tightest).
@@ -50,6 +55,8 @@ func _ready() -> void:
 	_build_environment()
 	_build_ground_pick()
 	_build_props()
+	if atmosphere_enabled:
+		add_child(HallAtmosphere.new())
 	_build_tomas()
 	_build_interactables()
 
@@ -118,12 +125,16 @@ func _build_props() -> void:
 	add_child(swing)
 	swing.rotation_degrees = Vector3(0, 0, BELL_TILT_DEG)   # hangs tilted into the draught, on purpose
 	bell = swing
+	if set_parts.foreground != null:
+		foreground = set_parts.take(set_parts.foreground)
+		foreground.name = "Foreground"
+		add_child(foreground)
 	add_obstacle(MACHINE_AT, 1.25)
 	add_obstacle(BELL_POST_AT, 0.95, 3.0)
 	add_obstacle(TOWER_AT, 1.7, 2.4)
-	add_obstacle(Vector3(4.9, 0, -7.4), 1.3, 3.0)
+	add_obstacle(Vector3(3.9, 0, -8.3), 1.3, 3.0)
 	add_obstacle(Vector3(-6.4, 0, -7.7), 1.3, 3.0)
-	add_obstacle(Vector3(7.0, 0, -3.6), 1.3, 3.0)
+	add_obstacle(Vector3(3.3, 0, -4.0), 1.2, 3.0)
 	add_obstacle(Vector3(2.4, 0, -0.4), 0.5, 0.6)
 	add_obstacle(Vector3(-3.2, 0, -2.6), 1.0, 1.0)
 	raccoon = Placeholders.raccoon()
@@ -166,7 +177,7 @@ func _build_interactables() -> void:
 	register_interactable(tomas_interactable)
 
 	add_interactable("machine", "obj.machine", MACHINE_AT, 1.7, 0.8, Vector3(-0.7, 0, 0.5), PackedStringArray(["mechanism", "timing"]))
-	add_interactable("bell", "obj.bell", BELL_POST_AT + Vector3(-1.3, 2.25, 0.0), 0.8, 0.0, Vector3(2.3, 0, -1.8), PackedStringArray(["wind", "sound", "attention"]))
+	add_interactable("bell", "obj.bell", BELL_POST_AT + Vector3(-1.3, 2.25, 0.0), 0.8, 0.0, BELL_POST_AT + Vector3(-1.3, 0, 1.6), PackedStringArray(["wind", "sound", "attention"]))
 	# The whole pointed arch is the target: a tall volume in the wall, so a low camera can still
 	# point at it over the heads of the people standing in front.
 	add_interactable("path_out", "obj.path_out", Vector3(0, 0, -9.4), 2.6, 3.2, Vector3(0, 0, -6.6), PackedStringArray(["departure"]))

@@ -1,79 +1,78 @@
 class_name InteractionPresenter
-extends CanvasLayer
+extends Node3D
 
-# The contextual action surface: a short list of natural-language options for whatever the
-# player tapped. It renders InteractionOption.label and NOTHING else; the ontology never
-# reaches the screen. Buttons are real Controls, so touch and mouse both work, and they are
-# sized for a finger (a 16px row is ~70px on a 1080p screen).
+# The contextual action surface: a short list of natural-language options for whatever the player
+# tapped, as carved plaques hung beside the thing (see PlaqueStack). It renders
+# InteractionOption.label and NOTHING else; the ontology never reaches the screen. A tap inside a
+# plaque chooses it, whether it came from a finger or a mouse (IntentInput asks handle_tap first).
 
 signal option_chosen(option: InteractionOption)
 signal dismissed
 
-const PANEL_WIDTH := 300.0
-const ROW_MIN_HEIGHT := 16.0
+var camera: Camera3D:
+	set(value):
+		camera = value
+		if _stack != null:
+			_stack.camera = value
 
-var _panel: PanelContainer
-var _title: Label
-var _list: VBoxContainer
+var _stack: PlaqueStack
 var _options: Array[InteractionOption] = []
 
 func _ready() -> void:
-	layer = 4
-	_panel = PanelContainer.new()
-	_panel.add_theme_stylebox_override("panel", UIKit.panel_style())
-	_panel.custom_minimum_size = Vector2(PANEL_WIDTH, 0)
-	_panel.visible = false
-	add_child(_panel)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 2)
-	_panel.add_child(column)
-	_title = UIKit.label("", UIKit.FONT_SIZE, UIKit.ACCENT)
-	column.add_child(_title)
-	_list = VBoxContainer.new()
-	_list.add_theme_constant_override("separation", 2)
-	column.add_child(_list)
+	_stack = PlaqueStack.new()
+	_stack.name = "Plaques"
+	_stack.camera = camera
+	_stack.chosen.connect(_on_chosen)
+	add_child(_stack)
 
 func is_open() -> bool:
-	return _panel != null and _panel.visible
+	return _stack != null and _stack.is_open()
 
 func current_options() -> Array[InteractionOption]:
 	return _options
 
 # `title` is what is being pointed at, already translated (an object name from the text table).
-func show_options(title: String, options: Array[InteractionOption]) -> void:
+# `anchor` is where it is in the world; the plaques hang beside it on the roomier side.
+func show_options(title: String, options: Array[InteractionOption], anchor: Vector3 = Vector3.INF) -> void:
 	_options = options
-	_title.text = title.substr(0, 1).to_upper() + title.substr(1)
-	for child in _list.get_children():
-		child.queue_free()
-		_list.remove_child(child)
-	for i in range(options.size()):
-		var button := UIKit.button(options[i].label)
-		button.custom_minimum_size = Vector2(PANEL_WIDTH - 10.0, ROW_MIN_HEIGHT)
-		button.pressed.connect(_on_pressed.bind(i))
-		_list.add_child(button)
-	var cancel := UIKit.button(tr("ui.never_mind"))
-	cancel.custom_minimum_size = Vector2(PANEL_WIDTH - 10.0, ROW_MIN_HEIGHT)
-	cancel.pressed.connect(close)
-	_list.add_child(cancel)
-	_panel.visible = true
-	_panel.reset_size()
-	# Bottom-centre, above the subtitle strip's resting place.
-	_panel.position = Vector2((320.0 - _panel.size.x) * 0.5, 236.0 - _panel.size.y)
+	var labels: Array[String] = []
+	for option in options:
+		labels.append(option.label)
+	labels.append(tr("ui.never_mind"))
+	var viewport_size := get_viewport().get_visible_rect().size if is_inside_tree() else Vector2(480, 360)
+	var anchor_px := Vector2(viewport_size.x * 0.5, viewport_size.y * 0.6)
+	if camera != null and anchor.is_finite():
+		anchor_px = camera.unproject_position(anchor)
+	_stack.camera = camera
+	_stack.open(title.substr(0, 1).to_upper() + title.substr(1), labels, anchor_px, false, false, true)
 
 func close() -> void:
 	if is_open():
-		_panel.visible = false
+		_stack.close()
 		_options = []
 		dismissed.emit()
 
 func choose(index: int) -> void:
-	_on_pressed(index)
+	_on_chosen(index)
 
-func _on_pressed(index: int) -> void:
+# True when the tap landed on a plaque (the choice itself follows after a short press animation).
+func handle_tap(px: Vector2) -> bool:
+	return _stack != null and _stack.handle_tap(px)
+
+func hover(px: Vector2) -> void:
+	if _stack != null:
+		_stack.hover(px)
+
+func _on_chosen(index: int) -> void:
+	if not is_open():
+		return
+	if index == _options.size():
+		close()
+		return
 	if index < 0 or index >= _options.size():
 		return
 	var option := _options[index]
-	_panel.visible = false
+	_stack.close()
 	_options = []
 	option_chosen.emit(option)
 
