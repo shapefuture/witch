@@ -9,6 +9,18 @@ const SPEEDS := {"jammed": 0.0, "running_by_magic": 4.2, "running_together": 1.3
 
 var state := "jammed"
 var _time := 0.0
+# Extra gears of a machine from its own prop file (any node named Gear*), turning about local Y,
+# alternating direction.
+var _gears: Array[Node3D] = []
+
+func _ready() -> void:
+	_collect_gears(self)
+
+func _collect_gears(node: Node) -> void:
+	for child in node.get_children():
+		if child is Node3D and str(child.name).begins_with("Gear"):
+			_gears.append(child)
+		_collect_gears(child)
 
 func apply_state(new_state: String) -> void:
 	state = new_state
@@ -29,3 +41,5 @@ func _process(delta: float) -> void:
 		big.rotate_object_local(Vector3.UP, speed * wobble * delta)
 	if small != null:
 		small.rotate_object_local(Vector3.UP, -speed * 1.9 * wobble * delta)
+	for i in range(_gears.size()):
+		_gears[i].rotate_object_local(Vector3.UP, speed * (1.0 if i % 2 == 0 else -1.6) * wobble * delta)

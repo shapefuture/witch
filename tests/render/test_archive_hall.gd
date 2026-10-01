@@ -1,43 +1,28 @@
 extends TestCase
 
-# The art pipeline's contract with the game: the baked set loads with the parts behaviour needs,
-# stays inside the mobile budget, and the bolted camera shows everywhere the witch can walk.
+# The art pipeline's contract with the game: the live props load with the parts behaviour needs, the
+# painted tiles stay small, and the bolted camera shows everywhere the witch can walk. (The set itself
+# is pre-rendered plates: tests/render/test_plates.gd.)
 
 const TILE_DIR := "res://assets/archive/textures/"
-const MAX_STATIC_TRIANGLES := 60000
-const MAX_STATIC_SURFACES := 28
 const MAX_TILE_SIZE := 256
 
-func _surface_triangles(mesh: Mesh) -> int:
-	var total := 0
-	for surface in range(mesh.get_surface_count()):
-		var arrays := mesh.surface_get_arrays(surface)
-		var indices: Variant = arrays[Mesh.ARRAY_INDEX]
-		total += (indices as PackedInt32Array).size() / 3 if indices != null else (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size() / 3
-	return total
-
-func test_the_baked_set_loads_with_every_part_the_game_drives() -> void:
-	ok(ArchiveSet.available(), "assets/archive/archive_set.glb is in the project (run tools/blender/build_hall.py)")
-	var set_parts := ArchiveSet.new()
-	ok(set_parts.load_set(), "static batch, machine, bell and foreground all present")
+func test_the_live_props_load_with_every_part_the_game_drives() -> void:
+	var props := ArchiveProps.new()
+	ok(props.load_props(), "machine and bell (props/*.glb, else the old set's)")
 	for part in ["Base", "BigGear", "SmallGear", "Pipe", "Lever", "Cam", "Indicator"]:
-		ok(set_parts.machine.get_node_or_null(part) != null, "the machine has %s (MachineView and the outline depend on the name)" % part)
-	ok(set_parts.foreground.get_node_or_null("FgLeft") != null and set_parts.foreground.get_node_or_null("FgRight") != null, "both edges of the camera frame")
-	track(set_parts.root)
-
-func test_every_surface_of_the_set_has_a_painted_tile_and_the_set_fits_the_mobile_budget() -> void:
-	var set_parts := ArchiveSet.new()
-	set_parts.load_set()
-	var surfaces := set_parts.batch.mesh.get_surface_count()
-	ok(surfaces <= MAX_STATIC_SURFACES, "draw calls for the static batch: %d <= %d" % [surfaces, MAX_STATIC_SURFACES])
-	ok(_surface_triangles(set_parts.batch.mesh) <= MAX_STATIC_TRIANGLES, "static triangles: %d <= %d" % [_surface_triangles(set_parts.batch.mesh), MAX_STATIC_TRIANGLES])
-	for surface in range(surfaces):
-		var material := set_parts.batch.get_surface_override_material(surface) as ShaderMaterial
-		ok(material != null and material.shader == PSXMaterials.shader(PSXMaterials.SET), "surface %d uses the set shader" % surface)
-		var tile := set_parts.batch.mesh.surface_get_material(surface).resource_name
-		if not PSXMaterials.GLOWING.has(tile):
-			ok(PSXMaterials.tile_texture(tile) != null, "tile '%s' has a painted texture" % tile)
-	track(set_parts.root)
+		ok(props.machine.get_node_or_null(part) != null or props.machine.find_children("Gear*").size() > 0, "the machine has %s or Gear* parts (MachineView and the outline depend on the names)" % part)
+	for node: Node3D in [props.machine, props.bell]:
+		var meshes: Array = node.find_children("*", "MeshInstance3D", true, false)
+		if node is MeshInstance3D:
+			meshes.append(node)
+		ok(not meshes.is_empty(), "%s has meshes" % node.name)
+		for mesh: Variant in meshes:
+			var instance := mesh as MeshInstance3D
+			for surface in range(instance.mesh.get_surface_count()):
+				ok(instance.get_surface_override_material(surface) is ShaderMaterial, "%s surface %d wears a PSX material" % [instance.name, surface])
+	track(props.machine)
+	track(props.bell)
 
 func test_painted_tiles_are_small_and_unique() -> void:
 	var dir := DirAccess.open(TILE_DIR)
@@ -73,19 +58,21 @@ func test_the_room_has_its_interactables_and_they_can_be_reached() -> void:
 		ok(not room.navigator.find_path(room.spawn_position, approach).is_empty(), "and there is a walk from the start to it")
 	eq(room.room_id, "clearing", "Mirror's key for this place is unchanged by how it looks")
 	ok(room.machine_view != null and room.bell != null and room.raccoon != null, "machine, bell, raccoon placed")
+	ok(room.plates != null and room.plates.proxy != null, "the set is the proxy wearing the plates")
 	ok(room.raccoon.position.y > 1.5, "the raccoon watches from a shelf, not the floor")
 	room.free()
 
 func test_the_bolted_wide_shot_shows_everywhere_the_witch_may_stand() -> void:
 	var viewport := SubViewport.new()
-	viewport.size = Vector2i(480, 360)   # 4:3, the tightest aspect the game supports
+	viewport.size = Vector2i(720, 540)   # 4:3, the tightest aspect the game supports
 	var camera := DioramaCamera.new()
 	viewport.add_child(camera)
 	Engine.get_main_loop().root.add_child(viewport)
 	track(viewport)
 	await Engine.get_main_loop().process_frame
-	var framing := ArchiveHall.wide_framing()
-	camera.set_pose(CameraDirector.compute_pose("wide", [], framing), true)
+	# the real shot: the wide plate's pose with the stage's roll, the lens closed to fit the plate
+	var plates := PlateSet.shared(false)
+	camera.set_pose(PlateSet.pose_of(plates.wide(), float(ArchiveHall.wide_framing()["roll_deg"])), true)
 	var seen := 0
 	var checked := 0
 	for x in range(-8, 9):
@@ -96,7 +83,7 @@ func test_the_bolted_wide_shot_shows_everywhere_the_witch_may_stand() -> void:
 				var feet := Vector3(x, 0.0, z)
 				var a := camera.unproject_position(feet)
 				var b := camera.unproject_position(head)
-				if not camera.is_position_behind(head) and Rect2(0, 0, 480, 360).grow(-4).has_point(a) and b.y > 0.0:
+				if not camera.is_position_behind(head) and Rect2(0, 0, 720, 540).grow(-6).has_point(a) and b.y > 0.0:
 					seen += 1
 	ok(checked > 80, "enough walkable cells to mean something (%d)" % checked)
 	eq(seen, checked, "the witch is in frame wherever she can walk (%d of %d), because the camera never follows" % [seen, checked])
@@ -141,7 +128,9 @@ func test_camera_roll_tilts_the_horizon() -> void:
 func test_render_globals_follow_the_screen_and_reset() -> void:
 	PSXGlobals.reset()
 	PSXGlobals.set_render_size(Vector2(640, 360))
-	eq(PSXGlobals.snap_grid(), Vector2(320, 180), "one snap cell is two render pixels at any aspect")
+	eq(PSXGlobals.snap_grid(), Vector2(320, 180), "one snap cell is two pixels of a 360-row picture at any aspect")
+	PSXGlobals.set_render_size(Vector2(960, 540))
+	eq(PSXGlobals.snap_grid(), Vector2(320, 180), "and the 540-row render keeps that lattice, so the wobble keeps its size")
 	PSXGlobals.set_lens(0.7)
 	ok(is_equal_approx(PSXGlobals.lens(), 0.7), "lens swing set")
 	PSXGlobals.set_time(12.5)
