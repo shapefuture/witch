@@ -1,0 +1,49 @@
+{
+  "model": "alibaba/qwen-image-3/edit",
+  "arguments": {
+    "prompt": "Remove these objects. First: the small purple crystal sconce on a dark bracket attached to the wall just left of the big eye mural, in the upper left quarter. Second: the stone tablet with a square glyph leaning on the floor at the bottom edge, left of centre. Third: the pile of rolled white scrolls on the top shelf in the upper left corner. Fourth: the key-shaped ring ornament standing on the right bookshelf, upper right. Fifth: the pale grey angular boulders on the floor at the bottom right corner. Where each was, continue the dark bookshelf, the wall, the spiral carpet and the floor behind it. Keep everything else exactly the same: same camera, composition, low-poly faceted papercraft style, colors and lighting.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/bf58ccdd-c0a4-4e86-a96a-ea25c09e3edb.png"
+    ],
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "seed": 7,
+    "negative_prompt": "lamp, sconce, tablet, scroll, ring, rock, boulder, text, letters, blurry, photorealistic, smooth",
+    "prompt_extend": false,
+    "enable_thinking": false
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.200",
+    "usd": "0.075",
+    "discount": null
+  },
+  "idempotency_key": "2bf6c8f6-f827-4c85-b488-4ff040d89b52",
+  "created_at": "2026-10-02T00:20:21+00:00",
+  "request_id": "5c547177-96cd-4600-a857-ff220054151a",
+  "status_url": "https://platform.higgsfield.ai/requests/5c547177-96cd-4600-a857-ff220054151a/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/5c547177-96cd-4600-a857-ff220054151a/cancel",
+  "status": "completed",
+  "correlation_id": "4f08422e91d3470c9cda175b488784ec",
+  "result": {
+    "status": "completed",
+    "request_id": "5c547177-96cd-4600-a857-ff220054151a",
+    "status_url": "https://platform.higgsfield.ai/requests/5c547177-96cd-4600-a857-ff220054151a/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/5c547177-96cd-4600-a857-ff220054151a/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/9e134bd6-85c9-433e-8fb6-77d6e6a028f2.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T00:20:51+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/9e134bd6-85c9-433e-8fb6-77d6e6a028f2.png",
+      "path": "image_0.png",
+      "sha256": "4cdd0deccb5e031aa341a4bd05e1e44c31f72a4980f38d5e6d4b1dc06b45d08e",
+      "bytes": 2350641
+    }
+  ]
+}

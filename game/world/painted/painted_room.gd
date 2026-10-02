@@ -9,6 +9,10 @@ extends Node3D
 signal prop_pressed(prop_id: String, reaction: String, world_position: Vector3)
 # She arrived at a tapped spot of the floor: the painting pixel that was tapped and where she stands.
 signal walked(pixel: Vector2, world_position: Vector3)
+# A reaction's line (a key of data/text/ru.json): the toy box says something; whoever presents text listens.
+signal prop_said(prop_id: String, text_key: String)
+# A tap that hit no prop was answered by fallback(): where, in painting pixels.
+signal fallback_pinged(px: Vector2)
 
 const PLATE_SHADER := preload("res://game/world/painted/painted_plate.gdshader")
 const SHADOW_SHADER := preload("res://game/world/painted/painted_shadow.gdshader")
@@ -33,6 +37,9 @@ var props: Array[PaintedProp] = []
 var life: PaintedLife
 var walk: PaintedWalk
 var input: IntentInput
+var sfx: PaintedSfx
+var pings: PaintedPings
+var _behind: Texture2D
 var _focal := 1.0
 var _pitch := 0.0
 var _eye := 1.3
@@ -69,14 +76,22 @@ func _ready() -> void:
 	if props_data.has("plate_empty"):
 		behind = _texture(str(props_data["plate_empty"]))
 	_plate_smooth = _plate
+	_behind = behind
 	_build_camera()
 	_build_room(behind)
 	for id in room.get("actors", {}):
 		_spawn_actor(str(id), room["actors"][id])
+	sfx = PaintedSfx.new()
+	sfx.name = "Sfx"
+	add_child(sfx)
+	pings = PaintedPings.new()
+	pings.name = "Pings"
+	add_child(pings)
 	for data in props_data.get("props", []):
 		var prop := PaintedProp.new()
 		add_child(prop)
 		prop.setup(self, data, _plate, _plate_smooth)
+		prop.answered.connect(_on_prop_answered)
 		props.append(prop)
 	_build_life()
 	_build_screen()
@@ -330,10 +345,6 @@ func tap(px: Vector2) -> String:
 	fallback(px)
 	return "fallback"
 
-# A tap that is neither a prop nor the floor (a wall, the ceiling, a corner she cannot reach). Nothing yet.
-func fallback(_px: Vector2) -> void:
-	pass
-
 # The nearest prop that contains painting pixel `px`, or null.
 func prop_at(px: Vector2) -> PaintedProp:
 	var best: PaintedProp = null
@@ -350,3 +361,25 @@ func press(px: Vector2) -> String:
 	var reaction := best.react("press")
 	prop_pressed.emit(best.prop_id, reaction, pixel_to_world(px))
 	return best.prop_id
+
+# The answer to a tap that hit no prop and no hotspot (and, for the caller that owns the input, no walkable floor):
+# a soft ring of light at the tapped pixel and a tiny sound, so a poke never does nothing. Returns "ping".
+func fallback(px: Vector2) -> String:
+	var at_depth := depth_at(px) * 0.97
+	pings.ping(pixel_at_depth(px, at_depth), at_depth / _focal * 2.0 * 26.0, view_axis(), view_up())
+	sfx.play("ping")
+	fallback_pinged.emit(px)
+	return "ping"
+
+func _on_prop_answered(prop_id: String, _reaction: String, sound: String, say: String) -> void:
+	sfx.play(sound)
+	if not say.is_empty():
+		prop_said.emit(prop_id, say)
+
+# For checking the room at rest: with `on`, the painting is drawn as the plate itself and the cutout cards are
+# hidden, which must look exactly like the room with its cards at rest over plate_empty.
+func show_originals(on: bool) -> void:
+	_plate_material.set_shader_parameter("plate", _plate if on else _behind)
+	_plate_material.set_shader_parameter("plate_smooth", _plate if on else _behind)
+	for prop in props:
+		prop.set_card_hidden(on)

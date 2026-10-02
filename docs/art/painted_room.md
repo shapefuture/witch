@@ -15,7 +15,7 @@ A painted still made into a room, as an alternative to the Cycles plates (`docs/
 4. **Props** (`props.json`, made by `tools/painted/lift_prop.py`): a second edit removes objects; the
    tool cuts each one out (diff, or a hand lasso with `--ellipse`/`--polygon`) onto a card at its
    nearest depth, and composites `plate_empty.png` behind it. A tap maps screen -> painting pixel ->
-   nearest prop -> its next reaction (`wobble`, `hop`, `squash`, `shiver`, `spin`); `PaintedRoom.prop_pressed`
+   nearest prop -> its next reaction (the vocabulary in the Toy box section); `PaintedRoom.prop_pressed`
    is where Mirror events will hook in. `kind: "hotspot"` (a polygon, no moving part) is supported.
 
 Limits seen in the captures: the camera holds about 15 cm of movement before depth edges smear;
@@ -124,3 +124,63 @@ Run: `GODOT=... ./tests/render/painted_walk_check.sh OUT_DIR` (xvfb; `render_che
 raccoon). Limits: the depth is monocular, so the floor is as good as the depth (a 5 cm wobble of the carpet is followed,
 not smoothed; far corridor floor beyond 11 m is not walkable); the hidden floor behind a prop is a guess; she can be
 entirely hidden behind the statue.
+
+## Toy box
+
+Everything visible in the room answers a poke, and a poke never does nothing (Humongous Entertainment
+aliveness). `assets/painted/hall_clean/props.json` lists 14 toys: 9 lifted **cutouts** (globe, statue, clock,
+wall lamp, two finial orbs, floor tablet, scroll pile, key ring) and 5 **hotspots** (the eye mural, the oculus,
+the beam, the carved chest, the boulders at the right).
+
+**Data.** A reaction entry is a word or `{"do": word, "sound": name, "say": text_key}`; the list for `press`
+is walked in order, so poking twice answers differently. Words (`PaintedProp.VOCABULARY`, the only place a
+new one is added): `wobble hop squash shiver spin droop peek blink rattle bob tilt_fall swing pulse ripple
+flash`. A cutout moves its card about its `pivot` (the clock swings from its hook, the ring spins about its
+centre); a hotspot has no moving part, so its card is the same painting drawn only while it reacts, warped by
+a soft mask (`painted_hotspot.gdshader`: ripple, shake, swell, flash) and hidden again at rest. Names a kind
+cannot do map onto one it can (`HOTSPOT_ALIAS`, `CUTOUT_ALIAS`). `sound` defaults per word. `say` is a key of
+`data/text/ru.json` (group `toy.`); the room emits `prop_said(prop_id, key)`, the presenter shows it.
+
+**Sound.** `tools/painted/synth.py` writes `assets/painted/sfx/*.wav` from numpy recipes (blip, thunk, chime,
+creak, rattle, boing, tick, sparkle, ping, whoosh): 22.05 kHz mono, seeded by name so reruns are
+byte-identical, 161 KB in all. `PaintedSfx` (four voices, a deterministic pitch drift) plays them and counts.
+
+**The fallback.** `PaintedRoom.fallback(px)` answers a tap that hit no prop and no hotspot: a ring of light at
+the pixel (`PaintedPings`, four pooled quads) and a `ping`. `press(px)` still returns `""` when nothing was
+hit; the caller that owns input dispatches prop, then floor walk, then `fallback`.
+
+**Building it.** `tools/painted/toybox.py` rebuilds every mask, rect and `plate_empty.png` from the `lift`
+blocks in `props.json` plus the image edits (`--without NAME=PATH`). Cutout cards are aligned to the mesh's
+8 px grid so the PSX vertex snap treats card and painting alike, and `plate_empty.png` is the plate bit for bit
+outside the masks (the fill is colour-matched to the ring around its hole and faded in over 3 px), so the room
+at rest is the painting. `tools/painted/lift_prop.py` does one prop the same way.
+
+**Cost of the objects** (Qwen Image 3 Edit, 2k, 16:9, seed 7, `prompt_extend` false, $0.075 per call; the raw
+outputs are in `build/higgsfield`, git-ignored, the manifests are `job_toys_{a,b,c}.json`):
+
+| call | asked to remove | removed | lifted |
+|---|---|---|---|
+| a | clock, lamp, two orbs | clock, two orbs (not the lamp) | clock, orb_left, orb_mid |
+| b | lamp, tablet, scrolls, ring, boulders | lamp, tablet | lamp, tablet |
+| c | scrolls, ring, boulders | scrolls, ring (not the boulders) | scrolls, ring |
+
+Three calls, **$0.225**, seven lifted objects: about $0.032 each. Three earlier submissions failed at once and
+were not charged (a placeholder URL left in `image_urls`: with `--upload` the list must start empty). The
+boulders never came off, so they are a hotspot. A model that skips some of a list is the cost of batching:
+ask again for the leftovers. The clock and the scroll pile are cut by hand lasso (the edit changed them too
+little to refine); the others by lasso intersected with what the edit changed.
+
+**Checks.** `tests/render/test_painted_toybox.gd`: the data uses the vocabulary and every sound, mask and text
+key exists; the sounds total at most 400 KB; plate_empty equals plate.png outside every mask (blit test);
+a 300-tap deterministic bot (floor, dark edges, outside the frame) finds zero silent taps; every toy runs its
+whole cycle, visibly displaced mid-way and back at rest. `capture_painted.gd ... toys` prints `REST` lines (the
+room with its cards against the painting drawn without them) and crops every reaction;
+`tools/painted/toy_sheet.py` joins them. Measured at 16:9: outside the mask contours 0 differing pixels in
+raw, PSX and full-resolution PSX; inside the cards the picture equals the card-less room to within 0.5 mean
+grey levels; the only differences (about 1.2 % of pixels raw) are 1 px silhouette lines where the depth mesh's
+own texture mapping misregisters, and there the cards are the exact ones.
+
+Limits: a moving cutout carries its 2 px mask margin of background with it (a faint dark outline on dark
+shelves); at non-16:9 aspects the PSX snap treats the card's four corners differently from the mesh's many
+vertices, so a hairline can show; no presenter shows `say` lines yet; the sounds were judged by their spectra,
+not by ear.

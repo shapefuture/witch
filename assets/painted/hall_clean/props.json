@@ -5,10 +5,10 @@
    "id": "statue",
    "kind": "cutout",
    "rect": [
-    765,
-    255,
-    160,
-    320
+    784,
+    272,
+    136,
+    304
    ],
    "mask": "statue_mask.png",
    "pivot": [
@@ -17,9 +17,20 @@
    ],
    "reactions": {
     "press": [
-     "shiver",
-     "squash"
+     {
+      "do": "shiver",
+      "sound": "rattle"
+     },
+     {
+      "do": "squash",
+      "sound": "thunk",
+      "say": "toy.statue.stiff"
+     }
     ]
+   },
+   "lift": {
+    "without": "gs",
+    "keep_mask": true
    }
   },
   {
@@ -27,9 +38,9 @@
    "kind": "cutout",
    "rect": [
     0,
-    295,
-    205,
-    290
+    304,
+    184,
+    280
    ],
    "mask": "globe_mask.png",
    "pivot": [
@@ -38,11 +49,799 @@
    ],
    "reactions": {
     "press": [
-     "wobble",
-     "hop",
-     "spin"
+     {
+      "do": "wobble",
+      "sound": "creak"
+     },
+     {
+      "do": "hop",
+      "sound": "boing"
+     },
+     {
+      "do": "spin",
+      "sound": "whoosh",
+      "say": "toy.globe.spin"
+     }
     ]
+   },
+   "lift": {
+    "without": "gs",
+    "keep_mask": true
    }
+  },
+  {
+   "id": "clock",
+   "kind": "cutout",
+   "pivot": [
+    413,
+    274
+   ],
+   "reactions": {
+    "press": [
+     {
+      "do": "swing",
+      "sound": "tick"
+     },
+     {
+      "do": "rattle",
+      "sound": "rattle"
+     },
+     {
+      "do": "tilt_fall",
+      "sound": "thunk",
+      "say": "toy.clock.late"
+     }
+    ]
+   },
+   "lift": {
+    "without": "a",
+    "ellipses": [
+     [
+      406,
+      310,
+      37,
+      35
+     ]
+    ]
+   },
+   "rect": [
+    360,
+    272,
+    88,
+    80
+   ],
+   "mask": "clock_mask.png"
+  },
+  {
+   "id": "lamp",
+   "kind": "cutout",
+   "reactions": {
+    "press": [
+     {
+      "do": "blink",
+      "sound": "chime"
+     },
+     {
+      "do": "bob",
+      "sound": "blip"
+     },
+     {
+      "do": "blink",
+      "sound": "chime",
+      "say": "toy.lamp.wink"
+     }
+    ]
+   },
+   "lift": {
+    "without": "b",
+    "polygons": [
+     [
+      [
+       262,
+       96
+      ],
+      [
+       340,
+       96
+      ],
+      [
+       345,
+       185
+      ],
+      [
+       262,
+       185
+      ]
+     ]
+    ],
+    "refine": true,
+    "search": [
+     250,
+     85,
+     100,
+     110
+    ]
+   },
+   "rect": [
+    272,
+    96,
+    64,
+    96
+   ],
+   "mask": "lamp_mask.png",
+   "pivot": [
+    300,
+    172
+   ]
+  },
+  {
+   "id": "orb_left",
+   "kind": "cutout",
+   "reactions": {
+    "press": [
+     {
+      "do": "bob",
+      "sound": "boing"
+     },
+     {
+      "do": "pulse",
+      "sound": "chime"
+     },
+     {
+      "do": "hop",
+      "sound": "boing"
+     }
+    ]
+   },
+   "lift": {
+    "without": "a",
+    "ellipses": [
+     [
+      607,
+      70,
+      20,
+      28
+     ]
+    ],
+    "refine": true,
+    "search": [
+     585,
+     40,
+     45,
+     60
+    ]
+   },
+   "rect": [
+    584,
+    48,
+    48,
+    48
+   ],
+   "mask": "orb_left_mask.png",
+   "pivot": [
+    604,
+    93
+   ]
+  },
+  {
+   "id": "orb_mid",
+   "kind": "cutout",
+   "reactions": {
+    "press": [
+     {
+      "do": "hop",
+      "sound": "boing"
+     },
+     {
+      "do": "droop",
+      "sound": "creak"
+     },
+     {
+      "do": "bob",
+      "sound": "chime",
+      "say": "toy.orb.hum"
+     }
+    ]
+   },
+   "lift": {
+    "without": "a",
+    "ellipses": [
+     [
+      722,
+      150,
+      26,
+      38
+     ]
+    ],
+    "refine": true,
+    "search": [
+     695,
+     115,
+     55,
+     75
+    ]
+   },
+   "rect": [
+    688,
+    120,
+    64,
+    72
+   ],
+   "mask": "orb_mid_mask.png",
+   "pivot": [
+    721,
+    186
+   ]
+  },
+  {
+   "id": "tablet",
+   "kind": "cutout",
+   "reactions": {
+    "press": [
+     {
+      "do": "tilt_fall",
+      "sound": "thunk"
+     },
+     {
+      "do": "wobble",
+      "sound": "thunk"
+     },
+     {
+      "do": "rattle",
+      "sound": "rattle",
+      "say": "toy.tablet.stone"
+     }
+    ]
+   },
+   "lift": {
+    "without": "b",
+    "polygons": [
+     [
+      [
+       318,
+       640
+      ],
+      [
+       395,
+       640
+      ],
+      [
+       425,
+       722
+      ],
+      [
+       330,
+       722
+      ]
+     ]
+    ],
+    "refine": true,
+    "search": [
+     310,
+     630,
+     125,
+     90
+    ]
+   },
+   "rect": [
+    320,
+    640,
+    104,
+    80
+   ],
+   "mask": "tablet_mask.png",
+   "pivot": [
+    370,
+    719
+   ]
+  },
+  {
+   "id": "scrolls",
+   "kind": "cutout",
+   "reactions": {
+    "press": [
+     {
+      "do": "rattle",
+      "sound": "rattle"
+     },
+     {
+      "do": "peek",
+      "sound": "creak"
+     },
+     {
+      "do": "droop",
+      "sound": "creak",
+      "say": "toy.scrolls.sigh"
+     }
+    ]
+   },
+   "lift": {
+    "without": "c",
+    "polygons": [
+     [
+      [
+       5,
+       30
+      ],
+      [
+       25,
+       27
+      ],
+      [
+       42,
+       34
+      ],
+      [
+       44,
+       52
+      ],
+      [
+       36,
+       60
+      ],
+      [
+       48,
+       63
+      ],
+      [
+       66,
+       66
+      ],
+      [
+       72,
+       78
+      ],
+      [
+       76,
+       56
+      ],
+      [
+       88,
+       52
+      ],
+      [
+       105,
+       52
+      ],
+      [
+       112,
+       62
+      ],
+      [
+       108,
+       82
+      ],
+      [
+       100,
+       92
+      ],
+      [
+       102,
+       108
+      ],
+      [
+       92,
+       116
+      ],
+      [
+       70,
+       114
+      ],
+      [
+       60,
+       104
+      ],
+      [
+       50,
+       102
+      ],
+      [
+       40,
+       98
+      ],
+      [
+       32,
+       90
+      ],
+      [
+       10,
+       92
+      ],
+      [
+       0,
+       88
+      ],
+      [
+       0,
+       50
+      ]
+     ]
+    ]
+   },
+   "rect": [
+    0,
+    24,
+    120,
+    96
+   ],
+   "mask": "scrolls_mask.png",
+   "pivot": [
+    53,
+    118
+   ]
+  },
+  {
+   "id": "ring",
+   "kind": "cutout",
+   "reactions": {
+    "press": [
+     {
+      "do": "spin",
+      "sound": "chime"
+     },
+     {
+      "do": "rattle",
+      "sound": "rattle"
+     },
+     {
+      "do": "bob",
+      "sound": "chime",
+      "say": "toy.ring.key"
+     }
+    ]
+   },
+   "lift": {
+    "without": "c",
+    "polygons": [
+     [
+      [
+       1196,
+       168
+      ],
+      [
+       1210,
+       158
+      ],
+      [
+       1232,
+       156
+      ],
+      [
+       1245,
+       170
+      ],
+      [
+       1248,
+       190
+      ],
+      [
+       1240,
+       208
+      ],
+      [
+       1232,
+       218
+      ],
+      [
+       1230,
+       225
+      ],
+      [
+       1236,
+       262
+      ],
+      [
+       1222,
+       266
+      ],
+      [
+       1214,
+       262
+      ],
+      [
+       1213,
+       225
+      ],
+      [
+       1200,
+       214
+      ],
+      [
+       1193,
+       192
+      ]
+     ]
+    ]
+   },
+   "rect": [
+    1184,
+    152,
+    72,
+    120
+   ],
+   "mask": "ring_mask.png",
+   "pivot": [
+    1221,
+    190
+   ]
+  },
+  {
+   "id": "eye",
+   "kind": "hotspot",
+   "polygon": [
+    [
+     335,
+     118
+    ],
+    [
+     375,
+     84
+    ],
+    [
+     425,
+     70
+    ],
+    [
+     470,
+     80
+    ],
+    [
+     500,
+     105
+    ],
+    [
+     525,
+     150
+    ],
+    [
+     500,
+     168
+    ],
+    [
+     440,
+     172
+    ],
+    [
+     380,
+     162
+    ],
+    [
+     340,
+     135
+    ]
+   ],
+   "reactions": {
+    "press": [
+     {
+      "do": "blink",
+      "sound": "chime",
+      "say": "toy.eye.blink"
+     },
+     {
+      "do": "ripple",
+      "sound": "blip"
+     }
+    ]
+   },
+   "rect": [
+    320,
+    56,
+    224,
+    136
+   ],
+   "mask": "eye_mask.png"
+  },
+  {
+   "id": "oculus",
+   "kind": "hotspot",
+   "polygon": [
+    [
+     850,
+     52
+    ],
+    [
+     868,
+     28
+    ],
+    [
+     906,
+     32
+    ],
+    [
+     912,
+     62
+    ],
+    [
+     895,
+     88
+    ],
+    [
+     852,
+     86
+    ]
+   ],
+   "reactions": {
+    "press": [
+     {
+      "do": "flash",
+      "sound": "sparkle"
+     },
+     {
+      "do": "ripple",
+      "sound": "sparkle",
+      "say": "toy.oculus.sky"
+     }
+    ]
+   },
+   "rect": [
+    832,
+    16,
+    96,
+    88
+   ],
+   "mask": "oculus_mask.png"
+  },
+  {
+   "id": "beam",
+   "kind": "hotspot",
+   "polygon": [
+    [
+     850,
+     92
+    ],
+    [
+     912,
+     92
+    ],
+    [
+     918,
+     150
+    ],
+    [
+     908,
+     230
+    ],
+    [
+     880,
+     300
+    ],
+    [
+     800,
+     300
+    ],
+    [
+     790,
+     230
+    ],
+    [
+     828,
+     150
+    ]
+   ],
+   "reactions": {
+    "press": [
+     {
+      "do": "ripple",
+      "sound": "sparkle"
+     },
+     {
+      "do": "flash",
+      "sound": "sparkle",
+      "say": "toy.beam.dust"
+     }
+    ]
+   },
+   "rect": [
+    776,
+    80,
+    160,
+    240
+   ],
+   "mask": "beam_mask.png"
+  },
+  {
+   "id": "chest",
+   "kind": "hotspot",
+   "polygon": [
+    [
+     1092,
+     462
+    ],
+    [
+     1190,
+     452
+    ],
+    [
+     1196,
+     545
+    ],
+    [
+     1095,
+     555
+    ]
+   ],
+   "reactions": {
+    "press": [
+     {
+      "do": "pulse",
+      "sound": "thunk"
+     },
+     {
+      "do": "rattle",
+      "sound": "rattle",
+      "say": "toy.chest.locked"
+     }
+    ]
+   },
+   "rect": [
+    1080,
+    440,
+    136,
+    128
+   ],
+   "mask": "chest_mask.png"
+  },
+  {
+   "id": "boulders",
+   "kind": "hotspot",
+   "polygon": [
+    [
+     1030,
+     590
+    ],
+    [
+     1085,
+     560
+    ],
+    [
+     1110,
+     555
+    ],
+    [
+     1150,
+     590
+    ],
+    [
+     1210,
+     590
+    ],
+    [
+     1215,
+     650
+    ],
+    [
+     1180,
+     690
+    ],
+    [
+     1120,
+     700
+    ],
+    [
+     1060,
+     650
+    ]
+   ],
+   "reactions": {
+    "press": [
+     {
+      "do": "rattle",
+      "sound": "thunk"
+     },
+     {
+      "do": "pulse",
+      "sound": "thunk",
+      "say": "toy.boulders.heavy"
+     }
+    ]
+   },
+   "rect": [
+    1016,
+    536,
+    216,
+    184
+   ],
+   "mask": "boulders_mask.png"
   }
  ]
 }

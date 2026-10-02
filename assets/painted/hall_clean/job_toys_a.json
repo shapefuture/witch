@@ -1,0 +1,49 @@
+{
+  "model": "alibaba/qwen-image-3/edit",
+  "arguments": {
+    "prompt": "Remove these objects. First: the round clock with a star pattern on the stone wall inside the arch in the centre-left. Second: the small purple crystal lamp on a bracket on the wall just left of the big eye mural. Third: the two purple crystal orbs on thin poles standing on top of the two tall central bookcases. Where each was, continue the plain stone wall, the cave ceiling and the bookcase tops behind it. Keep everything else exactly the same: same camera, composition, low-poly faceted papercraft style, colors and lighting.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/59424d17-e72e-40ff-8ae1-670c835dbff8.png"
+    ],
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "seed": 7,
+    "negative_prompt": "clock, lamp, orb, sphere, crystal ball, text, letters, blurry, photorealistic, smooth",
+    "prompt_extend": false,
+    "enable_thinking": false
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.200",
+    "usd": "0.075",
+    "discount": null
+  },
+  "idempotency_key": "01e2c4a0-fcdf-4cae-a82e-3fa5e9f33a64",
+  "created_at": "2026-10-02T00:19:09+00:00",
+  "request_id": "49bcdc24-f3d7-40d4-be2d-a659eb55d813",
+  "status_url": "https://platform.higgsfield.ai/requests/49bcdc24-f3d7-40d4-be2d-a659eb55d813/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/49bcdc24-f3d7-40d4-be2d-a659eb55d813/cancel",
+  "status": "completed",
+  "correlation_id": "f50b54ee89fc403983cf329b413c9996",
+  "result": {
+    "status": "completed",
+    "request_id": "49bcdc24-f3d7-40d4-be2d-a659eb55d813",
+    "status_url": "https://platform.higgsfield.ai/requests/49bcdc24-f3d7-40d4-be2d-a659eb55d813/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/49bcdc24-f3d7-40d4-be2d-a659eb55d813/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/78fbc253-be91-4bbe-93d4-b52db3c9dcef.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T00:19:40+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/78fbc253-be91-4bbe-93d4-b52db3c9dcef.png",
+      "path": "image_0.png",
+      "sha256": "12d5ca4400012702e4d50e43848378ce39cf7c79d282d02a2d38bc463c35fa56",
+      "bytes": 2302518
+    }
+  ]
+}
