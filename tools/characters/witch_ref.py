@@ -214,7 +214,7 @@ def head_z(x, y):
 # ---- the hood: a dome with a front opening, the peak folded back into a tip below its top ------------------------
 HOOD_N = 12
 HOOD_ROWS = [(.89, .228, .204, -.072), (.98, .244, .206, -.066), (1.07, .244, .200, -.054), (1.165, .222, .176, -.040),
-             (1.25, .172, .140, -.020), (1.312, .098, .084, -.008), (1.332, .036, .030, -.002)]
+             (1.25, .172, .140, -.020), (1.312, .098, .084, -.008), (1.332, .036, .030, -.002), (1.340, .001, .001, -.002)]   # the last ring is the cap: no hole at the tip
 HOOD_HEM_DIP = .035                          # the bottom edge hangs this much lower at the centre back (draped, not a ring)
 HOOD_FRONT_BANDS = (0, 1, 2)                 # bands below the brow ring are open at the front...
 HOOD_OPEN_COLS = (10, 11, 0, 1)              # ...in these columns (phi -60 .. +60)
@@ -238,7 +238,8 @@ def hood_pts():
     # hand-made crumple (mirror-symmetric): paper, not a lathe
     for r in range(P.shape[0]):
         for c in range(P.shape[1]):
-            P[r, c] += hsh3(P[r, c], .010 if r < 5 else .004)
+            if r < P.shape[0] - 1:                 # (the cap ring stays a point)
+                P[r, c] += hsh3(P[r, c], .010 if r < 5 else .004)
     return P
 
 
