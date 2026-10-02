@@ -302,9 +302,9 @@ def mirror_x(P):
 # name, start xyz, heading deg (0 = +X, counter-clockwise), stalk [(length, turn)], r0, r1, turns, dirn (+1 = counter-clockwise),
 # strand half-width, z drift over the spiral
 CURLS = [
-    ('lock_big', (.215, .90, -.045), -45, [(.07, 0), (.07, -8)], .082, .040, 1.1, +1, .050, -.03),
+    ('lock_big', (.215, .90, -.045), -45, [(.07, 0), (.07, -8)], .080, .040, 1.1, +1, .038, -.03),
     # the hip curls, the widest point of her outline: from under the hood's back, down and out
-    ('side_mid', (.200, .845, -.135), -66, [(.08, 0), (.08, -8), (.07, 10)], .088, .040, 1.15, +1, .054, -.02),
+    ('side_mid', (.200, .845, -.135), -66, [(.08, 0), (.08, -8), (.07, 10)], .086, .040, 1.15, +1, .040, -.02),
     # one small curl high on her left only, hugging the hood beside the flowers (the sheet is not symmetric there)
     ('hood_hi', (.165, 1.150, .040), 62, [(.050, 0), (.045, -22)], .042, .016, 1.20, -1, .030, -.02, -.02),
 ]
@@ -315,19 +315,19 @@ CURLS_R_TWEAK = {'lock_big': dict(r0=.082, turns=1.2), 'side_mid': dict(r0=.080,
 # hood's lower edge, over the shoulder, then behind the arm down to the hip, where it ends in a big outward curl.
 FRAME = [(.172, 1.160, .020), (.188, 1.070, .036), (.200, .975, .078), (.222, .900, .078), (.262, .830, -.020),
          (.290, .740, -.095), (.300, .650, -.105), (.300, .580, -.100)]
-FRAME_CURL = dict(r0=.078, r1=.040, turns=1.15)
+FRAME_CURL = dict(r0=.072, r1=.038, turns=1.1)
 
 # The long back hair: a lobed mass under the hood's back edge (a bulb, every lobe a flute) from which eight thick locks
 # hang side by side down to the waist, each ending in a curl, like the sheet's back view (an octopus of hair).
 MASS_PHIS = [75 + 15 * k for k in range(15)]                 # 75 .. 285 degrees: the sides and the back
-MASS_ROWS = [(.70, .200, .150, -.095), (.78, .262, .205, -.100), (.86, .272, .212, -.105), (.93, .212, .160, -.110)]
+MASS_ROWS = [(.70, .180, .140, -.095), (.78, .232, .190, -.100), (.86, .240, .196, -.105), (.93, .205, .156, -.110)]
 # (degrees from the back's centre, stalk length, curl turns: +1 counter-clockwise seen from behind... as drawn, radius)
 # (degrees round from the back's centre, stalk step, curl: 'out' or 'in' toward her middle, curl radius, lock radius).
 # The outer locks splay and end in big outward spirals (the hair is widest at the bottom); the inner ones curl in;
 # the middle one is short, with a small spiral at mid-back.
-LOCKS = [(-76, .066, 'out', .086, .044), (-57, .092, 'out', .070, .047), (-38, .118, 'in', .058, .049),
-         (-19, .136, 'in', .052, .050), (0, .052, 'in', .040, .046), (19, .132, 'out', .054, .050),
-         (38, .114, 'out', .060, .049), (57, .088, 'in', .066, .047), (76, .064, 'out', .084, .044)]
+LOCKS = [(-76, .066, 'out', .080, .034), (-57, .092, 'out', .064, .036), (-38, .118, 'in', .054, .038),
+         (-19, .136, 'in', .048, .038), (0, .052, 'in', .038, .036), (19, .132, 'out', .050, .038),
+         (38, .114, 'out', .056, .038), (57, .088, 'in', .060, .036), (76, .064, 'out', .078, .034)]
 
 
 def mass_pts():
@@ -370,7 +370,7 @@ def curl_paths():
         pts = spiral_on(stalk, FRAME_CURL['r0'], FRAME_CURL['r1'], FRAME_CURL['turns'] - (.1 if side < 0 else 0.), +1, CURL_SEG)
         if side < 0:
             pts = mirror_x(pts)
-        out.append(('frame', side, pts, .052, 6, len(stalk) - 1))
+        out.append(('frame', side, pts, .040, 6, len(stalk) - 1))
     y0, rx, rz, cz = MASS_ROWS[2]
     for off, length, way, r0, width in LOCKS:
         phi = RAD(180 + off)
@@ -826,7 +826,7 @@ def build_parts(M):
     add(skirt, 'skirt_tex', J=J, W=W, tex='skirt')
 
     # ===== torso: the brown vest (boxy, a bit wide in the shoulders)
-    tr = [(.40, .215, .132, .032), (.55, .205, .128, .032), (.70, .200, .124, .032), (.80, .185, .112, .028), (.855, .085, .070, .020)]
+    tr = [(.40, .190, .120, .032), (.55, .180, .116, .032), (.70, .172, .112, .032), (.80, .160, .104, .028), (.855, .080, .066, .020)]
     torso = loft([((0, y, cz), (rx, 0, 0), (0, 0, rz)) for y, rx, rz, cz in tr], 12, 2.5, cap=(0, 0), j=.003, o=.5)
     add(torso, lit_toned('vest'), bone='spine')
 
@@ -834,7 +834,7 @@ def build_parts(M):
     # two big pockets on the hips (wider at the bottom, a flap at the top), stuffed: a spoon, a toy mouse, a feather and
     # herbs on her right; sweets, a cookie and a folded note on her left
     for s in (1, -1):
-        px = s * .124
+        px = s * .112
         pk = loft([((px, y, z), (rx, 0, 0), (0, 0, rz)) for y, rx, rz, z in
                    ((.430, .046, .030, .208), (.450, .074, .050, .216), (.52, .078, .058, .224), (.580, .068, .050, .220))],
                   8, 2.3, cap=(.006, .004), j=.003)
@@ -844,11 +844,17 @@ def build_parts(M):
     sp0, sp1 = A((-.150, .560, .245)), A((-.168, .690, .262))
     add(tube([sp0, sp1], [.008, .007], N=4, cap=(.002, 0)), 'spoon', bone='spine')
     add(blob(sp1 + A((-.004, .026, .002)), (.022, .030, .010), (0, 1, 0), N=6, k=2), 'spoon', bone='spine')
-    mc = A((-.104, .630, .250))
-    add(blob(mc, (.036, .040, .030), (0, 1, 0), N=6, k=2), 'mouse', bone='spine')
+    mx = -.112
+    mc = A((mx, .600, .226))
+    add(blob(mc, (.040, .038, .030), (0, 1, 0), N=6, k=2), 'mouse', bone='spine')
+    hc = mc + A((0, .042, .020))
+    add(blob(hc, (.030, .030, .028), (0, 1, 0), N=6, k=2), 'mouse', bone='spine')
     for ex in (-1, 1):
-        add(blob(mc + A((ex * .028, .040, -.004)), (.020, .022, .006), (0, 0, 1), N=6, k=2), 'mouse', bone='spine')
-    add(blob(mc + A((0, -.004, .028)), (.007, .007, .007), (0, 0, 1), N=4, k=2), 'mouse_n', bone='spine')
+        add(blob(hc + A((ex * .030, .030, -.004)), (.022, .026, .006), N_((ex * .3, 0, 1)), N=6, k=2), 'mouse_n', bone='spine')
+        add(blob(mc + A((ex * .024, .000, .036)), (.010, .008, .008), (0, 0, 1), N=4, k=2), 'mouse', bone='spine')
+    add(blob(hc + A((0, -.006, .028)), (.007, .007, .007), (0, 0, 1), N=4, k=2), 'mouse_n', bone='spine')
+    add(tube([mc + A((.020, -.010, .000)), mc + A((.050, .010, -.010)), mc + A((.064, -.030, .000)), mc + A((.060, -.070, .008))],
+             [.006, .005, .004, .003], N=4, cap=(0, .002)), 'mouse_n', bone='spine')
     add(tube([A((-.062, .565, .245)), A((-.050, .640, .250)), A((-.030, .715, .240))], [.016, .020, .004], N=4, ratio=.25,
              flat=(0, 0, 1), cap=(0, 0)), 'feather', bone='spine')
     for hx, hy in ((-.185, .665), (-.200, .635)):
@@ -879,7 +885,7 @@ def build_parts(M):
         part['ax'] = part['ax'] + A((0, 0, VEST_DZ))
 
     # ===== cloak: shoulders down to a hem just below the hair, open at the front
-    cr = [(.865, .150, .108, .005), (.78, .245, .160, -.020), (.64, .268, .184, -.035), (.53, .275, .194, -.046), (.445, .282, .200, -.054)]
+    cr = [(.865, .140, .104, .005), (.78, .212, .150, -.020), (.64, .232, .170, -.035), (.53, .240, .178, -.046), (.445, .246, .184, -.054)]
     # open at the front from -45 to +45 degrees (16 columns), so the vest shows from the collar down, as on the references
     cp_ = [ring(y, rx, rz, cz, n=16, phi0=0.) for y, rx, rz, cz in cr[::-1]]
     top_band = len(cr) - 2
@@ -911,8 +917,10 @@ def build_parts(M):
             return {'arm_upper' + d: (1 - lo) * (1 - .5 * top), 'arm_lower' + d: lo, 'spine': (1 - lo) * .5 * top}
         J, W = weights(M, sl['V'], arm_w)
         sl['fuv'] = cyl_fuv(sl)
+        sl['both'] = True      # solid from every side, whichever way the sweep wound
         add(sl, 'sleeve1', J=J, W=W, tex='sleeve')
         cuff = tube([mid2 + (wr - el) * .22, wr + (wr - el) * .30], [.080, .092], N=6, ratio=.9, flat=(0, 0, 1.), cap=(0, .0))
+        cuff['both'] = True
         add(cuff, 'cuff0', bone='arm_lower' + d)
     add_fist(M)
     add_palm(M)
