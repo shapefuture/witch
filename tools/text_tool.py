@@ -24,7 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TABLE = ROOT / "data" / "text" / "ru.json"
-GROUP_ORDER = ["ui", "opt", "obj", "speaker", "line", "dlg"]
+GROUP_ORDER = ["ui", "opt", "obj", "speaker", "line", "dlg", "toy"]
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
 KEY = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$")
 
@@ -60,6 +60,18 @@ def referenced_keys():
 
     for path in (ROOT / "data" / "mirror").rglob("*.json"):
         walk(json.loads(path.read_text(encoding="utf-8")), str(path.relative_to(ROOT)))
+    # The painted room's toys (assets/painted/*/props.json): each reaction may carry a "say" key.
+    for path in (ROOT / "assets" / "painted").rglob("props.json"):
+        def walk_say(node, where=str(path.relative_to(ROOT))):
+            if isinstance(node, dict):
+                if isinstance(node.get("say"), str) and node["say"]:
+                    refs[node["say"]].append(where)
+                for v in node.values():
+                    walk_say(v, where)
+            elif isinstance(node, list):
+                for item in node:
+                    walk_say(item, where)
+        walk_say(json.loads(path.read_text(encoding="utf-8")))
     for path in (ROOT / "data" / "conversations").glob("*.dialogue"):
         for line in path.read_text(encoding="utf-8").splitlines():
             stripped = line.strip()
