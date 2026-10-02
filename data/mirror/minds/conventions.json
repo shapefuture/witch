@@ -1,0 +1,40 @@
+[
+	{
+		"id": "conv.hall.globe_is_a_toy",
+		"_about": "Fed by every poke of the globe that a member of the household reads as play. The raccoon starts it; it only becomes custom once Tomas, too, has stopped reading the witch's pokes as meddling.",
+		"label_key": "conv.hall.globe_is_a_toy.label",
+		"meaning": {"key": "conv.hall.globe_is_a_toy.meaning"},
+		"community": "household",
+		"reads": "play",
+		"subjects": ["globe"],
+		"event_kinds": ["PROP_POKED"],
+		"origin": {
+			"event_kinds": ["PROP_POKED"],
+			"fed_by": ["interp.raccoon.poke_is_play", "interp.tomas.poke_is_play"]
+		},
+		"adopt": {"threshold": 3, "min_holders": 2},
+		"cap": 6,
+		"decay": {"every": 60, "amount": 1},
+		"retire_at": 0,
+		"force": {"bias": 20, "enables_operators": []}
+	},
+	{
+		"id": "conv.hall.statue_is_a_toy",
+		"_about": "The counterexample the hall keeps handing out: only the raccoon reads the statue as play, Tomas never does, so this one never forms.",
+		"label_key": "conv.hall.statue_is_a_toy.label",
+		"meaning": {"key": "conv.hall.statue_is_a_toy.meaning"},
+		"community": "household",
+		"reads": "play",
+		"subjects": ["statue"],
+		"event_kinds": ["PROP_POKED"],
+		"origin": {
+			"event_kinds": ["PROP_POKED"],
+			"fed_by": ["interp.raccoon.poke_is_play"]
+		},
+		"adopt": {"threshold": 3, "min_holders": 2},
+		"cap": 6,
+		"decay": {"every": 60, "amount": 1},
+		"retire_at": 0,
+		"force": {"bias": 20, "enables_operators": []}
+	}
+]

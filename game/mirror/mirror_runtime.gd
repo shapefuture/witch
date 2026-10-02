@@ -18,8 +18,13 @@ signal game_loaded(meta: Dictionary)
 const PLAYER := "player"
 
 var engine: MirrorEngine
+# What the minds around the witch make of what happens (witnesses, readings, deferred consequences, folklore).
+# Always built from the same engine; see game/mirror/minds/mirror_minds.gd.
+var minds: MirrorMinds
 var catalog_dir: String = MirrorCatalog.DEFAULT_DIR
+var minds_dir: String = MindsCatalog.DEFAULT_DIR
 var catalog_report: Dictionary = {}
+var minds_report: Dictionary = {}
 var queue := ActionQueue.new()
 # func(presentation: Array, result: Dictionary) -> void   (may be a coroutine)
 var presenter: Callable
@@ -43,6 +48,10 @@ func setup(dir: String = "") -> Dictionary:
 	engine.transaction_failed.connect(func(result: Dictionary) -> void: failed.emit(result))
 	for error in catalog_report.get("errors", []):
 		push_error("Mirror catalog: %s" % error)
+	minds_report = MindsCatalog.load_dir(minds_dir)
+	minds = MirrorMinds.new(engine, minds_report["data"])
+	for error in minds_report.get("errors", []):
+		push_error("Minds catalog: %s" % error)
 	return catalog_report
 
 # Starts from scratch: fresh engine + the prologue observation (what the witch already believes).

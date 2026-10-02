@@ -1,0 +1,274 @@
+[
+	{
+		"id": "rule.hall.echo",
+		"_about": "TEMPORAL. The hall answers late: what you touch, it repeats, with the same move, after a pause. Surfaces: two props answering each other (physical), the raccoon repeating the witch (social). Boundary: the hall only remembers the latest touch.",
+		"label_key": "rule.hall.echo.name",
+		"statement": {"key": "rule.hall.echo.statement"},
+		"domain": "temporal",
+		"learnable": true,
+		"major": true,
+		"invariant": {
+			"relation": "answers_in_kind_later",
+			"polarity": "+",
+			"roles": ["question", "answer"],
+			"constraints": {"delay_min": 1, "same_reaction": true}
+		},
+		"revision": {
+			"model": "m.hall.every_poke_answered",
+			"deeper_model": "m.hall.latest_poke_answered",
+			"exception": "echo.exception.latest_wins",
+			"teaches": {"key": "rule.hall.echo.teaches"}
+		},
+		"exceptions": [
+			{
+				"id": "echo.exception.latest_wins",
+				"polarity": "+",
+				"scope": "a second touch before the first has been answered",
+				"teaches": {"key": "rule.hall.echo.teaches"}
+			}
+		],
+		"variants": [
+			{
+				"id": "echo.globe_to_statue",
+				"domain": "physical", "form": "direct", "source": "globe",
+				"relation": {"id": "answers_in_kind_later", "polarity": "+", "bindings": {"question": "globe", "answer": "statue"}},
+				"trigger": {"event_kind": "PROP_POKED", "subject": "globe"},
+				"transformation": {
+					"schedule": [
+						{
+							"delay": 3,
+							"event": {"kind": "PROP_ECHOED", "actor": "hall", "subject": "statue", "data": {"reaction": "$reaction", "answers": "$subject"}},
+							"key": "echo", "if_pending": "replace",
+							"on_replace": {
+								"holders": ["player"],
+								"knowledge_effects": [{"id": "echo_forgotten", "proposition": {"hall": "answers_only_the_latest"}, "status": "SUPPORTED"}],
+								"model_effects": [{"type": "revise", "old_rule_id": "m.hall.every_poke_answered", "new_rule_id": "m.hall.latest_poke_answered", "proposition": {"hall": "answers_the_latest_poke"}, "scope": "hall", "subject_id": "hall"}]
+							}
+						}
+					]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "consequence",
+					"knowledge_effects": [{"id": "hall_answers.$data_answers.$subject", "proposition": {"poked": "$data_answers", "answered_by": "$subject", "move": "$reaction"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.every_poke_answered", "subject_id": "hall", "proposition": {"hall": "answers_every_poke"}, "scope": "hall", "confidence": 0.4, "status": "HYPOTHESIS"}]
+				},
+				"conventions": {
+					"conv.hall.globe_is_a_toy": {"patch": {"set": {"schedule.0.delay": 1, "schedule.0.event.data.reaction": "hop"}}}
+				}
+			},
+			{
+				"id": "echo.statue_to_globe",
+				"domain": "physical", "form": "direct", "source": "statue",
+				"relation": {"id": "answers_in_kind_later", "polarity": "+", "bindings": {"question": "statue", "answer": "globe"}},
+				"trigger": {"event_kind": "PROP_POKED", "subject": "statue"},
+				"transformation": {
+					"schedule": [
+						{
+							"delay": 3,
+							"event": {"kind": "PROP_ECHOED", "actor": "hall", "subject": "globe", "data": {"reaction": "$reaction", "answers": "$subject"}},
+							"key": "echo", "if_pending": "replace",
+							"on_replace": {
+								"holders": ["player"],
+								"knowledge_effects": [{"id": "echo_forgotten", "proposition": {"hall": "answers_only_the_latest"}, "status": "SUPPORTED"}],
+								"model_effects": [{"type": "revise", "old_rule_id": "m.hall.every_poke_answered", "new_rule_id": "m.hall.latest_poke_answered", "proposition": {"hall": "answers_the_latest_poke"}, "scope": "hall", "subject_id": "hall"}]
+							}
+						}
+					]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "consequence",
+					"knowledge_effects": [{"id": "hall_answers.$data_answers.$subject", "proposition": {"poked": "$data_answers", "answered_by": "$subject", "move": "$reaction"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.every_poke_answered", "subject_id": "hall", "proposition": {"hall": "answers_every_poke"}, "scope": "hall", "confidence": 0.4, "status": "HYPOTHESIS"}]
+				}
+			},
+			{
+				"id": "echo.raccoon_repeats_the_poke",
+				"domain": "social", "form": "social", "source": "raccoon",
+				"relation": {"id": "answers_in_kind_later", "polarity": "+", "bindings": {"question": "witch", "answer": "raccoon"}},
+				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "witnessed_by": "raccoon"},
+				"transformation": {
+					"schedule": [
+						{
+							"delay": 5,
+							"event": {"kind": "PROP_POKED", "actor": "raccoon", "subject": "$subject", "data": {"reaction": "$reaction", "imitation": "yes"}},
+							"key": "imitate", "if_pending": "replace"
+						}
+					]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "consequence",
+					"knowledge_effects": [{"id": "raccoon_repeats.$subject", "proposition": {"raccoon": "repeats_the_poke", "thing": "$subject", "move": "$reaction"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.every_poke_answered", "subject_id": "hall", "proposition": {"hall": "answers_every_poke"}, "scope": "hall", "confidence": 0.4, "status": "HYPOTHESIS"}]
+				}
+			}
+		]
+	},
+	{
+		"id": "rule.hall.regard",
+		"_about": "SOCIAL / PERCEPTUAL. Whatever moves is looked at, by everyone who sees it move. Surfaces: the raccoon turning its head (social), the statue leaning in (physical), Tomas remarking on it (relational). Boundary: what nobody sees, nobody looks at.",
+		"label_key": "rule.hall.regard.name",
+		"statement": {"key": "rule.hall.regard.statement"},
+		"domain": "social",
+		"learnable": true,
+		"major": true,
+		"invariant": {
+			"relation": "attends_to_motion",
+			"polarity": "+",
+			"roles": ["mover", "watcher"],
+			"constraints": {"delay_max": 0}
+		},
+		"revision": {
+			"model": "m.hall.everything_watches",
+			"deeper_model": "m.hall.seen_motion_is_watched",
+			"exception": "regard.exception.unseen",
+			"teaches": {"key": "rule.hall.regard.teaches"}
+		},
+		"exceptions": [
+			{
+				"id": "regard.exception.unseen",
+				"domain": "epistemic", "form": "counter", "source": "raccoon",
+				"polarity": "+",
+				"scope": "a poke the raccoon did not see",
+				"teaches": {"key": "rule.hall.regard.teaches"},
+				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "unwitnessed_by": "raccoon"},
+				"transformation": {},
+				"evidence": {
+					"holders": ["player"], "at": "trigger",
+					"knowledge_effects": [{"id": "poke_unremarked.$subject", "proposition": {"poked": "$subject", "raccoon": "did_not_look"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "revise", "old_rule_id": "m.hall.everything_watches", "new_rule_id": "m.hall.seen_motion_is_watched", "proposition": {"hall": "looks_at_what_it_sees_move"}, "scope": "hall", "subject_id": "hall"}]
+				}
+			}
+		],
+		"variants": [
+			{
+				"id": "regard.raccoon_turns_to_look",
+				"domain": "social", "form": "direct", "source": "raccoon",
+				"relation": {"id": "attends_to_motion", "polarity": "+", "bindings": {"mover": "$subject", "watcher": "raccoon"}},
+				"trigger": {"event_kind": ["PROP_POKED", "PROP_ECHOED"], "witnessed_by": "raccoon", "actor_not": ["raccoon"]},
+				"transformation": {
+					"reactions": [{"op": "LOOK_AT", "actor": "$holder", "target": "$subject"}]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "trigger",
+					"knowledge_effects": [{"id": "raccoon_looks_at.$subject", "proposition": {"raccoon": "looks_at", "thing": "$subject"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.everything_watches", "subject_id": "hall", "proposition": {"hall": "looks_at_whatever_moves"}, "scope": "hall", "confidence": 0.4, "status": "HYPOTHESIS"}]
+				}
+			},
+			{
+				"id": "regard.statue_leans_in",
+				"domain": "physical", "form": "direct", "source": "statue",
+				"relation": {"id": "attends_to_motion", "polarity": "+", "bindings": {"mover": "$subject", "watcher": "statue"}},
+				"trigger": {"event_kind": "PROP_POKED", "subject_not": ["statue"]},
+				"transformation": {
+					"reactions": [{"op": "PROP_REACT", "target": "statue", "reaction": "shiver"}]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "trigger",
+					"knowledge_effects": [{"id": "statue_leans_in.$subject", "proposition": {"statue": "leans_toward", "thing": "$subject"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.everything_watches", "subject_id": "hall", "proposition": {"hall": "looks_at_whatever_moves"}, "scope": "hall", "confidence": 0.4, "status": "HYPOTHESIS"}]
+				}
+			},
+			{
+				"id": "regard.tomas_remarks",
+				"domain": "relational", "form": "social", "source": "tomas",
+				"relation": {"id": "attends_to_motion", "polarity": "+", "bindings": {"mover": "$subject", "watcher": "tomas"}},
+				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "witnessed_by": "tomas", "when": {"reads.tomas": "tampering"}},
+				"transformation": {
+					"reactions": [{"op": "COMMENT", "actor": "$holder", "key": "line.hall.tomas_saw"}]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "trigger",
+					"knowledge_effects": [{"id": "tomas_watches_the_witch", "proposition": {"tomas": "watches", "witch": "poking"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.everything_watches", "subject_id": "hall", "proposition": {"hall": "looks_at_whatever_moves"}, "scope": "hall", "confidence": 0.4, "status": "HYPOTHESIS"}]
+				}
+			}
+		]
+	},
+	{
+		"id": "rule.hall.name",
+		"_about": "CULTURAL. What two minds keep reading the same way becomes a custom, and the thing starts behaving by it. Surfaces: the globe hopping for play (physical), the raccoon playing with it alone (social), Tomas saying it out loud (epistemic). Boundary: one mind repeating a reading does nothing.",
+		"label_key": "rule.hall.name.name",
+		"statement": {"key": "rule.hall.name.statement"},
+		"domain": "cultural",
+		"learnable": true,
+		"major": true,
+		"invariant": {
+			"relation": "shared_reading_becomes_custom",
+			"polarity": "+",
+			"roles": ["reading", "custom"],
+			"constraints": {"needs_convention": true}
+		},
+		"revision": {
+			"model": "m.hall.repetition_makes_custom",
+			"deeper_model": "m.hall.shared_reading_makes_custom",
+			"exception": "name.exception.one_voice",
+			"teaches": {"key": "rule.hall.name.teaches"}
+		},
+		"exceptions": [
+			{
+				"id": "name.exception.one_voice",
+				"domain": "epistemic", "form": "counter", "source": "raccoon",
+				"polarity": "+",
+				"scope": "a reading only one mind holds",
+				"teaches": {"key": "rule.hall.name.teaches"},
+				"trigger": {"convention_change": {"id": "*", "change": "stalled"}},
+				"transformation": {},
+				"evidence": {
+					"holders": ["player"], "at": "trigger",
+					"knowledge_effects": [{"id": "custom_needs_two", "proposition": {"custom": "needs_two_minds", "stalled_on": "$subject"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "revise", "old_rule_id": "m.hall.repetition_makes_custom", "new_rule_id": "m.hall.shared_reading_makes_custom", "proposition": {"custom": "forms_when_two_read_alike"}, "scope": "hall", "subject_id": "hall"}]
+				}
+			}
+		],
+		"variants": [
+			{
+				"id": "name.globe_hops_for_play",
+				"domain": "physical", "form": "direct", "source": "globe",
+				"relation": {"id": "shared_reading_becomes_custom", "polarity": "+", "bindings": {"reading": "play", "custom": "globe_is_a_toy"}},
+				"trigger": {"event_kind": "PROP_POKED", "subject": "globe", "requires_convention": "conv.hall.globe_is_a_toy"},
+				"transformation": {
+					"reactions": [{"op": "PROP_REACT", "target": "globe", "reaction": "hop"}]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "trigger",
+					"knowledge_effects": [{"id": "globe_answers_as_a_toy", "proposition": {"globe": "answers_like_a_toy"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.shared_reading_makes_custom", "subject_id": "hall", "proposition": {"custom": "forms_when_two_read_alike"}, "scope": "hall", "confidence": 0.5, "status": "HYPOTHESIS"}]
+				}
+			},
+			{
+				"id": "name.raccoon_plays_alone",
+				"domain": "social", "form": "social", "source": "raccoon",
+				"relation": {"id": "shared_reading_becomes_custom", "polarity": "+", "bindings": {"reading": "play", "custom": "raccoon_plays_by_itself"}},
+				"trigger": {"convention_change": {"id": "conv.hall.globe_is_a_toy", "change": "adopted"}},
+				"transformation": {
+					"schedule": [
+						{
+							"delay": 4,
+							"event": {"kind": "PROP_POKED", "actor": "raccoon", "subject": "globe", "data": {"reaction": "hop", "imitation": "no"}},
+							"key": "solo_play", "if_pending": "skip"
+						}
+					]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "consequence",
+					"knowledge_effects": [{"id": "raccoon_plays_alone", "proposition": {"raccoon": "plays_with", "thing": "$subject", "unprompted": "yes"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.shared_reading_makes_custom", "subject_id": "hall", "proposition": {"custom": "forms_when_two_read_alike"}, "scope": "hall", "confidence": 0.5, "status": "HYPOTHESIS"}]
+				}
+			},
+			{
+				"id": "name.tomas_says_so",
+				"domain": "epistemic", "form": "social", "source": "tomas",
+				"relation": {"id": "shared_reading_becomes_custom", "polarity": "+", "bindings": {"reading": "play", "custom": "said_out_loud"}},
+				"trigger": {"convention_change": {"id": "conv.hall.globe_is_a_toy", "change": "adopted"}, "witnessed_by": "tomas"},
+				"transformation": {
+					"reactions": [{"op": "COMMENT", "actor": "$holder", "key": "line.hall.tomas_toy"}]
+				},
+				"evidence": {
+					"holders": ["player"], "at": "trigger",
+					"knowledge_effects": [{"id": "hall_custom.globe_is_a_toy", "proposition": {"custom": "globe_is_a_toy", "said_by": "tomas"}, "status": "SUPPORTED"}],
+					"model_effects": [{"type": "ensure", "rule_id": "m.hall.shared_reading_makes_custom", "subject_id": "hall", "proposition": {"custom": "forms_when_two_read_alike"}, "scope": "hall", "confidence": 0.5, "status": "HYPOTHESIS"}]
+				}
+			}
+		]
+	}
+]
