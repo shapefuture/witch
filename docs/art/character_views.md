@@ -53,3 +53,7 @@ run, buckled shoes in the next): if the invented parts matter, keep one run and 
 - The side views are not exact profiles and the 3/4 views not exact 45 degrees; image-to-3D tools tolerate it, a multi-view reconstructor
   that wants exact azimuths may not.
 - One key colour only (`green`); `magenta`/`blue` would need their own despill.
+
+## Next stage
+
+`docs/art/image_to_rig.md` (`tools/characters/image2rig.py`): the four canonical views to a 3D mesh, a rig and parts on free Spaces and Tripo, with the witch's results (the geometry is good; the textured and rigged results are not as good as our own `witch.glb`).

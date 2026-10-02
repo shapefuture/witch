@@ -1,0 +1,3 @@
+# tools/characters/image2rig.py (the pipeline's other dependencies are numpy, Pillow and scipy)
+gradio_client==2.7.2
+tripo3d==0.4.2
