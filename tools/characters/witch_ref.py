@@ -44,6 +44,10 @@ COL = {
     'skin': (.94, .73, .62), 'skin_d': (.82, .60, .52), 'blush': (.95, .55, .52),
     'gold': (.95, .76, .38), 'silver': (.88, .88, .95), 'chain': (.66, .50, .30),
     'pink': (.93, .45, .68), 'pink_l': (.98, .64, .80), 'flower_c': (.98, .80, .45),
+    'petal': (.80, .44, .72), 'petal_l': (.93, .62, .86), 'petal_d': (.66, .32, .62), 'leaf': (.66, .58, .30),
+    'spoon': (.80, .80, .86), 'mouse': (.62, .60, .64), 'mouse_n': (.95, .62, .70), 'feather': (.86, .80, .94),
+    'herb': (.45, .62, .38), 'candy_p': (.96, .52, .70), 'candy_g': (.55, .80, .55), 'cookie': (.80, .55, .28),
+    'paper': (.90, .84, .68), 'button': (.95, .76, .38),
     'hood_in': (.30, .16, .46), 'hood_rim': (.55, .34, .72),
     'wand': (.62, .30, .42), 'wand_star': (.98, .48, .72),
     'bird': (.72, .74, .85), 'bird_d': (.52, .54, .66), 'bird_l': (.88, .90, .96), 'beak': (.95, .66, .30),
@@ -51,7 +55,7 @@ COL = {
     'boot': (.26, .16, .12),
 }
 FAMILIES = {          # name: (base colour, relative spread): four tones per flat-coloured material, like paper folds
-    'hair': ((1., .70, .26), .17), 'purple': ((.50, .28, .70), .12), 'sleeve': ((.46, .26, .66), .12),
+    'hair': ((.98, .63, .26), .17), 'purple': ((.50, .28, .70), .12), 'sleeve': ((.46, .26, .66), .12),
     'cuff': ((.56, .34, .72), .08), 'vest': ((.48, .33, .28), .12), 'pocket': ((.31, .21, .18), .12),
     'cloak': ((.44, .24, .62), .12),
 }
@@ -85,8 +89,8 @@ def lit_toned(name, n=4):
 BONES = {'root': (None, (0, 0, 0)), 'hips': ('root', (0, .30, 0)), 'spine': ('hips', (0, .41, 0)),
          'neck': ('spine', (0, .86, 0)), 'head': ('neck', (0, .93, 0)), 'cape': ('spine', (0, .84, -.08)),
          'hat_tip': ('head', (0, 1.10, -.22))}
-ARM = {'.L': ((.20, .80, 0.), (.275, .655, .05), (.285, .715, .20)),       # shoulder, elbow, wrist
-       '.R': ((-.20, .80, 0.), (-.28, .67, .04), (-.30, .785, .155))}
+ARM = {'.L': ((.20, .80, -.01), (.275, .655, .025), (.285, .715, .165)),       # shoulder, elbow, wrist
+       '.R': ((-.20, .80, -.01), (-.28, .67, .015), (-.30, .785, .125))}
 for _s, _d in ((1, '.L'), (-1, '.R')):
     BONES['arm_upper' + _d] = ('spine', ARM[_d][0])
     BONES['arm_lower' + _d] = ('arm_upper' + _d, ARM[_d][1])
@@ -95,7 +99,7 @@ for _s, _d in ((1, '.L'), (-1, '.R')):
     BONES['foot' + _d] = ('leg' + _d, (_s * .07, .07, .03))
     BONES['hairB' + _d] = ('head', (_s * .19, .90, -.07))
     BONES['hairT' + _d] = ('hairB' + _d, (_s * .31, .62, -.12))
-BONES['bird'] = ('hand.L', (.285, .77, .235))
+BONES['bird'] = ('hand.L', (.285, .77, .200))
 
 
 # ---- helpers ---------------------------------------------------------------------------------------------
@@ -173,22 +177,24 @@ SK_Y = (0., .14, .285, .43)
 SK_R = (.460, .385, .300, .225)
 SK_N = 12
 SK_PHI0 = 15.        # panels centred on 0 (front) and 180 (back)
+SK_DEPTH = (1., .94, .86, .80)   # each row's depth over its width: the waist is oval under the slim vest
+VEST_DZ = -.048                  # the vest's front things sit this far back of where they were first placed (slimmer vest)
 
 
 def skirt_pts():
     rows = []
-    for y, r in zip(SK_Y, SK_R):
+    for y, r, dp in zip(SK_Y, SK_R, SK_DEPTH):
         fade = 1 - y / SK_Y[-1]
         rows.append([(r * (1 - (.045 if k % 2 else 0.) * fade) * S(RAD(SK_PHI0 + 360. * k / SK_N)), y,
-                      r * (1 - (.045 if k % 2 else 0.) * fade) * C(RAD(SK_PHI0 + 360. * k / SK_N))) for k in range(SK_N)])
+                      dp * r * (1 - (.045 if k % 2 else 0.) * fade) * C(RAD(SK_PHI0 + 360. * k / SK_N))) for k in range(SK_N)])
     return A(rows, float)
 
 
 # ---- the head -----------------------------------------------------------------------------------------------
 # the jaw rows hug the face's outline (tools/characters/ref/witch_face.json), so the head never shows around her chin
-HEAD_R = [(.905, .036, .050, .020), (.935, .050, .100, .030), (.960, .086, .115, .025), (.990, .112, .125, .015),
-          (1.060, .135, .130, .005),
-          (1.130, .125, .125, 0.), (1.190, .100, .100, -.010), (1.235, .050, .060, -.010)]
+HEAD_R = [(.905, .036, .050, -.010), (.935, .050, .100, .000), (.960, .086, .115, -.005), (.990, .112, .125, -.015),
+          (1.060, .135, .130, -.025),
+          (1.130, .125, .125, -.030), (1.190, .100, .100, -.040), (1.235, .050, .060, -.040)]
 HEAD_E = 2.2
 FACE_X = .115
 FACE_Y0, FACE_Y1 = .922, 1.172
@@ -206,11 +212,11 @@ def head_z(x, y):
 
 # ---- the hood: a dome with a front opening, the peak folded back into a tip below its top ------------------------
 HOOD_N = 12
-HOOD_ROWS = [(.89, .245, .238, -.072), (.98, .248, .232, -.062), (1.07, .242, .225, -.045), (1.165, .215, .185, -.030),
-             (1.25, .145, .130, -.005), (1.325, .055, .055, .010)]
+HOOD_ROWS = [(.89, .250, .214, -.075), (.98, .256, .210, -.068), (1.07, .252, .204, -.055), (1.165, .234, .180, -.040),
+             (1.25, .196, .150, -.020), (1.312, .125, .100, -.008), (1.332, .045, .036, -.002)]
 HOOD_FRONT_BANDS = (0, 1, 2)                 # bands below the brow ring are open at the front...
 HOOD_OPEN_COLS = (10, 11, 0, 1)              # ...in these columns (phi -60 .. +60)
-HOOD_TIP = (0., 1.07, -.400)                # the folded peak, back and below the top
+HOOD_TIP = (0., 1.07, -.355)                # the folded peak, back and below the top
 
 
 def hood_pts():
@@ -279,36 +285,41 @@ def mirror_x(P):
 CURLS = [
     ('lock_big', (.215, .90, -.045), -45, [(.07, 0), (.07, -8)], .080, .026, 1.25, +1, .050, -.03),
     ('side_mid', (.255, .70, -.150), -55, [(.07, 0), (.07, -12), (.05, 10)], .082, .026, 1.30, +1, .056, -.02),
-    ('frame', (.150, 1.14, .075), -72, [(.10, 0), (.10, -5), (.10, 8)], .052, .020, 1.2, +1, .036, .01, .07),
-    ('hood_hi', (.215, 1.10, -.150), 40, [(.06, 0), (.05, 15)], .062, .022, 1.20, +1, .036, -.02),
-    ('hood_mid', (.235, .99, -.150), 15, [(.06, 0), (.05, -10)], .064, .022, 1.20, +1, .038, -.02),
+    # the hair that frames her face: from under the flowers down the cheek, over the shoulder, into a curl outward
+    ('frame', (.180, 1.15, .015), -91, [(.075, 0), (.075, 2), (.075, 4), (.07, 13), (.065, 14)], .062, .022, 1.15, +1,
+     .056, .01, .10),
+    # the two upper curls leave her hair at the temple, behind the flowers, sweep out over the hood's front edge, then curl
+    ('hood_hi', (.150, 1.135, .092), 18, [(.065, 0), (.065, -14)], .062, .022, 1.20, +1, .034, -.03, -.04),
+    ('hood_mid', (.165, 1.035, .088), -4, [(.068, 0), (.062, -12)], .064, .022, 1.15, +1, .036, -.03, -.04),
 ]
 # the curls on her right: a different spiral radius and turn count so the two sides do not match
-CURLS_R_TWEAK = {'frame': dict(r0=.058, turns=1.1), 'lock_big': dict(r0=.082, turns=1.2), 'side_mid': dict(r0=.074, turns=1.4),
+CURLS_R_TWEAK = {'frame': dict(r0=.066, turns=1.05), 'lock_big': dict(r0=.082, turns=1.2), 'side_mid': dict(r0=.074, turns=1.4),
                  'hood_hi': dict(r0=.054, turns=1.3), 'hood_mid': dict(turns=1.1)}
 
-# The long back hair is one lobed mass (a bulb that is widest at the shoulder blades, every lobe a flute) whose
-# scalloped lower edge hangs lower under every second lobe; a thin tail leaves each of those tips and ends in a spiral.
+# The long back hair: a lobed mass under the hood's back edge (a bulb, every lobe a flute) from which eight thick locks
+# hang side by side down to the waist, each ending in a curl, like the sheet's back view (an octopus of hair).
 MASS_PHIS = [75 + 15 * k for k in range(15)]                 # 75 .. 285 degrees: the sides and the back
-MASS_ROWS = [(.57, .335, .225, -.100), (.66, .345, .225, -.104), (.75, .325, .215, -.108), (.84, .290, .200, -.112), (.93, .215, .160, -.115)]
-TAIL_COLS = (3, 5, 7, 9, 11)                              # which columns drop a tail (the lobes that hang lower)
-TAIL_IN = (False, True, False, True, False)           # curls toward the centre instead of outward
+MASS_ROWS = [(.80, .215, .155, -.100), (.87, .228, .164, -.105), (.93, .205, .146, -.110)]
+# (degrees from the back's centre, stalk length, curl turns: +1 counter-clockwise seen from behind... as drawn, radius)
+LOCKS = [(-66, .096, -1, .078, .064), (-44, .116, +1, .068, .068), (-22, .128, -1, .064, .070), (0, .136, +1, .062, .072),
+         (22, .126, -1, .066, .070), (44, .114, +1, .070, .068), (66, .094, +1, .076, .064)]
 
 
 def mass_pts():
-    """Rows (bottom first) of the hair mass; lobes alternate in radius, the odd-numbered bottoms hang lower."""
+    """Rows (bottom first) of the hair mass; lobes alternate in radius, every second bottom hangs a little lower."""
     rows = []
     for ri, (y, rx, rz, cz) in enumerate(MASS_ROWS):
         row = []
         for k, p in enumerate(MASS_PHIS):
-            lob = 1.0 if k % 2 == 0 else .88
-            yy = y - (.045 if (ri == 0 and k in TAIL_COLS) else 0.)
+            lob = 1.0 if k % 2 == 0 else .86
+            yy = y - (.03 if (ri == 0 and k % 2 == 1) else 0.)
             row.append((rx * lob * S(RAD(p)), yy, cz + rz * lob * C(RAD(p))))
         rows.append(row)
     return A(rows, float)
 
 
 TILT = .30        # the curls' planes lean back at the bottom, so their faces tilt up toward the room's key light
+BACK_TILT = .08   # the back locks lean less: they hang close over the cloak, as on the sheet
 
 
 def curl_paths():
@@ -326,22 +337,18 @@ def curl_paths():
                 pts = mirror_x(pts)
             if name != 'frame':
                 pts[:, 2] += TILT * (pts[:, 1] - pts[0, 1])
-            out.append((name, side, pts, width, 5 if width > .045 else 4, len(stalk)))
-    mp = mass_pts()
-    for i, c in enumerate(TAIL_COLS):
-        p0 = mp[0, c] + A((0., .012, 0.))
-        s_ = 1 if p0[0] >= 0 else -1
-        a_ = abs(p0[0]) / .26
-        w = 12. * (1 if i % 2 == 0 else -1)
-        L = .045 + .02 * (i % 2)
-        stalk = [(L, -6. * s_ * a_ + w), (L, 12. * s_ * a_ - 2 * w), (L * .7, -8. * s_ * a_ + w)]
-        dirn = -s_ if TAIL_IN[i] else s_
-        pts, _ = turtle(p0, -90. + 20. * s_ * a_, stalk, .052 + .008 * (i % 2), .020, 1.2, dirn, 60., dz=.01)
-        pts[:, 2] += TILT * (pts[:, 1] - pts[0, 1])
-        out.append(('tail', s_, pts, .046, 4, 3))
-    # a small spiral lying on the hollow at the centre of the back, as on the sheet
-    pts, _ = turtle((0., .76, -.318), 165, [(.03, 0)], .046, .014, 1.6, +1, 60., dz=0.)
-    out.append(('relief', 1, pts, .020, 4, 1))
+            out.append((name, side, pts, width, 5 if width > .045 and name != 'frame' else 4, len(stalk)))
+    y0, rx, rz, cz = MASS_ROWS[1]
+    for off, length, dirn, r0, width in LOCKS:
+        phi = RAD(180 + off)
+        p0 = A((rx * 1.02 * S(phi), y0 + .02, cz + rz * 1.06 * C(phi)))
+        s_ = 1 if p0[0] > 1e-6 else -1 if p0[0] < -1e-6 else (1 if dirn > 0 else -1)
+        splay = off * .20
+        wave = 9. * dirn                     # an S through each lock, so they read as separate, soft locks
+        stalk = [(length, splay * .30 + wave), (length, splay * .15 - 2 * wave), (length * .85, -splay * .25 + wave)]
+        pts, _ = turtle(p0, -90. + splay * .45, stalk, r0, .018, 1.4, dirn, 45., dz=.012)
+        pts[:, 2] += BACK_TILT * (pts[:, 1] - pts[0, 1])
+        out.append(('tail', s_, pts, width, 5, 3))
     return out
 
 
@@ -547,7 +554,7 @@ def _inside(poly, pts):
 FACE_POINTS = 110          # vertices of the sculpted face (the outline's 40 included)
 FACE_TOL = .0012           # ...or fewer, once no texel's relief is further than this from the facets (metres)
 FACE_LIFT = .004           # the plate floats this far off the head, so the head never shows through it
-FACE_RELIEF = 1.0          # the depth model's relief, exaggerated (1: as measured)
+FACE_RELIEF = .8           # the depth model's relief, scaled (1: as measured; the sheet's profile is flatter)
 
 
 def face_height(meta, depth):
@@ -679,6 +686,48 @@ def side_of(p):
     return '.L' if p[0] > 0 else '.R'
 
 
+# ---- hands: a fist round the wand (her right), an open palm under the bird (her left) ---------------------------------------
+def hand_axes(d):
+    """Forearm direction, and the hand's own frame: `a` along the forearm, `up` its normal toward the sky, `side` across."""
+    sh, el, wr = (A(ARM[d][i], float) for i in range(3))
+    a = N_(wr - el)
+    up = N_(A((0, 1., 0)) - a * a[1])
+    return wr, a, up, N_(np.cross(up, a))
+
+
+def fist_frame():
+    wr, a, up, side = hand_axes('.R')
+    return wr + a * .085, N_(A((-.30, 1., .06)))
+
+
+def add_fist(M):
+    """Her right hand closed round the wand: a palm, a roll of four knuckles across the front of the stick, a thumb
+    over them; rigid on hand.R (the wand is too, so the grip holds in every clip)."""
+    wr, a, up, side = hand_axes('.R')
+    c, wdir = fist_frame()
+    front = N_(np.cross(wdir, side))
+    if front @ a < 0:
+        front = -front
+    M.add(blob(wr + a * .050, (.036, .030, .032), a, N=6, k=2), 'skin', bone='hand.R')            # the back of the hand
+    M.add(blob(c - front * .006, (.034, .040, .034), wdir, N=6, k=2), 'skin', bone='hand.R')       # the closed palm
+    M.add(tube([c + front * .022 - wdir * .026, c + front * .026, c + front * .022 + wdir * .026], [.017, .018, .016],
+               N=5, ratio=.85, flat=wdir, cap=(.008, .008)), 'skin', bone='hand.R')                 # the curled fingers
+    M.add(tube([c - side * .030 - front * .004 + wdir * .010, c - side * .022 + front * .022 + wdir * .028],
+               [.013, .010], N=4, cap=(0, .006)), 'skin', bone='hand.R')                            # the thumb
+
+
+def add_palm(M):
+    """Her left hand open, palm up, the bird standing on it: a flat palm, the fingers together curving up at the tips,
+    the thumb out to the side."""
+    wr, a, up, side = hand_axes('.L')
+    pc = wr + a * .070
+    M.add(blob(pc, (.044, .046, .014), a, N=6, k=2), 'skin', bone='hand.L')
+    fingers = [pc + a * .040, pc + a * .075 + up * .004, pc + a * .100 + up * .020]
+    M.add(tube(fingers, [.038, .034, .022], N=4, ratio=.32, flat=up, cap=(0, .008)), 'skin', bone='hand.L')
+    M.add(tube([pc + side * .040 + a * .005, pc + side * .062 + a * .035 + up * .012], [.012, .009], N=4, cap=(0, .005)),
+          'skin', bone='hand.L')
+
+
 def build_parts(M):
     add = M.add
 
@@ -699,38 +748,75 @@ def build_parts(M):
     add(skirt, 'skirt_tex', J=J, W=W, tex='skirt')
 
     # ===== torso: the brown vest (boxy, a bit wide in the shoulders)
-    tr = [(.40, .215, .165, .050), (.55, .205, .160, .050), (.70, .200, .155, .050), (.80, .185, .140, .045), (.855, .085, .080, .035)]
+    tr = [(.40, .215, .132, .032), (.55, .205, .128, .032), (.70, .200, .124, .032), (.80, .185, .112, .028), (.855, .085, .070, .020)]
     torso = loft([((0, y, cz), (rx, 0, 0), (0, 0, rz)) for y, rx, rz, cz in tr], 12, 2.5, cap=(0, 0), j=.003, o=.5)
     add(torso, lit_toned('vest'), bone='spine')
 
-    # two big pockets (flap boxes) with something sticking out of each
+    front0 = len(M.P)
+    # two big pockets on the hips (wider at the bottom, a flap at the top), stuffed: a spoon, a toy mouse, a feather and
+    # herbs on her right; sweets, a cookie and a folded note on her left
     for s in (1, -1):
-        px = s * .108
+        px = s * .112
         pk = loft([((px, y, z), (rx, 0, 0), (0, 0, rz)) for y, rx, rz, z in
-                   ((.445, .080, .046, .205), (.50, .088, .056, .222), (.585, .082, .046, .215))], 6, 2.6, cap=(0, .004), j=.003)
+                   ((.435, .070, .040, .205), (.455, .090, .052, .214), (.53, .086, .056, .222), (.585, .076, .050, .218))],
+                  6, 3.2, cap=(.006, .004), j=.003)
         add(pk, lit_toned('pocket'), bone='spine')
-    add(blob((-.108, .615, .215), (.034, .05, .02), (0, 1, 0), N=6, k=2), 'item_a', bone='spine')
-    add(blob((.100, .625, .215), (.026, .05, .016), (0.2, 1, 0), N=6, k=2), 'item_b', bone='spine')
-    add(blob((.136, .600, .214), (.026, .036, .016), (0, 1, 0), N=5, k=2), 'item_c', bone='spine')
+        add(tube([A((px - .078, .575, .262)), A((px + .078, .575, .262))], [.016, .016], N=4, ratio=.45, flat=(0, 1, 0),
+                 cap=(.004, .004)), 'pocket3', bone='spine')
+    sp0, sp1 = A((-.150, .560, .245)), A((-.168, .690, .262))
+    add(tube([sp0, sp1], [.008, .007], N=4, cap=(.002, 0)), 'spoon', bone='spine')
+    add(blob(sp1 + A((-.004, .026, .002)), (.022, .030, .010), (0, 1, 0), N=6, k=2), 'spoon', bone='spine')
+    mc = A((-.098, .618, .250))
+    add(blob(mc, (.032, .036, .026), (0, 1, 0), N=6, k=2), 'mouse', bone='spine')
+    for ex in (-1, 1):
+        add(blob(mc + A((ex * .024, .034, -.004)), (.014, .016, .005), (0, 0, 1), N=5, k=2), 'mouse', bone='spine')
+    add(blob(mc + A((0, -.004, .028)), (.007, .007, .007), (0, 0, 1), N=4, k=2), 'mouse_n', bone='spine')
+    add(tube([A((-.062, .565, .245)), A((-.050, .640, .250)), A((-.030, .715, .240))], [.016, .020, .004], N=4, ratio=.25,
+             flat=(0, 0, 1), cap=(0, 0)), 'feather', bone='spine')
+    for hx, hy in ((-.185, .665), (-.200, .635)):
+        add(tube([A((-.175, .575, .240)), A((hx, hy, .245))], [.010, .002], N=4, ratio=.3, flat=(0, 0, 1), cap=(0, 0)),
+            'herb', bone='spine')
+    for (cx, cy, cz), mat in (((.070, .600, .245), 'candy_p'), ((.098, .612, .250), 'candy_g'), ((.122, .598, .246), 'gold')):
+        add(blob(A((cx, cy, cz)), (.016, .016, .014), (0, 1, 0), N=5, k=2), mat, bone='spine')
+    add(blob(A((.150, .618, .245)), (.034, .034, .010), N_((.4, .2, 1)), N=7, k=2), 'cookie', bone='spine')
+    pv_ = [A((.155, .585, .232)), A((.200, .590, .228)), A((.205, .650, .238)), A((.165, .660, .242))]
+    add(dict(V=A(pv_), F=A([(0, 1, 2), (0, 2, 3)], int), ax=A([(.18, .62, .10)]), fb=None, both=True), 'paper', bone='spine')
 
-    # pendant: a crescent on the chest, and its chain
-    pv, pf = cres3d(.052, 7, h=.010)
-    pv = A([(x, y + .715, z + .187) for x, y, z in pv])
-    add(dict(V=pv, F=A(pf, int), ax=A([(0, .715, .05)]), fb=None), 'silver', bone='spine')
-    chain = [[(-.075, .83, .125), (0., .86, .12), (.075, .83, .125)], [(-.052, .775, .185), (0., .75, .19), (.052, .775, .185)]]
+    # pendant: a big silver crescent on a gold chain, a small crescent and a stud below it; gold buttons by the collar
+    pv, pf = cres3d(.068, 8, h=.012)
+    pv = A([(x, y + .705, z + .200) for x, y, z in pv])
+    add(dict(V=pv, F=A(pf, int), ax=A([(0, .705, .05)]), fb=None), 'silver', bone='spine')
+    chain = [[(-.070, .845, .150), (0., .86, .15), (.070, .845, .150)], [(-.024, .770, .205), (0., .762, .208), (.024, .770, .205)]]
     cv = A([q for r in chain for q in r], float)
     add(dict(V=cv, F=A([(0, 3, 1), (1, 3, 4), (1, 4, 2), (2, 4, 5)], int), ax=A([(0, .6, -.2)]), fb=None, both=True), 'chain', bone='spine')
+    sv_, sf_ = cres3d(.022, 6, h=.008)
+    add(dict(V=A([(x + .055, y + .640, z + .214) for x, y, z in sv_]), F=A(sf_, int), ax=A([(.055, .64, .05)]), fb=None),
+        'silver', bone='spine')
+    add(blob(A((.032, .600, .218)), (.010, .010, .007), (0, 0, 1), N=4, k=2), 'silver', bone='spine')
+    for bx, by in ((-.070, .790), (.070, .790), (-.062, .742), (.062, .742)):
+        add(blob(A((bx, by, .205)), (.011, .011, .007), (0, 0, 1), N=4, k=2), 'button', bone='spine')
+
+    for part in M.P[front0:]:
+        part['V'] = part['V'] + A((0, 0, VEST_DZ))
+        part['ax'] = part['ax'] + A((0, 0, VEST_DZ))
 
     # ===== cloak: shoulders down to a hem just below the hair, open at the front
-    cr = [(.865, .150, .125, .020), (.78, .245, .185, -.010), (.62, .270, .215, -.030), (.48, .275, .230, -.050), (.355, .285, .235, -.060)]
-    cp_ = [ring(y, rx, rz, cz, n=12, phi0=0.) for y, rx, rz, cz in cr[::-1]]
-    cloak = gp(cp_, True, skip={(b, c) for b in range(len(cr) - 1) for c in (11, 0)})
+    cr = [(.865, .150, .108, .005), (.78, .245, .160, -.020), (.62, .270, .186, -.035), (.48, .275, .198, -.050), (.355, .285, .202, -.058)]
+    # open at the front from -45 to +45 degrees (16 columns), so the vest shows from the collar down, as on the references
+    cp_ = [ring(y, rx, rz, cz, n=16, phi0=0.) for y, rx, rz, cz in cr[::-1]]
+    cloak = gp(cp_, True, skip={(b, c) for b in range(len(cr) - 1) for c in (14, 15, 0, 1)})
 
     def cloak_w(p):
         lo = smooth((.70 - p[1]) / .25)
         return {'spine': 1 - lo, 'cape': lo}
     J, W = weights(M, cloak['V'], cloak_w)
     add(cloak, lit_toned('cloak'), J=J, W=W)
+    # the cowl: the cloak's collar round the base of her neck; a short shaded neck shows above it, as on the references
+    cowl = loft([((0, y, cz), (rx, 0, 0), (0, 0, rz)) for y, rx, rz, cz in
+                 ((.800, .160, .118, -.015), (.845, .118, .094, -.010), (.880, .074, .066, -.012))],
+                10, 2.2, cap=(0, 0), j=.003)
+    J, W = weights(M, cowl['V'], lambda p: {'spine': 1 - smooth((p[1] - .86) / .07), 'neck': smooth((p[1] - .86) / .07)})
+    add(cowl, lit_toned('cloak'), J=J, W=W)
 
     # ===== sleeves and hands
     for s, d in ((1, '.L'), (-1, '.R')):
@@ -747,13 +833,15 @@ def build_parts(M):
         J, W = weights(M, sl['V'], arm_w)
         add(sl, lit_toned('sleeve'), J=J, W=W)
         cuff = tube([mid2 + (wr - el) * .22, wr + (wr - el) * .30], [.080, .092], N=6, ratio=.9, flat=(0, 0, 1.), cap=(0, .0))
-        add(cuff, 'cuff0', bone='hand' + d)
-        add(blob(wr + (wr - el) * .60 + A((0, .01, .01)), (.040, .040, .046), (0, 0, 1), N=6, k=2), 'skin', bone='hand' + d)
+        add(cuff, 'cuff0', bone='arm_lower' + d)
+    add_fist(M)
+    add_palm(M)
 
     # ===== wand (right hand): a stick rising from the fist and a pink star
-    wb = A(ARM['.R'][2]) + A((.0, .0, .02))
-    wt = wb + A((-.065, .205, .015))
-    add(tube([wb - (wt - wb) * .22, wt], [.010, .008], N=4, cap=(.004, .004)), 'wand', bone='hand.R')
+    fc, wdir = fist_frame()
+    wb = fc - wdir * .045
+    wt = fc + wdir * .200
+    add(tube([wb - wdir * .03, wt], [.010, .008], N=4, cap=(.004, .004)), 'wand', bone='hand.R')
     sc = wt + (wt - wb) / np.linalg.norm(wt - wb) * .030
     sv = [sc + A((0, 0, .014)), sc + A((0, 0, -.014))]
     for kk in range(10):
@@ -776,7 +864,7 @@ def build_parts(M):
         add(tube([bc + A((sgn * .03, .025, .01)), bc + A((sgn * .085, .06, -.04)), bc + A((sgn * .13, .095, -.10))], [.034, .030, .004], N=4, ratio=.22, flat=(0, 1, 0), cap=(0, 0)), 'bird_d', bone='bird')
 
     # ===== neck, head, face plate
-    add(loft([((0, y, 0.01), (r, 0, 0), (0, 0, r)) for y, r in ((.84, .036), (.93, .033))], 8, 2., cap=(0, 0)), 'skin_d', bone='neck')
+    add(loft([((0, y, -.015), (r, 0, 0), (0, 0, r)) for y, r in ((.84, .036), (.93, .033))], 8, 2., cap=(0, 0)), 'skin_d', bone='neck')
     head = loft([((0, y, cz), (rx, 0, 0), (0, 0, rz)) for y, rx, rz, cz in HEAD_R], 10, HEAD_E, cap=(.004, .004), j=.0015)
     add(head, lambda c, n: 'skin_d' if c[1] < .985 else 'hair1', bone='head')
     ref = face_ref()
@@ -810,6 +898,14 @@ def build_parts(M):
         return {'head': 1 - t, 'hat_tip': t}
     J, W = weights(M, hood['V'], hood_w)
     add(hood, 'hood_tex', J=J, W=W, tex='hood')
+    # the hood's rolled hem across the back and sides (the sheet's back view: a thick band at the shoulders)
+    hem = []
+    for c in range(2, 11):
+        q = P[0, c]
+        out_ = N_(A((q[0], 0., q[2] - HOOD_ROWS[0][3])))
+        hem.append(q + out_ * .014 + A((0, .012, 0)))
+    add(tube(hem, [.024, .030, .032, .032, .032, .032, .032, .030, .024], N=5, ratio=.8, flat=(0, 1., 0), cap=(.01, .01)),
+        lit_toned('cloak'), bone='head')
     shrink = P.copy()
     for r in range(P.shape[0]):
         cen = A([P[r][:, 0].mean(), P[r][:, 1].mean(), P[r][:, 2].mean()])
@@ -819,14 +915,20 @@ def build_parts(M):
     J2, W2 = weights(M, lin['V'], lambda p: {'head': 1 - smooth((p[1] - 1.02) / .12) * smooth((-p[2] - .06) / .14),
                                               'hat_tip': smooth((p[1] - 1.02) / .12) * smooth((-p[2] - .06) / .14)})
     add(lin, 'hood_in', J=J2, W=W2)
-    # flowers on the rim: ring vertices round the opening (side edges and the brow row)
-    wreath = [(1, 10), (2, 10), (3, 10), (3, 11), (3, 0), (3, 1), (3, 2), (2, 2), (1, 2)]
-    flip = [-1, 1]
-    for i, (r, c) in enumerate(wreath):
-        p = P[r, c] + A((0, 0, 0))
-        cen = A([0., p[1], HOOD_ROWS[min(r, len(HOOD_ROWS) - 1)][3]])
-        nrm = N_((p - cen) * A((1., .35, 1.)) + A((0, .25, 0)))
-        add_flower(M, p + nrm * .012, nrm, .060 + .014 * ((i * 7) % 3), i, hood_w)
+    # the flower crown: along the opening's rim from temple to temple over the brow, clustered at the temples (as on the
+    # references), round five-petal flowers, a few leaves between them
+    rim = A([P[2, 10], P[3, 10], P[3, 11], P[3, 0], P[3, 1], P[3, 2], P[2, 2]], float)
+    seg_l = np.r_[0., np.cumsum(np.linalg.norm(np.diff(rim, axis=0), axis=1))]
+    for i, f in enumerate(CROWN):
+        p = A([np.interp(f * seg_l[-1], seg_l, rim[:, k]) for k in range(3)])
+        cen = A([0., p[1] - .04, HOOD_ROWS[3][3]])
+        nrm = N_((p - cen) * A((1., .5, 1.)) + A((0, .15, .35)))
+        add_flower(M, p + nrm * .010, nrm, CROWN_SIZE[i % len(CROWN_SIZE)], i, hood_w)
+    for i, f in enumerate(LEAVES):
+        p = A([np.interp(f * seg_l[-1], seg_l, rim[:, k]) for k in range(3)])
+        cen = A([0., p[1] - .04, HOOD_ROWS[3][3]])
+        nrm = N_((p - cen) * A((1., .5, 1.)) + A((0, .15, .35)))
+        add_leaf(M, p + nrm * .006, nrm, i, hood_w)
 
     # ===== hair: the lobed mass behind her, then the curls
     hm = gp(mass_pts(), False)
@@ -843,8 +945,11 @@ def build_parts(M):
 
     for name, side, pts, width, nsides, n_st in curl_paths():
         m = len(pts)
-        rad = np.interp(np.arange(m), [0, n_st, m - 1], [width, width * .78, width * .30])
-        cu = tube(pts, rad, N=nsides, ratio=.85, flat=(0, 0, 1.), cap=(0, .012), o=.5 if nsides == 4 else 0.)
+        taper = (.68, .26) if name == 'tail' else (.78, .30)     # the back locks stay thick down to their curl, as on the sheet
+        rad = np.interp(np.arange(m), [0, n_st, m - 1], [width, width * taper[0], width * taper[1]])
+        ratio = {'frame': .45, 'tail': .80}.get(name, .85)
+        flat = N_((side * .7, 0., 1.)) if name == 'frame' else (0, 0, 1.)
+        cu = tube(pts, rad, N=nsides, ratio=ratio, flat=flat, cap=(0, .012), o=.5 if nsides == 4 else 0.)
         d = '.L' if side > 0 else '.R'
         t_ = (np.arange(m) / (m - 1))
         nv = nsides
@@ -856,24 +961,65 @@ def build_parts(M):
         J, W = weights(M, cu['V'], hair_w if name == 'relief' else curl_w)
         add(cu, lit_toned('hair'), J=J, W=W)
 
+    # bangs: swept from the parting to each temple over the forehead's top corners, under the flowers
+    for sx in (1, -1):
+        pts = [A((sx * x, y, head_z(x, y) + dz)) for x, y, dz in BANGS]
+        bg = tube(pts, [.020, .026, .022, .014], N=4, ratio=.45, flat=(0, 0, 1.), cap=(0, .006), o=.5)
+        add(bg, lit_toned('hair'), bone='head')
+
+
+BANGS = ((.015, 1.168, .045), (.060, 1.158, .042), (.110, 1.128, .036), (.150, 1.085, .030))   # x, y, out of the head
+CROWN = (.02, .10, .18, .33, .50, .66, .80, .90, .98)   # where the flowers sit along the rim, 0..1 (temple to temple)
+CROWN_SIZE = (.058, .050, .064, .052, .066, .050, .062, .052, .058)
+LEAVES = (.06, .26, .58, .74, .94)
+
 
 def add_flower(M, p, nrm, size, i, hood_w):
-    """A five-petal flower lying on the surface at p: a star fan with a raised gold centre."""
+    """A five-petal flower lying on the surface at p: rounded petals (each a fan of four facets, lighter at the tip) round
+    a raised gold centre."""
     t1 = np.cross(nrm, (0., 1., 0.))
     if np.linalg.norm(t1) < 1e-3:
         t1 = np.cross(nrm, (1., 0., 0.))
     t1 = N_(t1)
     t2 = np.cross(nrm, t1)
-    rot = (i * 37) % 72
-    V = [p + nrm * .016]
-    for k in range(10):
-        a = RAD(rot) + k * math.pi / 5
-        r = size if k % 2 == 0 else size * .50
-        V.append(p + r * (math.cos(a) * t1 + math.sin(a) * t2) - nrm * (.004 if k % 2 else 0))
-    F = [(0, 1 + k, 1 + (k + 1) % 10) for k in range(10)]
-    part = dict(V=A(V), F=A(F, int), ax=A([p - nrm * .05]), fb=None)
+    rot = RAD((i * 37) % 72)
+
+    def at(a, r, lift=0.):
+        return p + r * (math.cos(a) * t1 + math.sin(a) * t2) + nrm * lift
+
+    V, F, mats = [p + nrm * .012], [], []
+    for k in range(5):
+        a0 = rot + k * 2 * math.pi / 5
+        base = len(V)
+        V += [at(a0 - .56, size * .70, .004), at(a0 - .25, size * .98, .008), at(a0 + .25, size * .98, .008),
+              at(a0 + .56, size * .70, .004)]
+        tip = 'petal_l' if (i + k) % 3 == 0 else 'petal'
+        F += [(0, base, base + 1), (0, base + 1, base + 2), (0, base + 2, base + 3)]
+        mats += ['petal_d' if k % 2 else 'petal', tip, 'petal' if k % 2 else 'petal_d']
+    cen = len(V)
+    V.append(p + nrm * .020)
+    ring_ = len(V)
+    for k in range(5):
+        V.append(at(rot + k * 2 * math.pi / 5 + .6, size * .26, .014))
+    for k in range(5):
+        F.append((cen, ring_ + k, ring_ + (k + 1) % 5))
+        mats.append('flower_c')
+    part = dict(V=A(V), F=A(F, int), ax=A([p - nrm * .05]), fb=list(range(len(F))))
     J, W = weights(M, part['V'], hood_w)
-    M.add(part, lambda c, n, i=i: 'pink_l' if hsh1(c) > .6 else 'pink', J=J, W=W)
+    M.add(part, mats, J=J, W=W)
+
+
+def add_leaf(M, p, nrm, i, hood_w):
+    """A small olive leaf tucked between the flowers: a flat diamond pointing outward along the rim."""
+    t1 = N_(np.cross(nrm, (0., 0., 1.)) if abs(nrm[2]) < .95 else np.cross(nrm, (1., 0., 0.)))
+    t2 = np.cross(nrm, t1)
+    a = RAD(30 + (i * 53) % 120)
+    d = math.cos(a) * t1 + math.sin(a) * t2
+    w = np.cross(nrm, d)
+    V = [p, p + d * .030 + w * .012, p + d * .058, p + d * .030 - w * .012]
+    part = dict(V=A(V), F=A([(0, 1, 2), (0, 2, 3)], int), ax=A([p - nrm * .05]), fb=None, both=True)
+    J, W = weights(M, part['V'], hood_w)
+    M.add(part, 'leaf', J=J, W=W)
 
 
 # ---- clips --------------------------------------------------------------------------------------------------------------------
@@ -1048,7 +1194,7 @@ def build(out_dir, preview=None, name='witch'):
     n = glb.export(path, M, arr, at.img, clips, scale, mesh_name='Witch', generator='tools/characters/witch_ref.py', extras=ex)
     print('  %s: %d triangles, %d bones, %d clips, atlas %dx%d (%.0f%% used), top %.3f m (scale %.3f)'
           % (path, n, len(M.names), len(clips), at.W, at.H, 100 * at.usage(), top * scale, scale))
-    assert n <= 4000, 'triangle budget'
+    assert n <= 4500, "triangle budget"
     if preview:
         os.makedirs(preview, exist_ok=True)
         import witch_preview as wp

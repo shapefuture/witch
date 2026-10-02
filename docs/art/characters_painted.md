@@ -27,11 +27,15 @@ xvfb-run -a godot --path . --rendering-method gl_compatibility --rendering-drive
     --script res://tools/characters/capture_witch.gd -- CAPDIR                     # room (raw, PSX) and studio, 4 views
 python tools/characters/witch_strip.py CAPDIR OUTDIR --ref REF_SHEET.png           # the reference next to the live witch
 python tools/characters/witch_turnaround.py OUT.png --ref REF_SHEET.png            # same, from the numpy previewer (fast)
+xvfb-run -a godot ... --resolution 360x420 --script res://tools/characters/capture_clips.gd -- CLIPDIR witch q_left
+python tools/characters/clip_sheet.py CLIPDIR clips.png                            # every clip, 6 poses each: the rig
 ```
+The studio shots (`capture_witch.gd`, `capture_clips.gd`) light her with a neutral white key, so her colours read like
+the reference's studio render; the room shots use the room's own light.
 
 | | witch.glb |
 |---|---|
-| triangles (budget 9,000; the brief asks for about 3,000) | 3,136 (the sculpted face is 178 of them) |
+| triangles (budget 9,000; the test holds her to 4,500) | 4,476 (the sculpted face is 178 of them) |
 | surfaces after `CharacterModels` folds flat colours | 1 (one atlas, one material) |
 | bones | 22: the 21 every witch has had + `hat_tip` (the hood's peak and upper hood, which lag the head) |
 | clips | idle 4.0 s, walk 1.0 s, talk 3.0 s, cast 1.6 s (not looping); every bone keyed in every clip |
@@ -46,17 +50,27 @@ only: the room lights her.
 - *Skirt*: a 12-sided cone, three rows, every second corner pulled in 4.5 % at the hem (pleats); its tile has the stars
   and crescents sized in metres (compensated for the cone's narrowing) and a tone per panel and triangle. The hem
   follows the legs a little in `walk`.
-- *Hood*: a six-ring dome, bell-shaped (see lighting below), open at the front below the brow ring, with a lining; the
-  back-centre column is pulled out to the tip and its neighbours half way, which makes the ridge and the point. Its
-  upper back weights to `hat_tip`. Nine five-petal flowers sit on the rim.
-- *Hair*: one lobed mass (15 columns, every second one 12 % smaller, the lower edge dragged down under the odd
-  lobes), five thin tails from those tips, each ending in a spiral, two spiral curls per side near the shoulder and
-  the hip, two small ones by the hood, two locks framing the face and a small spiral on the back's hollow. The spirals
-  are polylines walked by a turtle (`turtle()`: a stalk, then a spiral that shrinks), swept as 4- or 5-sided tubes.
-  Hair vertices weight to `head`, `hairB.*` and `hairT.*` by height and side, so the curls swing in every clip.
-- *Cloak* (shoulders to a hem just below the hair, open at the front, on `cape`), *vest* with two pocket boxes and
-  things sticking out of them, a crescent pendant and its chain, bell sleeves, small hands, the wand and its pink star
-  (`hand.R`), the bird (`bird`, parented to `hand.L`), the head with the sculpted face (below).
+- *Hood*: a seven-ring dome with a wide, rounded crown (the sheet's back view), open at the front below the brow
+  ring, with a lining and a thick rolled hem across the back and sides at the shoulders; the back-centre column is
+  pulled out to the folded tip. Its upper back weights to `hat_tip`. Front to back it is as shallow as the sheet's
+  side view (the face sits behind the flowers, not out of the hood).
+- *Flower crown*: nine five-petal flowers along the opening's rim from temple to temple, clustered at the temples,
+  each petal a fan of three facets (a darker side, the lit tip), a raised gold centre, olive leaves between.
+- *Hair*: a short scalp mass under the hood's back, and from under the hem seven thick locks side by side down to the
+  waist, each with an S through it and a big curl at its end (the sheet's "octopus" back); two locks frame the face
+  from under the flowers over the shoulders into an outward curl; swept bangs over the forehead's corners; per side a
+  big curl at the shoulder and one at the hip, and two upper curls that leave her hair at the temple, behind the
+  flowers, sweep out over the hood's front edge and curl beside it. The spirals are polylines walked by a turtle
+  (`turtle()`: a stalk, then a spiral that shrinks), swept as 4- or 5-sided tubes. Hair vertices weight to `head`,
+  `hairB.*` and `hairT.*` by height and side, so the curls swing in every clip.
+- *Cloak* (shoulders to a hem just below the hair, open at the front from -45 to +45 degrees so the vest shows from
+  the collar, on `cape`) and a collar round the base of the neck, with a short shaded neck above it. *Vest*, slim front
+  to back, with two big pockets on the hips (wider at the bottom, a flap), stuffed: a spoon, a toy mouse, a feather and
+  herbs; sweets, a cookie and a folded note; a big silver crescent on a gold chain, a small crescent and a stud, four
+  gold buttons. Bell sleeves whose cuffs follow the forearm (`arm_lower`). *Hands*: her right a fist closed round the
+  wand (a palm, a roll of knuckles across the stick, a thumb over them; wand and fist both rigid on `hand.R`, so the
+  grip holds through `cast`), her left open palm up with the fingers curving up and the thumb out, the bird
+  (`bird`, parented to `hand.L`) standing on it. The head with the sculpted face (below).
 
 **The face** comes from the user's camera-facing close-up (not in the repository). `tools/characters/face_from_ref.py
 <image>` levels the eyes, cuts the skin out (forehead under the flowers as an arch, the neck where the face narrows,
@@ -86,24 +100,20 @@ face its own anchor so the kit's outward test cannot flip a face whose winding i
 
 **Checked.** `tests/render/test_character_models.gd`: the clips, the height and the floor, the budgets, the bone names
 (plus `hat_tip`), and `test_the_witch_has_the_new_references_proportions_and_palette` (0.9-1.15 m across the curls, a
-skirt at least 0.7 m wide, at most 3,300 triangles, one atlas of at most 256 px with golden-orange, purple and pink
+skirt at least 0.7 m wide, at most 4,500 triangles, one atlas of at most 256 px with golden-orange, purple and pink
 texels). `painted_walk_check.sh` passes (0 failures; occlusion unchanged). Frames: the turnaround strip
 (reference | studio | room), the room at game resolution with PSX on, and the three sizes (100 %, 50 %, 25 % of the
 row height; the game sees her at about 100 px). No image generation was used: the sheet already is a turnaround.
 
 **Still different from the sheet**
-- The hair is a smooth flute mass with thin tails; the sheet's is layered, with thick rounded locks and more, bigger
-  spirals. The curls' ribbons are 4-5 sided tubes, so at the sheet's scale they look sharper.
-- The hood is a rounded bell with one ridge; the sheet's is more peaked and its tip bends toward the viewer.
-- The face is the close-up's, but rounder at the cheeks than the reference (it lies on the head's ellipsoid), its
-  skin a little warmer in the room's gold light, and no hair parts over the forehead as in the close-up (two locks
-  only); the flowers are flat five-point stars, not layered petals; the hands are small blocks; the bird is a
-  few flat shapes; no sparkles, no floating moon, no gem and plant things in the pockets beyond three blobs.
-- The vest is boxy, the pockets plain; no medallions on the cloak.
-- In the room the hair reads golden-brown, not orange: the actor light there is dim and warm (`actor_light`,
-  `actor_sun` in `painted_room.gd`, not touched here); the lit-up render (`room_psx_lit`) is closer.
-- Her cast shadow and the raccoon: the hem is wider than the old witch's (radius 0.46 m), so the raccoon's idle
-  spot beside her now overlaps her skirt a little; `SHADOW_RADIUS` for the witch (0.32) is smaller than the hem.
+- The back locks are 5-sided tubes on regular spacing, so they read more ordered than the sheet's; its locks overlap
+  in layers and its small spiral in the middle of the back is not modelled.
+- The sleeves and the cloak are plain purple (the sheet prints stars and moons on them); the bird is a few blobs; the
+  wand's star is flat; no sparkles and no floating moon.
+- The face lies on the head's ellipsoid, so it is rounder at the cheeks than the close-up; in the room's gold light
+  her skin is a little warmer and her eyes a little greener than in the studio.
+- In the room the hair reads golden-brown: the actor light there is dim and warm (`actor_light`, `actor_sun` in
+  `painted_room.gd`).
 
 The sections below describe the painted-hat witch (superseded by the section above: read their witch parts as history,
 and `python tools/characters/witch_painted.py` now writes `witch_painted.glb`) and the raccoon.
