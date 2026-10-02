@@ -68,6 +68,20 @@ def test_prompts_carry_the_hard_constraints():
             assert "exactly the same camera" in vt and "no black outline" in vt
 
 
+def test_the_ps1_master_prompt_fills_for_every_brief_and_keeps_its_laws():
+    styles = nr.load_styles()
+    assert {"hall", "ps1"} <= set(styles) and styles["ps1"]["refs"] == [] and styles["ps1"]["frame"] == {"strength": 0.0}
+    for b in nr.list_briefs():
+        spec = nr.resolve(b["kind"], b)
+        text = nr.compose_prompt(spec, b["prompt"], "ps1", b)
+        assert "{" not in text and "}" not in text, b["id"]                  # every field of the template was filled
+        for must in ("Catastrophically crude early-3D", "NOT papercraft", "no vignette", "no witch, no raccoon", "NO 2D",
+                     "%d percent" % round(spec["horizon"] * 100), "Palette: jewel-toned"):
+            assert must in text, (b["id"], must)
+    shop = nr.load_brief("shop")
+    assert "Bigger Inside" in nr.compose_prompt(nr.resolve("interior", shop), shop["prompt"], "ps1", shop)
+
+
 def test_resolve_overrides_in_order_kind_brief_explicit():
     spec = nr.resolve("street", {"palette": "night", "sun": {"mode": "fixed", "dir": [0, 1, 0]}}, horizon=0.55)
     assert spec["palette"] == "night" and spec["sun"]["dir"] == [0, 1, 0] and spec["horizon"] == 0.55

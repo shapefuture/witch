@@ -48,7 +48,6 @@ import build_painted as bp  # noqa: E402
 
 MODEL = "xai/grok-imagine-image-2.0"
 SCENES = HERE / "scenes"
-DEFAULT_REFS = [ROOT / "assets/painted/hall_clean/plate_empty.png"]
 ASK_HORIZON = 0.62
 DEFAULT_PALETTE = "olive, ochre and purple, warm dusty low-key light"
 # The look of the game (docs/art/painted_room.md), and what a plate must never contain. The characters, the visitors and the
@@ -65,6 +64,15 @@ VARIANT_STYLE = ("Same painting style. Horizontal 16:9. No people, no witch, no 
 def load_kinds():
     kinds = json.loads((SCENES / "kinds.json").read_text(encoding="utf-8"))
     return {k: v for k, v in kinds.items() if not k.startswith("_")}
+
+
+def load_styles():
+    styles = json.loads((SCENES / "styles.json").read_text(encoding="utf-8"))
+    return {k: v for k, v in styles.items() if not k.startswith("_")}
+
+
+def style_refs(style_name):
+    return [ROOT / r for r in load_styles()[style_name].get("refs", [])]
 
 
 def load_brief(brief_id):
@@ -96,9 +104,26 @@ def resolve(kind_name, brief=None, **overrides):
     return spec
 
 
-def compose_prompt(spec, scene_prompt):
-    style = STYLE.format(pct=int(round(spec["horizon"] * 100)))
-    return "%s %s Palette: %s. %s" % (scene_prompt.strip(), spec["composition"], spec.get("palette") or DEFAULT_PALETTE, style)
+def compose_prompt(spec, scene_prompt, style="hall", brief=None):
+    """The whole prompt: for `hall` the scene, the kind's composition and palette and the house style; for any style with a
+    `template` (ps1: the game draft's master prompt) that template filled from the style's blocks and the brief's own
+    `styles.<name>` entry (prompt, title, ui, motifs, palette)."""
+    pct = int(round(spec["horizon"] * 100))
+    st = load_styles()[style]
+    mine = ((brief or {}).get("styles") or {}).get(style, {})
+    if "template" not in st:
+        return "%s %s Palette: %s. %s" % (scene_prompt.strip(), spec["composition"], spec.get("palette") or DEFAULT_PALETTE,
+                                          STYLE.format(pct=pct))
+    fields = {k: v for k, v in st.items() if isinstance(v, str)}
+    fields.update(
+        title=mine.get("title") or (brief or {}).get("title", ""),
+        scene=(mine.get("prompt") or scene_prompt).strip(),
+        composition=spec["composition"],
+        ui_scene=mine.get("ui", "no interface element in this scene."),
+        motifs_scene=mine.get("motifs", st["motifs"]),
+        palette=mine.get("palette") or st.get("palette") or spec.get("palette") or DEFAULT_PALETTE,
+        pct=pct)
+    return st["template"].format(**fields)
 
 
 def compose_variant_prompt(change):
@@ -108,7 +133,7 @@ def compose_variant_prompt(change):
 
 # ---- 1. generate -------------------------------------------------------------------------------------------------------
 def generate(prompt, refs, max_usd, out_dir):
-    """Returns the job's folder. `prompt` is complete (compose_prompt / compose_variant_prompt)."""
+    """Returns the job's folder (no references: a text-only generation). `prompt` is complete (compose_prompt / compose_variant_prompt)."""
     out_dir.mkdir(parents=True, exist_ok=True)
     args = {"prompt": prompt.strip(), "aspect_ratio": "16:9", "resolution": "2k", "quality": "medium"}
     args_file = out_dir / "args.json"
@@ -263,7 +288,7 @@ def job_cost(job):
         return 0.0
 
 
-def make(name, spec, picture, source_note, *, horizon=None, floor_box=None, sun=None, sun_pixel=None, life=True, godot=None,
+def make(name, spec, picture, source_note, *, style="hall", horizon=None, floor_box=None, sun=None, sun_pixel=None, life=True, godot=None,
          brief=None, fit_horizon=False):
     """Calibrate, build, draft the life, mark the walkable ground and capture. Returns the report."""
     out = ROOT / "assets/painted" / name
@@ -328,6 +353,9 @@ def make(name, spec, picture, source_note, *, horizon=None, floor_box=None, sun=
         p = np.array([wx, -bp.EYE_H, wz])
         depth = max(float(p @ fwd), 0.3)
         ground_px = (float(np.clip(bp.W / 2 + f * p[0] / depth, 60, bp.W - 60)), float(np.clip(bp.H / 2 - f * (p @ up) / depth, 40, bp.H - 40)))
+        spec = dict(spec)
+        if load_styles()[style].get("frame") is not None:      # a look can forbid the closing-in dark frame (the ps1 look: no vignette)
+            spec["frame"] = load_styles()[style]["frame"]
         drafted, src = make_life(plate, horizon, ground_px, spec)
         (out / "life.json").write_text(json.dumps(drafted, indent=1) + "\n", encoding="utf-8")
         lights = len(drafted["lights"])
@@ -348,8 +376,10 @@ def make(name, spec, picture, source_note, *, horizon=None, floor_box=None, sun=
     return report
 
 
-def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=None, refs=(), max_usd=0.20, godot=None, **kw):
-    """One scene (or one variant of one). Returns (report, cost in USD)."""
+def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=None, refs=(), max_usd=0.20, godot=None, style="hall", **kw):
+    """One scene (or one variant of one). Returns (report, cost in USD). A style other than `hall` builds into NAME_STYLE."""
+    if style != "hall" and not variant:
+        name = "%s_%s" % (name, style)
     scratch = ROOT / "build/rooms" / name
     base_dir = ROOT / "assets/painted" / name
     cost = 0.0
@@ -373,7 +403,7 @@ def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=N
             (ROOT / "assets/painted" / target).mkdir(parents=True, exist_ok=True)
             shutil.copy(job / "job.json", ROOT / "assets/painted" / target / "job_room.json")
             note = "%s: variant %r of %s: %s (job_room.json)" % (MODEL, variant, name, brief["variants"][variant][:140])
-        return make(target, spec, picture, note, godot=godot, brief=brief, **kw), cost
+        return make(target, spec, picture, note, style=style, godot=godot, brief=brief, **kw), cost
     spec = resolve(kind or (brief or {}).get("kind", "interior"), brief)
     text = prompt or (brief or {}).get("prompt")
     if image:
@@ -381,12 +411,12 @@ def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=N
     else:
         if not text:
             sys.exit("give a brief id, --prompt, or --image")
-        job = generate(compose_prompt(spec, text), [Path(r) for r in refs] or DEFAULT_REFS, max_usd, scratch)
+        job = generate(compose_prompt(spec, text, style, brief), [Path(r) for r in refs] or style_refs(style), max_usd, scratch)
         picture, cost = job / "image_0.png", job_cost(job)
         base_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy(job / "job.json", base_dir / "job_room.json")
         note = "%s: %s (job_room.json)" % (MODEL, text.strip()[:160])
-    return make(name, spec, picture, note, godot=godot, brief=brief, **kw), cost
+    return make(name, spec, picture, note, style=style, godot=godot, brief=brief, **kw), cost
 
 
 def main(argv=None):
@@ -398,6 +428,7 @@ def main(argv=None):
     ap.add_argument("--variants", action="store_true", help="--all: also build every variant")
     ap.add_argument("--kind", help="a kind of scenes/kinds.json (default: the brief's)")
     ap.add_argument("--prompt", help="what the place is (the kind's composition and the house style are added)")
+    ap.add_argument("--style", default="hall", help="a look of scenes/styles.json: hall (papercraft, default) or ps1 (the master prompt)")
     ap.add_argument("--variant", help="a named change of the brief's scene, same camera (an edit of the base plate)")
     ap.add_argument("--image", help="build from this picture instead of generating one")
     ap.add_argument("--ref", action="append", default=[], help="reference images (default: the hall plate, for the style)")
@@ -421,10 +452,11 @@ def main(argv=None):
         print("kinds: " + ", ".join(sorted(kinds)) + "   (* = variant built)")
         return 0
 
-    common = dict(godot=args.godot, max_usd=args.max_usd, life=not args.no_life, fit_horizon=args.fit_horizon)
+    common = dict(godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
     if args.all:
         spent, built = 0.0, []
-        todo = [(b, None) for b in list_briefs() if not (ROOT / "assets/painted" / b["id"] / "room.json").exists()]
+        suffix = "" if args.style == "hall" else "_" + args.style
+        todo = [(b, None) for b in list_briefs() if not (ROOT / "assets/painted" / (b["id"] + suffix) / "room.json").exists()]
         if args.variants:
             todo += [(b, v) for b in list_briefs() for v in b.get("variants", {})
                      if not (ROOT / "assets/painted" / ("%s_%s" % (b["id"], v)) / "room.json").exists()]

@@ -1,0 +1,43 @@
+{
+  "model": "xai/grok-imagine-image-2.0",
+  "arguments": {
+    "prompt": "16:9 horizontal point-and-click adventure game screenshot from THE WITCH, a fictional forgotten magical adventure game of approximately 1997-2002. Catastrophically crude early-3D: extremely low-polygon geometry built from wedges, cubes, triangular slabs, cones, stretched pyramids, tapered cylinders, primitive planes, irregular extrusions and lopsided blobs — visibly imperfect topology, blunt corners, slightly floating intersections, asymmetric dimensions, walls that bend in ways a modern modeler would correct. NOT modern low-poly, NOT polished indie 3D, NOT claymation, NOT voxels, NOT papercraft. Aggressively faceted rendering, polygon-to-polygon value shifts, primitive vertex colors, faceted directional light, blunt stylized shadows, dark ambient-occlusion pockets, mild atmospheric haze, low-resolution painted textures, dry matte opaque pigment, dry-brush grain, palette-knife ridges, scratched contours, worn and rubbed paint, chipped painted glaze, stretched patterns, warped UVs, tiny texture seams, mild aliasing, subtle dithering, imperfect early-digital gradients, repairs and mismatched patches telling history. Textures are never flat, clean or graphic: soft gradients, gentle mottling, hand-painted variation — storybook soul on jagged geometry. Characters and props read as carved wooden toys rendered as low-poly 3D, never photographed physical media. SCENE \"The Shop That Is Bigger Inside\", late afternoon golden hour, the witch's potion-and-curiosities shop, one big crooked room that is clearly bigger on the inside than the outside: a long lopsided counter of chunky wooden slabs with a brass bell on a wooden mount and a sealed unlabeled envelope on it, a wedge mark carved into its front, a pulley with a rope bag hanging from a rafter, a staircase that goes sideways up one wall to a small absurd door set in the ceiling, shelves crowded with potion bottles, spools of thread knotted between unrelated objects, a bookshelf leaning as if about to fall, a giant teapot used as a stove, a low-poly pigeon holding a package perched on a rafter, a badger digging up through the floorboards, a frog asleep in a teacup, a round warped window pouring long blunt golden-hour light across the floor, repairs and mismatched patches everywhere, a dust gap on a shelf where something used to sit. An enclosed room seen from just inside its entrance, looking across a large clear area of floor. Vaulted or beamed ceiling, walls of shelves and stone, light coming from a window, skylight or lamps. Dense, alive, impossibly cluttered; every inch of the screen is a puzzle piece. Architecture appears grown rather than constructed: rounded dwellings, crooked doorways, inflated walls, twisting trees, whimsical rock formations, built from chunky faceted primitives arranged organically, crooked, impossible, asymmetrical. Chunky, faceted, instantly readable low-poly animals populate the scene as props and puzzle pieces. UI: paper and cloth provenance tags, blank, knotted to a few objects. UI is diegetic only, a physical object in the world: nothing sits on top of the screen. No panel, no text, no tooltip, no modern HUD, no glowing markers. Palette: jewel-toned theatrical daylight that still reads as daylight; shadows deep cobalt, violet-blue-black, plum, indigo (never gray); light pockets incandescent amber, pale gold, lemon; ground and walls turquoise, teal, petrol, dusty teal; accents coral, hot-pink, tangerine, cream, lavender; earthy anchors moss green, lime, mustard yellow, burnt orange, coral red, muted purple, earthy brown; matte, dry, opaque painted pigment with soft gradients and gentle mottling; never gray, never desaturated. Lighting: Rich, earthy, warm theatrical atmosphere under soft directional light, baked warmth, golden-hour sun through warped windows casting long blunt dramatic shadows, gentle ambient shadow, subtle rim light, a slightly dreamlike glow painted in, never optically simulated: no gloss, no specularity, no bloom, no lens flare. Camera: Fixed 2.5D point-and-click camera, framed like a stage play. Strong barrel curvature living inside the geometry: bent facades, exaggerated foreground, compressed background, absurd convergence. Absolutely no fisheye border, no black rings, no vignette, no screen frame, no comic outlines, no ink lines, no letterboxing. 3 to 7 readable depth layers: an exaggerated foreground element toward the viewer, a midground, a background of compressed distance with tiny activity. Everything looks touchable and clickable. The horizon (where the ground meets the far wall) is about 62 percent of the way down the frame. A large clear area of ground, unobstructed, fills the foreground to walk on: the two main characters will stand there, so leave it empty; no people, no witch, no raccoon in the picture. Recurring motifs, one to three of them: a wedge mark carved into the counter, a sealed envelope, a dust gap on a shelf. Avoid: photorealism, glossy PBR, ray tracing, bloom, lens flare, cinematic depth of field, volumetric perfection, clean vector interface, modern HUD, dialogue boxes, cel shading, toon outlines, gray filters, portrait framing, claymation textures, cute modern 3D, smooth sculpting, realistic anatomy, voxels, Minecraft blocks, papercraft, fabric, cardboard, steampunk cliché, occult rune wallpaper, giant magic circles, sci-fi holograms, neon cyberpunk, cloned identical NPCs, horror mood, green toxic glow, gold magic glow effects, question-mark icons, clue glows, arrows. NO 2D. NO CLAY. NO VOXELS. NO PHYSICAL MEDIA. NO HORROR: the surrealism is fun, wacky, ridiculous, a funhouse mirror, not a nightmare, and the absurdity is treated completely seriously.",
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "quality": "medium"
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.280",
+    "usd": "0.080",
+    "discount": null
+  },
+  "idempotency_key": "a306a212-a371-481e-a117-2628872b5226",
+  "created_at": "2026-10-02T16:48:11+00:00",
+  "request_id": "722b8a1e-5b92-439e-b633-b44b004c43b0",
+  "status_url": "https://platform.higgsfield.ai/requests/722b8a1e-5b92-439e-b633-b44b004c43b0/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/722b8a1e-5b92-439e-b633-b44b004c43b0/cancel",
+  "status": "completed",
+  "correlation_id": "75543f01ed7b4a539da3c341656c6b5d",
+  "result": {
+    "status": "completed",
+    "request_id": "722b8a1e-5b92-439e-b633-b44b004c43b0",
+    "status_url": "https://platform.higgsfield.ai/requests/722b8a1e-5b92-439e-b633-b44b004c43b0/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/722b8a1e-5b92-439e-b633-b44b004c43b0/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/dc644f5b-3fb2-4b6e-87d7-eb90c30e7e53.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T16:49:46+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/dc644f5b-3fb2-4b6e-87d7-eb90c30e7e53.png",
+      "path": "image_0.png",
+      "sha256": "1c1bdccc4bee9ad551014cc1f025b9734c0dbbd4c145752bcb7581f7a8596cb5",
+      "bytes": 6924221
+    }
+  ]
+}

@@ -51,3 +51,25 @@ Not the factory's work (and not yet built): the fisheye camera and its roll (eng
 overlay, props and their reactions (`tools/painted/lift_prop.py`), the doorways between scenes, the Mirror room ids and the
 text keys (`data/mirror/`, `data/text/ru.json`), and the characters. The kinds say where the witch and raccoon stand only so a built scene
 can be looked at.
+
+## Looks (styles)
+
+`--style NAME` picks a look from `tools/painted/scenes/styles.json`. A scene in a style other than `hall` is built into `<id>_<style>`.
+
+- **`hall`** (default): the papercraft look of the first painting; the hall plate is the style reference.
+- **`ps1`**: the *master prompt v3.0* of the game draft (THE WITCH, a fictional 1997-2002 point-and-click game): catastrophically crude
+  early 3D, **not** papercraft, jewel-toned theatrical palette (cobalt and plum shadows, never gray; turquoise and teal ground; amber light),
+  barrel curvature inside the geometry, no vignette or screen frame, the avoid list and the recurring motifs. The blocks are the draft's own
+  words; the template is its section XII. No reference picture is used (text only), the closing-in dark frame is switched off, and the
+  template's character blocks are replaced by a request for clear floor, because the witch and raccoon are engine actors. A brief adds
+  its own `styles.ps1` entry (`title`, `prompt`, `ui`, `motifs`, `palette`); without one the brief's plain prompt is used.
+
+```sh
+python tools/painted/new_scene.py shop --style ps1 --godot $GODOT      # assets/painted/shop_ps1/, about USD 0.08
+```
+
+`shop_ps1` is the first scene in this look: a shop that is bigger inside (a staircase that climbs the wall to a small door in the ceiling,
+a pigeon with a package, a badger coming up through the floorboards, a frog in a teacup, a brass bell, a sealed envelope, blank tags knotted
+to objects as the scene's diegetic interface). The generator reads the look as hand-painted and fairly polished rather than truly crude;
+the engine's own PSX pass (affine mapping, snapped vertices, dither) supplies the crudeness. The fisheye barrel is in the picture, so the
+flat-lens depth calibration is a little off near the edges.
