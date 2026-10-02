@@ -1,0 +1,44 @@
+{
+ "camera_space": "x right, y up, z toward the camera",
+ "key_direction_from_grey": [
+  0.764,
+  0.645,
+  0.022
+ ],
+ "sun_direction_from_chrome": [
+  0.842,
+  0.525,
+  -0.129
+ ],
+ "angle_between_deg": 11.9,
+ "fill_color": [
+  1.0,
+  0.947,
+  0.823
+ ],
+ "key_color": [
+  1.0,
+  0.663,
+  0.421
+ ],
+ "grey_fit_r2": 0.967,
+ "fill_to_key": 0.1,
+ "sun_color": [
+  1.0,
+  0.802,
+  0.569
+ ],
+ "sky_color": [
+  0.892,
+  0.868,
+  1.0
+ ],
+ "ground_color": [
+  1.0,
+  0.583,
+  0.218
+ ],
+ "sun_to_sky": 3.7,
+ "grey_vs_chrome_correlation": 0.881,
+ "ok": true
+}

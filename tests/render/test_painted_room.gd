@@ -52,6 +52,40 @@ func test_the_characters_have_a_key_light_and_cast_a_shadow_along_the_beam() -> 
 	eq(witch_shadow.viewport.render_target_update_mode, SubViewport.UPDATE_DISABLED, "shadow off stops its camera")
 	room.queue_free()
 
+# A room with a `lighting` block (measured from calibration spheres or derived from its plate) lights its characters by it:
+# a warm key from its own direction, a cool sky fill, a ground bounce; one without keeps the floor-map light.
+func test_a_rooms_own_lighting_lights_the_characters() -> void:
+	await _first_frame()
+	var hall := _room()
+	eq(hall.lighting().size(), 0, "the hall has no lighting block")
+	var hall_material := ((hall.actors["witch"] as Node3D).get_node("Visual").find_children("*", "MeshInstance3D", true, false)[0] as MeshInstance3D).get_active_material(0) as ShaderMaterial
+	eq(float(hall_material.get_shader_parameter("lighting_mode")), 0.0, "so its characters stay on the floor-map light")
+	hall.queue_free()
+	var garden := (load("res://game/world/painted/painted_room.tscn") as PackedScene).instantiate() as PaintedRoom
+	garden.room_dir = "res://assets/painted/garden"
+	(Engine.get_main_loop() as SceneTree).root.add_child(garden)
+	var l := garden.lighting()
+	ok(not l.is_empty() and str(l["source"]) == "spheres", "the garden carries the lighting measured from its spheres")
+	var key: Array = l["key_dir"]
+	for id in ["witch", "raccoon"]:
+		for mesh in (garden.actors[id] as Node3D).get_node("Visual").find_children("*", "MeshInstance3D", true, false):
+			var material := (mesh as MeshInstance3D).get_active_material(0) as ShaderMaterial
+			eq(float(material.get_shader_parameter("lighting_mode")), 1.0, "%s: lighting mode is on" % id)
+			var dir := material.get_shader_parameter("sun_dir") as Vector3
+			ok(dir.distance_to(Vector3(float(key[0]), float(key[1]), float(key[2]))) < 1e-4, "%s: the key comes from the measured direction" % id)
+			var sky := material.get_shader_parameter("sky_color") as Color
+			var ground := material.get_shader_parameter("ground_color") as Color
+			ok(sky.b >= sky.r and ground.r > ground.b, "%s: cool sky above, warm bounce below" % id)
+			eq(float(material.get_shader_parameter("key_front")), 0.0, "%s: the key is not turned toward the camera" % id)
+		var shadow := garden.shadows[id] as PaintedActorShadow
+		var tint := shadow.material.get_shader_parameter("tint") as Color
+		ok(tint.b >= tint.r, "%s: its shadow takes the cool fill, not the default violet" % id)
+	garden.measured_lighting = false
+	garden.relight_actors()
+	var off := ((garden.actors["witch"] as Node3D).get_node("Visual").find_children("*", "MeshInstance3D", true, false)[0] as MeshInstance3D).get_active_material(0) as ShaderMaterial
+	eq(float(off.get_shader_parameter("lighting_mode")), 0.0, "switching it off puts the characters back on the floor map")
+	garden.queue_free()
+
 func test_a_tap_finds_the_nearest_prop_and_walks_its_reactions() -> void:
 	await _first_frame()
 	var room := _room()

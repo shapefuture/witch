@@ -1,0 +1,46 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "prompt": "The same garden from exactly the same camera position, angle and framing, with identical layout, objects, colours and light. Two large spheres rest on the gravel path in the foreground, side by side with a gap between them: on the left a matte mid-grey sphere with a chalky even surface, and on the right a mirror-polished chrome sphere that reflects the garden, the house and the sky. Each sphere is about the size of a beach ball and sits in the same golden-hour light as everything else, casting a soft shadow on the path.",
+    "aspect_ratio": "16:9",
+    "resolution": "1k",
+    "quality": "medium",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/515134c0-ee4b-40ab-9181-aca4df5cd6ea.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "0.883",
+    "usd": "0.056",
+    "discount": null
+  },
+  "idempotency_key": "564969bd-b1cd-44e7-a2c9-b08725e54f6c",
+  "created_at": "2026-10-02T18:24:22+00:00",
+  "request_id": "c76d2dac-b5ed-47b9-acf6-fa5e05bb8fd6",
+  "status_url": "https://platform.higgsfield.ai/requests/c76d2dac-b5ed-47b9-acf6-fa5e05bb8fd6/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/c76d2dac-b5ed-47b9-acf6-fa5e05bb8fd6/cancel",
+  "status": "completed",
+  "correlation_id": "dcc4d824d6ae46a7bd7b6004f13bf172",
+  "result": {
+    "status": "completed",
+    "request_id": "c76d2dac-b5ed-47b9-acf6-fa5e05bb8fd6",
+    "status_url": "https://platform.higgsfield.ai/requests/c76d2dac-b5ed-47b9-acf6-fa5e05bb8fd6/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/c76d2dac-b5ed-47b9-acf6-fa5e05bb8fd6/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/7f8917e7-7682-4737-90cc-0ce371bd1ad4.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T18:24:53+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/7f8917e7-7682-4737-90cc-0ce371bd1ad4.png",
+      "path": "image_0.png",
+      "sha256": "1364015dc076935619cf2ebed526a08dca6cf2d207d3349aad326e80d663949e",
+      "bytes": 1796566
+    }
+  ]
+}

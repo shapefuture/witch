@@ -30,6 +30,7 @@ const SHADOW_SIZE := {"witch": 2.2, "raccoon": 1.5}        # the square the beam
 @export var actor_sun := 0.4
 @export var actor_rim := 0.25
 @export var actor_key := 2.6          # the beam's faceted key light on the characters (0 = the flat baked-set look)
+@export var measured_lighting := true   # use room.json `lighting` (warm key, cool sky fill, ground bounce) when the room has it
 @export var actor_shadow := 0.75     # how dark the shadow they cast along the beam is (0 = none; PaintedActorShadow)
 # Use the room's margin (overscan.json, see PaintedOverscan) when it has one; false = the painting as it was,
 # zooming in to hide its edges.
@@ -276,7 +277,7 @@ func _spawn_actor(id: String, data: Dictionary) -> void:
 	var shadow := PaintedActorShadow.new()
 	shadow.name = id.capitalize() + "Shadow"
 	add_child(shadow)
-	var sun: Array = room["sun_dir"]
+	var sun: Array = _key_dir()
 	# each character has its own render layer (20, 19, ...), so one's beam camera never draws the other
 	shadow.setup(holder, 20 - shadows.size(), float(SHADOW_SIZE.get(id, 1.5)),
 		Vector3(float(sun[0]), float(sun[1]), float(sun[2])), float(SHADOW_RADIUS.get(id, 0.3)))
@@ -290,15 +291,39 @@ func relight_actors() -> void:
 		_light_actor(actors[id])
 		_shade(id)
 
+# The room's own lighting block, or {} when it has none (or it is switched off): see docs/art/lighting_from_image.md.
+func lighting() -> Dictionary:
+	if measured_lighting and room.has("lighting"):
+		return room["lighting"] as Dictionary
+	return {}
+
+func _color(a: Array) -> Color:
+	return Color(float(a[0]), float(a[1]), float(a[2]))
+
+# The characters' key light: the room's beam colour, or (with a lighting block) the key's own colour and level.
+func actor_key_color() -> Color:
+	var l := lighting()
+	if not l.is_empty():
+		return _color(l["key_color"]) * float(l.get("key_level", 1.0)) * (actor_sun / 0.4)
+	return _color(room["sun_color"]) * actor_sun
+
+func _key_dir() -> Array:
+	var l := lighting()
+	return l["key_dir"] if not l.is_empty() else room["sun_dir"]
+
 func _shade(id: String) -> void:
 	if shadows.has(id):
-		(shadows[id] as PaintedActorShadow).set_light(_texture("light_map.png"), room["light_rect"], room["lit_range"], actor_shadow)
+		var shadow := shadows[id] as PaintedActorShadow
+		shadow.set_light(_texture("light_map.png"), room["light_rect"], room["lit_range"], actor_shadow)
+		var l := lighting()
+		if not l.is_empty():
+			shadow.set_tint(_color(l["shadow_tint"]))
 
 func _light_actor(node: Node) -> void:
 	var light_map := _texture("light_map.png")
 	var r: Array = room["light_rect"]
-	var sun: Array = room["sun_dir"]
-	var sun_color: Array = room["sun_color"]
+	var sun: Array = _key_dir()
+	var l := lighting()
 	var lit: Array = room["lit_range"]
 	for mesh in node.find_children("*", "MeshInstance3D", true, false):
 		var instance := mesh as MeshInstance3D
@@ -312,11 +337,19 @@ func _light_actor(node: Node) -> void:
 			shader_material.set_shader_parameter("light_map", light_map)
 			shader_material.set_shader_parameter("light_rect", Vector4(float(r[0]), float(r[1]), float(r[2]), float(r[3])))
 			shader_material.set_shader_parameter("sun_dir", Vector3(float(sun[0]), float(sun[1]), float(sun[2])))
-			shader_material.set_shader_parameter("sun_color", Color(float(sun_color[0]), float(sun_color[1]), float(sun_color[2])) * actor_sun)
+			shader_material.set_shader_parameter("sun_color", actor_key_color())
 			shader_material.set_shader_parameter("lit_range", Vector2(float(lit[0]), float(lit[1])))
 			shader_material.set_shader_parameter("light_scale", actor_light)
 			shader_material.set_shader_parameter("rim_strength", actor_rim)
 			shader_material.set_shader_parameter("key_strength", actor_key)
+			shader_material.set_shader_parameter("lighting_mode", 0.0 if l.is_empty() else 1.0)
+			if not l.is_empty():
+				shader_material.set_shader_parameter("key_front", 0.0)         # the key comes from where it really does
+				shader_material.set_shader_parameter("sky_color", _color(l["sky_color"]))
+				shader_material.set_shader_parameter("ground_color", _color(l["ground_color"]))
+				shader_material.set_shader_parameter("fill_level", float(l["fill_level"]))
+				shader_material.set_shader_parameter("grade", _color(l.get("grade", [1.0, 1.0, 1.0])))
+				shader_material.set_shader_parameter("grade_strength", float(l.get("grade_strength", 0.0)))
 
 # Light and life (painted_life.gd, life.json): built before the screen layer, so the quantisation reads the finished frame.
 func _build_life() -> void:

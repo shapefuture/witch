@@ -1,5 +1,8 @@
 # Character lighting from the painting
 
+> **Status (2026-10-02): built.** A room's `room.json` may carry a `lighting` block (measured from calibration spheres, below); its characters are then lit by
+> it. `new_scene.py` measures it for every generated scene (about USD 0.07 extra). The garden and the shop have one; rooms without keep the floor-map light.
+
 **The problem.** A character is a 3D model on a painted plate. Today it gets one brightness from the blurred floor map, one beam colour and one sun direction
 (`docs/art/painted_room.md`, actor lighting). In the garden that single warm tint turned the witch's purple dress maroon: the painting is warm
 where the sun hits and cool in the shade, and the character is warm everywhere.
@@ -45,7 +48,7 @@ lit this way keeps its purple on top and in shade, and goes warm only where the 
 right, no more). The spheres measure one spot, the foreground path; probes for the whole floor need several spheres or variants. Directions are in the camera's frame and still
 have to be turned into world space with the room's pitch. Absolute intensities mean nothing (only ratios and colours). Nothing here has been fed to a character yet.
 
-**Next steps.** (1) Write the measurement into `room.json` (`lighting`: key direction and colour, fill colour, sky, ground, fill:key) from `new_scene.py`;
+**Next steps (done below).** (1) Write the measurement into `room.json` (`lighting`: key direction and colour, fill colour, sky, ground, fill:key) from `new_scene.py`;
 (2) a character shader that uses a warm key, a cool hemisphere fill (sky above, ground bounce below) from those numbers, replacing the single `sun_color` tint;
 (3) blind-compare the witch in the garden with old and new lighting; (4) extend to several positions (probes) if one spot is not enough.
 
@@ -55,3 +58,33 @@ python tools/painted/sphere_probe.py grid   OUT/.../image_0.png grid.png --box 3
 python tools/painted/sphere_probe.py measure OUT/.../image_0.png --grey 548 516 79 --chrome 755 506 70 --plate plate.png --out lighting.json
 python tools/painted/test_new_scene.py                                                       # includes a synthetic-light recovery test
 ```
+
+
+## Applied to the characters (built)
+
+**The `lighting` block** (`tools/painted/relight.py` writes it; `PaintedRoom.lighting()` reads it; `psx_lit_actor.gdshader`, `lighting_mode`, uses it):
+
+| field | what it does |
+|---|---|
+| `key_dir`, `key_color`, `key_level` | a warm key from the measured direction (turned into world space with the room's pitch), as the grey ball's fit says; its level follows the scene's own exposure (1.5 x the floor band's mean luma: the garden 0.45, the dark shop 0.34), so the characters are no brighter than their surroundings |
+| `sky_color`, `ground_color`, `fill_level` | a hemisphere fill instead of the floor's purple: the sky's colour on top-facing facets, the ground's bounce under them; its strength is a share of the key's peak (the measured ratio is 0.10-0.14; it is raised to 0.25-0.5 so shadows stay readable), so the room's flicker moves both |
+| (rim) | the rim light is the sky's colour, not the sun's |
+| `shadow_tint` | the colour the floor goes to in a character's shadow: cool, from the sky; the shadow also falls along the measured key direction |
+| `grade`, `grade_strength` | the plate's own colour cast (its floor band's mean colour over its luma), taken in part (0.5) by the characters: they sit in the same golden or teal light |
+| `source` | `spheres` (measured) or `plate` (derived, opt-in) |
+
+**Before and after.** In the garden the witch's dress went from a dark maroon to purple on top and plum where the sun hits it, her hair from brown to orange, the raccoon from a muddy
+brown to a warm taupe; in the shop the characters stopped being muddy and took the teal shade and the warm window key. Not yet compared by blind critics.
+
+**Workarounds added along the way, and what did not work**
+
+- **Exposure matching** (`key_level` from the floor's luma): without it the first version over-lit the characters in the dark shop (the raccoon went nearly white).
+- **The plate's grade** applied in part: the first version looked cool and clean next to a golden floor; a 0.5 share of the cast sat them in.
+- **A sanity gate** on the measurement (`sphere_probe.GOOD_FIT` 0.85: the grey ball must be explained by one light; `GOOD_AGREEMENT` 0.6: the grey ball's shading must follow the chrome ball's irradiance). A measurement that fails leaves the characters on the floor-map light, never on a bad guess.
+- **Smooth spheres in the prompt**: in the shop style the generator painted faceted balls, which breaks the shading fit and the circle search; "perfectly smooth, perfectly round, the same size" fixed that.
+- **Plate-derived lighting is a poor guess in interiors** (`relight.py --plate`, opt-in): the "sky" is the ceiling and the "ground" the teal floor, so on the shop it washed the raccoon out to yellow. Only the grade and exposure are safe to take from a plate alone.
+- **Finding the balls automatically** (`sphere_probe.find_spheres`): a gradient Hough vote finds the grey ball exactly (within 3 px on the garden); the chrome ball is then found by its outline in the same row to its right. It works on the garden (fit 0.97, agreement 0.89) but not yet on the faceted shop, which needed circles read off a grid by hand (`sphere_probe.py grid`, then `measure --grey ... --chrome ...`).
+  The pipeline's gate catches a failed search, so the cost is a missing improvement, not a worse picture.
+
+**Not done / open.** One measurement per scene (the foreground path); characters keep one lighting wherever they stand (probes are the next step). The shop's measurement agrees less well than the garden's
+(0.66 against 0.88, several lights in an interior). Local lamps (the shop's fireplace) do not yet light the characters. A blind comparison of old and new lighting has not been run.

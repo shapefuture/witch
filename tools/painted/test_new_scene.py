@@ -13,6 +13,7 @@ import scene_layout as sl  # noqa: E402
 import layout_score as ls  # noqa: E402
 import compare_models as cm  # noqa: E402
 import sphere_probe as sp  # noqa: E402
+import relight as rl  # noqa: E402
 
 
 def synthetic_disparity(horizon, a=22.0, b=0.5):
@@ -185,6 +186,30 @@ def test_sphere_probe_recovers_a_known_light():
     assert np.degrees(np.arccos(np.clip(got @ sun, -1, 1))) < 12, res
     assert res["grey_vs_chrome_correlation"] > 0.9 and res["grey_fit_r2"] > 0.9, res
     assert res["sun_color"][0] >= res["sun_color"][2] and res["sky_color"][2] >= res["sky_color"][0], res   # warm sun, cool sky
+
+
+def test_relight_world_conversion_and_blocks():
+    assert np.allclose(rl.to_world((0.3, 0.5, 0.2), 0.0), np.array([0.3, 0.5, 0.2]) / np.linalg.norm([0.3, 0.5, 0.2]))
+    up = rl.to_world((0.0, 1.0, 0.0), 90.0)                       # a camera looking straight up: its "up" is the world's toward-the-camera axis
+    assert np.allclose(up, [0, 0, 1], atol=1e-9)
+    room = {"pitch_deg": 6.0, "lit_range": [0.3, 0.6], "horizon": 0.6, "sun_dir": [0.3, 0.8, -0.5]}
+    measured = {"key_direction_from_grey": [0.76, 0.65, 0.02], "key_color": [1, 0.66, 0.42], "sky_color": [0.89, 0.86, 1.0],
+                "ground_color": [1.0, 0.59, 0.22], "fill_to_key": 0.1, "angle_between_deg": 12.0}
+    b = rl.from_spheres(room, measured)
+    assert abs(np.linalg.norm(b["key_dir"]) - 1) < 1e-2 and b["source"] == "spheres"
+    assert b["key_color"][0] == 1.0 and b["key_color"][2] < b["key_color"][0] and b["sky_color"][2] == 1.0
+    assert 0.25 <= b["fill_level"] <= 0.5 and len(b["shadow_tint"]) == 3 and max(b["shadow_tint"]) <= 0.8
+
+
+def test_relight_from_the_plate_finds_a_cool_sky_and_a_warm_ground():
+    a = np.zeros((720, 1280, 3), np.uint8)
+    a[:300] = (110, 140, 210)                                      # blue sky
+    a[300:] = (150, 110, 60)                                       # warm ground
+    a[560:600, 400:700] = (240, 190, 110)                          # a sunlit patch on it
+    from PIL import Image as _I
+    b = rl.from_plate({"horizon": 0.45, "sun_dir": [0.3, 0.8, -0.5], "lit_range": [0.3, 0.6]}, _I.fromarray(a))
+    assert b["sky_color"][2] > b["sky_color"][0] and b["ground_color"][0] > b["ground_color"][2] and b["key_color"][0] > b["key_color"][2]
+    assert b["source"] == "plate" and b["key_dir"] == [0.3, 0.8, -0.5]
 
 
 def test_resolve_overrides_in_order_kind_brief_explicit():

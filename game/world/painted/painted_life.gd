@@ -94,8 +94,7 @@ func setup(p_room: PaintedRoom, file: String = "life.json") -> bool:
 	_occluder_config = data.get("occluders", {})
 	var actors: Dictionary = data.get("actors", {})
 	_actor_follow = float(actors.get("follow", 1.0))
-	var sun: Array = room.room.get("sun_color", [1.0, 1.0, 1.0])
-	_sun_base = Color(float(sun[0]), float(sun[1]), float(sun[2])) * room.actor_sun
+	_sun_base = room.actor_key_color()
 	_build_glow()
 	_build_beam(data.get("beam", {}) as Dictionary)
 	_build_frame(data.get("frame", {}) as Dictionary)

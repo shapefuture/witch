@@ -20,10 +20,11 @@ from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[2]
 LUMA = np.array([0.2126, 0.7152, 0.0722])
-PROMPT = ("The same garden from exactly the same camera position, angle and framing, with identical layout, objects, colours and light. Two large "
-          "spheres rest on the ground in the foreground, side by side with a gap between them: on the left a matte mid-grey sphere with a chalky even "
-          "surface, and on the right a mirror-polished chrome sphere that reflects its surroundings and the sky. Each sphere is about the size of a "
-          "beach ball and sits in the same light as everything else, casting a soft shadow on the ground.")
+PROMPT = ("The same scene from exactly the same camera position, angle and framing, with identical layout, objects, colours and light. Two large "
+          "perfectly smooth, perfectly round spheres of exactly the same size rest on the ground in the foreground, in one row with a gap between "
+          "them: on the left a matte mid-grey sphere with a chalky even surface, and on the right a mirror-polished chrome sphere that reflects its "
+          "surroundings and the sky. Each sphere is about the size of a beach ball and sits in the same light as everything else, casting a soft "
+          "shadow on the ground.")
 MODELS = {"marketing": ("marketing-studio/image", dict(aspect_ratio="16:9", resolution="1k", quality="medium")),
           "qwen": ("alibaba/qwen-image-3/edit", dict(aspect_ratio="16:9", resolution="2k", prompt_extend=True))}
 
@@ -112,6 +113,38 @@ def cross_check(lin, grey_circle, chrome_circle):
     return float(np.corrcoef(pred, lin[m] @ LUMA)[0, 1])
 
 
+GOOD_FIT, GOOD_AGREEMENT = 0.85, 0.6           # a measurement is trusted when the grey ball is one-light Lambert and the two balls agree
+
+
+def make_variant(plate, out, model="marketing", max_usd=0.12):
+    """The paid edit: the plate with the two balls painted in. Returns the picture's path (None if the call failed)."""
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    slug, args = MODELS[model]
+    (out / "args.json").write_text(json.dumps(dict(args, prompt=PROMPT)), encoding="utf-8")
+    cmd = [sys.executable, str(ROOT / "tools/higgsfield/hf.py"), "run", slug, "--args-file", str(out / "args.json"), "--upload", "image_urls=%s" % plate,
+           "--max-usd", str(max_usd), "--out", str(out)]
+    subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    found = sorted(out.rglob("image_0.*"))
+    return found[0] if found else None
+
+
+def measure_auto(edit_path, plate_path):
+    """Finds the balls and measures them; `ok` says whether to trust it (see GOOD_FIT / GOOD_AGREEMENT)."""
+    plate = Image.open(plate_path)
+    edit = Image.open(edit_path)
+    try:
+        grey, chrome = find_spheres(edit, plate)
+    except ValueError as e:
+        return dict(ok=False, why=str(e))
+    res = measure(edit.resize(plate.size, Image.LANCZOS), grey, chrome)
+    res.update(grey_circle=list(grey), chrome_circle=list(chrome))
+    res["ok"] = bool(res["grey_fit_r2"] >= GOOD_FIT and res["grey_vs_chrome_correlation"] >= GOOD_AGREEMENT)
+    if not res["ok"]:
+        res["why"] = "the grey ball is not one-light Lambert (%.2f) or the balls disagree (%.2f)" % (res["grey_fit_r2"], res["grey_vs_chrome_correlation"])
+    return res
+
+
 def measure(image, grey, chrome):
     lin = srgb_to_linear(np.asarray(image.convert("RGB"), np.float32))
     g = fit_grey(lin, grey)
@@ -128,14 +161,81 @@ def measure(image, grey, chrome):
                 grey_vs_chrome_correlation=round(cross_check(lin, grey, chrome), 3))
 
 
+def find_spheres(edit, plate, rmin=40, rmax=130):
+    """The grey ball (left) and the chrome ball (right) in an edited plate, as (x, y, r) circles in the plate's pixels.
+    Where the edit differs from the plate marks the new objects; a gradient-direction Hough vote over those edges finds the two circles."""
+    from scipy import ndimage
+    ed = edit.convert("RGB").resize(plate.size, Image.LANCZOS)
+    e = np.asarray(ed, np.float32)
+    diff = np.abs(e - np.asarray(plate.convert("RGB"), np.float32)).mean(2)
+    region = ndimage.binary_dilation(ndimage.binary_opening(diff > 40, iterations=2), iterations=14)
+    luma = ndimage.gaussian_filter(e.mean(2), 1.5)
+    gx, gy = ndimage.sobel(luma, axis=1), ndimage.sobel(luma, axis=0)
+    mag = np.hypot(gx, gy)
+    ys, xs = np.nonzero(region & (mag > np.quantile(mag[region], 0.8)))
+    ux, uy = gx[ys, xs] / mag[ys, xs], gy[ys, xs] / mag[ys, xs]
+    H, W = luma.shape
+    best = []
+    for r in range(rmin, rmax + 1, 3):
+        acc = np.zeros((H, W), np.float32)
+        for sgn in (1, -1):                                   # the centre lies along the gradient, on either side
+            cx = np.clip(np.round(xs + sgn * r * ux).astype(int), 0, W - 1)
+            cy = np.clip(np.round(ys + sgn * r * uy).astype(int), 0, H - 1)
+            np.add.at(acc, (cy, cx), 1.0)
+        acc = ndimage.gaussian_filter(acc, 3.0)
+        best.append((float(acc.max()) / (2 * np.pi * r) ** 0.5, r, acc))
+    # the strongest peaks over all radii, not on top of each other
+    cands = []
+    for score, r, acc in best:
+        a = acc.copy()
+        for _ in range(3):
+            iy, ix = np.unravel_index(np.argmax(a), a.shape)
+            cands.append((float(a[iy, ix]) / r ** 0.5, ix, iy, r))
+            a[max(iy - r // 2, 0): iy + r // 2, max(ix - r // 2, 0): ix + r // 2] = 0
+    cands.sort(reverse=True)
+    # a ball painted into the plate is made of pixels the edit changed: keep circles that are mostly new
+    changed = ndimage.gaussian_filter((diff > 20).astype(np.float32), 2.0) > 0.5
+
+    def coverage(c):
+        m, _ = disk(luma.shape, (c[1], c[2], c[3]), 0.9)
+        return float(changed[m].mean())
+    cands = [c for c in cands if coverage(c) >= 0.5]
+    if not cands:
+        raise ValueError("found no sphere: draw the circles by hand (sphere_probe.py grid / measure)")
+    first = cands[0]
+    # the second ball: in the same row, a gap away, of about the same size. Its inside is a whole reflected scene (strong edges that fool a
+    # vote), so it is found by the outline instead: the circle whose circumference lies on the strongest edge.
+    r1 = first[3]
+    gxs, gys = ndimage.gaussian_filter(gx, 1.0), ndimage.gaussian_filter(gy, 1.0)
+    th = np.linspace(0, 2 * np.pi, 120, endpoint=False)
+    ct, st = np.cos(th), np.sin(th)
+    best = None
+    for r in range(int(0.85 * r1), int(1.2 * r1) + 1, 3):
+        for dy in range(-int(0.5 * r1), int(0.5 * r1) + 1, 4):
+            for dx in range(int(1.8 * r1), int(4.2 * r1) + 1, 4):
+                for sgn in (1,):                                   # to its right: the prompt puts the grey ball on the left
+                    cx, cy = first[1] + sgn * dx, first[2] + dy
+                    if not (r < cx < W - r and r < cy < H - r):
+                        continue
+                    yy_, xx_ = np.clip((cy + r * st).astype(int), 0, H - 1), np.clip((cx + r * ct).astype(int), 0, W - 1)
+                    # edges that run along the circle (a ball's outline) count, edges that cross it (shelves, planks) do not
+                    sc = float(np.abs(gxs[yy_, xx_] * ct + gys[yy_, xx_] * st).mean())
+                    if best is None or sc > best[0]:
+                        best = (sc, cx, cy, r)
+    if best is None:
+        raise ValueError("found one sphere, not two: draw the circles by hand (sphere_probe.py grid / measure)")
+    second = (0, best[1], best[2], best[3])
+    circles = [(int(first[1]), int(first[2]), int(first[3])), (int(second[1]), int(second[2]), int(second[3]))]
+    # the chrome ball is the one with the busier inside (it holds a whole reflected scene); the grey ball is nearly flat
+    def busy(c):
+        m, _ = disk(luma.shape, c, 0.85)
+        return float(luma[m].std())
+    circles.sort(key=busy)
+    return circles[0], circles[1]
+
+
 def cmd_make(a):
-    out = Path(a.out)
-    out.mkdir(parents=True, exist_ok=True)
-    slug, args = MODELS[a.model]
-    (out / "args.json").write_text(json.dumps(dict(args, prompt=PROMPT)), encoding="utf-8")
-    cmd = [sys.executable, str(ROOT / "tools/higgsfield/hf.py"), "run", slug, "--args-file", str(out / "args.json"), "--upload", "image_urls=%s" % a.plate,
-           "--max-usd", str(a.max_usd), "--out", str(out)]
-    print(subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT).stdout[-400:])
+    print(make_variant(a.plate, a.out, a.model, a.max_usd))
 
 
 def cmd_grid(a):
@@ -154,7 +254,12 @@ def cmd_measure(a):
     img = Image.open(a.edit)
     if a.plate:
         img = img.resize(Image.open(a.plate).size, Image.LANCZOS)
-    res = measure(img, tuple(a.grey), tuple(a.chrome))
+    grey, chrome = a.grey, a.chrome
+    if not (grey and chrome):                                    # no circles given: find them (needs --plate)
+        grey, chrome = find_spheres(img, Image.open(a.plate))
+        print("found grey %s, chrome %s" % (grey, chrome), file=sys.stderr)
+    res = measure(img, tuple(grey), tuple(chrome))
+    res["ok"] = bool(res["grey_fit_r2"] >= GOOD_FIT and res["grey_vs_chrome_correlation"] >= GOOD_AGREEMENT)
     print(json.dumps(res, indent=1))
     if a.out:
         Path(a.out).write_text(json.dumps(res, indent=1) + "\n", encoding="utf-8")
@@ -165,7 +270,7 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("make"); p.add_argument("plate"); p.add_argument("out"); p.add_argument("--model", choices=sorted(MODELS), default="marketing"); p.add_argument("--max-usd", type=float, default=0.12); p.set_defaults(fn=cmd_make)
     p = sub.add_parser("grid"); p.add_argument("edit"); p.add_argument("out"); p.add_argument("--box", type=int, nargs=4, required=True); p.set_defaults(fn=cmd_grid)
-    p = sub.add_parser("measure"); p.add_argument("edit"); p.add_argument("--grey", type=float, nargs=3, required=True); p.add_argument("--chrome", type=float, nargs=3, required=True); p.add_argument("--plate"); p.add_argument("--out"); p.set_defaults(fn=cmd_measure)
+    p = sub.add_parser("measure"); p.add_argument("edit"); p.add_argument("--grey", type=float, nargs=3); p.add_argument("--chrome", type=float, nargs=3); p.add_argument("--plate"); p.add_argument("--out"); p.set_defaults(fn=cmd_measure)
     a = ap.parse_args(argv)
     a.fn(a)
     return 0

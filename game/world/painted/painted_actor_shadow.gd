@@ -67,6 +67,10 @@ func set_light(light_map: Texture2D, rect: Array, lit: Array, strength: float) -
 	_strength = strength
 	follow()
 
+# The colour the floor goes to in full shadow (a room's cool fill, instead of the default violet).
+func set_tint(color: Color) -> void:
+	material.set_shader_parameter("tint", color)
+
 func _process(_delta: float) -> void:
 	follow()
 

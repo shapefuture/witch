@@ -46,6 +46,8 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 import build_painted as bp  # noqa: E402
 import scene_layout as sl  # noqa: E402
+import relight  # noqa: E402
+import sphere_probe  # noqa: E402
 
 # The generators (docs/art/model_comparison.md: grok and qwen led the blind comparison). With references the `edit` model takes them as
 # images; with none the `text` model is used.
@@ -314,7 +316,7 @@ def job_cost(job):
         return 0.0
 
 
-def make(name, spec, picture, source_note, *, style="hall", horizon=None, floor_box=None, sun=None, sun_pixel=None, life=True, godot=None,
+def make(name, spec, picture, source_note, *, lighting=None, spheres=False, from_plate=False, style="hall", horizon=None, floor_box=None, sun=None, sun_pixel=None, life=True, godot=None,
          brief=None, fit_horizon=False):
     """Calibrate, build, draft the life, mark the walkable ground and capture. Returns the report."""
     out = ROOT / "assets/painted" / name
@@ -365,6 +367,26 @@ def make(name, spec, picture, source_note, *, style="hall", horizon=None, floor_
         (out / "room.json").write_text(json.dumps(room) + "\n", encoding="utf-8")
         print("sun_dir turned to fall toward the viewer: %s (override with --sun X Y Z)" % room["sun_dir"])
 
+    # how the characters are lit: the measured lighting (sphere_probe.py) if given, else derived from the plate's own colours
+    # how the characters are lit: measured lighting (a lighting.json), or measured now from calibration spheres painted into the plate
+    # (about USD 0.07), or derived from the plate's own colours (opt-in: it is a poor guess in interiors), or the floor-map light
+    if lighting is False:
+        relight.apply(out, remove=True)
+    else:
+        if not lighting and spheres:
+            edit = sphere_probe.make_variant(picture, scratch / "spheres")
+            measured = sphere_probe.measure_auto(edit, picture) if edit else dict(ok=False, why="the sphere edit made no picture")
+            (out / "lighting_measured.json").write_text(json.dumps(measured, indent=1) + "\n", encoding="utf-8")
+            if measured.get("ok"):
+                lighting = out / "lighting_measured.json"
+            else:
+                print("sphere measurement not trusted (%s): the characters keep the floor-map light" % measured.get("why"))
+        if lighting:
+            relight.apply(out, spheres=lighting)
+            print("lighting: measured from calibration spheres")
+        elif from_plate:
+            relight.apply(out, plate=True)
+            print("lighting: derived from the plate's colours")
     lights = 0
     if life:
         lm = Image.open(out / "light_map.png").convert("L")
@@ -409,7 +431,7 @@ def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=N
         name = "%s_%s" % (name, style)
     scratch = ROOT / "build/rooms" / name
     base_dir = ROOT / "assets/painted" / name
-    if (base_dir / "room.json").exists() and not variant and not kw.get("force"):
+    if (base_dir / "room.json").exists() and not variant and not kw.get("force") and not layout_only:
         sys.exit("assets/painted/%s already exists; give --force to build over it (or use another name)" % name)
     kw.pop("force", None)
     cost = 0.0
@@ -433,9 +455,18 @@ def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=N
             (ROOT / "assets/painted" / target).mkdir(parents=True, exist_ok=True)
             shutil.copy(job / "job.json", ROOT / "assets/painted" / target / "job_room.json")
             note = "%s: variant %r of %s: %s (job_room.json)" % (MODELS[GEN]["edit"], variant, name, brief["variants"][variant][:140])
-        return make(target, spec, picture, note, style=style, godot=godot, brief=brief, **kw), cost
+        kw["spheres"] = False                                   # the same camera and light: the base scene's measurement is reused
+        report = make(target, spec, picture, note, style=style, godot=godot, brief=brief, **kw)
+        if base.get("lighting") and kw.get("lighting") is not False:
+            room_path = ROOT / "assets/painted" / target / "room.json"
+            variant_room = json.loads(room_path.read_text(encoding="utf-8"))
+            variant_room["lighting"] = base["lighting"]
+            room_path.write_text(json.dumps(variant_room) + "\n", encoding="utf-8")
+        return report, cost
     spec = resolve(kind or (brief or {}).get("kind", "interior"), brief)
     text = prompt or (brief or {}).get("prompt")
+    if kw.get("spheres") is None:                                # measure the light for a generated scene, not for a picture you brought
+        kw["spheres"] = image is None
     guide, layout_data = None, None
     if layout is not False:                       # False: --no-layout. None: the brief's layout, if it has one. A path: that file.
         if layout and str(layout).lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
@@ -495,6 +526,11 @@ def main(argv=None):
     ap.add_argument("--sun-pixel", type=float, nargs=2, metavar=("X", "Y"))
     ap.add_argument("--sun", type=float, nargs=3, metavar=("X", "Y", "Z"), help="the light's direction (default: the kind's)")
     ap.add_argument("--no-life", action="store_true")
+    ap.add_argument("--lighting", help="lighting.json from sphere_probe.py measure: the characters are lit by it")
+    ap.add_argument("--spheres", dest="spheres", action="store_true", default=None, help="measure the lighting from calibration spheres painted into the plate (default for a generated scene; about USD 0.07)")
+    ap.add_argument("--no-spheres", dest="spheres", action="store_false")
+    ap.add_argument("--lighting-from-plate", action="store_true", help="derive the characters' lighting from the plate's colours (a poor guess in interiors)")
+    ap.add_argument("--no-relight", action="store_true", help="leave the characters on the floor-map light")
     ap.add_argument("--godot", default=os.environ.get("GODOT"), help="Godot binary for the capture (default: $GODOT)")
     args = ap.parse_args(argv)
     global GEN
@@ -510,7 +546,7 @@ def main(argv=None):
         print("kinds: " + ", ".join(sorted(kinds)) + "   (* = variant built)")
         return 0
 
-    common = dict(force=args.force, layout=False if args.no_layout else args.layout, layout_only=args.layout_only, godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
+    common = dict(lighting=False if args.no_relight else args.lighting, spheres=args.spheres, from_plate=args.lighting_from_plate, force=args.force, layout=False if args.no_layout else args.layout, layout_only=args.layout_only, godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
     if args.all:
         spent, built = 0.0, []
         suffix = "" if args.style == DEFAULT_STYLE else "_" + args.style

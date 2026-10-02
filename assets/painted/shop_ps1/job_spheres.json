@@ -1,0 +1,46 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "aspect_ratio": "16:9",
+    "resolution": "1k",
+    "quality": "medium",
+    "prompt": "The same scene from exactly the same camera position, angle and framing, with identical layout, objects, colours and light. Two large perfectly smooth, perfectly round spheres of exactly the same size rest on the ground in the foreground, in one row with a gap between them: on the left a matte mid-grey sphere with a chalky even surface, and on the right a mirror-polished chrome sphere that reflects its surroundings and the sky. Each sphere is about the size of a beach ball and sits in the same light as everything else, casting a soft shadow on the ground.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/e12e58f8-4d9a-4754-a93e-dae98d4e521a.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "0.886",
+    "usd": "0.056",
+    "discount": null
+  },
+  "idempotency_key": "12637e2e-0fd0-4902-be14-01f8ece711a0",
+  "created_at": "2026-10-02T18:52:17+00:00",
+  "request_id": "923a2f60-5705-4346-afe8-125d9b8471ff",
+  "status_url": "https://platform.higgsfield.ai/requests/923a2f60-5705-4346-afe8-125d9b8471ff/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/923a2f60-5705-4346-afe8-125d9b8471ff/cancel",
+  "status": "completed",
+  "correlation_id": "3f4f929726f748c7b6e8e2ce2ceed2d5",
+  "result": {
+    "status": "completed",
+    "request_id": "923a2f60-5705-4346-afe8-125d9b8471ff",
+    "status_url": "https://platform.higgsfield.ai/requests/923a2f60-5705-4346-afe8-125d9b8471ff/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/923a2f60-5705-4346-afe8-125d9b8471ff/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/5e723b29-dfc4-456b-8ce9-d3dfe9a3146a.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T18:52:47+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/5e723b29-dfc4-456b-8ce9-d3dfe9a3146a.png",
+      "path": "image_0.png",
+      "sha256": "ff434ea38badfcfc1380fd3f8a72a8612f2ea6b1a25deae541c5170f37051ebb",
+      "bytes": 1529929
+    }
+  ]
+}
