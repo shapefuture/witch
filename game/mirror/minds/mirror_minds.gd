@@ -36,6 +36,7 @@ var _tip_id := ""
 var _tip_hash := ""
 var _pumping := false
 var _fired_log: Array = []
+var _fired_total := 0
 
 func _init(p_engine: MirrorEngine, p_data: Dictionary = {}) -> void:
 	engine = p_engine
@@ -64,12 +65,12 @@ func perceive(raw_event: Dictionary) -> Dictionary:
 # `fired`: the results of the consequences that fell due during this call.
 func advance_time(delta: int, reason: String = "wait") -> Dictionary:
 	_sync()
-	var before := _fired_log.size()
+	var before := _fired_total
 	var result := engine.advance_time(delta, "player", reason)
 	if not result.get("ok", false):
 		return result
 	_pump()
-	result["fired"] = _fired_log.slice(before)
+	result["fired"] = _fired_log.slice(maxi(0, _fired_log.size() - (_fired_total - before)))
 	return result
 
 # Somebody comes or goes. Presence is Mirror's truth (it decides who can witness), recorded as an event.
@@ -181,6 +182,9 @@ func _pump() -> void:
 			break
 		fired += 1
 		_fired_log.append(result)
+		_fired_total += 1
+		if _fired_log.size() > 64:
+			_fired_log.pop_front()
 		consequence_fired.emit(result)
 	_pumping = false
 
