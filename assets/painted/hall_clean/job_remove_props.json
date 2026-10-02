@@ -1,0 +1,49 @@
+{
+  "model": "alibaba/qwen-image-3/edit",
+  "arguments": {
+    "prompt": "Remove the large purple faceted globe on its wooden stand at the left edge, and remove the tall hooded statue holding scrolls on the right of the beam. Where the globe was, continue the wooden bookshelf with books and scrolls behind it. Where the statue was, continue the bookshelf, the floor and the glowing light beam behind it. Keep everything else exactly the same: same camera, composition, low-poly faceted papercraft style, colors and lighting.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/1041b583-98ee-4ae2-b2ef-dc205c212ec6.png"
+    ],
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "seed": 7,
+    "negative_prompt": "globe, sphere, statue, figure, person, text, letters, blurry, photorealistic, smooth",
+    "prompt_extend": false,
+    "enable_thinking": false
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.200",
+    "usd": "0.075",
+    "discount": null
+  },
+  "idempotency_key": "30906ac0-a750-4f5f-8ad1-ec27d889af25",
+  "created_at": "2026-10-01T23:55:55+00:00",
+  "request_id": "4cc4d132-a0af-48fa-94ee-ecdf692c3e72",
+  "status_url": "https://platform.higgsfield.ai/requests/4cc4d132-a0af-48fa-94ee-ecdf692c3e72/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/4cc4d132-a0af-48fa-94ee-ecdf692c3e72/cancel",
+  "status": "completed",
+  "correlation_id": "95425e4a94074f4abcde835b280d0809",
+  "result": {
+    "status": "completed",
+    "request_id": "4cc4d132-a0af-48fa-94ee-ecdf692c3e72",
+    "status_url": "https://platform.higgsfield.ai/requests/4cc4d132-a0af-48fa-94ee-ecdf692c3e72/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/4cc4d132-a0af-48fa-94ee-ecdf692c3e72/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/55275ed7-5e89-4d6d-bdea-89cdb7313421.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-01T23:56:25+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/55275ed7-5e89-4d6d-bdea-89cdb7313421.png",
+      "path": "image_0.png",
+      "sha256": "16a9bd4c476229ddeb2998cf405df01ee224224dc0da2da3f973701b4f81de13",
+      "bytes": 2260780
+    }
+  ]
+}

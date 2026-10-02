@@ -1,0 +1,49 @@
+{
+  "model": "alibaba/qwen-image-3/edit",
+  "arguments": {
+    "prompt": "Remove the small witch in the purple pointed hat and the striped raccoon standing on the floor in the lower middle. Fill that area with the purple and olive spiral carpet, continuing its pattern and lighting naturally. Keep everything else exactly the same: same camera angle, composition, low-poly faceted papercraft style, colors, shelves, hooded statue, glowing light beam and dust.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/6cce8819-9587-49f6-ada8-30229ac525e0.png"
+    ],
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "seed": 7,
+    "negative_prompt": "people, characters, animals, witch, raccoon, text, letters, watermark, blurry, photorealistic, smooth",
+    "prompt_extend": false,
+    "enable_thinking": false
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.200",
+    "usd": "0.075",
+    "discount": null
+  },
+  "idempotency_key": "02edebbc-b12c-448e-a441-37c6d73f0810",
+  "created_at": "2026-10-01T23:46:18+00:00",
+  "request_id": "b7fc840b-5bda-4cd4-815b-94c1f1a8d049",
+  "status_url": "https://platform.higgsfield.ai/requests/b7fc840b-5bda-4cd4-815b-94c1f1a8d049/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/b7fc840b-5bda-4cd4-815b-94c1f1a8d049/cancel",
+  "status": "completed",
+  "correlation_id": "891ffbadd75646118ca10e3cc6f0db88",
+  "result": {
+    "status": "completed",
+    "request_id": "b7fc840b-5bda-4cd4-815b-94c1f1a8d049",
+    "status_url": "https://platform.higgsfield.ai/requests/b7fc840b-5bda-4cd4-815b-94c1f1a8d049/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/b7fc840b-5bda-4cd4-815b-94c1f1a8d049/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/c2777f31-bdfc-4a6b-bcb3-7d0439f668f7.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-01T23:46:49+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/c2777f31-bdfc-4a6b-bcb3-7d0439f668f7.png",
+      "path": "image_0.png",
+      "sha256": "ae3d242ab5fb243d6e5654bd9fe9ab5480463a5dd2522a8597c2f57c27be4407",
+      "bytes": 2135138
+    }
+  ]
+}

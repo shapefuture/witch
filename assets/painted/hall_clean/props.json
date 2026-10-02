@@ -1,0 +1,48 @@
+{
+ "plate_empty": "plate_empty.png",
+ "props": [
+  {
+   "id": "statue",
+   "kind": "cutout",
+   "rect": [
+    765,
+    255,
+    160,
+    320
+   ],
+   "mask": "statue_mask.png",
+   "pivot": [
+    847,
+    572
+   ],
+   "reactions": {
+    "press": [
+     "shiver",
+     "squash"
+    ]
+   }
+  },
+  {
+   "id": "globe",
+   "kind": "cutout",
+   "rect": [
+    0,
+    295,
+    205,
+    290
+   ],
+   "mask": "globe_mask.png",
+   "pivot": [
+    92,
+    578
+   ],
+   "reactions": {
+    "press": [
+     "wobble",
+     "hop",
+     "spin"
+    ]
+   }
+  }
+ ]
+}
