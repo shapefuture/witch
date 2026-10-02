@@ -146,6 +146,12 @@ def test_the_positive_master_prompt_forbids_nothing():
         assert not re.findall(forbidding, note, flags=re.I), note
 
 
+def test_the_default_recipe_is_the_one_that_won():
+    assert nr.DEFAULT_MODEL == "marketing" and nr.DEFAULT_STYLE == "ps1p" and nr.GEN == "marketing"
+    assert nr.MODELS["marketing"]["edit"] == "marketing-studio/image"
+    assert nr.load_styles()[nr.DEFAULT_STYLE]["refs"] == []                 # no style-reference picture: references leak their objects
+
+
 def test_resolve_overrides_in_order_kind_brief_explicit():
     spec = nr.resolve("street", {"palette": "night", "sun": {"mode": "fixed", "dir": [0, 1, 0]}}, horizon=0.55)
     assert spec["palette"] == "night" and spec["sun"]["dir"] == [0, 1, 0] and spec["horizon"] == 0.55

@@ -138,3 +138,9 @@ original-room-painting versions (r2). USD 0.23 for the new runs.
 
 Reproduce: `compare_models.py run r3 --style-ref IMAGE --tag eng --only grok_guide,marketing_guide,qwen_edit_guide`, `blind r3 --reference
 --include-from r1:... --include-from r2:...`, critics, `score r3 a.json b.json`.
+
+## Outcome (the user's choice)
+
+After run r6 the user picked **Marketing Studio + the grey guide + the positive-only master prompt (`ps1p`), no style reference** as the best
+result: all of the guide's elements in place, a clear path, golden-hour light, "wickedness" and a faceted low-poly look at a high finish. It is the
+default of `new_scene.py`; `assets/painted/garden/` is the garden built from that picture.

@@ -1,5 +1,11 @@
 # Scenes: the plan from the game draft, and the factory that makes them
 
+> **The recipe** (chosen by the user from the comparisons in `docs/art/model_comparison.md`, run r6): **Marketing Studio** (`--model marketing`),
+> a **grey layout guide** (the brief's `layout`), the **master prompt with nothing forbidden** (`--style ps1p`), and **no style-reference picture**
+> (a reference leaks its objects into other scenes). It is the default of `new_scene.py`. Result: every element placed where the guide puts it, a rich
+> painterly look on faceted low-poly geometry. A scene built over an existing one needs `--force`. A brief with no `layout` is generated without a guide,
+> which is weaker: give each brief a layout first (only `shop` and `garden` have one so far).
+
 The painted-room pipeline (`docs/art/painted_room.md`) is not only for rooms. `tools/painted/new_scene.py` turns a **brief**
 (`tools/painted/scenes/<id>.json`) of a **kind** (`tools/painted/scenes/kinds.json`) into a playable scene under `assets/painted/<id>/`.
 This file is the scene plan taken from the "selected narrative build" draft (the user's own file; it is not committed because

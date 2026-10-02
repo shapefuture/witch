@@ -55,8 +55,13 @@ MODELS = {
     "qwen": dict(edit="alibaba/qwen-image-3/edit", text="alibaba/qwen-image-3/text-to-image",
                  args=dict(resolution="2k", aspect_ratio="16:9", prompt_extend=True)),    # (this account only accepts prompt_extend true)
 }
-GEN = "grok"
-MODEL = MODELS["grok"]["edit"]
+MODELS["marketing"] = dict(edit="marketing-studio/image", text="marketing-studio/image",
+                           args=dict(resolution="1k", quality="medium", aspect_ratio="16:9"))
+# The recipe that won the blind comparisons and the user's eye (docs/art/model_comparison.md, run r6): Marketing Studio, the grey layout guide,
+# the master prompt with nothing forbidden (look ps1p), and NO style-reference picture (references leak their objects into other scenes).
+DEFAULT_MODEL, DEFAULT_STYLE = "marketing", "ps1p"
+GEN = DEFAULT_MODEL
+MODEL = MODELS[GEN]["edit"]
 SCENES = HERE / "scenes"
 ASK_HORIZON = 0.62
 DEFAULT_PALETTE = "olive, ochre and purple, warm dusty low-key light"
@@ -400,10 +405,13 @@ def make(name, spec, picture, source_note, *, style="hall", horizon=None, floor_
 def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=None, refs=(), max_usd=0.20, godot=None, style="hall",
               layout=None, layout_only=False, **kw):
     """One scene (or one variant of one). Returns (report, cost in USD). A style other than `hall` builds into NAME_STYLE."""
-    if style != "hall" and not variant:
+    if style != DEFAULT_STYLE and not variant:
         name = "%s_%s" % (name, style)
     scratch = ROOT / "build/rooms" / name
     base_dir = ROOT / "assets/painted" / name
+    if (base_dir / "room.json").exists() and not variant and not kw.get("force"):
+        sys.exit("assets/painted/%s already exists; give --force to build over it (or use another name)" % name)
+    kw.pop("force", None)
     cost = 0.0
     if variant:
         if not brief or variant not in brief.get("variants", {}):
@@ -471,7 +479,7 @@ def main(argv=None):
     ap.add_argument("--variants", action="store_true", help="--all: also build every variant")
     ap.add_argument("--kind", help="a kind of scenes/kinds.json (default: the brief's)")
     ap.add_argument("--prompt", help="what the place is (the kind's composition and the house style are added)")
-    ap.add_argument("--style", default="hall", help="a look of scenes/styles.json: hall (papercraft, default) or ps1 (the master prompt)")
+    ap.add_argument("--style", default=DEFAULT_STYLE, help="a look of scenes/styles.json: ps1p (default: the master prompt with nothing forbidden), ps1 (the master prompt as written) or hall (papercraft)")
     ap.add_argument("--layout", help="a layout guide: a JSON of scene_layout.py, or your own PNG (default: the brief's `layout`, if it has one)")
     ap.add_argument("--no-layout", action="store_true", help="ignore the brief's layout")
     ap.add_argument("--layout-only", action="store_true", help="render the guide to build/rooms/NAME/layout.png and stop (free)")
@@ -479,7 +487,8 @@ def main(argv=None):
     ap.add_argument("--image", help="build from this picture instead of generating one")
     ap.add_argument("--ref", action="append", default=[], help="reference images (default: the hall plate, for the style)")
     ap.add_argument("--max-usd", type=float, default=0.20)
-    ap.add_argument("--model", choices=sorted(MODELS), default="grok", help="the generator (see docs/art/model_comparison.md)")
+    ap.add_argument("--model", choices=sorted(MODELS), default=DEFAULT_MODEL, help="the generator (see docs/art/model_comparison.md)")
+    ap.add_argument("--force", action="store_true", help="build over a scene that already exists")
     ap.add_argument("--horizon", type=float, help="override the horizon (fraction of the height)")
     ap.add_argument("--fit-horizon", action="store_true", help="search for the horizon with the ground fit (weak, see above)")
     ap.add_argument("--floor-box", type=int, nargs=4, metavar=("X0", "Y0", "X1", "Y1"))
@@ -501,10 +510,10 @@ def main(argv=None):
         print("kinds: " + ", ".join(sorted(kinds)) + "   (* = variant built)")
         return 0
 
-    common = dict(layout=False if args.no_layout else args.layout, layout_only=args.layout_only, godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
+    common = dict(force=args.force, layout=False if args.no_layout else args.layout, layout_only=args.layout_only, godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
     if args.all:
         spent, built = 0.0, []
-        suffix = "" if args.style == "hall" else "_" + args.style
+        suffix = "" if args.style == DEFAULT_STYLE else "_" + args.style
         todo = [(b, None) for b in list_briefs() if not (ROOT / "assets/painted" / (b["id"] + suffix) / "room.json").exists()]
         if args.variants:
             todo += [(b, v) for b in list_briefs() for v in b.get("variants", {})

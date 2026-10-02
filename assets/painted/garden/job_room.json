@@ -1,0 +1,46 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "resolution": "1k",
+    "quality": "medium",
+    "aspect_ratio": "16:9",
+    "prompt": "The reference image is a layout guide: labeled grey boxes mark where each element of the scene goes and how big it is (FG foreground, MID middle ground, BG background; GROUND is the open empty ground; the dashed line is the horizon). Place every labeled element at its box's position and size, as a finished object painted in this scene's own colours, light and style. 16:9 horizontal point-and-click adventure game screenshot from THE WITCH, a fictional forgotten magical adventure game of approximately 1997-2002. Catastrophically crude early-3D: extremely low-polygon geometry built from wedges, cubes, triangular slabs, cones, stretched pyramids, tapered cylinders, primitive planes, irregular extrusions and lopsided blobs — visibly imperfect topology, blunt corners, slightly floating intersections, asymmetric dimensions, walls that bend in ways a modern modeler would correct. Aggressively faceted rendering, polygon-to-polygon value shifts, primitive vertex colors, faceted directional light, blunt stylized shadows, dark ambient-occlusion pockets, mild atmospheric haze, low-resolution painted textures, dry matte opaque pigment, dry-brush grain, palette-knife ridges, scratched contours, worn and rubbed paint, chipped painted glaze, stretched patterns, warped UVs, tiny texture seams, mild aliasing, subtle dithering, imperfect early-digital gradients, repairs and mismatched patches telling history. Textures are gently mottled: soft gradients, hand-painted variation, storybook soul on jagged geometry. Characters and props read as carved wooden toys rendered as low-poly 3D. SCENE \"The Garden That Remembers\", late afternoon golden hour, a walled garden behind a house: an old crooked pear tree on the left with a stone bench beneath it, a low stone wall with a small arched gate across the back, the house with a warm lit window rising behind the wall, a stone post with a hanging lantern, a sundial on a stone base, raised beds all planted with one kind of flower in tidy rows, a wheelbarrow and a watering can close to the viewer, a gravel path winding to the gate, mismatched patches and repairs on the wall, a dust gap on the bench where something used to sit. An enclosed outdoor garden seen from its gate or its path, looking in: beds, a stone path and wall, trees, a clear stretch of path and lawn in the foreground to walk on, open sky above. Dense, alive, impossibly cluttered; every inch of the screen is a puzzle piece. Architecture appears grown rather than constructed: rounded dwellings, crooked doorways, inflated walls, twisting trees, whimsical rock formations, built from chunky faceted primitives arranged organically, crooked, impossible, asymmetrical. Interface: blank paper tags knotted to a few of the plants. Palette: saturated jewel-toned theatrical daylight that reads as daylight; shadows deep cobalt, violet-blue-black, plum and indigo; light pockets incandescent amber, pale gold and lemon; ground and walls turquoise, teal, petrol and dusty teal; accents coral, hot-pink, tangerine, cream and lavender; earthy anchors moss green, lime, mustard yellow, burnt orange, coral red, muted purple and earthy brown; matte, dry, opaque painted pigment with soft gradients and gentle mottling. Lighting: Rich, earthy, warm theatrical atmosphere under soft directional light, baked warmth, golden-hour sun casting long blunt dramatic shadows, gentle ambient shadow, subtle rim light, a slightly dreamlike glow painted into the surfaces. Camera: Fixed 2.5D point-and-click camera, framed like a stage play, with strong barrel curvature living inside the geometry: bent facades, exaggerated foreground, compressed background, absurd convergence. Three to seven readable depth layers: an exaggerated foreground element toward the viewer, a midground, and a background of compressed distance with tiny activity. Everything looks touchable and clickable. The horizon (where the ground meets the far wall) is about 60 percent of the way down the frame. A large open stretch of empty ground fills the foreground. Recurring motifs, one to three of them: a wedge mark carved into the sundial, a small bell hanging at the gate.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/1b016c50-3e45-4f47-8dec-a3c451701115.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.173",
+    "usd": "0.074",
+    "discount": null
+  },
+  "idempotency_key": "a9cce1f1-bcc8-46a6-b67d-571419d8cd5b",
+  "created_at": "2026-10-02T18:09:52+00:00",
+  "request_id": "6a6108b0-39ec-45ae-8324-cbaaeac336f8",
+  "status_url": "https://platform.higgsfield.ai/requests/6a6108b0-39ec-45ae-8324-cbaaeac336f8/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/6a6108b0-39ec-45ae-8324-cbaaeac336f8/cancel",
+  "status": "completed",
+  "correlation_id": "e85cb968c3344dfe975741ad196952ee",
+  "result": {
+    "status": "completed",
+    "request_id": "6a6108b0-39ec-45ae-8324-cbaaeac336f8",
+    "status_url": "https://platform.higgsfield.ai/requests/6a6108b0-39ec-45ae-8324-cbaaeac336f8/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/6a6108b0-39ec-45ae-8324-cbaaeac336f8/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/2929b1fb-34e8-4cf8-87e0-710e9ed3a4f2.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T18:10:33+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/2929b1fb-34e8-4cf8-87e0-710e9ed3a4f2.png",
+      "path": "image_0.png",
+      "sha256": "b7a3d98810cc5b320214b2535e708bb81a3a80ca922e56b470e4a013189ed597",
+      "bytes": 1885587
+    }
+  ]
+}
