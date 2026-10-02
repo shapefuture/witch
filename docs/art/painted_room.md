@@ -276,3 +276,37 @@ room they now have what the painting's figures have: facets with a core shadow, 
   mesh itself onto the floor as a `material_overlay`; it came out patchy (per-vertex fade under a once-per-pixel
   stencil) and jagged (every curl's edge, PSX-snapped), and its pieces sank into the bumpy painted floor.
 - Dials: `actor_key` (2.6), `actor_shadow` (0.75; 0 hides it and stops its camera), `key_front`/`key_bands` in the shader.
+
+## The hallway (second scene)
+
+`assets/painted/hall_hallway/` is the view from inside the hall's left arched passage, looking down its length: an
+edit of `hall_clean/plate_empty.png` (`xai/grok-imagine-image-2.0`, one generation, about USD 0.09; prompt and
+provenance in `job_hallway.json`). It is a plain room (plate, depth, light map; no props or life yet):
+
+```sh
+python tools/painted/build_painted.py --plate build/higgsfield/<job>/image_0.png --out assets/painted/hall_hallway \
+    --horizon 0.70 --floor-box 525 580 800 715 --sun -0.3 0.9 0.3 --actor witch=640,690
+# capture: tools/painted/capture_painted.gd -- OUT res://assets/painted/hall_hallway views
+```
+
+`--horizon` (the vanishing point's height, 0.70 here against the hall's 0.65), `--floor-box` (bare carpet for the metric
+calibration) and `--sun` (a corridor has no oculus to aim at) are new options of `build_painted.py`. Load it with
+`PaintedRoom.room_dir`.
+
+## The chamber (second scene)
+
+`assets/painted/hall_chamber/` is the room at the end of the hall's left passage: a round vaulted reading chamber with a wide
+open spiral carpet, a stone reading table, a window throwing a shaft of light across the floor, and a second doorway on its right.
+It is a place to stand in, not a corridor. One `xai/grok-imagine-image-2.0` generation (about USD 0.09 after a USD 0.09
+hallway test that was discarded) from two references, the hall plate and the hallway shot; prompt and provenance in
+`job_chamber.json`. A plain room so far (plate, depth, light map, witch and raccoon marks; no props or life):
+
+```sh
+python tools/painted/build_painted.py --plate build/higgsfield/<job>/image_0.png --out assets/painted/hall_chamber \
+    --horizon 0.62 --floor-box 384 565 960 704 --sun 0.1 0.55 -0.8 --actor witch=640,610 --actor raccoon=760,640
+# capture: tools/painted/capture_painted.gd -- OUT res://assets/painted/hall_chamber views
+```
+
+`--horizon` (where the floor meets the far wall, as a fraction of the height; the hall's is 0.65), `--floor-box` (bare carpet
+for the metric calibration) and `--sun` (the light's direction, here from the window; the hall aims at its oculus) are new
+options of `build_painted.py`. Load a room with `PaintedRoom.room_dir`.

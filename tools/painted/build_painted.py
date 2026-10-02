@@ -138,7 +138,17 @@ def main(argv=None):
     parser.add_argument("--out", required=True)
     parser.add_argument("--actor", action="append", default=[], metavar="NAME=X,Y")
     parser.add_argument("--source", default="", help="provenance note written into room.json")
+    parser.add_argument("--horizon", type=float, help="the horizon as a fraction of the height (default: the hall's 0.65)")
+    parser.add_argument("--floor-box", type=int, nargs=4, metavar=("X0", "Y0", "X1", "Y1"),
+                        help="bare floor pixels of the 1280x720 frame for the metric calibration")
+    parser.add_argument("--sun", type=float, nargs=3, metavar=("X", "Y", "Z"),
+                        help="the light's direction toward the sun (default: from the pool toward the brightest top pixel)")
     args = parser.parse_args(argv)
+    global HORIZON_FRAC, FLOOR_BOX
+    if args.horizon:
+        HORIZON_FRAC = args.horizon
+    if args.floor_box:
+        FLOOR_BOX = tuple(args.floor_box)
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -168,6 +178,8 @@ def main(argv=None):
     oy, ox = np.unravel_index(np.argmax(top), top.shape)
     oculus = rays(np.array(float(ox)), np.array(float(oy)), f, pitch) * min(z[oy, ox], 12.0) + [0, EYE_H, 0]
     sun_dir = (oculus - pool) / np.linalg.norm(oculus - pool)
+    if args.sun:
+        sun_dir = np.array(args.sun, float) / np.linalg.norm(args.sun)
     beam = np.asarray(plate, np.float32)[max(oy - 6, 0): oy + 6, max(ox - 6, 0): ox + 6].reshape(-1, 3).mean(axis=0) / 255.0
 
     actors = {}
