@@ -27,6 +27,12 @@ uniform float rim_strength = 1.3;
 // Experimental, so live actors sit in the painted plates: a faint paper grain fixed to the screen
 // (the plates are still pictures) and a small tone shift per facet (the plates' baked facet mosaic).
 uniform float paper_grain = 0.035;
+// Painted rooms (game/world/painted): a faceted key light with core shadows, like the painting's own forms.
+// 0 keeps the baked-set look above.
+uniform float key_strength = 0.0;
+uniform float key_bands = 3.0;
+uniform float key_front = 0.6; // 0: the key is the beam's own direction; 1: it comes from the camera's side of the room
+uniform vec2 ambient_range = vec2(0.28, 0.8); // the floor's colour on an underside / on a top
 uniform float facet_tone = 0.05;
 
 varying vec3 v_world;
@@ -73,6 +79,19 @@ void fragment() {
 	vec3 n_view = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
 	float rim = pow(clamp(1.0 - dot(n_view, view), 0.0, 1.0), 2.4) * rim_strength;
 	vec3 col = base * (shade + gold) + sun_color * rim * (0.35 + 0.65 * in_sun) * 0.6;
+	if (key_strength > 0.0) {
+		// Flat facets (the painting is made of them), lit in a few steps by the beam's direction. Facets turned away
+		// from it keep only the floor's own purple: the core shadow that gives them volume.
+		vec3 nf = normalize(cross(dFdx(v_world), dFdy(v_world)));
+		nf = dot(nf, n) < 0.0 ? -nf : nf;
+		vec3 key_dir = normalize(vec3(sun_dir.x, sun_dir.y, mix(sun_dir.z, -sun_dir.z, key_front)));
+		float lam = clamp(dot(nf, key_dir), 0.0, 1.0);
+		float stepped = floor(lam * key_bands + 0.5) / key_bands;
+		float hemi = nf.y * 0.5 + 0.5;
+		vec3 ambient = floor_light * mix(ambient_range.x, ambient_range.y, hemi);
+		vec3 key = sun_color * stepped * (0.3 + 0.7 * in_sun) * key_strength;
+		col = base * (ambient + key) + sun_color * rim * (0.35 + 0.65 * in_sun) * 0.6;
+	}
 	vec3 facet = normalize(cross(dFdx(v_world), dFdy(v_world)));
 	float facet_hash = fract(sin(dot(floor(facet * 23.0), vec3(12.9898, 78.233, 37.719))) * 43758.5453);
 	col *= 1.0 + (facet_hash - 0.5) * 2.0 * facet_tone;

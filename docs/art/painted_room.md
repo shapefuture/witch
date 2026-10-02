@@ -254,3 +254,18 @@ shelves), built with `build_painted.py`, rendered by `PaintedRoom` with `room_di
   room (its geometry is invented), only as a second room of the same style. Neither is a measured view of the first picture: no
   guarantee that distances agree, parallax holds to the usual 15 cm, characters (placed by hand) look large in shot 2.
   Cost per shot: $0.09 for a working edit, $0.075 per failed attempt; total spent on the whole task $1.09 of 1.50.
+
+## Actor lighting: form and cast shadow
+
+The characters used to be lit flat (a half-lambert over the floor's colour) with a round blob under them. In the painted
+room they now have what the painting's figures have: facets with a core shadow, and a shadow that has their shape.
+
+- **Key light** (`psx_lit_actor.gdshader`, `key_strength` > 0, set by `PaintedRoom.actor_key`): each flat facet is lit in
+  `key_bands` steps by a key direction (the beam's, turned partly toward the camera's side by `key_front` so backs show
+  some form), gated by how lit the floor under the character is; facets turned away keep only the floor's own purple
+  (the core shadow), tops are brighter than undersides. The hall's characters keep `key_strength = 0`: nothing changes there.
+- **Cast shadow** (`painted_actor_shadow.gdshader`, `PaintedRoom.actor_shadow`): each character mesh gets this as a
+  `material_overlay`, so the shadow is the skinned mesh itself flattened onto the floor along the beam, in every pose.
+  Multiplied into the painting through the stencil buffer, so the overlap of limbs and body darkens only once. It fades
+  toward the tip and is weaker where the painted floor is not in the pool. The round contact blob stays under the feet.
+- Dials: `actor_key` (2.6), `actor_shadow` (0.55; 0 removes it), `key_front`/`key_bands` in the shader.

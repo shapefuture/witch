@@ -24,6 +24,23 @@ func test_the_room_loads_its_camera_depth_actors_and_props() -> void:
 	ok(feet.distance_to(Vector2(735, 634)) < 1.0, "the witch's feet are where the painting had them (%s)" % feet)
 	room.queue_free()
 
+func test_the_characters_have_a_key_light_and_cast_a_shadow_along_the_beam() -> void:
+	await _first_frame()
+	var room := _room()
+	for id in ["witch", "raccoon"]:
+		var meshes := (room.actors[id] as Node3D).get_node("Visual").find_children("*", "MeshInstance3D", true, false)
+		ok(not meshes.is_empty(), "%s has meshes" % id)
+		for mesh in meshes:
+			var instance := mesh as MeshInstance3D
+			ok(instance.material_overlay is ShaderMaterial, "%s: every mesh draws its shadow on the floor" % id)
+			var lit := instance.get_active_material(0) as ShaderMaterial
+			ok(lit != null and float(lit.get_shader_parameter("key_strength")) > 0.0, "%s: faceted key light is on" % id)
+	room.actor_shadow = 0.0
+	room.relight_actors()
+	for mesh in (room.actors["witch"] as Node3D).get_node("Visual").find_children("*", "MeshInstance3D", true, false):
+		ok((mesh as MeshInstance3D).material_overlay == null, "shadow off removes the overlay")
+	room.queue_free()
+
 func test_a_tap_finds_the_nearest_prop_and_walks_its_reactions() -> void:
 	await _first_frame()
 	var room := _room()
