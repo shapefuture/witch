@@ -17,8 +17,8 @@ Two budgets, and the quota is the tight one (free account: 300 GPU-seconds and 8
   the manifest. A provider that rejects a call for its GPU duration says so: lower `--steps` or `--octree`, or wait for the reset.
 * **Tripo** (multiview to model, rig) is for volume: credits. The balance must cover `--max-credits` before anything is sent; the spend is measured.
 
-Keys (never printed, not even in part): HF_TOKEN (Hugging Face, NOT the Higgsfield HF_KEY) and TRIPO_API_KEY, from the environment or the
-git-ignored .env.local. `run` does the geometry stage only; --rig and --parts are opt-in. Results are kept in build/rigs/NAME/ with manifest.json;
+Keys (never printed, not even in part): HUGGINGFACE_TOKEN (Hugging Face; HF_TOKEN is the fallback; NOT the Higgsfield HF_KEY) and TRIPO_API_KEY,
+from the environment or the git-ignored .env.local. `run` does the geometry stage only; --rig and --parts are opt-in. Results are kept in build/rigs/NAME/ with manifest.json;
 a stage whose inputs and settings are unchanged is not run again (--force).
 
 The generated mesh is a REFERENCE, not a game asset: the game's characters are at most 9000 triangles in 2 surfaces with a 256 px atlas and a fixed
@@ -39,7 +39,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 ENV_FILE = Path(os.getenv("HF_ENV_FILE") or ROOT / ".env.local")
-SECRETS = ("HF_TOKEN", "TRIPO_API_KEY", "HF_KEY")
+HF_NAMES = ("HUGGINGFACE_TOKEN", "HF_TOKEN")     # ours first: HF_TOKEN is what every other Hugging Face tool reads, so it may hold another account's token
+SECRETS = HF_NAMES + ("TRIPO_API_KEY", "HF_KEY")
 
 SLOTS = ("front", "left", "back", "right")           # Tripo's order; Hunyuan3D-2mv names the same four
 SPACES = {"hunyuan2mv": "tencent/Hunyuan3D-2mv", "skintokens": "VAST-AI/SkinTokens", "anigen": "VAST-AI/AniGen", "parts": "tencent/Hunyuan3D-Part"}
@@ -81,6 +82,16 @@ def load_env(path=None):
 def secret(name):
     load_env()
     return os.environ.get(name, "").strip()
+
+
+def hf_var():
+    """The name of the variable the Hugging Face token comes from ('' if none)."""
+    load_env()
+    return next((n for n in HF_NAMES if os.environ.get(n, "").strip()), "")
+
+
+def hf_token():
+    return secret(hf_var()) if hf_var() else ""
 
 
 def redact(text):
@@ -149,7 +160,7 @@ def zerogpu(token):
 def gpu_guard(token, min_seconds):
     q = zerogpu(token)
     if q is None:
-        raise Refused("no HF_TOKEN: an anonymous call gets about 2 GPU-minutes a day; put HF_TOKEN in the environment or .env.local")
+        raise Refused("no Hugging Face token: an anonymous call gets about 2 GPU-minutes a day; put HUGGINGFACE_TOKEN in the environment or .env.local")
     if "error" in q:
         raise Refused("cannot read the ZeroGPU quota (%s)" % q["error"])
     if q["seconds"] < min_seconds or q["runs"] < 1:
@@ -550,7 +561,7 @@ def run(a):
     out.mkdir(parents=True, exist_ok=True)
     mf = out / "manifest.json"
     manifest = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {"stages": {}}
-    hf, tripo = secret("HF_TOKEN"), secret("TRIPO_API_KEY")
+    hf, tripo = hf_token(), secret("TRIPO_API_KEY")
     inputs = sha(*[views[s] for s in SLOTS if s in views])
     log("views", "%s (unused: the 3/4 views; the services take four)" % ", ".join(s for s in SLOTS if s in views))
     if len(views) < 4:
@@ -640,8 +651,8 @@ def run(a):
 
 def doctor():
     print("image2rig doctor")
-    hf, tripo = secret("HF_TOKEN"), secret("TRIPO_API_KEY")
-    print("  HF_TOKEN       %s" % (("set, from the %s" % source("HF_TOKEN")) if hf else "MISSING (anonymous: about 2 GPU-minutes a day)"))
+    hf, tripo = hf_token(), secret("TRIPO_API_KEY")
+    print("  %-14s %s" % (hf_var() or "HUGGINGFACE_TOKEN", ("set, from the %s" % source(hf_var())) if hf else "MISSING (anonymous: about 2 GPU-minutes a day)"))
     if hf:
         try:
             who = _get_json("https://huggingface.co/api/whoami-v2", hf)

@@ -64,7 +64,7 @@ class FakeClient:
 def test_keys_come_from_the_env_file_and_are_never_printed():
     tmp = Path(tempfile.mkdtemp())
     (tmp / "env").write_text("# c\nHF_TOKEN=%s\nTRIPO_API_KEY=\"%s\"\n" % (FAKE_HF, FAKE_TRIPO), encoding="utf-8")
-    for n in ("HF_TOKEN", "TRIPO_API_KEY"):
+    for n in ("HF_TOKEN", "HUGGINGFACE_TOKEN", "TRIPO_API_KEY"):
         os.environ.pop(n, None)
     ir.load_env(tmp / "env")
     assert ir.secret("HF_TOKEN") == FAKE_HF and os.environ["TRIPO_API_KEY"] == FAKE_TRIPO
@@ -78,6 +78,29 @@ def test_keys_come_from_the_env_file_and_are_never_printed():
     finally:
         sys.stdout = old
     assert FAKE_HF not in buf.getvalue() and FAKE_TRIPO not in buf.getvalue() and code == 2, buf.getvalue()
+
+
+def test_our_hugging_face_variable_is_read_before_the_shared_one():
+    other = "hf_" + "C" * 30
+    saved = {n: os.environ.pop(n, None) for n in ("HF_TOKEN", "HUGGINGFACE_TOKEN")}
+    real_file, tmp = ir.ENV_FILE, Path(tempfile.mkdtemp())
+    (tmp / "env").write_text("HUGGINGFACE_TOKEN=%s\n" % FAKE_HF, encoding="utf-8")
+    (tmp / "empty").write_text("", encoding="utf-8")
+    try:
+        os.environ["HF_TOKEN"] = other                       # another tool's (or another account's) token
+        ir.ENV_FILE = tmp / "env"
+        assert ir.hf_var() == "HUGGINGFACE_TOKEN" and ir.hf_token() == FAKE_HF, "ours wins over a stale HF_TOKEN"
+        os.environ.pop("HUGGINGFACE_TOKEN")
+        ir.ENV_FILE = tmp / "empty"                          # the file no longer supplies ours
+        assert ir.hf_var() == "HF_TOKEN" and ir.hf_token() == other, "the shared name is the fallback"
+        os.environ.pop("HF_TOKEN")
+        assert ir.hf_var() == "" and ir.hf_token() == ""
+    finally:
+        ir.ENV_FILE = real_file
+        for n, v in saved.items():
+            os.environ.pop(n, None)
+            if v:
+                os.environ[n] = v
 
 
 def test_four_views_are_taken_from_a_multiview_result_and_the_34_views_are_left_out():
@@ -138,7 +161,7 @@ def test_the_guards_stop_a_call_before_anything_is_spent():
         ir.gpu_guard("", 90)
         assert False, "no token: anonymous quota is about 2 minutes"
     except ir.Refused as e:
-        assert "HF_TOKEN" in str(e)
+        assert "HUGGINGFACE_TOKEN" in str(e)
     try:
         ir.tripo_guard(0.0, 60)
         assert False, "a zero balance cannot cover the cap"

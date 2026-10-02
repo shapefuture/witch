@@ -17,7 +17,7 @@ python tools/characters/image2rig.py preview a.glb out.png                   # f
 
 `NAME` is a `multiview.py` result under `build/views/` (or a folder); the 3/4 views are not used (the services take four). Output goes to
 `build/rigs/NAME/` with `manifest.json` (inputs, settings, files, seconds, GPU seconds or credits really spent). A stage whose inputs and settings did not
-change is kept, not run again (`--force`). Keys: `HF_TOKEN` (Hugging Face; not the Higgsfield `HF_KEY`) and `TRIPO_API_KEY`, from the environment or
+change is kept, not run again (`--force`). Keys: `HUGGINGFACE_TOKEN` (Hugging Face; `HF_TOKEN` is the fallback; not the Higgsfield `HF_KEY`) and `TRIPO_API_KEY`, from the environment or
 the git-ignored `.env.local`; never printed, not even in part (`redact()` covers every message).
 
 ## The two budgets
@@ -103,6 +103,7 @@ runs inside the budget (Tripo's credits, Tencent's API at 10 credits, or SkinTok
 
 ## Keys, and two accounts
 
-A real environment variable wins over `.env.local` (the repo's convention, as in `hf.py`), and `doctor` says where each key comes from. The user gave a second Hugging Face token
-(another free account, with its own 300 GPU-seconds and 8 runs a day) after the first account's runs were spent; if the cloud environment still carries the old token as a variable,
-unset it or update it, or the file's new token is ignored. Each account's quota is its own: the tool does not rotate between accounts.
+A real environment variable wins over `.env.local` (the repo's convention, as in `hf.py`), and `doctor` says which variable and where each key comes from. The Hugging Face token
+is read from `HUGGINGFACE_TOKEN` first and `HF_TOKEN` second: `HF_TOKEN` is the name every other Hugging Face tool reads, so it may hold another account's token (it did: a second free account,
+with its own 300 GPU-seconds and 8 runs a day, was added after the first account's runs were spent, and the old value in the environment shadowed the file). Each account's quota is its own:
+the tool does not rotate between accounts.
