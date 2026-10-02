@@ -178,7 +178,7 @@ SK_R = (.460, .385, .300, .225)
 SK_N = 12
 SK_PHI0 = 15.        # panels centred on 0 (front) and 180 (back)
 SK_DEPTH = (1., .94, .86, .80)
-SKIRT_BASE = (.46, .26, .62)     # the hood's deep violet (the sheet's skirt and hood are one cloth)   # each row's depth over its width: the waist is oval under the slim vest
+SKIRT_BASE = (.41, .23, .57)     # the hood's deep violet (the sheet's skirt and hood are one cloth)   # each row's depth over its width: the waist is oval under the slim vest
 VEST_DZ = -.048                  # the vest's front things sit this far back of where they were first placed (slimmer vest)
 
 
@@ -302,9 +302,9 @@ def mirror_x(P):
 # name, start xyz, heading deg (0 = +X, counter-clockwise), stalk [(length, turn)], r0, r1, turns, dirn (+1 = counter-clockwise),
 # strand half-width, z drift over the spiral
 CURLS = [
-    ('lock_big', (.215, .90, -.045), -45, [(.07, 0), (.07, -8)], .080, .026, 1.25, +1, .050, -.03),
+    ('lock_big', (.215, .90, -.045), -45, [(.07, 0), (.07, -8)], .082, .040, 1.1, +1, .050, -.03),
     # the hip curls, the widest point of her outline: from under the hood's back, down and out
-    ('side_mid', (.200, .845, -.135), -66, [(.08, 0), (.08, -8), (.07, 10)], .086, .026, 1.30, +1, .054, -.02),
+    ('side_mid', (.200, .845, -.135), -66, [(.08, 0), (.08, -8), (.07, 10)], .088, .040, 1.15, +1, .054, -.02),
     # one small curl high on her left only, hugging the hood beside the flowers (the sheet is not symmetric there)
     ('hood_hi', (.165, 1.150, .040), 62, [(.050, 0), (.045, -22)], .042, .016, 1.20, -1, .030, -.02, -.02),
 ]
@@ -315,7 +315,7 @@ CURLS_R_TWEAK = {'lock_big': dict(r0=.082, turns=1.2), 'side_mid': dict(r0=.080,
 # hood's lower edge, over the shoulder, then behind the arm down to the hip, where it ends in a big outward curl.
 FRAME = [(.172, 1.160, .020), (.188, 1.070, .036), (.200, .975, .078), (.222, .900, .078), (.262, .830, -.020),
          (.290, .740, -.095), (.300, .650, -.105), (.300, .580, -.100)]
-FRAME_CURL = dict(r0=.070, r1=.022, turns=1.2)
+FRAME_CURL = dict(r0=.078, r1=.040, turns=1.15)
 
 # The long back hair: a lobed mass under the hood's back edge (a bulb, every lobe a flute) from which eight thick locks
 # hang side by side down to the waist, each ending in a curl, like the sheet's back view (an octopus of hair).
@@ -382,7 +382,7 @@ def curl_paths():
         splay = -off * .45 if abs(off) > 50 else -off * .15
         wave = 7. * dirn
         stalk = [(length, splay * .30 + wave), (length, splay * .15 - 2 * wave), (length * .85, -splay * .20 + wave)]
-        local, _ = turtle(A((0., p0[1], 0.)), -90. + splay * .5, stalk, r0, .018, 1.35, dirn, CURL_SEG, dz=.012)
+        local, _ = turtle(A((0., p0[1], 0.)), -90. + splay * .5, stalk, r0, .034, 1.15, dirn, CURL_SEG, dz=.012)
         local[:, 2] += BACK_TILT * (local[:, 1] - local[0, 1])
         local[:, 2] *= -1                                          # the back's plane faces -z
         rot = rotm((0, 1, 0), off * .5)
@@ -1023,7 +1023,7 @@ def build_parts(M):
         m = len(pts)
         taper = (.80, .32) if name == 'tail' else (.85, .40)     # thick down into the curl, as on the sheet
         rad = np.interp(np.arange(m), [0, n_st, m - 1], [width, width * taper[0], width * taper[1]])
-        ratio = {'frame': .62, 'tail': .92}.get(name, .92)
+        ratio = {'frame': .50, 'tail': .50}.get(name, .50)   # flat ribbons, as on the sheet
         flat = N_((side * .7, 0., 1.)) if name == 'frame' else (0, 0, 1.)
         cu = tube(pts, rad, N=nsides, ratio=ratio, flat=flat, cap=(0, .012), o=.5 if nsides == 4 else 0.)
         d = '.L' if side > 0 else '.R'
