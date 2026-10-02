@@ -55,8 +55,8 @@ for _s, _d in ((1, '.L'), (-1, '.R')):
     BONES['arm_upper' + _d] = ('spine', (_s * .136, .60, 0))
     BONES['arm_lower' + _d] = ('arm_upper' + _d, (_s * .166, .45, 0))
     BONES['hand' + _d] = ('arm_lower' + _d, (_s * .174, .30, .015))
-    BONES['leg' + _d] = ('hips', (_s * .066, .34, 0))
-    BONES['foot' + _d] = ('leg' + _d, (_s * .066, .07, 0))
+    BONES['leg' + _d] = ('hips', (_s * .058, .34, 0))
+    BONES['foot' + _d] = ('leg' + _d, (_s * .058, .07, 0))
     BONES['hairB' + _d] = ('head', (_s * .09, .76, -.04))
     BONES['hairT' + _d] = ('hairB' + _d, (_s * .10, .64, -.06))
 BONES['bird'] = ('hand.L', (.18, .27, .04))      # carried over from the concept witch; nothing hangs on it
@@ -154,7 +154,7 @@ def head_z(x, y):
 # (the painted hat is a rigid, over-large cone resting on the shoulders: the brim is lowest behind and to
 # her left, high in front and to her right, and the tip hooks further over)
 HAT_PIVOT = A((0., .745, -.004))
-HAT_LEAN = (21., 12.)
+HAT_LEAN = (19., 12.)
 HAT_R = rotm((1, 0, 0), -HAT_LEAN[1]) @ rotm((0, 0, 1), -HAT_LEAN[0])
 BRIM = ((.325, 0.), (.245, .045), (.190, .092))          # radius, lift above the edge
 BRIM_ROLL = (.085, .060, .025)
@@ -164,7 +164,7 @@ HAT_N = 12
 
 def hat_bend(h):
     s = max(0., (h - .2) / .45)
-    return .105 * s * s + .035 * s ** 4, -.040 * s * s
+    return .095 * s * s + .030 * s ** 4, -.040 * s * s
 
 
 def to_world(q):
@@ -179,7 +179,7 @@ def hat_local(n=HAT_N):
         row = []
         for p in phis:
             k = max(0., -math.sin(math.radians(p))) ** 1.3          # her right: the brim curls up and out
-            rr = r + .03 * k * (r / BRIM[0][0])
+            rr = r + .045 * k * (r / BRIM[0][0])
             row.append((rr * math.sin(math.radians(p)), lift + roll * k, rr * math.cos(math.radians(p))))
         rows.append(row)
     for h, r in CONE:
@@ -287,22 +287,22 @@ def build_parts(M):
     add = M.add
     # ===== boots and legs
     for s, d in ((1, '.L'), (-1, '.R')):
-        bx = s * .066
-        shaft = loft([((bx, y, -.003), (rx, 0, 0), (0, 0, rz)) for y, rx, rz in ((.005, .038, .046), (.085, .035, .042), (.150, .033, .037))],
+        bx = s * .058
+        shaft = loft([((bx, y, -.003), (rx, 0, 0), (0, 0, rz)) for y, rx, rz in ((.005, .034, .040), (.085, .032, .038), (.150, .031, .036))],
                      8, 2.4, cap=(0, 0), j=.002)
         J, W = weights(M, shaft['V'], lambda p: {'foot' + d: 1. - smooth((p[1] - .10) / .06), 'leg' + d: smooth((p[1] - .10) / .06)})
         add(shaft, 'boot', J=J, W=W)
         foot = loft([((bx, cy, z), (rx, 0, 0), (0, ry, 0)) for z, rx, ry, cy in
-                     ((-.055, .040, .026, .034), (.01, .052, .040, .042), (.075, .052, .034, .034), (.135, .036, .022, .024))],
+                     ((-.040, .034, .024, .030), (.01, .043, .036, .037), (.060, .043, .030, .030), (.105, .030, .020, .022))],
                     8, 2.4, cap=(.012, .02), j=.002)
         add(foot, 'boot', bone='foot' + d)
-        sole = loft([((bx, .006, z), (rx, 0, 0), (0, .008, 0)) for z, rx in ((-.055, .036), (.01, .048), (.075, .048), (.135, .030))], 8, 2.4, cap=(.008, .012))
+        sole = loft([((bx, .006, z), (rx, 0, 0), (0, .008, 0)) for z, rx in ((-.040, .030), (.01, .039), (.060, .039), (.105, .026))], 8, 2.4, cap=(.008, .012))
         add(sole, 'sole', bone='foot' + d)
-        leg = loft([((bx, .08, 0), (.034, 0, 0), (0, 0, .034)), ((bx, .36, 0), (.040, 0, 0), (0, 0, .040))], 6, 2., cap=(0, 0))
+        leg = loft([((bx, .08, 0), (.030, 0, 0), (0, 0, .030)), ((bx, .36, 0), (.036, 0, 0), (0, 0, .036))], 6, 2., cap=(0, 0))
         add(leg, 'leg', bone='leg' + d)
 
     # ===== robe: a blocky bell, dark yoke above the seam, lighter skirt below; the hem swings with the legs
-    rr = [(.150, .205, .152, 0.), (.255, .182, .136, 0.), (.375, .152, .118, 0.), (.385, .150, .116, 0.), (.470, .130, .104, 0.),
+    rr = [(.150, .222, .160, 0.), (.255, .190, .140, 0.), (.375, .152, .118, 0.), (.385, .150, .116, 0.), (.470, .130, .104, 0.),
           (.545, .126, .097, 0.), (.598, .100, .078, 0.), (.628, .054, .052, 0.)]
     robe = loft([((0, y, cz), (rx, 0, 0), (0, 0, rz)) for y, rx, rz, cz in rr], 10, 2.6, cap=(0, .004), j=.0035, o=.5)
 

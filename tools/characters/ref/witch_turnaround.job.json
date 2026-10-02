@@ -1,0 +1,49 @@
+{
+ "model": "alibaba/qwen-image-3/edit",
+ "arguments": {
+  "prompt": "Character turnaround model sheet of the small witch in the input image, drawn exactly as she is designed there. Three full-body views of the same character standing in a neutral A-pose, side by side on one sheet: FRONT view on the left, SIDE view in the middle facing right, BACK view on the right (the back view is exactly the input image: a huge faceted purple pointed wizard hat with a very wide drooping brim and yellow stars, a short blocky dark navy-blue robe to the shins, dark sleeves, small dark hands, short dark boots). In the front view the face is mostly hidden in the shadow of the wide hat brim, with only a small pale face, two dark eyes and a small mouth visible under the brim. Same low-poly faceted papercraft art style as the input: flat-shaded triangles, no outlines, muted colours. Flat even neutral lighting, no cast shadow, no ground, plain flat light grey background, no text, no labels, no watermark, the three figures have identical height and are evenly spaced.",
+  "aspect_ratio": "16:9",
+  "resolution": "2k",
+  "seed": 11,
+  "negative_prompt": "text, letters, watermark, label, cast shadow, floor, smooth gradients, photorealistic, fur strands, cartoon outlines, extra characters, extra limbs",
+  "prompt_extend": false,
+  "enable_thinking": false,
+  "image_urls": [
+   "<the witch cut from the reference still at 5-6x, uploaded by hf.py --upload>"
+  ]
+ },
+ "estimate": {
+  "type": "estimate",
+  "credits": "1.200",
+  "usd": "0.075",
+  "discount": null
+ },
+ "idempotency_key": "426a1bf3-c63a-4116-9bea-1e6b1910e811",
+ "created_at": "2026-10-02T00:16:21+00:00",
+ "request_id": "e8b07767-ced6-4e5f-afb9-a92c9aa27c0d",
+ "status_url": "https://platform.higgsfield.ai/requests/e8b07767-ced6-4e5f-afb9-a92c9aa27c0d/status",
+ "cancel_url": "https://platform.higgsfield.ai/requests/e8b07767-ced6-4e5f-afb9-a92c9aa27c0d/cancel",
+ "status": "completed",
+ "correlation_id": "d262f90dccca4717a252c5438b630e41",
+ "result": {
+  "status": "completed",
+  "request_id": "e8b07767-ced6-4e5f-afb9-a92c9aa27c0d",
+  "status_url": "https://platform.higgsfield.ai/requests/e8b07767-ced6-4e5f-afb9-a92c9aa27c0d/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/e8b07767-ced6-4e5f-afb9-a92c9aa27c0d/cancel",
+  "images": [
+   {
+    "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/54003dd4-736f-437a-a8f7-7258f50a9107.png"
+   }
+  ]
+ },
+ "finished_at": "2026-10-02T00:16:51+00:00",
+ "files": [
+  {
+   "kind": "image",
+   "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/54003dd4-736f-437a-a8f7-7258f50a9107.png",
+   "path": "image_0.png",
+   "sha256": "bf94a839cd0c7fcc86a4927eb5e4d2e7375e1aae157ae11a1cc52591a7396c1d",
+   "bytes": 1463715
+  }
+ ]
+}
