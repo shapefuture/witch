@@ -1,12 +1,19 @@
 # The witch: two character models
 
-`assets/characters/witch.glb` (v1, the concept sheet's witch) and `witch_antler.glb` (v2, the
+> **Update.** `assets/characters/witch.glb` is now the *painted* witch (a star-strewn violet hat on a small
+> body in a navy robe, matched to the painted room: `docs/art/characters_painted.md`, built by
+> `witch_painted.py`). Everything below about "v1" describes the concept sheet's orange-haired witch, which
+> `witch.py --only v1` still builds, as `witch_concept.glb` (not shipped); v2 (`witch_antler.glb`) is
+> unchanged. Its numbers (9,000-triangle budget, clip names and lengths, the face-plate technique) still hold
+> for the painted witch where the doc says "both witches".
+
+`witch_concept.glb` (v1, the concept sheet's witch; was `witch.glb`) and `witch_antler.glb` (v2, the
 antler variant) are built by code from the user's procedural models (numpy to glTF), ported into
 `tools/characters/`:
 
 ```sh
-python tools/characters/witch.py --out assets/characters --refs <dir with the concept art>
-python tools/characters/witch.py --out assets/characters --preview /tmp/witch   # six views, face, clips
+python tools/characters/witch.py --out assets/characters --only v1 --refs <dir with the concept art>   # concept witch
+python tools/characters/witch.py --out assets/characters --preview /tmp/witch   # painted witch + antler, six views, clips
 python tools/characters/witch_antler.py --out assets/characters                 # v2 only
 ```
 

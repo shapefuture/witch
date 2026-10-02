@@ -1,17 +1,17 @@
-"""The raccoon wizard (concept sheet, top right): grumpy, arms crossed, purple hat.
+"""The raccoon wizard as the painted room has him: a dark, round, four-legged raccoon with a fat ringed
+tail, a rounded face with the bandit mask, and a tall straight violet hat with a small brim and a few
+yellow marks.
 
     python tools/characters/raccoon.py --out assets/characters [--preview DIR]
 
-Writes raccoon.glb: one skinned mesh (one surface per palette colour), 0.70 m tall with
-the hat, feet on y = 0, facing +Z; animations idle, walk, talk, watch.
+Writes raccoon.glb: one skinned mesh (one surface per palette colour; the game folds the flat ones into
+one), 0.70 m tall with the hat, feet on y = 0, facing +Z; animations idle, walk, talk, watch.
 
-Ported from the user's procedural model (numpy -> glTF). What changed against the sheet is
-written up in docs/art/characters_raccoon_shadow.md; the short version: narrower head and
-body (the source was ~30% too wide), arms modelled crossed in the bind pose, a two-lobed
-bandit mask that sweeps down to pointed cheeks, half-lidded grumpy eyes, a crooked hat, and
-a banded tail lying behind on the floor instead of out to one side.
-
-Authoring units: the source's, about 3.1 units tall; finish() scales to metres.
+The skeleton keeps the names of the concept sheet's upright raccoon (the arms are now the front legs,
+`upper_arm / forearm / hand`; the legs are the hind legs); the body is modelled on all fours, as in the
+painting (the figure at the lower right of the reference still) and in the turnaround generated from it
+(tools/characters/ref/raccoon_turnaround.png, docs/art/characters_painted.md). The head is the concept
+sheet's, scaled onto the neck. Authored in metres.
 """
 
 import argparse
@@ -27,134 +27,116 @@ from glb import A, Clip, catmull, hring, jitter, loft, nz, q5, smooth, tube, wav
 
 HEIGHT = 0.70
 
-PALETTE = {k: q5(v) for k, v in {
-    'fur': (.66, .58, .55),       # warm grey-taupe, sits in an olive/ochre room
-    'fur_d': (.52, .44, .41),     # paws, feet, the back of the ears
-    'belly': (.76, .69, .65),
-    'cream': (.86, .80, .74),     # muzzle, brows, lids, light tail bands
-    'mask': (.31, .25, .23),      # bandit mask, dark tail bands
-    'ear_in': (.46, .36, .35),
-    'nose': (.11, .09, .09),
+_BASE = {
+    'fur': (.43, .39, .34),       # dark warm grey: the painted raccoon is nearly black in its own shade
+    'fur_d': (.24, .21, .19),     # paws, feet, the back of the ears
+    'belly': (.52, .47, .41),
+    'cream': (.88, .82, .70),     # muzzle, brows, lids, the light tail rings
+    'mask': (.10, .085, .09),     # bandit mask, the dark tail rings
+    'ear_in': (.32, .25, .24),
+    'nose': (.07, .06, .06),
     'eye': (.90, .86, .74),
     'pupil': (.06, .05, .06),
-    'hat': (.42, .24, .53),
-    'hat_d': (.30, .16, .40),     # brim underside and band
-    'star': (.93, .78, .76),
-}.items()}
+    'hat': (.40, .27, .64),
+    'hat_d': (.24, .16, .38),     # brim underside and band
+    'star': (.93, .76, .36),
+}
+PALETTE = {k: q5(v) for k, v in _BASE.items()}
+# three tones of the big surfaces, picked per facet: crumpled paper, as in the painting
+for _k in ('fur', 'belly', 'hat'):
+    for _v, _m in zip('abc', (.78, 1.0, 1.30)):
+        PALETTE[_k + _v] = q5(tuple(min(1., c * _m) for c in _BASE[_k]))
+
+
+def vary(name, c):
+    h = abs(math.sin(c[0] * 91.7 + c[1] * 53.3 + c[2] * 37.9) * 43758.5453)
+    return name + 'abc'[int(h % 3)]
 
 
 # ---------------------------------------------------------------------------- skeleton
 
+# where the old head's pivot sits in the source's units, and where it goes (metres)
+HEAD_OLD = A((0.0, 2.04, 0.04))
+HEAD_NEW = A((0.0, 0.318, 0.200))
+HEAD_K = 0.185
+
+
+EAR_OLD = (.46, 2.16, -.02)         # the ears sit lower than the sheet's, so they show under the hat's brim
+
+
+def carry(p):
+    """A point of the source head -> its place on the quadruped."""
+    return (A(p, float) - HEAD_OLD) * HEAD_K + HEAD_NEW
+
+
 def skeleton(m):
     m.bone('root', None, (0, 0, 0))
-    m.bone('hips', 'root', (0, .62, 0))
-    m.bone('spine', 'hips', (0, 1.05, 0))
-    m.bone('chest', 'spine', (0, 1.38, 0))
-    m.bone('head', 'chest', (0, 1.68, .04))
-    m.bone('hat', 'head', (0, 2.47, -.04))
-    m.bone('hat_tip', 'hat', (0, 2.82, -.19))
+    m.bone('hips', 'root', (0, .20, -.12))
+    m.bone('spine', 'hips', (0, .23, -.02))
+    m.bone('chest', 'spine', (0, .255, .09))
+    m.bone('head', 'chest', (0, .285, .15))
+    m.bone('hat', 'head', (0, .408, .20))
+    m.bone('hat_tip', 'hat', (0, .56, .19))
     for s, d in ((1, '.L'), (-1, '.R')):
-        m.bone('ear' + d, 'head', (s * .44, 2.31, -.03))
-        top = s > 0  # the left forearm lies over the right one
-        m.bone('upper_arm' + d, 'chest', (s * .40, 1.56, -.02))
-        m.bone('forearm' + d, 'upper_arm' + d, (s * .46, 1.30 - (0 if top else .02), .12 - (0 if top else .01)))
-        m.bone('hand' + d, 'forearm' + d, (-s * .40, 1.44 - (0 if top else .04), .30 - (0 if top else .05)))
-        m.bone('leg' + d, 'hips', (s * .27, .55, .03))
-        m.bone('foot' + d, 'leg' + d, (s * .28, .12, .06))
-    m.bone('tail1', 'hips', (0, .78, -.40))
-    m.bone('tail2', 'tail1', (0, .48, -.95))
-    m.bone('tail3', 'tail2', (0, .33, -1.40))
+        m.bone('ear' + d, 'head', carry((s * EAR_OLD[0], EAR_OLD[1], EAR_OLD[2])))
+        m.bone('upper_arm' + d, 'chest', (s * .09, .22, .09))
+        m.bone('forearm' + d, 'upper_arm' + d, (s * .095, .135, .10))
+        m.bone('hand' + d, 'forearm' + d, (s * .095, .055, .125))
+        m.bone('leg' + d, 'hips', (s * .095, .185, -.14))
+        m.bone('foot' + d, 'leg' + d, (s * .100, .07, -.12))
+    m.bone('tail1', 'hips', (0, .195, -.20))
+    m.bone('tail2', 'tail1', (0, .18, -.36))
+    m.bone('tail3', 'tail2', (0, .14, -.48))
 
 
 # ---------------------------------------------------------------------------- body
 
 def body(m):
-    R = [(0.30, .44, .40, -.05), (0.42, .57, .52, -.05), (0.60, .635, .59, -.06), (0.84, .645, .62, -.06),
-         (1.10, .62, .59, -.09), (1.35, .58, .52, -.12), (1.55, .50, .48, -.12), (1.70, .38, .40, -.08),
-         (1.80, .20, .24, -.04)]
-    g = loft([hring(y, rx, rz, cz, N=12, e=2.2) for y, rx, rz, cz in R], cap=(.08, .04))
-    g['V'] = jitter(g['V'], .018)
+    path = [(0, .185, -.190), (0, .208, -.110), (0, .232, -.020), (0, .255, .070), (0, .270, .140)]
+    g = tube(path, [.070, .112, .127, .118, .085], N=10, ratio=.93, cap=(.02, .03))
+    g['V'] = jitter(g['V'], .006, 1)
     V = g['V']
-    W = m.blend(V[:, 1], [(.55, 'hips'), (.95, 'spine'), (1.30, 'spine'), (1.55, 'chest')])
-    # the lower body follows the legs (stubby legs live inside the pear)
-    a = smooth((.62 - V[:, 1]) / .42) * np.clip(np.abs(V[:, 0]) / .22, 0, 1) * .85
-    leg = np.where(V[:, 0] >= 0, m.ix['leg.L'], m.ix['leg.R'])
-    W *= (1 - a)[:, None]
-    W[np.arange(len(V)), leg] += a
-
-    def mat(c, n):
-        if n[2] > .35 and abs(c[0]) < .40 and .22 < c[1] < 1.22:
-            return 'belly'
-        return 'fur'
-    m.add(g, mat, W)
+    W = m.blend(V[:, 2], [(-.16, 'hips'), (-.03, 'spine'), (.10, 'chest')])
+    m.add(g, lambda c, n: vary('belly' if n[1] < -.45 else 'fur', c), W)
 
 
 def legs(m):
+    """Front legs on the arm bones, hind legs on the leg bones; short, dark, planted."""
     for s, d in ((1, '.L'), (-1, '.R')):
-        shin = tube([(s * .25, .52, .0), (s * .27, .30, .03), (s * .28, .10, .05)], [.16, .15, .125], N=8,
-                    cap=(.0, .02))
-        shin['V'] = jitter(shin['V'], .008, 1)
-        m.add(shin, 'fur', m.blend(shin['V'][:, 1], [(.14, 'foot' + d), (.26, 'leg' + d)]))
-        rows = [(-.10, .12, .075, .08), (.04, .16, .095, .09), (.20, .15, .085, .08), (.33, .11, .055, .055)]
-        ft = loft([glb.ring((s * .28, cy, .06 + z), (rx, 0, 0), (0, ry, 0), 8, 2.4) for z, rx, ry, cy in rows],
-                  cap=(.03, .05))
-        ft['V'] = jitter(ft['V'], .008, 2)
-        glb.transform(ft, glb.rot_axis((0, 1, 0), s * 12), piv=(s * .28, 0, .06))
-        m.add(ft, 'fur_d', 'foot' + d)
-
-
-def arms(m):
-    """Crossed in the bind pose, left forearm over the right, paws tucked at the far arm."""
-    for s, d in ((1, '.L'), (-1, '.R')):
-        sh, el = m.head('upper_arm' + d), m.head('forearm' + d)
-        up = tube([sh + (s * -.04, .04, 0), sh, (sh + el) / 2 + (s * .03, 0, 0), el],
-                  [.13, .155, .145, .13], N=8, cap=(.02, .02))
-        up['V'] = jitter(up['V'], .008, 3)
-        t = np.clip(((up['V'] - sh) @ nz(el - sh)) / np.linalg.norm(el - sh), 0, 1)
-        m.add(up, 'fur', m.blend(t, [(0.0, 'chest'), (.25, 'upper_arm' + d), (.85, 'upper_arm' + d), (1.1, 'forearm' + d)]))
-        top = s > 0  # the left forearm lies on top (further forward)
-        dz = 0 if top else -.05
-        dy = 0 if top else -.04
-        ctrl = [el, (s * .36, 1.34 + dy, .36 + dz), (s * .10, 1.38 + dy, .46 + dz), (-s * .20, 1.42 + dy, .44 + dz),
-                m.head('hand' + d)]
-        path = catmull(ctrl, 2)
-        fa = tube(path, [.13, .125, .12, .115, .11], N=8, cap=(.02, .03))
-        fa['V'] = jitter(fa['V'], .008, 4)
-        L = np.cumsum([0] + [np.linalg.norm(path[i + 1] - path[i]) for i in range(len(path) - 1)])
-        # arc-length parameter for each vertex: nearest path sample
-        idx = np.argmin(((fa['V'][:, None, :] - path[None]) ** 2).sum(2), 1)
-        tt = L[idx] / L[-1]
-        m.add(fa, 'fur', m.blend(tt, [(0.0, 'upper_arm' + d), (.12, 'forearm' + d), (.80, 'forearm' + d), (.98, 'hand' + d)]))
-        wr = m.head('hand' + d)
-        paw_c = wr + A((-s * .09, .0, -.10))
-        paw = glb.blob(paw_c, (.095, .085, .11), nz(paw_c - wr) * A((1, .2, 1)), N=7, k=2)
-        paw['V'] = jitter(paw['V'], .006, 5)
+        fl = tube([(s * .092, .24, .09), (s * .095, .135, .10), (s * .095, .065, .125)], [.056, .046, .038], N=7, cap=(.01, .02))
+        fl['V'] = jitter(fl['V'], .004, 2)
+        W = m.blend(-fl['V'][:, 1], [(-.23, 'upper_arm' + d), (-.16, 'upper_arm' + d), (-.11, 'forearm' + d), (-.075, 'hand' + d)])
+        m.add(fl, 'fur_d', W)
+        paw = glb.blob((s * .095, .028, .140), (.050, .064, .031), (0, 0, 1), N=7, k=2)
+        paw['V'] = jitter(paw['V'], .003, 3)
         m.add(paw, 'fur_d', 'hand' + d)
-        # three blunt fingers curling over the far upper arm (only the top paw shows them)
-        if top:
-            for k in (-1, 0, 1):
-                a0 = paw_c + A((-s * .03, .05 * k, -.02))
-                a1 = a0 + A((-s * .06, .01 * k, -.07))
-                m.add(tube([a0, a1], [.035, .028], N=5, cap=(.005, .015)), 'fur_d', 'hand' + d)
+        thigh = glb.blob((s * .105, .145, -.125), (.074, .090, .097), (0, 1, -.15), N=8, k=3)
+        thigh['V'] = jitter(thigh['V'], .005, 4)
+        m.add(thigh, lambda c, n: vary('fur', c), 'leg' + d)
+        shin = tube([(s * .102, .11, -.12), (s * .100, .06, -.125)], [.050, .040], N=6, cap=(.0, .01))
+        m.add(shin, 'fur_d', m.blend(-shin['V'][:, 1], [(-.11, 'leg' + d), (-.07, 'foot' + d)]))
+        foot = glb.blob((s * .100, .030, -.095), (.048, .088, .030), (0, 0, 1), N=7, k=2)
+        foot['V'] = jitter(foot['V'], .003, 5)
+        m.add(foot, 'fur_d', 'foot' + d)
 
 
 def tail(m):
-    ctrl = [(0, .80, -.44), (0, .52, -.74), (0, .35, -1.02), (0, .30, -1.30), (0, .29, -1.56), (0, .31, -1.78)]
+    """Fat and ringed, out behind and curling down: dark at the root and the tip, cream between."""
+    ctrl = [(0, .196, -.20), (.008, .192, -.29), (.028, .178, -.385), (.055, .155, -.47), (.080, .128, -.535), (.100, .106, -.575)]
     path = catmull(ctrl, 2)
-    r = [.17, .24, .28, .295, .29, .27, .24, .20, .155, .105, .065]
-    g = tube(path, r, N=8, cap=(.03, .08), up=(1, 0, 0))
-    g['V'] = jitter(g['V'], .012, 6)
+    r = [.052, .078, .096, .100, .092, .072, .042]
+    g = tube(path, r, N=8, cap=(.02, .035), up=(1, 0, 0))
+    g['V'] = jitter(g['V'], .005, 6)
     nring = len(path)
-    # bands: light at the root, dark tip; one band per ring segment
-    bands = ['fur', 'mask', 'cream', 'mask', 'cream', 'mask', 'cream', 'mask', 'cream', 'mask', 'mask']
+    bands = ['mask', 'cream', 'mask', 'cream', 'mask', 'cream', 'mask', 'cream', 'mask', 'mask', 'mask']
     mats = [bands[min(k, len(bands) - 1)] for k in range(nring)]
-    rid = np.arange(nring)
-    W = m.blend(np.concatenate([np.repeat(rid, 8), [0, nring - 1]]).astype(float),
-                [(0, 'hips'), (1.2, 'tail1'), (3.8, 'tail2'), (6.5, 'tail3')])
+    W = m.blend(-g['V'][:, 2], [(.20, 'hips'), (.28, 'tail1'), (.38, 'tail2'), (.48, 'tail3')])
     m.add(g, mats, W)
 
 
 # ---------------------------------------------------------------------------- head
+# The head is the concept sheet's (a two-lobed bandit mask, cream muzzle, pale half-lidded eyes), built in the
+# source's own units on a throwaway model, then scaled and carried onto the quadruped's neck (`carry`).
 
 HEAD_R = [(1.66, .30, .32, .05), (1.76, .47, .43, .06), (1.90, .55, .48, .04), (2.04, .56, .48, .02),
           (2.18, .53, .47, .0), (2.31, .47, .43, -.02), (2.42, .35, .34, -.04)]
@@ -263,39 +245,58 @@ def head(m):
             m.add(eg, 'ear_in' if inner else (lambda c, n: 'fur_d' if n[2] < -.3 else 'fur'), 'ear' + d)
 
 
+
+
+def head_on_neck(m):
+    """Build the source head in its own units, then scale it onto the quadruped's neck."""
+    old = glb.Model('source_head')
+    old.bone('root', None, (0, 0, 0))
+    old.bone('head', 'root', (0, 1.68, .04))
+    for s, d in ((1, '.L'), (-1, '.R')):
+        old.bone('ear' + d, 'head', (s * EAR_OLD[0], EAR_OLD[1], EAR_OLD[2]))
+    head(old)
+    nb = len(m.bones)
+    for p in old.parts:
+        W = np.zeros((len(p['V']), nb))
+        for name, oi in old.ix.items():
+            if name in m.ix:
+                W[:, m.ix[name]] += p['W'][:, oi]
+        g = dict(V=(A(p['V'], float) - HEAD_OLD) * HEAD_K + HEAD_NEW, F=p['F'],
+                 ax=(A(p['ax'], float) - HEAD_OLD) * HEAD_K + HEAD_NEW, fb=p.get('fb'))
+        m.add(g, p['mat'], W, inv=p['inv'], orient=p['orient'])
+
+
+# ---------------------------------------------------------------------------- hat
+
+HAT_BASE_Y = .408
+
+
 def hat(m):
-    """Small cone, narrow brim, the top third bent backwards (crooked), pale stars."""
-    path = catmull([(0, 2.47, -.04), (0, 2.63, -.08), (0, 2.77, -.15), (0, 2.85, -.25), (0, 2.90, -.36),
-                    (0, 2.99, -.44)], 1)
-    cone = tube(path, [.205, .16, .12, .085, .06, .042], N=10, cap=(.0, .07), up=(1, 0, 0))
-    cone['V'] = jitter(cone['V'], .006, 10)
-    W = m.blend(cone['V'][:, 1] - cone['V'][:, 2], [(2.80, 'hat'), (3.0, 'hat_tip')])
-    m.add(cone, lambda c, n: 'hat_d' if c[1] < 2.50 else 'hat', W)
-    brim = loft([glb.ring((0, y, -.04), (r, 0, 0), (0, 0, r), 12) for y, r in
-                 ((2.485, .21), (2.47, .31), (2.445, .32), (2.43, .20))], cap=(.02, .02))
-    m.add(brim, lambda c, n: 'hat' if n[1] > 0 else 'hat_d', 'hat')
-    # pale stars and dots on a spiral
+    """Tall straight cone on a small brim, a floppy tip, a few small yellow marks (the painted hat)."""
+    path = A([(0, HAT_BASE_Y + .004, .200), (0, .49, .200), (0, .565, .198), (0, .630, .193), (0, .683, .186)])
+    cone = tube(path, [.090, .072, .052, .030, .009], N=12, cap=(.0, .02), up=(1, 0, 0))
+    cone['V'] = jitter(cone['V'], .0025, 10)
+    W = m.blend(cone['V'][:, 1], [(.52, 'hat'), (.65, 'hat_tip')])
+    m.add(cone, lambda c, n: vary('hat', c), W)
+    brim = loft([glb.ring((0, y, .200), (r, 0, 0), (0, 0, r), 12) for y, r in
+                 ((HAT_BASE_Y + .020, .090), (HAT_BASE_Y + .006, .122), (HAT_BASE_Y - .004, .130), (HAT_BASE_Y - .010, .096))],
+                cap=(.008, .008))
+    brim['V'] = jitter(brim['V'], .003, 11)
+    m.add(brim, lambda c, n: 'hat_d' if n[1] < 0 else vary('hat', c), 'hat')
+    # marks on a spiral (small stars and diamonds in the same yellow as the painting)
     surf = glb.Surface([cone])
     for i in range(7):
-        y = 2.55 + .055 * i
+        y = .45 + .031 * i
         th = 1.0 + i * 2.35
-        if y > 2.80:
-            continue
 
         def mp(u, v, th=th):
-            return (0, v, float(np.interp(v, path[:, 1], path[:, 2]))), (math.sin(th + u / .12), 0, math.cos(th + u / .12))
-        r = .028 - .002 * i
-        if i % 3 == 1:  # crescent
-            pts = [(r * math.cos(a), y + r * math.sin(a)) for a in np.linspace(.5, 2 * math.pi - .5, 6)]
-            pts += [(.45 * r + .6 * r * math.cos(a), y + .6 * r * math.sin(a)) for a in np.linspace(2 * math.pi - .9, .9, 5)]
-            F = [(k, k + 1, 11 - k - 1) for k in range(5)] + [(k + 1, 11 - k - 2, 11 - k - 1) for k in range(4)]
-            P = pts
-        else:          # four-point star
-            P = [(0, y)] + [((r if j % 2 == 0 else r * .4) * math.cos(j * math.pi / 4),
-                             y + (r if j % 2 == 0 else r * .4) * math.sin(j * math.pi / 4)) for j in range(8)]
-            F = [(0, 1 + j, 1 + (j + 1) % 8) for j in range(8)]
-        V = surf.project(P, mp, .010)
-        m.add(dict(V=V, F=A(F), ax=A([(0, y, -.03)])), 'star', m.blend(V[:, 1] - V[:, 2], [(2.80, 'hat'), (3.0, 'hat_tip')]))
+            return (0, v, float(np.interp(v, path[:, 1], path[:, 2]))), (math.sin(th + u / .05), 0, math.cos(th + u / .05))
+        r = .0125 - .0008 * i
+        P = [(0, y)] + [((r if j % 2 == 0 else r * .42) * math.cos(j * math.pi / 4),
+                         y + (r if j % 2 == 0 else r * .42) * math.sin(j * math.pi / 4)) for j in range(8)]
+        F = [(0, 1 + j, 1 + (j + 1) % 8) for j in range(8)]
+        V = surf.project(P, mp, .004)
+        m.add(dict(V=V, F=A(F), ax=A([(0, y, .2)])), 'star', m.blend(V[:, 1], [(.52, 'hat'), (.65, 'hat_tip')]))
 
 
 def build():
@@ -303,60 +304,66 @@ def build():
     skeleton(m)
     body(m)
     legs(m)
-    arms(m)
     tail(m)
-    head(m)
+    head_on_neck(m)
     hat(m)
     m.finish(HEIGHT)
     return m
 
 
 # ---------------------------------------------------------------------------- animation
+# Rotations are degrees about the rest-pose world axes (x: pitch, + swings a hanging leg backwards;
+# y: yaw, + turns toward +X, the raccoon's left; z: roll).
 
 def idle(t):
-    br = wave(t, 4.0)            # one slow breath per loop
+    br = wave(t, 4.0)
     br2 = wave(t, 2.0, .2)
     twitch = math.exp(-((t - 2.7) / .07) ** 2)
     return {
-        'spine': (1.2 * br, 0, 0),
-        'chest': (.8 * br2, 0, .6 * wave(t, 4.0, .3)),
-        'head': (-1.0 * br + 1.2 * wave(t, 4.0, .5), 4 * wave(t, 4.0, .1), 1.5 * wave(t, 4.0, .35)),
+        'hips': dict(r=(.4 * br, 0, 0), t=(0, .002 * br2, 0)),
+        'spine': (1.0 * br, 0, 0),
+        'chest': (.8 * br2, 0, .5 * wave(t, 4.0, .3)),
+        'head': (-1.2 * br + 1.5 * wave(t, 4.0, .5), 5 * wave(t, 4.0, .1), 1.5 * wave(t, 4.0, .35)),
         'ear.L': (0, 0, -14 * twitch),
         'ear.R': (0, 0, 2 * br2),
-        'upper_arm.L': (-.8 * br, 0, 0),
-        'upper_arm.R': (-.8 * br, 0, 0),
-        'tail1': (0, 5 * wave(t, 4.0), 0),
-        'tail2': (2 * wave(t, 2.0), 7 * wave(t, 4.0, .12), 0),
-        'tail3': (3 * wave(t, 2.0, .1), 10 * wave(t, 4.0, .24), 0),
-        'hat_tip': (2 * wave(t, 4.0, .25), 0, 2.5 * wave(t, 4.0, .4)),
+        'tail1': (0, 6 * wave(t, 4.0), 0),
+        'tail2': (2 * wave(t, 2.0), 8 * wave(t, 4.0, .12), 0),
+        'tail3': (3 * wave(t, 2.0, .1), 11 * wave(t, 4.0, .24), 0),
+        'hat_tip': (2.5 * wave(t, 4.0, .25), 0, 3 * wave(t, 4.0, .4)),
     }
 
 
 def walk(t, T=0.9):
-    """In place: a stiff-armed waddle (arms stay crossed), two steps per loop."""
+    """In place: a trot, diagonal pairs together, the body rocking, the tail swinging, the hat tip lagging."""
     s = wave(t, T)
     c2 = math.cos(4 * math.pi * t / T)
     lift = lambda ph: max(0.0, wave(t, T, ph)) ** 1.5  # noqa: E731
     return {
-        'hips': dict(r=(0, 4 * s, 5 * s), t=(0, .045 * c2, 0)),
-        'leg.L': (-26 * s, 0, 0),
-        'leg.R': (26 * s, 0, 0),
-        'foot.L': (18 * s - 22 * lift(.0), 0, 0),
-        'foot.R': (-18 * s - 22 * lift(.5), 0, 0),
-        'spine': (3 + 1.5 * c2, -3 * s, -3.5 * s),
-        'chest': (0, -2 * s, -1.5 * s),
-        'head': (-2 - 2 * c2, 2 * s, 1.5 * s),
-        'tail1': (4 * c2, -12 * s, 0),
-        'tail2': (0, -8 * wave(t, T, .1), 0),
-        'tail3': (0, -10 * wave(t, T, .2), 0),
-        'hat_tip': (-4 * c2, 0, 6 * wave(t, T, .15)),
+        'hips': dict(r=(0, 5 * s, 3.5 * s), t=(0, .012 * c2, 0)),
+        'spine': (2 + 1.2 * c2, -4 * s, -2.5 * s),
+        'chest': (0, -3 * s, -1.5 * s),
+        'head': (-2 - 2 * c2, 3 * s, 1.5 * s),
+        'upper_arm.L': (-24 * s, 0, 0),
+        'upper_arm.R': (24 * s, 0, 0),
+        'forearm.L': (-10 * lift(.0) - 4 * s, 0, 0),
+        'forearm.R': (-10 * lift(.5) + 4 * s, 0, 0),
+        'hand.L': (10 * lift(.0), 0, 0),
+        'hand.R': (10 * lift(.5), 0, 0),
+        'leg.L': (24 * s, 0, 0),
+        'leg.R': (-24 * s, 0, 0),
+        'foot.L': (-16 * s + 22 * lift(.5), 0, 0),
+        'foot.R': (16 * s + 22 * lift(.0), 0, 0),
+        'tail1': (3 * c2, -14 * s, 0),
+        'tail2': (0, -10 * wave(t, T, .1), 0),
+        'tail3': (0, -12 * wave(t, T, .2), 0),
+        'hat_tip': (-5 * c2, 0, 7 * wave(t, T, .15)),
         'ear.L': (0, 0, -3 * c2),
         'ear.R': (0, 0, 3 * c2),
     }
 
 
 def talk(t, T=2.4):
-    """Head beats and the top (left) forearm opening forward in a 'look here' gesture."""
+    """Head beats, and the left front paw lifted in a 'look here' gesture."""
     env = smooth((t - .15) / .35) * (1 - smooth((t - 1.75) / .45))
     beat = wave(t, .6)
     beat2 = wave(t, .4, .1)
@@ -364,12 +371,13 @@ def talk(t, T=2.4):
         'head': (4 * beat * (.4 + .6 * env) - 2 * env, 5 * wave(t, 2.4, .1), 4 * wave(t, 1.2) * env),
         'chest': (2 * env, 3 * env, 0),
         'spine': (1.5 * beat2 * env, 0, 0),
-        'upper_arm.L': (-14 * env, 0, -6 * env),
-        'forearm.L': (8 * env * beat2, 72 * env, 0),
-        'hand.L': (-20 * env, 0, 25 * env + 8 * beat * env),
+        'upper_arm.L': (-52 * env, 0, -8 * env),
+        'forearm.L': (-34 * env + 8 * env * beat2, 0, 0),
+        'hand.L': (-15 * env + 8 * beat * env, 0, 0),
         'hat_tip': (3 * beat, 0, 3 * beat2),
         'ear.L': (0, 0, -4 * env),
         'ear.R': (0, 0, 4 * env),
+        'tail2': (0, 5 * wave(t, 2.4), 0),
     }
 
 
@@ -404,7 +412,7 @@ def export(out_dir):
     info = glb.write_glb(path, m, flat, PALETTE, clips(), generator='tools/characters/raccoon.py')
     glb.write_import(path, [c.name for c in clips() if c.loop])
     lo, hi = m.bbox()
-    info.update(path=path, height=float(hi[1] - lo[1]), size=(hi - lo).round(3).tolist())
+    info.update(path=path, height=float(hi[1] - lo[1]), size=(hi - lo).round(3).tolist(), scale=m.scale)
     return info
 
 
@@ -414,7 +422,7 @@ def main(argv=None):
     ap.add_argument('--preview', help='write six-view and animation strips here')
     a = ap.parse_args(argv)
     info = export(a.out)
-    print('raccoon: %(triangles)d tris, %(bones)d bones, %(materials)d materials, %(height).3f m -> %(path)s' % info)
+    print('raccoon: %(triangles)d tris, %(bones)d bones, %(materials)d materials, %(height).3f m (scale %(scale).3f) -> %(path)s' % info)
     assert info['triangles'] <= 6000, 'over the 6k triangle budget'
     if a.preview:
         import glb_preview as gp
