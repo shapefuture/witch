@@ -58,7 +58,8 @@ def rays(xs, ys, f, pitch):
     return dx[..., None] * right + dy[..., None] * up + fwd
 
 
-def run_depth(img):
+def run_depth(img, size=None):
+    """Relative inverse depth of `img`, resized to `size` (default: the 1280x720 plate frame)."""
     import onnxruntime as ort
     if not MODEL_CACHE.exists():
         MODEL_CACHE.parent.mkdir(parents=True, exist_ok=True)
@@ -71,7 +72,7 @@ def run_depth(img):
     x = (x - np.array([0.485, 0.456, 0.406])) / np.array([0.229, 0.224, 0.225])
     x = x.transpose(2, 0, 1)[None].astype(np.float32)
     disparity = session.run(None, {"pixel_values": x})[0][0]
-    return np.asarray(Image.fromarray(disparity.astype(np.float32)).resize((W, H), Image.BILINEAR))
+    return np.asarray(Image.fromarray(disparity.astype(np.float32)).resize(size or (W, H), Image.BILINEAR))
 
 
 def calibrate(disparity, f, pitch):

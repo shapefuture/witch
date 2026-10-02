@@ -1,0 +1,56 @@
+{
+ "model": "alibaba/qwen-image-3/edit",
+ "arguments": {
+  "prompt": "This is a painting of a faceted low-poly papercraft library hall in olive, ochre and purple with one shaft of warm light, shown at the same framing as given. The outer band of the picture, all around the edges, is out of focus and smeared: repaint that whole outer band as crisp, sharp, fully detailed painting in exactly the same faceted style, lighting and colours as the middle, following the lines and shapes already there (shelves with scrolls and boxes, stone vaults, spiral carpet and floor continuing past the middle of the picture). Do not zoom or crop: keep the same composition, framing and aspect ratio, and keep the sharp middle of the picture exactly as it is. No frame, no border, no text.",
+  "aspect_ratio": "16:9",
+  "resolution": "2k",
+  "seed": 7,
+  "negative_prompt": "frame, picture frame, border line, vignette, white border, black bar, text, letters, watermark, people, characters, blurry, photorealistic, smooth",
+  "prompt_extend": false,
+  "enable_thinking": false,
+  "image_urls": [
+   "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/4fc7d95e-18c3-4a0d-bd08-075249933b02.png"
+  ]
+ },
+ "estimate": {
+  "type": "estimate",
+  "credits": "1.200",
+  "usd": "0.075",
+  "discount": null
+ },
+ "idempotency_key": "1b296688-3426-452e-bd75-cdd60f9a32b8",
+ "created_at": "2026-10-02T00:20:55+00:00",
+ "request_id": "0a3bd72d-1609-4b08-b583-8a6dac1bbd12",
+ "status_url": "https://platform.higgsfield.ai/requests/0a3bd72d-1609-4b08-b583-8a6dac1bbd12/status",
+ "cancel_url": "https://platform.higgsfield.ai/requests/0a3bd72d-1609-4b08-b583-8a6dac1bbd12/cancel",
+ "status": "completed",
+ "correlation_id": "1641cd1f9cca470499be745f45f0c4fc",
+ "result": {
+  "status": "completed",
+  "request_id": "0a3bd72d-1609-4b08-b583-8a6dac1bbd12",
+  "status_url": "https://platform.higgsfield.ai/requests/0a3bd72d-1609-4b08-b583-8a6dac1bbd12/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/0a3bd72d-1609-4b08-b583-8a6dac1bbd12/cancel",
+  "images": [
+   {
+    "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/16bfcfd9-ef52-4462-9f50-7d97874202df.png"
+   }
+  ]
+ },
+ "finished_at": "2026-10-02T00:21:36+00:00",
+ "files": [
+  {
+   "kind": "image",
+   "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/16bfcfd9-ef52-4462-9f50-7d97874202df.png",
+   "path": "image_0.png",
+   "sha256": "675c8ef978bea9f8ffea4b47f45f487cf2651007561e4a41bba9d72975564fdf",
+   "bytes": 2385916
+  }
+ ],
+ "recipe": [
+  "python tools/painted/extend_plate.py canvas --plate assets/painted/hall_clean/plate.png --out DIR --fill mirror --blur 2,6   (uploaded as image_urls[0])",
+  "this job (alibaba/qwen-image-3/edit, 16:9, 2k, seed 7, prompt PROMPT_SHARPEN in extend_plate.py)",
+  "python tools/painted/extend_plate.py merge --plate assets/painted/hall_clean/plate.png --generated image_0.png --out DIR   (feather 4)",
+  "python tools/painted/extend_plate.py paste --plate assets/painted/hall_clean/plate.png --extended plate_ext.png --centre plate_empty.png --out DIR",
+  "python tools/painted/extend_room.py --room assets/painted/hall_clean --plate-ext plate_ext.png --plate-empty-ext plate_empty_ext.png"
+ ]
+}
