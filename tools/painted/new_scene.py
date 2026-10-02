@@ -45,8 +45,18 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 import build_painted as bp  # noqa: E402
+import scene_layout as sl  # noqa: E402
 
-MODEL = "xai/grok-imagine-image-2.0"
+# The generators (docs/art/model_comparison.md: grok and qwen led the blind comparison). With references the `edit` model takes them as
+# images; with none the `text` model is used.
+MODELS = {
+    "grok": dict(edit="xai/grok-imagine-image-2.0", text="xai/grok-imagine-image-2.0",
+                 args=dict(resolution="2k", quality="medium", aspect_ratio="16:9")),
+    "qwen": dict(edit="alibaba/qwen-image-3/edit", text="alibaba/qwen-image-3/text-to-image",
+                 args=dict(resolution="2k", aspect_ratio="16:9", prompt_extend=True)),    # (this account only accepts prompt_extend true)
+}
+GEN = "grok"
+MODEL = MODELS["grok"]["edit"]
 SCENES = HERE / "scenes"
 ASK_HORIZON = 0.62
 DEFAULT_PALETTE = "olive, ochre and purple, warm dusty low-key light"
@@ -104,10 +114,19 @@ def resolve(kind_name, brief=None, **overrides):
     return spec
 
 
-def compose_prompt(spec, scene_prompt, style="hall", brief=None):
+def compose_prompt(spec, scene_prompt, style="hall", brief=None, layout=False):
     """The whole prompt: for `hall` the scene, the kind's composition and palette and the house style; for any style with a
     `template` (ps1: the game draft's master prompt) that template filled from the style's blocks and the brief's own
     `styles.<name>` entry (prompt, title, ui, motifs, palette)."""
+    text = _compose_prompt(spec, scene_prompt, style, brief)
+    if not layout:
+        return text
+    second = (" The second reference image shows the target look (palette, rendering, mood) only: match it, but do not copy its objects "
+              "or composition.") if load_styles()[style].get("refs") else ""
+    return sl.NOTE + second.strip() + " " + text
+
+
+def _compose_prompt(spec, scene_prompt, style, brief):
     pct = int(round(spec["horizon"] * 100))
     st = load_styles()[style]
     mine = ((brief or {}).get("styles") or {}).get(style, {})
@@ -135,13 +154,15 @@ def compose_variant_prompt(change):
 def generate(prompt, refs, max_usd, out_dir):
     """Returns the job's folder (no references: a text-only generation). `prompt` is complete (compose_prompt / compose_variant_prompt)."""
     out_dir.mkdir(parents=True, exist_ok=True)
-    args = {"prompt": prompt.strip(), "aspect_ratio": "16:9", "resolution": "2k", "quality": "medium"}
+    gen = MODELS[GEN]
+    model = gen["edit"] if refs else gen["text"]
+    args = dict(gen["args"], prompt=prompt.strip())
     args_file = out_dir / "args.json"
     args_file.write_text(json.dumps(args, indent=2) + "\n", encoding="utf-8")
-    cmd = [sys.executable, str(ROOT / "tools/higgsfield/hf.py"), "run", MODEL, "--args-file", str(args_file), "--max-usd", str(max_usd)]
+    cmd = [sys.executable, str(ROOT / "tools/higgsfield/hf.py"), "run", model, "--args-file", str(args_file), "--max-usd", str(max_usd)]
     for ref in refs:
         cmd += ["--upload", "image_urls=%s" % ref]
-    print("generating (%s, at most USD %.2f, %d references) ..." % (MODEL, max_usd, len(refs)))
+    print("generating (%s, at most USD %.2f, %d references) ..." % (model, max_usd, len(refs)))
     with open(ROOT / ".hf.lock", "w") as lock:       # one job at a time: the account's concurrency is 2
         try:
             import fcntl
@@ -376,7 +397,8 @@ def make(name, spec, picture, source_note, *, style="hall", horizon=None, floor_
     return report
 
 
-def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=None, refs=(), max_usd=0.20, godot=None, style="hall", **kw):
+def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=None, refs=(), max_usd=0.20, godot=None, style="hall",
+              layout=None, layout_only=False, **kw):
     """One scene (or one variant of one). Returns (report, cost in USD). A style other than `hall` builds into NAME_STYLE."""
     if style != "hall" and not variant:
         name = "%s_%s" % (name, style)
@@ -402,20 +424,41 @@ def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=N
             picture, cost = job / "image_0.png", job_cost(job)
             (ROOT / "assets/painted" / target).mkdir(parents=True, exist_ok=True)
             shutil.copy(job / "job.json", ROOT / "assets/painted" / target / "job_room.json")
-            note = "%s: variant %r of %s: %s (job_room.json)" % (MODEL, variant, name, brief["variants"][variant][:140])
+            note = "%s: variant %r of %s: %s (job_room.json)" % (MODELS[GEN]["edit"], variant, name, brief["variants"][variant][:140])
         return make(target, spec, picture, note, style=style, godot=godot, brief=brief, **kw), cost
     spec = resolve(kind or (brief or {}).get("kind", "interior"), brief)
     text = prompt or (brief or {}).get("prompt")
+    guide, layout_data = None, None
+    if layout is not False:                       # False: --no-layout. None: the brief's layout, if it has one. A path: that file.
+        if layout and str(layout).lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
+            guide = Path(layout)                  # a guide you drew yourself
+        else:
+            layout_data = json.loads(Path(layout).read_text(encoding="utf-8")) if layout else (brief or {}).get("layout")
+            if layout_data:
+                layout_data = sl.with_defaults(layout_data, spec)
+                scratch.mkdir(parents=True, exist_ok=True)
+                guide = scratch / "layout.png"
+                sl.render(layout_data).save(guide)
+    if guide:
+        print("layout guide: %s%s" % (guide, " (%d elements)" % len(layout_data["elements"]) if layout_data else ""))
+    if layout_only:
+        return {"guide": str(guide)}, 0.0
     if image:
         picture, note = Path(image), "built from %s" % Path(image).name
     else:
         if not text:
             sys.exit("give a brief id, --prompt, or --image")
-        job = generate(compose_prompt(spec, text, style, brief), [Path(r) for r in refs] or style_refs(style), max_usd, scratch)
+        send = ([guide] if guide else []) + ([Path(r) for r in refs] or style_refs(style))
+        job = generate(compose_prompt(spec, text, style, brief, layout=bool(guide)), send, max_usd, scratch)
         picture, cost = job / "image_0.png", job_cost(job)
+        if layout_data:                          # what was asked for, and the shapes over what came back
+            base_dir.mkdir(parents=True, exist_ok=True)
+            (base_dir / "layout.json").write_text(json.dumps(layout_data, indent=1) + "\n", encoding="utf-8")
+            sl.check_image(layout_data, Image.open(picture)).save(scratch / "layout_check.png")
+            print("layout check: %s" % (scratch / "layout_check.png"))
         base_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy(job / "job.json", base_dir / "job_room.json")
-        note = "%s: %s (job_room.json)" % (MODEL, text.strip()[:160])
+        note = "%s: %s (job_room.json)" % (MODELS[GEN]["edit" if (guide or refs or style_refs(style)) else "text"], text.strip()[:160])
     return make(name, spec, picture, note, style=style, godot=godot, brief=brief, **kw), cost
 
 
@@ -429,10 +472,14 @@ def main(argv=None):
     ap.add_argument("--kind", help="a kind of scenes/kinds.json (default: the brief's)")
     ap.add_argument("--prompt", help="what the place is (the kind's composition and the house style are added)")
     ap.add_argument("--style", default="hall", help="a look of scenes/styles.json: hall (papercraft, default) or ps1 (the master prompt)")
+    ap.add_argument("--layout", help="a layout guide: a JSON of scene_layout.py, or your own PNG (default: the brief's `layout`, if it has one)")
+    ap.add_argument("--no-layout", action="store_true", help="ignore the brief's layout")
+    ap.add_argument("--layout-only", action="store_true", help="render the guide to build/rooms/NAME/layout.png and stop (free)")
     ap.add_argument("--variant", help="a named change of the brief's scene, same camera (an edit of the base plate)")
     ap.add_argument("--image", help="build from this picture instead of generating one")
     ap.add_argument("--ref", action="append", default=[], help="reference images (default: the hall plate, for the style)")
     ap.add_argument("--max-usd", type=float, default=0.20)
+    ap.add_argument("--model", choices=sorted(MODELS), default="grok", help="the generator (see docs/art/model_comparison.md)")
     ap.add_argument("--horizon", type=float, help="override the horizon (fraction of the height)")
     ap.add_argument("--fit-horizon", action="store_true", help="search for the horizon with the ground fit (weak, see above)")
     ap.add_argument("--floor-box", type=int, nargs=4, metavar=("X0", "Y0", "X1", "Y1"))
@@ -441,6 +488,8 @@ def main(argv=None):
     ap.add_argument("--no-life", action="store_true")
     ap.add_argument("--godot", default=os.environ.get("GODOT"), help="Godot binary for the capture (default: $GODOT)")
     args = ap.parse_args(argv)
+    global GEN
+    GEN = args.model
 
     if args.list:
         kinds = load_kinds()
@@ -452,7 +501,7 @@ def main(argv=None):
         print("kinds: " + ", ".join(sorted(kinds)) + "   (* = variant built)")
         return 0
 
-    common = dict(godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
+    common = dict(layout=False if args.no_layout else args.layout, layout_only=args.layout_only, godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
     if args.all:
         spent, built = 0.0, []
         suffix = "" if args.style == "hall" else "_" + args.style

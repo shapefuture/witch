@@ -9,6 +9,9 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_painted as bp  # noqa: E402
 import new_scene as nr  # noqa: E402
+import scene_layout as sl  # noqa: E402
+import layout_score as ls  # noqa: E402
+import compare_models as cm  # noqa: E402
 
 
 def synthetic_disparity(horizon, a=22.0, b=0.5):
@@ -70,7 +73,7 @@ def test_prompts_carry_the_hard_constraints():
 
 def test_the_ps1_master_prompt_fills_for_every_brief_and_keeps_its_laws():
     styles = nr.load_styles()
-    assert {"hall", "ps1"} <= set(styles) and styles["ps1"]["refs"] == [] and styles["ps1"]["frame"] == {"strength": 0.0}
+    assert {"hall", "ps1"} <= set(styles) and styles["ps1"]["refs"] == ["tools/painted/scenes/anchors/ps1.jpg"] and styles["ps1"]["frame"] == {"strength": 0.0}
     for b in nr.list_briefs():
         spec = nr.resolve(b["kind"], b)
         text = nr.compose_prompt(spec, b["prompt"], "ps1", b)
@@ -80,6 +83,53 @@ def test_the_ps1_master_prompt_fills_for_every_brief_and_keeps_its_laws():
             assert must in text, (b["id"], must)
     shop = nr.load_brief("shop")
     assert "Bigger Inside" in nr.compose_prompt(nr.resolve("interior", shop), shop["prompt"], "ps1", shop)
+
+
+LAYOUT = {"horizon": 0.6, "ground": [0.3, 0.7, 0.7, 0.98], "elements": [
+    {"label": "WINDOW: warm", "at": [0.7, 0.1, 0.9, 0.5], "shape": "ellipse", "layer": "mid"},
+    {"label": "COUNTER", "at": [0.05, 0.5, 0.4, 0.8], "layer": "fg"},
+    {"label": "STAIRS", "shape": "poly", "points": [[0.4, 0.6], [0.5, 0.6], [0.6, 0.2], [0.5, 0.2]], "layer": "bg"}]}
+
+
+def test_layout_validates_and_renders_a_grey_guide():
+    sl.validate(LAYOUT)
+    img = sl.render(LAYOUT, (480, 270))
+    assert img.size == (480, 270) and img.getpixel((2, 2)) == (255, 255, 255)
+    px = img.getpixel((int(0.8 * 480), int(0.3 * 270)))                       # inside the window: a grey, never a colour
+    assert px[0] == px[1] == px[2] and px[0] < 255, px
+    for bad in ({"elements": []}, {"elements": [{"label": "x", "at": [0.5, 0.5, 0.4, 0.6]}]},
+                {"elements": [{"label": "x", "at": [0, 0, 1, 1], "layer": "sky"}]}, {"elements": [{"label": "", "at": [0, 0, 1, 1]}]}):
+        try:
+            sl.validate(bad)
+        except ValueError:
+            continue
+        raise AssertionError("accepted %r" % (bad,))
+
+
+def test_layout_words_and_scoring():
+    assert ls.where(LAYOUT["elements"][0]) == "far right, upper, medium"
+    perfect = {"elements": {"WINDOW": {"present": True, "box": [0.7, 0.1, 0.9, 0.5]}, "COUNTER": {"present": True, "box": [0.05, 0.5, 0.4, 0.8]},
+                            "STAIRS": {"present": True, "box": [0.4, 0.2, 0.6, 0.6]}}}
+    s = ls.score_picture(LAYOUT, perfect)
+    assert s["placement"] == 1.0 and s["presence"] == 1.0 and s["mean_iou"] > 0.99
+    off = {"elements": {"WINDOW": {"present": True, "box": [0.1, 0.1, 0.3, 0.5]}, "COUNTER": {"present": False, "box": None}}}
+    s = ls.score_picture(LAYOUT, off)
+    assert s["placement"] == 0.0 and abs(s["presence"] - 1 / 3) < 1e-9
+    rows = ls.score_all(LAYOUT, [{"pic_01.png": perfect}], {"pic_01.png": "run_a"}, {"run_a": {"usd": 0.1}})
+    assert rows[0]["run"] == "run_a" and rows[0]["placement"] == 1.0 and "run_a" in ls.table(rows)
+
+
+def test_benchmark_prompts_fit_each_model_and_carry_no_anchor():
+    brief, spec, layout = cm.load()
+    for run in cm.RUNS:
+        text = cm.prompt_for(run, brief, layout)
+        assert len(text) <= cm.LIMITS.get(run["model"], 5000), (run["id"], len(text))
+        assert ("LAYOUT GUIDE" in text) == (run["channel"] == "guide"), run["id"]
+        assert ("Placement of each element" in text) == (run["channel"] == "words"), run["id"]
+        assert "no text" in text.lower() and "No people" in text or run["channel"] == "words-short", run["id"]
+        assert "second reference" not in text, run["id"]                       # no style anchor: the model's own reading of the style
+    full = cm.prompt_for([r for r in cm.RUNS if r["id"] == "grok_words"][0], brief, layout)
+    assert cm.master_style() in full                                            # the master prompt's style block, verbatim
 
 
 def test_resolve_overrides_in_order_kind_brief_explicit():

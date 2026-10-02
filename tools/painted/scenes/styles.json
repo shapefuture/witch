@@ -1,12 +1,18 @@
 {
   "_about": "Looks a scene can be asked for (new_scene.py --style NAME). `hall` is the papercraft look of the first painting. `ps1` is the master prompt v3.0 of the game draft (THE WITCH: a fictional 1997-2002 point-and-click game): its blocks are copied verbatim, in its own words; the template is its section XII. A plate never contains the witch, the raccoon or any person: they are engine actors, so the template's character blocks are replaced by a line asking for clear floor. Everything here is English tooling data.",
   "hall": {
-    "refs": ["assets/painted/hall_clean/plate_empty.png"],
+    "refs": [
+      "assets/painted/hall_clean/plate_empty.png"
+    ],
     "frame": null
   },
   "ps1": {
-    "refs": [],
-    "frame": {"strength": 0.0},
+    "refs": [
+      "tools/painted/scenes/anchors/ps1.jpg"
+    ],
+    "frame": {
+      "strength": 0.0
+    },
     "palette": "jewel-toned theatrical daylight that still reads as daylight; shadows deep cobalt, violet-blue-black, plum, indigo (never gray); light pockets incandescent amber, pale gold, lemon; ground and walls turquoise, teal, petrol, dusty teal; accents coral, hot-pink, tangerine, cream, lavender; earthy anchors moss green, lime, mustard yellow, burnt orange, coral red, muted purple, earthy brown; matte, dry, opaque painted pigment with soft gradients and gentle mottling; never gray, never desaturated",
     "style_block": "Catastrophically crude early-3D: extremely low-polygon geometry built from wedges, cubes, triangular slabs, cones, stretched pyramids, tapered cylinders, primitive planes, irregular extrusions and lopsided blobs — visibly imperfect topology, blunt corners, slightly floating intersections, asymmetric dimensions, walls that bend in ways a modern modeler would correct. NOT modern low-poly, NOT polished indie 3D, NOT claymation, NOT voxels, NOT papercraft. Aggressively faceted rendering, polygon-to-polygon value shifts, primitive vertex colors, faceted directional light, blunt stylized shadows, dark ambient-occlusion pockets, mild atmospheric haze, low-resolution painted textures, dry matte opaque pigment, dry-brush grain, palette-knife ridges, scratched contours, worn and rubbed paint, chipped painted glaze, stretched patterns, warped UVs, tiny texture seams, mild aliasing, subtle dithering, imperfect early-digital gradients, repairs and mismatched patches telling history.",
     "technical": "Textures are never flat, clean or graphic: soft gradients, gentle mottling, hand-painted variation — storybook soul on jagged geometry. Characters and props read as carved wooden toys rendered as low-poly 3D, never photographed physical media.",
@@ -17,5 +23,6 @@
     "avoid": "photorealism, glossy PBR, ray tracing, bloom, lens flare, cinematic depth of field, volumetric perfection, clean vector interface, modern HUD, dialogue boxes, cel shading, toon outlines, gray filters, portrait framing, claymation textures, cute modern 3D, smooth sculpting, realistic anatomy, voxels, Minecraft blocks, papercraft, fabric, cardboard, steampunk cliché, occult rune wallpaper, giant magic circles, sci-fi holograms, neon cyberpunk, cloned identical NPCs, horror mood, green toxic glow, gold magic glow effects, question-mark icons, clue glows, arrows. NO 2D. NO CLAY. NO VOXELS. NO PHYSICAL MEDIA. NO HORROR: the surrealism is fun, wacky, ridiculous, a funhouse mirror, not a nightmare, and the absurdity is treated completely seriously.",
     "motifs": "a wedge mark carved into stone, wood or metal; thread and node-and-thread diagrams; a small bell; a sealed envelope, unlabeled; a pigeon that understands more than the characters; repairs in the wrong material; a dust gap where a removed object used to sit; small absurd doors on oversized facades",
     "template": "16:9 horizontal point-and-click adventure game screenshot from THE WITCH, a fictional forgotten magical adventure game of approximately 1997-2002. {style_block} {technical} SCENE \"{title}\", {scene} {composition} {world} UI: {ui_scene} {ui} Palette: {palette}. Lighting: {lighting} Camera: {camera} The horizon (where the ground meets the far wall) is about {pct} percent of the way down the frame. A large clear area of ground, unobstructed, fills the foreground to walk on: the two main characters will stand there, so leave it empty; no people, no witch, no raccoon in the picture. Recurring motifs, one to three of them: {motifs_scene}. Avoid: {avoid}"
-  }
+  },
+  "_anchors": "A style's `refs` are sent after the layout guide as the look to match. ps1.jpg is the first accepted picture in that look (the shop, text-only generation): jewel dark teal, plum and amber, crude faceted wood, no cute pastel gems. Replace it when a better one is accepted."
 }

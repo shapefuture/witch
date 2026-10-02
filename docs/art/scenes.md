@@ -73,3 +73,41 @@ a pigeon with a package, a badger coming up through the floorboards, a frog in a
 to objects as the scene's diegetic interface). The generator reads the look as hand-painted and fairly polished rather than truly crude;
 the engine's own PSX pass (affine mapping, snapped vertices, dither) supplies the crudeness. The fisheye barrel is in the picture, so the
 flat-lens depth calibration is a little off near the edges.
+
+## Layout guides: directing what goes where
+
+A generator told only "a shop with a window and a counter" chooses the composition itself. `tools/painted/scene_layout.py` draws a **layout
+guide**: a white canvas with grey labeled boxes and shapes (each label starts with its depth, `FG` / `MID` / `BG`), a pale `GROUND` box
+that must stay empty, and a dashed horizon. A brief carries its `layout` (fractions of the frame); `new_scene.py` renders it, sends it as the
+first reference with a note on how to read it, and afterwards writes `build/rooms/NAME/layout_check.png`, the guide's outlines drawn over the
+result, so a misplacement is seen at once. The layout is kept beside the scene as `layout.json`.
+
+```sh
+python tools/painted/new_scene.py shop --style ps1 --layout-only    # render the guide, free: look at it first
+python tools/painted/new_scene.py shop --style ps1                  # generate with the brief's layout (--no-layout to ignore it)
+python tools/painted/new_scene.py shop --layout my_layout.json      # or your own layout JSON, or your own guide PNG
+```
+
+Lessons from the shop:
+
+- **Guides must be grey.** A first guide with red, blue and yellow boxes put red, blue and yellow gems all over the floor; the generator
+  echoes a guide's colours as objects. The guide is grey, and depth is a text tag.
+- **A guide pulls the look toward "cute modern 3D"** (pastel gems, toy-like): the style then needs an anchor. `styles.json` gives `ps1` an
+  anchor picture (`tools/painted/scenes/anchors/ps1.jpg`, the first accepted picture in that look) sent as the second reference, with a note
+  to match its palette and rendering but not copy its objects. With guide and anchor the shop kept its jewel-dark look and most placements.
+- Placement is followed approximately, not exactly: expect most elements within a box's width, a few moved or mirrored. Check the check image.
+
+## Which model follows our guidance? (`compare_models.py`)
+
+`tools/painted/compare_models.py` runs the shop through many models on the same guidance (the master prompt's style block verbatim, trimmed
+only where a model's prompt limit forces it; the layout as a guide image or as words; **no style anchor**, so each model's own reading of the
+style), caps the spend as a whole, and scores blind: critics who see neither the layout nor the model locate each named element and answer a
+checklist, and `layout_score.py` compares their boxes with the layout (placement, presence, overlap) and tallies guide leaks, text, people,
+objects on the empty ground, crude-3D, jewel palette and "cute modern". Results are in `docs/art/model_comparison.md`.
+
+```sh
+python tools/painted/compare_models.py plan                 # the runs and estimated prices (free)
+python tools/painted/compare_models.py run r1 --budget 1.0  # generate (paid); a finished run is recovered, never paid twice
+python tools/painted/compare_models.py blind r1             # anonymised copies and critic instructions
+python tools/painted/compare_models.py score r1 a.json b.json
+```
