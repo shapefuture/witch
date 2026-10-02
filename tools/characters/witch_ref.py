@@ -320,7 +320,7 @@ FRAME_CURL = dict(r0=.072, r1=.038, turns=1.1)
 # The long back hair: a lobed mass under the hood's back edge (a bulb, every lobe a flute) from which eight thick locks
 # hang side by side down to the waist, each ending in a curl, like the sheet's back view (an octopus of hair).
 MASS_PHIS = [75 + 15 * k for k in range(15)]                 # 75 .. 285 degrees: the sides and the back
-MASS_ROWS = [(.70, .180, .140, -.095), (.78, .232, .190, -.100), (.86, .240, .196, -.105), (.93, .205, .156, -.110)]
+MASS_ROWS = [(.70, .180, .140, -.095), (.78, .232, .190, -.100), (.86, .240, .196, -.105), (.92, .200, .150, -.108), (.99, .160, .115, -.105)]
 # (degrees from the back's centre, stalk length, curl turns: +1 counter-clockwise seen from behind... as drawn, radius)
 # (degrees round from the back's centre, stalk step, curl: 'out' or 'in' toward her middle, curl radius, lock radius).
 # The outer locks splay and end in big outward spirals (the hair is widest at the bottom); the inner ones curl in;
@@ -336,7 +336,7 @@ def mass_pts():
     for ri, (y, rx, rz, cz) in enumerate(MASS_ROWS):
         row = []
         for k, p in enumerate(MASS_PHIS):
-            lob = 1.0 if k % 2 == 0 else .94
+            lob = 1.0 if (k % 2 == 0 or ri > 1) else .94    # only the lower rows are lobed: the top is a smooth edge tucked under the hood
             yy = y - (.03 if (ri == 0 and k % 2 == 1) else 0.)
             row.append((rx * lob * S(RAD(p)), yy, cz + rz * lob * C(RAD(p))))
         rows.append(row)
