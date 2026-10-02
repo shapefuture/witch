@@ -440,6 +440,45 @@ def paint_skirt_tile(size=(240, 40)):
     return img.resize(size, Image.LANCZOS)
 
 
+def paint_sleeve_tile(size=(48, 40), n_around=6, n_along=4):
+    """Tile for a sleeve tube: u around (n_around facets), v along (n_along bands). Violet, a tone per triangle, a few
+    gold moons and stars (the sheet's sleeves are printed like the skirt)."""
+    W, H = size
+    k = 4
+    rng = np.random.default_rng(21)
+    base = np.array((.46, .26, .66))
+    img = Image.new('RGB', (W * k, H * k), c8(base))
+    d = ImageDraw.Draw(img)
+    for r in range(n_along):
+        for m in range(n_around):
+            for tri in range(2):
+                f = 1 + rng.uniform(-.12, .12)
+                ua, ub = m * W / n_around * k, (m + 1) * W / n_around * k
+                va, vb = r * H / n_along * k, (r + 1) * H / n_along * k
+                pts = [(ua, va), (ub, va), (ua, vb)] if tri == 0 else [(ub, va), (ub, vb), (ua, vb)]
+                d.polygon(pts, fill=c8(tuple(min(1., c * f) for c in base)))
+    px = W / (2 * math.pi * .062)             # tile px per metre round the sleeve
+    py = H / .36                              # and along it
+    for i, (fu, fv, kind) in enumerate(((.10, .30, 'moon'), (.42, .62, 'star8'), (.75, .25, 'star5'), (.60, .86, 'moon'),
+                                         (.25, .80, 'star8'), (.90, .62, 'dot'))):
+        draw_symbol(d, kind, fu * W, fv * H, {'moon': .034, 'star8': .026, 'star5': .028, 'dot': .014}[kind], px, py, k,
+                    c8(GOLD))
+    return img.resize(size, Image.LANCZOS)
+
+
+def cyl_fuv(part):
+    """Per-face UVs from a loft's cylindrical per-vertex UVs, with the seam's wrapped faces fixed (u 0 -> 1 there)."""
+    uv = part['uvc']
+    out = []
+    for f in part['F']:
+        q = uv[f].copy()
+        if q[:, 0].max() - q[:, 0].min() > .5:
+            q[q[:, 0] < .5, 0] += 1.
+        q[:, 0] = np.minimum(q[:, 0], 1.)
+        out.append(q)
+    return A(out, float)
+
+
 def hood_v(P):
     """Tile v per hood ring: arc length from the bottom edge to the top along the back (column 6)."""
     prof = P[:, HOOD_N // 2]
@@ -831,7 +870,8 @@ def build_parts(M):
             top = smooth((.05 - float((p - sh) @ N_(el - sh))) / .06)
             return {'arm_upper' + d: (1 - lo) * (1 - .5 * top), 'arm_lower' + d: lo, 'spine': (1 - lo) * .5 * top}
         J, W = weights(M, sl['V'], arm_w)
-        add(sl, lit_toned('sleeve'), J=J, W=W)
+        sl['fuv'] = cyl_fuv(sl)
+        add(sl, 'sleeve1', J=J, W=W, tex='sleeve')
         cuff = tube([mid2 + (wr - el) * .22, wr + (wr - el) * .30], [.080, .092], N=6, ratio=.9, flat=(0, 0, 1.), cap=(0, .0))
         add(cuff, 'cuff0', bone='arm_lower' + d)
     add_fist(M)
@@ -1172,7 +1212,8 @@ def make_model():
     at = atl.Atlas(256)
     P = hood_pts()
     ref = face_ref()
-    tiles = {'skirt': paint_skirt_tile(), 'hood': paint_hood_tile(P), 'face': ref[1] if ref is not None else paint_face_tile()}
+    tiles = {'skirt': paint_skirt_tile(), 'hood': paint_hood_tile(P), 'face': ref[1] if ref is not None else paint_face_tile(),
+             'sleeve': paint_sleeve_tile()}
     for k, im in tiles.items():
         at.alloc(k, *im.size)
     for k, im in tiles.items():

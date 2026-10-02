@@ -57,21 +57,27 @@ class Atlas:
         return name in self.req
 
     def pack(self):
-        """Shelf packing, tallest first; raises if the requests do not fit."""
+        """Shelf packing, tallest first, each tile on the first shelf with room (so the swatches fill the space beside
+        a tall tile); raises if the requests do not fit."""
         names = sorted(self.order, key=lambda n: (-self.req[n][1], -self.req[n][0], n))
-        x = y = shelf = 0
+        shelves = []         # [y, height, x used]
+        top = 0
         for n in names:
             w, h = self.req[n]
             W2, H2 = w + 2 * PAD, h + 2 * PAD
-            if x + W2 > self.W:
-                x, y, shelf = 0, y + shelf, 0
-            if W2 > self.W or y + H2 > self.H:
-                used = sum((a + 2 * PAD) * (b + 2 * PAD) for a, b in self.req.values())
-                raise ValueError('atlas %dx%d overflow at %s (%d%% of area requested)'
-                                 % (self.W, self.H, n, 100 * used // (self.W * self.H)))
-            self.rect[n] = (x + PAD, y + PAD, w, h)
-            x += W2
-            shelf = max(shelf, H2)
+            for sh in shelves:
+                if H2 <= sh[1] and sh[2] + W2 <= self.W:
+                    break
+            else:
+                if W2 > self.W or top + H2 > self.H:
+                    used = sum((a + 2 * PAD) * (b + 2 * PAD) for a, b in self.req.values())
+                    raise ValueError('atlas %dx%d overflow at %s (%d%% of area requested)'
+                                     % (self.W, self.H, n, 100 * used // (self.W * self.H)))
+                sh = [top, H2, 0]
+                shelves.append(sh)
+                top += H2
+            self.rect[n] = (sh[2] + PAD, sh[0] + PAD, w, h)
+            sh[2] += W2
         return self.rect
 
     # ---- painting ----------------------------------------------------------------------------
