@@ -83,7 +83,6 @@ func advance(delta: float) -> void:
 		_turn_toward(body.position + to_waypoint, delta)
 	elif _has_facing:
 		_turn_toward(_facing_target, delta)
-	_aim_shadow()
 
 func _end(reached: bool) -> void:
 	_path = PackedVector3Array()
@@ -99,9 +98,3 @@ func _turn_toward(point: Vector3, delta: float) -> void:
 	if direction.length() < 0.01:
 		return
 	body.rotation.y = lerp_angle(body.rotation.y, atan2(direction.x, direction.z), clampf(Witch.TURN_RATE * delta, 0.0, 1.0))
-
-# The contact shadow is pushed away from the sun in the world, so it keeps its side as the holder turns.
-func _aim_shadow() -> void:
-	var shadow := body.get_node_or_null("Shadow") as Node3D
-	if shadow != null and shadow.has_meta("away"):
-		shadow.position = body.basis.inverse() * (shadow.get_meta("away") as Vector3) + Vector3(0.0, 0.01, 0.0)

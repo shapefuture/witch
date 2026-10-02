@@ -30,15 +30,26 @@ func test_the_characters_have_a_key_light_and_cast_a_shadow_along_the_beam() -> 
 	for id in ["witch", "raccoon"]:
 		var meshes := (room.actors[id] as Node3D).get_node("Visual").find_children("*", "MeshInstance3D", true, false)
 		ok(not meshes.is_empty(), "%s has meshes" % id)
+		var shadow := room.shadows.get(id) as PaintedActorShadow
+		ok(shadow != null and shadow.visible, "%s casts a shadow" % id)
 		for mesh in meshes:
 			var instance := mesh as MeshInstance3D
-			ok(instance.material_overlay is ShaderMaterial, "%s: every mesh draws its shadow on the floor" % id)
+			ok(instance.layers & shadow.camera.cull_mask != 0, "%s: every mesh is in its beam camera's layer" % id)
 			var lit := instance.get_active_material(0) as ShaderMaterial
 			ok(lit != null and float(lit.get_shader_parameter("key_strength")) > 0.0, "%s: faceted key light is on" % id)
+		ok(shadow.material.get_shader_parameter("silhouette") is ViewportTexture, "%s: the floor reads the beam camera's view" % id)
+		# the shadow falls away from the sun
+		var sun: Array = room.room["sun_dir"]
+		var away := -Vector2(float(sun[0]), float(sun[2]))
+		var centre := shadow.floor_quad.global_position - (room.actors[id] as Node3D).global_position
+		ok(Vector2(centre.x, centre.z).dot(away) > 0.0, "%s: its shadow lies away from the beam" % id)
+	var witch_shadow := room.shadows["witch"] as PaintedActorShadow
+	var raccoon_shadow := room.shadows["raccoon"] as PaintedActorShadow
+	ok(witch_shadow.camera.cull_mask & raccoon_shadow.camera.cull_mask == 0, "each beam camera sees only its own character")
 	room.actor_shadow = 0.0
 	room.relight_actors()
-	for mesh in (room.actors["witch"] as Node3D).get_node("Visual").find_children("*", "MeshInstance3D", true, false):
-		ok((mesh as MeshInstance3D).material_overlay == null, "shadow off removes the overlay")
+	ok(not witch_shadow.visible, "shadow off hides it")
+	eq(witch_shadow.viewport.render_target_update_mode, SubViewport.UPDATE_DISABLED, "shadow off stops its camera")
 	room.queue_free()
 
 func test_a_tap_finds_the_nearest_prop_and_walks_its_reactions() -> void:

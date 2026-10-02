@@ -50,7 +50,7 @@ func _run() -> void:
 	# This check measures geometry (occlusion, feet); the light and life layer has its own pixel check.
 	if room.life != null:
 		room.life.intensity = 0.0
-	# Her cast shadow is drawn on the floor by her own mesh: it would count as her in the silhouette.
+	# Her cast shadow darkens the floor around her: it would count as her in the silhouette.
 	room.actor_shadow = 0.0
 	room.relight_actors()
 	scale_to_image = root.get_texture().get_size().x / room.image_size().x

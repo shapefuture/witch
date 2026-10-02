@@ -267,8 +267,12 @@ room they now have what the painting's figures have: facets with a core shadow, 
   from the beam dim, not black. Faces with vertex-colour alpha 0 (the witch's face, whose tile already carries the
   reference's planes) take the key without bands, never below `soft_floor` of it, and half neutral (`soft_neutral`).
   The hall's characters keep `key_strength = 0`: nothing changes there.
-- **Cast shadow** (`painted_actor_shadow.gdshader`, `PaintedRoom.actor_shadow`): each character mesh gets this as a
-  `material_overlay`, so the shadow is the skinned mesh itself flattened onto the floor along the beam, in every pose.
-  Multiplied into the painting through the stencil buffer, so the overlap of limbs and body darkens only once. It fades
-  toward the tip and is weaker where the painted floor is not in the pool. The round contact blob stays under the feet.
-- Dials: `actor_key` (2.6), `actor_shadow` (0.55; 0 removes it), `key_front`/`key_bands` in the shader.
+- **Cast shadow** (`PaintedActorShadow`, `painted_actor_shadow.gd/.gdshader`, `PaintedRoom.actor_shadow`): each
+  character has its own render layer (20, 19, ...) and a 128 px `SubViewport` whose orthographic camera looks along the
+  beam at it alone, so its alpha is the character's silhouette as the sun sees it, in every pose. A quad on the floor
+  (the camera's square laid along the beam) samples that silhouette where each floor point's ray toward the sun meets
+  it: one sample per pixel, blurred more the farther from the feet (contact-hardening), fading toward the tip, weaker
+  off the lit pool, plus a contact patch at the feet; multiplied into the painting. An earlier version flattened the
+  mesh itself onto the floor as a `material_overlay`; it came out patchy (per-vertex fade under a once-per-pixel
+  stencil) and jagged (every curl's edge, PSX-snapped), and its pieces sank into the bumpy painted floor.
+- Dials: `actor_key` (2.6), `actor_shadow` (0.75; 0 hides it and stops its camera), `key_front`/`key_bands` in the shader.

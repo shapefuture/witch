@@ -15,12 +15,11 @@ signal prop_said(prop_id: String, text_key: String)
 signal fallback_pinged(px: Vector2)
 
 const PLATE_SHADER := preload("res://game/world/painted/painted_plate.gdshader")
-const SHADOW_SHADER := preload("res://game/world/painted/painted_shadow.gdshader")
-const CAST_SHADOW_SHADER := preload("res://game/world/painted/painted_actor_shadow.gdshader")
 const SCREEN_SHADER := preload("res://game/world/painted/painted_screen.gdshader")
 # Where each character looks: away from the camera, into the hall, as in the painting.
 const FACING := {"witch": PI, "raccoon": PI * 0.92}
-const SHADOW_RADIUS := {"witch": 0.5, "raccoon": 0.3}
+const SHADOW_RADIUS := {"witch": 0.5, "raccoon": 0.3}      # the contact patch at the feet
+const SHADOW_SIZE := {"witch": 2.2, "raccoon": 1.5}        # the square the beam's camera sees around each (metres)
 
 @export var room_dir := "res://assets/painted/hall_clean"
 @export var psx := true
@@ -31,7 +30,7 @@ const SHADOW_RADIUS := {"witch": 0.5, "raccoon": 0.3}
 @export var actor_sun := 0.4
 @export var actor_rim := 0.25
 @export var actor_key := 2.6          # the beam's faceted key light on the characters (0 = the flat baked-set look)
-@export var actor_shadow := 0.55     # how dark the shadow they cast along the beam is (0 = none)
+@export var actor_shadow := 0.75     # how dark the shadow they cast along the beam is (0 = none; PaintedActorShadow)
 # Use the room's margin (overscan.json, see PaintedOverscan) when it has one; false = the painting as it was,
 # zooming in to hide its edges.
 @export var overscan := true
@@ -39,6 +38,7 @@ const SHADOW_RADIUS := {"witch": 0.5, "raccoon": 0.3}
 var room: Dictionary = {}
 var camera: Camera3D
 var actors: Dictionary = {}
+var shadows: Dictionary = {}         # id -> PaintedActorShadow
 var props: Array[PaintedProp] = []
 var life: PaintedLife
 var walk: PaintedWalk
@@ -271,15 +271,28 @@ func _spawn_actor(id: String, data: Dictionary) -> void:
 	holder.rotation.y = float(FACING.get(id, PI))
 	add_child(holder)
 	holder.add_child(visual)
-	_light_actor(visual)
 	CharacterModels.play(visual, "watch" if CharacterModels.has_clip(visual, "watch") else "idle")
-	_add_shadow(holder, float(SHADOW_RADIUS.get(id, 0.3)))
 	actors[id] = holder
+	var shadow := PaintedActorShadow.new()
+	shadow.name = id.capitalize() + "Shadow"
+	add_child(shadow)
+	var sun: Array = room["sun_dir"]
+	# each character has its own render layer (20, 19, ...), so one's beam camera never draws the other
+	shadow.setup(holder, 20 - shadows.size(), float(SHADOW_SIZE.get(id, 1.5)),
+		Vector3(float(sun[0]), float(sun[1]), float(sun[2])), float(SHADOW_RADIUS.get(id, 0.3)))
+	shadows[id] = shadow
+	_light_actor(visual)
+	_shade(id)
 
 # The characters stand in the painting's light: its floor seen from above (light_map.png) and the beam.
 func relight_actors() -> void:
 	for id in actors:
 		_light_actor(actors[id])
+		_shade(id)
+
+func _shade(id: String) -> void:
+	if shadows.has(id):
+		(shadows[id] as PaintedActorShadow).set_light(_texture("light_map.png"), room["light_rect"], room["lit_range"], actor_shadow)
 
 func _light_actor(node: Node) -> void:
 	var light_map := _texture("light_map.png")
@@ -304,38 +317,6 @@ func _light_actor(node: Node) -> void:
 			shader_material.set_shader_parameter("light_scale", actor_light)
 			shader_material.set_shader_parameter("rim_strength", actor_rim)
 			shader_material.set_shader_parameter("key_strength", actor_key)
-		if actor_shadow > 0.0:
-			instance.material_overlay = _cast_shadow_material(light_map, r, sun, lit)
-		else:
-			instance.material_overlay = null
-
-# The character's own mesh flattened onto the floor along the beam (painted_actor_shadow.gdshader).
-func _cast_shadow_material(light_map: Texture2D, rect: Array, sun: Array, lit: Array) -> ShaderMaterial:
-	var material := ShaderMaterial.new()
-	material.shader = CAST_SHADOW_SHADER
-	material.set_shader_parameter("sun_dir", Vector3(float(sun[0]), float(sun[1]), float(sun[2])))
-	material.set_shader_parameter("strength", actor_shadow)
-	material.set_shader_parameter("light_map", light_map)
-	material.set_shader_parameter("light_rect", Vector4(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])))
-	material.set_shader_parameter("lit_range", Vector2(float(lit[0]), float(lit[1])))
-	return material
-
-func _add_shadow(holder: Node3D, radius: float) -> void:
-	var quad := QuadMesh.new()
-	quad.size = Vector2(radius * 2.0, radius * 2.0)
-	var material := ShaderMaterial.new()
-	material.shader = SHADOW_SHADER
-	var shadow := MeshInstance3D.new()
-	shadow.name = "Shadow"
-	shadow.mesh = quad
-	shadow.material_override = material
-	shadow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	# Flat on the floor, pushed a little away from the sun (the holder turns with the character).
-	var sun: Array = room["sun_dir"]
-	var away := -Vector3(float(sun[0]), 0.0, float(sun[2])).normalized() * radius * 0.35
-	shadow.set_meta("away", away)
-	shadow.transform = Transform3D(Basis(Vector3.RIGHT, -PI * 0.5), holder.basis.inverse() * away + Vector3(0.0, 0.01, 0.0))
-	holder.add_child(shadow)
 
 # Light and life (painted_life.gd, life.json): built before the screen layer, so the quantisation reads the finished frame.
 func _build_life() -> void:
