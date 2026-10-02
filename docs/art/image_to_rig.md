@@ -35,14 +35,14 @@ the git-ignored `.env.local`; never printed, not even in part (`redact()` covers
 | Hunyuan3D-2mv, textured | **Failed three times inside the Space** (`PyMeshLabException` in its own post-processing: 5 steps, 30 steps, octree 192 and 256). Not ours to fix: use `--shape-only` and texture elsewhere. The 5-step Turbo mode is not the cause. |
 | AniGen (front view only) | Worked technically: one skinned mesh, 26 joints, 15,115 triangles, one 1024 px texture; 84 GPU-seconds, 2 runs. **The result is worse than our `assets/characters/witch.glb`** (the user's verdict, and a side-by-side shows it): it sees only the front, so the back is an invented dark mass, the texture is noisy triangle mottling, and the joints are anonymous (`joint_0` ... `joint_25`). Useful only as a skeleton-topology reference. |
 | SkinTokens (rigs a mesh) | **Refused up front**: it asks the Space for 450 GPU-seconds in one call, above this account's per-call cap, so it cannot run on the free tier (nothing spent). Wired (`--rig skintokens`, decimates to 30k triangles first) and tested offline only. |
-| Make-It-Animatable (rigs a mesh) | Ran (8 GPU-seconds) but returned nothing the code recognised as a rigged model, and the raw answer was not kept (it is now: the error prints it). Unverified; wired as `--rig mia`. |
+| Make-It-Animatable (rigs a mesh) | **Does not work through the API.** Tried twice (two accounts): `/pipeline` answers nine empty Gradio updates, no model. Its endpoints are a web-UI event chain with thirteen unnamed parameters and its `app.py` is a stub that loads the real code at runtime, so the sequence the UI performs cannot be read from here. The provider was removed (it is in the git history of this file). |
 | Hunyuan3D-Part | Not run (quota). |
 | Tripo | **Not run: this key's balance is 0 credits** (checked on both API versions, v2 `/user/balance` and v3 `/account/balance`). The code path is written against the vendor SDK and untested live; the signup credits do not appear on this key. |
 
 With the **legless** T-pose views (`multiview.py --pose t --no-legs`, see `docs/art/character_views.md`) the same shape stage gives a clean bell of a body with the
 T-pose arms and nothing below the hem: 572,922 triangles, 9 GPU-seconds, 1 run (`build/rigs/witch_t_nolegs`). That is the geometry to model and rig from: no legs, so no leg animation.
 
-Quota after all the tests: **148 s but 0 runs left**: the 8 runs a day were the limit that bit, not the seconds, and a run that fails inside the Space (the three texture attempts) still counts.
+Quota after the first account's tests: **148 s but 0 runs left**: the 8 runs a day were the limit that bit, not the seconds, and a run that fails inside the Space (the three texture attempts) still counts.
 Budget the runs: a validation day is about eight calls.
 
 ## What was changed from the draft, and why
@@ -89,7 +89,7 @@ Licences (user's research): AniGen, TRELLIS, UniRig and Pixal3D are MIT.
 | Stage | Space | Notes |
 |---|---|---|
 | Rig a mesh | VAST-AI/SkinTokens | Takes a mesh, so the best geometry can be the one rigged. Needs 450 s of GPU per call: **refused on the free tier**. |
-| Rig and retarget | jasongzy/Make-It-Animatable | `/pipeline` rigs a mesh, `/vis_blender` retargets a clip. Ran, result unverified (see above). |
+| Rig and retarget | jasongzy/Make-It-Animatable | Not usable by script (see above): drive it in the browser. |
 | Rig, from an image | VAST-AI/AniGen, kirikir13/image-to-rigged-3d | AniGen wired and tried: worse than our own witch. |
 | Mesh from the four views | tencent/Hunyuan3D-2mv | Wired: the shape works, the texture stage crashes. |
 | Mesh from one view | TencentARC/Pixal3D (best), microsoft/TRELLIS.2, stabilityai/stable-fast-3d, Wuvin/Unique3D, LGM | Single view: they would ignore three of our four views. Not wired. |
@@ -100,3 +100,9 @@ Licences (user's research): AniGen, TRELLIS, UniRig and Pixal3D are MIT.
 The census's suggested ensemble (three mesh generators scored automatically, then SkinTokens, Part, Make-It-Animatable) does not fit the budget measured here: one bucket of
 8 runs and 300 GPU-seconds a day, and the generators it would ensemble are single-view. Hunyuan3D-2mv already uses all four views. What would change the picture is a rig that
 runs inside the budget (Tripo's credits, Tencent's API at 10 credits, or SkinTokens on a GPU we own: Modal's $30 a month).
+
+## Keys, and two accounts
+
+A real environment variable wins over `.env.local` (the repo's convention, as in `hf.py`), and `doctor` says where each key comes from. The user gave a second Hugging Face token
+(another free account, with its own 300 GPU-seconds and 8 runs a day) after the first account's runs were spent; if the cloud environment still carries the old token as a variable,
+unset it or update it, or the file's new token is ignored. Each account's quota is its own: the tool does not rotate between accounts.

@@ -42,10 +42,10 @@ ENV_FILE = Path(os.getenv("HF_ENV_FILE") or ROOT / ".env.local")
 SECRETS = ("HF_TOKEN", "TRIPO_API_KEY", "HF_KEY")
 
 SLOTS = ("front", "left", "back", "right")           # Tripo's order; Hunyuan3D-2mv names the same four
-SPACES = {"hunyuan2mv": "tencent/Hunyuan3D-2mv", "skintokens": "VAST-AI/SkinTokens", "mia": "jasongzy/Make-It-Animatable", "anigen": "VAST-AI/AniGen", "parts": "tencent/Hunyuan3D-Part"}
+SPACES = {"hunyuan2mv": "tencent/Hunyuan3D-2mv", "skintokens": "VAST-AI/SkinTokens", "anigen": "VAST-AI/AniGen", "parts": "tencent/Hunyuan3D-Part"}
 GAME = {"triangles": 9000, "surfaces": 2, "texture": 256}
 GEOMETRY = ("hunyuan2mv", "tripo")
-RIGS = ("skintokens", "mia", "anigen", "tripo")
+RIGS = ("skintokens", "anigen", "tripo")
 
 
 class Refused(Exception):
@@ -61,6 +61,14 @@ class SpaceError(Exception):
 
 
 # ---- keys -------------------------------------------------------------------------------------------------------------
+ENV_BEFORE = frozenset(n for n in SECRETS if os.environ.get(n))      # the keys the environment itself already had: they win over the file
+
+
+def source(name):
+    """Where a key comes from: a real environment variable wins over .env.local (the repo's convention, as in hf.py)."""
+    return "environment" if name in ENV_BEFORE else (".env.local" if secret(name) else "missing")
+
+
 def load_env(path=None):
     path = Path(path or ENV_FILE)
     if path.exists():
@@ -239,25 +247,6 @@ def rig_skintokens(mesh, out, token, faces=30000, client=None):
         raise SpaceError("skintokens returned no rigged mesh; it answered %s" % redact(repr(res))[:500])
     dest = out / "rig_skintokens.glb"
     shutil.copyfile(files[-1], dest)
-    return dest
-
-
-def rig_mia(mesh, out, token, faces=30000, client=None):
-    """Make-It-Animatable: skeleton and skin weights for a MESH in about a minute on its own (and it can retarget a clip onto it: /vis_blender).
-    Experimental here: its pipeline has thirteen unnamed parameters, all left at their defaults."""
-    from gradio_client import handle_file
-    src = Path(mesh)
-    if glb_inspect(src).get("triangles", 0) > faces:
-        src = decimate(src, out / "rig_input.glb", faces)
-    c = client or make_client(SPACES["mia"], token)
-    res = call(c, "/pipeline", progress=handle_file(str(src)), param_11=None)
-    files = _files(res)
-    glbs = [f for f in files if f.lower().endswith(".glb")]
-    pick = (glbs or files or [None])[-1]
-    if not pick:
-        raise SpaceError("make-it-animatable returned no rigged model; it answered %s" % redact(repr(res))[:500])
-    dest = out / ("rig_mia" + Path(pick).suffix.lower())
-    shutil.copyfile(pick, dest)
     return dest
 
 
@@ -630,9 +619,6 @@ def run(a):
         elif r == "skintokens":
             gpu_guard(hf, a.min_gpu)
             rigged = stage("space:skintokens", [sha(master), a.rig_faces], lambda: ([rig_skintokens(master, out, hf, a.rig_faces)], {}))[0]
-        elif r == "mia":
-            gpu_guard(hf, a.min_gpu)
-            rigged = stage("space:mia", [sha(master), a.rig_faces], lambda: ([rig_mia(master, out, hf, a.rig_faces)], {}))[0]
         else:
             gpu_guard(hf, a.min_gpu)
             rigged = stage("space:anigen", [a.texture], lambda: ([rig_anigen(views["front"], out, hf, a.texture)], {}))[0]
@@ -655,7 +641,7 @@ def run(a):
 def doctor():
     print("image2rig doctor")
     hf, tripo = secret("HF_TOKEN"), secret("TRIPO_API_KEY")
-    print("  HF_TOKEN       %s" % ("set" if hf else "MISSING (anonymous: about 2 GPU-minutes a day)"))
+    print("  HF_TOKEN       %s" % (("set, from the %s" % source("HF_TOKEN")) if hf else "MISSING (anonymous: about 2 GPU-minutes a day)"))
     if hf:
         try:
             who = _get_json("https://huggingface.co/api/whoami-v2", hf)
@@ -665,7 +651,7 @@ def doctor():
         q = zerogpu(hf)
         if q and "seconds" in q:
             print("  ZeroGPU        %.0f GPU-seconds and %d runs left (rolling 24 h from the first call)" % (q["seconds"], q["runs"]))
-    print("  TRIPO_API_KEY  %s" % ("set" if tripo else "MISSING"))
+    print("  TRIPO_API_KEY  %s" % (("set, from the %s" % source("TRIPO_API_KEY")) if tripo else "MISSING"))
     if tripo:
         try:
             print("  Tripo credits  %g" % tripo_balance(tripo))
@@ -699,7 +685,7 @@ def main(argv=None):
     r.add_argument("--out")
     r.add_argument("--geometry", default="hunyuan2mv", help="comma list, tried in order: " + ", ".join(GEOMETRY))
     r.add_argument("--all", action="store_true", help="run every listed geometry provider and keep the best (uses all their budgets)")
-    r.add_argument("--rig", default="", help="skintokens or mia (both rig the mesh that won the geometry stage), anigen (its own mesh, front view only) or tripo (credits; needs --geometry tripo)")
+    r.add_argument("--rig", default="", help="skintokens (rigs the mesh that won the geometry stage), anigen (its own mesh, front view only) or tripo (credits; needs --geometry tripo)")
     r.add_argument("--rig-faces", type=int, default=30000, help="skintokens: decimate the mesh to about this many triangles first")
     r.add_argument("--rig-spec", choices=("tripo", "mixamo"), default="tripo", help="Tripo's skeleton: its own, or Mixamo's names")
     r.add_argument("--parts", action="store_true", help="split the mesh into parts (Hunyuan3D-Part, one more GPU run)")
