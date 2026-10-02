@@ -293,20 +293,41 @@ python tools/painted/build_painted.py --plate build/higgsfield/<job>/image_0.png
 calibration) and `--sun` (a corridor has no oculus to aim at) are new options of `build_painted.py`. Load it with
 `PaintedRoom.room_dir`.
 
-## The chamber (second scene)
-
-`assets/painted/hall_chamber/` is the room at the end of the hall's left passage: a round vaulted reading chamber with a wide
-open spiral carpet, a stone reading table, a window throwing a shaft of light across the floor, and a second doorway on its right.
-It is a place to stand in, not a corridor. One `xai/grok-imagine-image-2.0` generation (about USD 0.09 after a USD 0.09
-hallway test that was discarded) from two references, the hall plate and the hallway shot; prompt and provenance in
-`job_chamber.json`. A plain room so far (plate, depth, light map, witch and raccoon marks; no props or life):
+## New rooms in one command
 
 ```sh
-python tools/painted/build_painted.py --plate build/higgsfield/<job>/image_0.png --out assets/painted/hall_chamber \
-    --horizon 0.62 --floor-box 384 565 960 704 --sun 0.1 0.55 -0.8 --actor witch=640,610 --actor raccoon=760,640
-# capture: tools/painted/capture_painted.gd -- OUT res://assets/painted/hall_chamber views
+python tools/painted/new_room.py NAME --prompt "a round stone observatory with a skylight, an armillary sphere ..." \
+    --max-usd 0.15 --godot $GODOT          # about 1 minute, about USD 0.09 for the picture
+python tools/painted/new_room.py NAME --image picture.png                    # no generation: build from a picture
+python tools/painted/test_new_room.py                                       # offline checks (no network, no depth model)
 ```
 
-`--horizon` (where the floor meets the far wall, as a fraction of the height; the hall's is 0.65), `--floor-box` (bare carpet
-for the metric calibration) and `--sun` (the light's direction, here from the window; the hall aims at its oculus) are new
-options of `build_painted.py`. Load a room with `PaintedRoom.room_dir`.
+`tools/painted/new_room.py` chains everything below into `assets/painted/NAME/`: the Higgsfield generation (the hall plate as the
+style reference, the house style appended to the prompt, capped by `--max-usd`, one job at a time under a lock; the provenance kept as
+`job_room.json`), the depth calibration, `build_painted.py`, a **drafted `life.json`**, `walkable.py`, and a Godot capture with a
+contact sheet at `build/rooms/NAME/sheet.png` (plus `report.json`). Each step prints its choice and has an override
+(`--horizon`, `--floor-box`, `--sun-pixel`, `--sun`, `--no-life`, `--ref`).
+
+What is automatic and how far to trust it:
+
+- **Horizon**: the 0.62 the prompt asks for. The generator keeps to it within a few percent (the hall's is 0.65, the chamber's 0.62, a
+  hallway asked for 0.667 came out 0.70). A search with the floor fit (`--fit-horizon`) is *not* reliable: for a bare floor the
+  disparity is linear in the image row whatever the horizon, so it only shifts `b` and the search follows its prior. When a picture's
+  horizon is visibly elsewhere, give `--horizon`; the effect of being off is a slightly tilted floor, not a broken room.
+- **Sun**: the brightest source above the horizon (a window, an oculus); its direction is turned to fall toward the viewer when the
+  brightest floor lies beyond it.
+- **Life**: the plate's bright-against-surroundings blobs become glow lights (large ones above the horizon a breath, violet ones magic,
+  the rest candles; floor highlights are not lamps, and the panes of one window are one light). The largest source above the
+  horizon also gets a beam onto the brightest floor. It is a draft: tune radii, strengths and the two polygons by hand.
+- **Actors**: the witch and raccoon are put on the foreground floor (0.72 and 0.80 of the way from the horizon to the bottom).
+- **Not automatic**: props (`lift_prop.py`), a doorway to another room, Mirror ids, tap hotspots.
+
+`build_painted.py` takes `--horizon`, `--floor-box`, `--sun` and `--sun-pixel` for this.
+
+## The chamber and the observatory (rooms made so)
+
+`assets/painted/hall_chamber/` is the room at the end of the hall's left passage: a round vaulted reading chamber with a wide open spiral
+carpet, a stone table, a window throwing a shaft of light across the floor and a second doorway (two references: the hall plate and a
+discarded hallway test; made by hand, before `new_room.py`; `job_chamber.json`). `assets/painted/observatory/` is the first
+room made by the command alone (`job_room.json`): a round observatory with a skylight, an armillary sphere and crystal lamps, with its
+lights and beam drafted from the picture. Load either with `PaintedRoom.room_dir`.

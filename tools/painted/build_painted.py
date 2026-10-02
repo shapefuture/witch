@@ -143,6 +143,8 @@ def main(argv=None):
                         help="bare floor pixels of the 1280x720 frame for the metric calibration")
     parser.add_argument("--sun", type=float, nargs=3, metavar=("X", "Y", "Z"),
                         help="the light's direction toward the sun (default: from the pool toward the brightest top pixel)")
+    parser.add_argument("--sun-pixel", type=float, nargs=2, metavar=("X", "Y"),
+                        help="the pixel of the light source (an oculus, a window) instead of the brightest in the top fifth")
     args = parser.parse_args(argv)
     global HORIZON_FRAC, FLOOR_BOX
     if args.horizon:
@@ -176,6 +178,8 @@ def main(argv=None):
     # The oculus: the brightest pixel in the top fifth of the painting, at its estimated depth.
     top = np.asarray(plate, np.float32)[: H // 5].sum(axis=2)
     oy, ox = np.unravel_index(np.argmax(top), top.shape)
+    if args.sun_pixel:
+        ox, oy = (int(round(v)) for v in args.sun_pixel)
     oculus = rays(np.array(float(ox)), np.array(float(oy)), f, pitch) * min(z[oy, ox], 12.0) + [0, EYE_H, 0]
     sun_dir = (oculus - pool) / np.linalg.norm(oculus - pool)
     if args.sun:
