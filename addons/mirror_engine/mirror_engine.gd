@@ -784,6 +784,105 @@ func record_observation(observer_id: String, subject_id: String, observation: Di
         transaction_committed.emit(result)
     return result
 
+# One atomic transaction for something that HAPPENED somewhere (a prop was poked, a consequence fell
+# due) rather than something the player chose from a menu: the event itself, plus what each witness made
+# of it. The engine owns the commit (hash chain, rollback, evidence); the caller owns the meaning.
+# `payload` is opaque to the engine except `payload.effects` ({"world": {...}, "npc_state": {...}}),
+# which is applied like a response's effects and re-applied by replay. Every entry of `observations` is
+# {observer_id, subject_id?, observation, context, evidence, knowledge_effects, model_effects,
+# operator_effects, relationship_effects} and becomes an ObservationRecorded event in the SAME
+# transaction, so a replay rebuilds every witness's beliefs and a failure leaves none of them behind.
+func record_world_event(actor_id: String, subject_id: String, payload: Dictionary, observations: Array = []) -> Dictionary:
+    if not lock_catalog():
+        return _fail("catalog_invalid")
+    if not _catalog_intact():
+        return _fail("catalog_fingerprint_mismatch")
+    if observations.size() + 1 > max_transaction_events:
+        return _fail("transaction_event_limit")
+    for entry in observations:
+        if not entry is Dictionary or str(entry.get("observer_id", "")).is_empty():
+            return _fail("invalid_observation")
+    var transaction_id := "tx_world_%s" % str(event_store.next_sequence())
+    var event_id := transaction_id + ":event"
+    var world_event := _make_event(event_id, "WorldEventHappened", actor_id, subject_id, payload.duplicate(true))
+    world_event.transaction_id = transaction_id
+    world_event.catalog_fingerprint = catalog_fingerprint
+    world_event.effects = payload.get("effects", {}).duplicate(true)
+    var staged: Array[MirrorEvent] = [world_event]
+    var observation_events: Array[MirrorEvent] = []
+    var index := 0
+    for entry in observations:
+        var observer := str(entry.get("observer_id", ""))
+        var observation_id := "%s:obs:%d" % [transaction_id, index]
+        # Evidence ids are derived from (transaction, index): two witnesses must not collide.
+        var normalized_evidence := _normalize_evidence(entry.get("evidence", []), "%s:%d" % [transaction_id, index], observation_id, observer)
+        var observation_event := _make_event(observation_id, "ObservationRecorded", observer, str(entry.get("subject_id", subject_id)), {
+            "observation": entry.get("observation", {}).duplicate(true),
+            "context": entry.get("context", {}).duplicate(true),
+            "knowledge_effects": entry.get("knowledge_effects", []).duplicate(true),
+            "model_effects": entry.get("model_effects", []).duplicate(true),
+            "operator_effects": entry.get("operator_effects", []).duplicate(true),
+            "relationship_effects": entry.get("relationship_effects", []).duplicate(true),
+            "evidence": normalized_evidence,
+        })
+        observation_event.transaction_id = transaction_id
+        observation_event.causes = [event_id]
+        observation_event.catalog_fingerprint = catalog_fingerprint
+        for item in normalized_evidence:
+            observation_event.evidence_refs.append(str(item.get("id", "")))
+        staged.append(observation_event)
+        observation_events.append(observation_event)
+        index += 1
+    var snapshot := _snapshot()
+    if not event_store.append_bundle(staged, false):
+        return _fail("event_store_rejected", {"reason": event_store.last_error})
+    _apply_response_effects(world_event.effects, event_id)
+    var evidence_ok := true
+    for observation_event in observation_events:
+        var body: Dictionary = observation_event.payload
+        models.observe_action(str(observation_event.target_id), body.get("observation", {}).get("signature", []), body.get("context", {}), observation_event.event_id, str(observation_event.actor_id))
+        _apply_knowledge_effects(body.get("knowledge_effects", []), observation_event.event_id)
+        _apply_model_effects(body.get("model_effects", []), observation_event.event_id)
+        _apply_operator_effects(body.get("operator_effects", []), observation_event.event_id)
+        _apply_relationship_effects(body.get("relationship_effects", []), observation_event.event_id)
+        if not _apply_evidence(body.get("evidence", [])):
+            evidence_ok = false
+    if not evidence_ok:
+        _restore_snapshot(snapshot)
+        return _fail("evidence_conflict")
+    action_memory["__event_count"] = event_store.size()
+    if not _validate_post_commit(snapshot):
+        _restore_snapshot(snapshot)
+        return _fail("post_commit_validation_failed")
+    if not event_store.publish(staged):
+        _restore_snapshot(snapshot)
+        return _fail("event_publish_failed")
+    var result := {"ok": true, "transaction_id": transaction_id, "event_id": event_id, "events": staged, "payload": payload.duplicate(true), "catalog_fingerprint": catalog_fingerprint}
+    if not _suppress_signals:
+        transaction_committed.emit(result)
+    return result
+
+# The id the next record_world_event() will give its happening, so a caller can name it (as the origin of
+# something it records in the same payload) before it exists.
+func next_world_event_id() -> String:
+    return "tx_world_%s:event" % str(event_store.next_sequence())
+
+# Public form of the requirement check actions use (claims, models, operators), for callers that gate
+# their own content on a holder's beliefs rather than on the player's: witness interpretation rules.
+func check_requirements(definition: Dictionary, holder_id: String, context: Dictionary = {}) -> Dictionary:
+    var reasons: Array = []
+    reasons.append_array(_claims_requirements_ok(definition, holder_id)["reasons"])
+    reasons.append_array(_operators_requirements_ok(definition, holder_id, context)["reasons"])
+    return {"ok": reasons.is_empty(), "reasons": reasons}
+
+func _apply_relationship_effects(effects: Array, event_id: String) -> void:
+    for effect in effects:
+        var a := str(effect.get("a", ""))
+        var b := str(effect.get("b", ""))
+        if a.is_empty() or b.is_empty():
+            continue
+        relationships.record(a, b, event_id, effect.get("tags", []), effect.get("payload", {}))
+
 func share_claim(from_holder_id: String, to_holder_id: String, claim_id: String, event_context: Dictionary = {}) -> Dictionary:
     if from_holder_id.is_empty() or to_holder_id.is_empty() or claim_id.is_empty():
         return _fail("invalid_claim_transfer")
@@ -1598,7 +1697,10 @@ func rebuild_projections_from_event_log(verify_chain: bool = true) -> Dictionary
                 _apply_knowledge_effects(observation_payload.get("knowledge_effects", []), event.event_id)
                 _apply_model_effects(observation_payload.get("model_effects", []), event.event_id)
                 _apply_operator_effects(observation_payload.get("operator_effects", []), event.event_id)
+                _apply_relationship_effects(observation_payload.get("relationship_effects", []), event.event_id)
                 _apply_evidence(observation_payload.get("evidence", []))
+            "WorldEventHappened":
+                _apply_response_effects(event.payload.get("effects", {}), event.event_id)
             "ResponseResolved":
                 var response_payload: Dictionary = event.payload
                 _apply_response_effects(response_payload.get("effects", {}), event.event_id)

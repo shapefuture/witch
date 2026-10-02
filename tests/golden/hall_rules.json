@@ -1,0 +1,841 @@
+{
+	"final": {
+		"event_count": 106,
+		"head_hash": "de18f7073adbeb73aa0c3a6feb3c0b68f71fac674335b7dd693d375876779ecf",
+		"knowledge": {
+			"custom_needs_two": "SUPPORTED",
+			"echo_forgotten": "SUPPORTED",
+			"echo_seen.globe": "SUPPORTED",
+			"echo_seen.statue": "SUPPORTED",
+			"globe_answers_as_a_toy": "SUPPORTED",
+			"hall_answers.globe.statue": "SUPPORTED",
+			"hall_answers.statue.globe": "SUPPORTED",
+			"hall_custom.globe_is_a_toy": "SUPPORTED",
+			"poke_unremarked.lamp": "SUPPORTED",
+			"poked.globe": "SUPPORTED",
+			"poked.lamp": "SUPPORTED",
+			"poked.statue": "SUPPORTED",
+			"raccoon_looks_at.globe": "SUPPORTED",
+			"raccoon_looks_at.lamp": "SUPPORTED",
+			"raccoon_looks_at.statue": "SUPPORTED",
+			"raccoon_plays_alone": "SUPPORTED",
+			"raccoon_repeats.globe": "SUPPORTED",
+			"raccoon_repeats.lamp": "SUPPORTED",
+			"raccoon_repeats.statue": "SUPPORTED",
+			"statue_leans_in.globe": "SUPPORTED",
+			"statue_leans_in.lamp": "SUPPORTED",
+			"tomas_watches_the_witch": "SUPPORTED"
+		},
+		"minds": {
+			"conventions": {
+				"conv.hall.globe_is_a_toy": {
+					"adopted": true,
+					"holders": [
+						"raccoon",
+						"tomas"
+					],
+					"origin_events": 5,
+					"stalled": false,
+					"tally": 5
+				},
+				"conv.hall.statue_is_a_toy": {
+					"adopted": false,
+					"holders": [
+						"raccoon"
+					],
+					"origin_events": 3,
+					"stalled": true,
+					"tally": 3
+				}
+			},
+			"holders": {
+				"raccoon": {
+					"knowledge": {
+						"conv.hall.globe_is_a_toy": "ESTABLISHED",
+						"heard_something_in_the_hall": "POSSIBLE",
+						"saw_hall_play.globe": "SUPPORTED",
+						"saw_hall_play.statue": "SUPPORTED",
+						"saw_witch_play.globe": "SUPPORTED",
+						"saw_witch_play.lamp": "SUPPORTED",
+						"saw_witch_play.statue": "SUPPORTED"
+					},
+					"models": {
+
+					}
+				},
+				"tomas": {
+					"knowledge": {
+						"conv.hall.globe_is_a_toy": "ESTABLISHED",
+						"tomas_blames_the_raccoon": "POSSIBLE",
+						"tomas_saw_play": "SUPPORTED",
+						"tomas_saw_tampering": "SUPPORTED",
+						"tomas_winces_at_statue": "SUPPORTED"
+					},
+					"models": {
+						"m.tomas.pokes_harmless": "SUPPORTED 0.66"
+					}
+				}
+			},
+			"pending": []
+		},
+		"models": {
+			"m.hall.every_poke_answered": "REVISED",
+			"m.hall.everything_watches": "REVISED",
+			"m.hall.latest_poke_answered": "REVISED",
+			"m.hall.repetition_makes_custom": "REVISED",
+			"m.hall.seen_motion_is_watched": "REVISED",
+			"m.hall.shared_reading_makes_custom": "REVISED",
+			"m.helping_is_welcome": "HYPOTHESIS"
+		},
+		"npc_state": {
+			"tomas": {
+				"expects": "EXPECT_MAGIC",
+				"invited": false,
+				"stance": "braced",
+				"tense": false
+			}
+		},
+		"operators": [],
+		"world": {
+			"__mirror_time": 49,
+			"clearing": {
+				"departed": false
+			},
+			"machine": {
+				"in_tune": false,
+				"state": "jammed"
+			}
+		}
+	},
+	"name": "The hall's three rules: it answers late, everything that moves is looked at, what two minds agree on becomes custom",
+	"steps": [
+		{
+			"cancelled": [],
+			"conventions": [],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"LOOK_AT raccoon>globe",
+				"PROP_REACT shiver>statue",
+				"COMMENT tomas>line.hall.tomas_saw"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "tampering"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c1",
+				"c2"
+			],
+			"subject": "globe",
+			"time": 0,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"fired": [
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_ECHOED",
+					"misread": [],
+					"reactions": [
+						"LOOK_AT raccoon>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "play",
+						"tomas": "reverence"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "statue",
+					"time": 3,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				}
+			],
+			"minds": "advance",
+			"ok": true,
+			"time": 3
+		},
+		{
+			"fired": [
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_POKED",
+					"misread": [],
+					"reactions": [
+						"PROP_REACT shiver>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "noticed",
+						"tomas": "noticed"
+					},
+					"recorded": true,
+					"scheduled": [
+						"c3"
+					],
+					"subject": "globe",
+					"time": 5,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				},
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_ECHOED",
+					"misread": [],
+					"reactions": [
+						"LOOK_AT raccoon>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "play",
+						"tomas": "reverence"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "statue",
+					"time": 8,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				}
+			],
+			"minds": "advance",
+			"ok": true,
+			"time": 8
+		},
+		{
+			"fired": [],
+			"minds": "advance",
+			"ok": true,
+			"time": 10
+		},
+		{
+			"cancelled": [],
+			"conventions": [],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"LOOK_AT raccoon>globe",
+				"PROP_REACT shiver>statue",
+				"COMMENT tomas>line.hall.tomas_saw"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "tampering"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c4",
+				"c5"
+			],
+			"subject": "globe",
+			"time": 10,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"cancelled": [
+				"c4",
+				"c5"
+			],
+			"conventions": [
+				"conv.hall.globe_is_a_toy stalled"
+			],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"LOOK_AT raccoon>globe",
+				"PROP_REACT shiver>statue",
+				"COMMENT tomas>line.hall.tomas_saw"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "tampering"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c6",
+				"c7"
+			],
+			"subject": "globe",
+			"time": 10,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"fired": [
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_ECHOED",
+					"misread": [],
+					"reactions": [
+						"LOOK_AT raccoon>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "play",
+						"tomas": "reverence"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "statue",
+					"time": 13,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				}
+			],
+			"minds": "advance",
+			"ok": true,
+			"time": 13
+		},
+		{
+			"cancelled": [
+				"c7"
+			],
+			"conventions": [
+				"conv.hall.globe_is_a_toy adopted"
+			],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"COMMENT tomas>line.hall.tomas_toy",
+				"LOOK_AT raccoon>globe",
+				"PROP_REACT shiver>statue"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "play"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c8",
+				"c9",
+				"c10"
+			],
+			"subject": "globe",
+			"time": 13,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"fired": [],
+			"minds": "advance",
+			"ok": true,
+			"time": 15
+		},
+		{
+			"cancelled": [
+				"c8",
+				"c9"
+			],
+			"conventions": [],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"APPROACH raccoon>statue",
+				"PROP_REACT hop>globe",
+				"LOOK_AT raccoon>globe",
+				"PROP_REACT shiver>statue"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "play"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c11",
+				"c12"
+			],
+			"subject": "globe",
+			"time": 15,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"fired": [
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_ECHOED",
+					"misread": [],
+					"reactions": [
+						"LOOK_AT raccoon>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "play",
+						"tomas": "reverence"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "statue",
+					"time": 16,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				},
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_POKED",
+					"misread": [],
+					"reactions": [
+						"APPROACH raccoon>statue",
+						"PROP_REACT hop>globe",
+						"PROP_REACT shiver>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "noticed",
+						"tomas": "noticed"
+					},
+					"recorded": true,
+					"scheduled": [
+						"c13"
+					],
+					"subject": "globe",
+					"time": 17,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				},
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_ECHOED",
+					"misread": [],
+					"reactions": [
+						"LOOK_AT raccoon>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "play",
+						"tomas": "reverence"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "statue",
+					"time": 18,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				},
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_POKED",
+					"misread": [],
+					"reactions": [
+						"APPROACH raccoon>statue",
+						"PROP_REACT hop>globe",
+						"PROP_REACT shiver>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "noticed",
+						"tomas": "noticed"
+					},
+					"recorded": true,
+					"scheduled": [
+						"c14"
+					],
+					"subject": "globe",
+					"time": 20,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				},
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_ECHOED",
+					"misread": [],
+					"reactions": [
+						"LOOK_AT raccoon>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "play",
+						"tomas": "reverence"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "statue",
+					"time": 21,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				}
+			],
+			"minds": "advance",
+			"ok": true,
+			"time": 29
+		},
+		{
+			"cancelled": [],
+			"conventions": [],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"LOOK_AT raccoon>statue"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "reverence"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c15",
+				"c16"
+			],
+			"subject": "statue",
+			"time": 29,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"cancelled": [
+				"c15",
+				"c16"
+			],
+			"conventions": [],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"LOOK_AT raccoon>statue"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "reverence"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c17",
+				"c18"
+			],
+			"subject": "statue",
+			"time": 29,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"cancelled": [
+				"c17",
+				"c18"
+			],
+			"conventions": [
+				"conv.hall.statue_is_a_toy stalled"
+			],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"LOOK_AT raccoon>statue"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "reverence"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c19",
+				"c20"
+			],
+			"subject": "statue",
+			"time": 29,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"fired": [
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_ECHOED",
+					"misread": [],
+					"reactions": [
+						"LOOK_AT raccoon>globe"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "play",
+						"tomas": "noticed"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "globe",
+					"time": 32,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				},
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_POKED",
+					"misread": [],
+					"reactions": [],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "noticed",
+						"tomas": "reverence"
+					},
+					"recorded": true,
+					"scheduled": [
+						"c21"
+					],
+					"subject": "statue",
+					"time": 34,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				},
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_ECHOED",
+					"misread": [],
+					"reactions": [
+						"LOOK_AT raccoon>globe"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "play",
+						"tomas": "noticed"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "globe",
+					"time": 37,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				}
+			],
+			"minds": "advance",
+			"ok": true,
+			"time": 39
+		},
+		{
+			"cancelled": [],
+			"conventions": [],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [],
+			"ok": true,
+			"reactions": [
+				"PROP_REACT shiver>statue"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "noise",
+				"tomas": "play"
+			},
+			"recorded": true,
+			"scheduled": [],
+			"subject": "lamp",
+			"time": 39,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"minds": "presence",
+			"ok": true
+		},
+		{
+			"cancelled": [],
+			"conventions": [],
+			"dropped": [],
+			"kind": "PROP_POKED",
+			"minds": "event",
+			"misread": [
+				"tomas"
+			],
+			"ok": true,
+			"reactions": [
+				"LOOK_AT raccoon>lamp",
+				"PROP_REACT shiver>statue"
+			],
+			"reads": {
+				"player": "noticed",
+				"raccoon": "play",
+				"tomas": "blame"
+			},
+			"recorded": true,
+			"scheduled": [
+				"c22"
+			],
+			"subject": "lamp",
+			"time": 39,
+			"unaware": [],
+			"witnesses": [
+				"player",
+				"raccoon",
+				"tomas"
+			]
+		},
+		{
+			"minds": "presence",
+			"ok": true
+		},
+		{
+			"fired": [
+				{
+					"cancelled": [],
+					"conventions": [],
+					"dropped": [],
+					"kind": "PROP_POKED",
+					"misread": [],
+					"reactions": [
+						"PROP_REACT shiver>statue"
+					],
+					"reads": {
+						"player": "noticed",
+						"raccoon": "noticed",
+						"tomas": "noticed"
+					},
+					"recorded": true,
+					"scheduled": [],
+					"subject": "lamp",
+					"time": 44,
+					"unaware": [],
+					"witnesses": [
+						"player",
+						"raccoon",
+						"tomas"
+					]
+				}
+			],
+			"minds": "advance",
+			"ok": true,
+			"time": 49
+		}
+	]
+}
