@@ -13,6 +13,8 @@ python tools/characters/image2rig.py inspect a.glb      # triangles, surfaces, j
 python tools/characters/image2rig.py preview a.glb out.png                   # four flat-shaded views (textured if it has a texture)
 ```
 
+`decimate` (local, free, quadric via `fast_simplification`) shrinks a mesh to about N triangles: the 573k-triangle Hunyuan shape becomes about 30k in seconds with its outline intact.
+
 `NAME` is a `multiview.py` result under `build/views/` (or a folder); the 3/4 views are not used (the services take four). Output goes to
 `build/rigs/NAME/` with `manifest.json` (inputs, settings, files, seconds, GPU seconds or credits really spent). A stage whose inputs and settings did not
 change is kept, not run again (`--force`). Keys: `HF_TOKEN` (Hugging Face; not the Higgsfield `HF_KEY`) and `TRIPO_API_KEY`, from the environment or
@@ -32,13 +34,16 @@ the git-ignored `.env.local`; never printed, not even in part (`redact()` covers
 | Hunyuan3D-2mv, shape only, 30 steps (4 views) | Worked: a clean, recognisable T-pose witch (hood with the flower crown, curls, jacket with pockets, skirt, shoes), 515,770 triangles, 9 GPU-seconds, 1 run. |
 | Hunyuan3D-2mv, textured | **Failed three times inside the Space** (`PyMeshLabException` in its own post-processing: 5 steps, 30 steps, octree 192 and 256). Not ours to fix: use `--shape-only` and texture elsewhere. The 5-step Turbo mode is not the cause. |
 | AniGen (front view only) | Worked technically: one skinned mesh, 26 joints, 15,115 triangles, one 1024 px texture; 84 GPU-seconds, 2 runs. **The result is worse than our `assets/characters/witch.glb`** (the user's verdict, and a side-by-side shows it): it sees only the front, so the back is an invented dark mass, the texture is noisy triangle mottling, and the joints are anonymous (`joint_0` ... `joint_25`). Useful only as a skeleton-topology reference. |
+| SkinTokens (rigs a mesh) | **Refused up front**: it asks the Space for 450 GPU-seconds in one call, above this account's per-call cap, so it cannot run on the free tier (nothing spent). Wired (`--rig skintokens`, decimates to 30k triangles first) and tested offline only. |
+| Make-It-Animatable (rigs a mesh) | Ran (8 GPU-seconds) but returned nothing the code recognised as a rigged model, and the raw answer was not kept (it is now: the error prints it). Unverified; wired as `--rig mia`. |
 | Hunyuan3D-Part | Not run (quota). |
 | Tripo | **Not run: this key's balance is 0 credits** (checked on both API versions, v2 `/user/balance` and v3 `/account/balance`). The code path is written against the vendor SDK and untested live; the signup credits do not appear on this key. |
 
 With the **legless** T-pose views (`multiview.py --pose t --no-legs`, see `docs/art/character_views.md`) the same shape stage gives a clean bell of a body with the
 T-pose arms and nothing below the hem: 572,922 triangles, 9 GPU-seconds, 1 run (`build/rigs/witch_t_nolegs`). That is the geometry to model and rig from: no legs, so no leg animation.
 
-GPU quota after all the tests: 156 s and 2 runs of the day.
+Quota after all the tests: **148 s but 0 runs left**: the 8 runs a day were the limit that bit, not the seconds, and a run that fails inside the Space (the three texture attempts) still counts.
+Budget the runs: a validation day is about eight calls.
 
 ## What was changed from the draft, and why
 
@@ -78,3 +83,20 @@ the look. The free Space route stays the place to validate a character before sp
 | Meshy free (100 credits a month, no API on the free plan), Colab free (its terms forbid automation) | | Not usable by a script. |
 
 Licences (user's research): AniGen, TRELLIS, UniRig and Pixal3D are MIT.
+
+## The Spaces census (from the user's research; the two rigging Spaces were probed and tried here)
+
+| Stage | Space | Notes |
+|---|---|---|
+| Rig a mesh | VAST-AI/SkinTokens | Takes a mesh, so the best geometry can be the one rigged. Needs 450 s of GPU per call: **refused on the free tier**. |
+| Rig and retarget | jasongzy/Make-It-Animatable | `/pipeline` rigs a mesh, `/vis_blender` retargets a clip. Ran, result unverified (see above). |
+| Rig, from an image | VAST-AI/AniGen, kirikir13/image-to-rigged-3d | AniGen wired and tried: worse than our own witch. |
+| Mesh from the four views | tencent/Hunyuan3D-2mv | Wired: the shape works, the texture stage crashes. |
+| Mesh from one view | TencentARC/Pixal3D (best), microsoft/TRELLIS.2, stabilityai/stable-fast-3d, Wuvin/Unique3D, LGM | Single view: they would ignore three of our four views. Not wired. |
+| Multi-view from one view | TencentARC/InstantMesh | Not needed: `multiview.py` makes the views. |
+| Parts | tencent/Hunyuan3D-Part | Wired, not run. |
+| Unusable (user's census) | microsoft/TRELLIS (broken), tencent/Hunyuan3D-2.1 (running, no API), Step1X-3D, PartCrafter, Direct3D-S2, TripoSR, UniRig (Space) | Do not spend time. |
+
+The census's suggested ensemble (three mesh generators scored automatically, then SkinTokens, Part, Make-It-Animatable) does not fit the budget measured here: one bucket of
+8 runs and 300 GPU-seconds a day, and the generators it would ensemble are single-view. Hunyuan3D-2mv already uses all four views. What would change the picture is a rig that
+runs inside the budget (Tripo's credits, Tencent's API at 10 credits, or SkinTokens on a GPU we own: Modal's $30 a month).

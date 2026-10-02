@@ -188,6 +188,43 @@ def test_anigen_keeps_the_skinned_mesh_first_and_the_skeleton_picture_apart():
     assert ir.glb_inspect(out / "skeleton_anigen.glb")["joints"] == 0
 
 
+def _sphere(n=120):
+    import numpy as np
+    th, ph = np.meshgrid(np.linspace(0, np.pi, n), np.linspace(0, 2 * np.pi, n))
+    P = np.stack([np.sin(th) * np.cos(ph), np.cos(th), np.sin(th) * np.sin(ph)], -1).reshape(-1, 3)
+    i = np.arange(n * n).reshape(n, n)
+    F = np.concatenate([np.stack([i[:-1, :-1], i[1:, :-1], i[:-1, 1:]], -1).reshape(-1, 3), np.stack([i[1:, :-1], i[1:, 1:], i[:-1, 1:]], -1).reshape(-1, 3)])
+    return P, F
+
+
+def test_decimation_keeps_the_shape_and_skintokens_rigs_the_decimated_mesh():
+    import numpy as np
+    tmp = Path(tempfile.mkdtemp())
+    P, F = _sphere()
+    big = ir.write_glb(tmp / "big.glb", P, F)
+    st = ir.glb_inspect(big)
+    assert st["triangles"] == len(F) and all(abs(x - 2.0) < 0.01 for x in st["size"]) and st["surfaces"] == 1
+    small = ir.decimate(big, tmp / "small.glb", 1500)
+    st2 = ir.glb_inspect(small)
+    assert 1000 < st2["triangles"] < 2200 and all(abs(x - 2.0) < 0.05 for x in st2["size"]), st2
+    out = tmp / "out"
+    out.mkdir()
+    rigged = _glb(tmp / "rigged.glb", tris=1500, joints=22)
+    fake = FakeClient([], answers={"/run_gradio": ("done", {"value": str(rigged), "__type__": "update"})})
+    dest = ir.rig_skintokens(big, out, "tok", faces=1500, client=fake)
+    api, kw = fake.calls[0]
+    sent = Path(kw["files"][0]["path"] if isinstance(kw["files"][0], dict) else kw["files"][0])
+    assert api == "/run_gradio" and len(kw["files"]) == 1
+    assert (out / "rig_input.glb").exists() and ir.glb_inspect(out / "rig_input.glb")["triangles"] < 2200, "the mesh sent is the decimated one"
+    assert dest.name == "rig_skintokens.glb" and ir.glb_inspect(dest)["joints"] == 22
+    empty = FakeClient([], answers={"/run_gradio": ("Error: no skeleton found", None)})
+    try:
+        ir.rig_skintokens(big, out, "tok", faces=1500, client=empty)
+        assert False
+    except ir.SpaceError as e:
+        assert "no skeleton found" in str(e) and "it answered" in str(e)
+
+
 def test_run_keeps_a_stage_whose_inputs_are_unchanged():
     tmp = Path(tempfile.mkdtemp())
     _views(tmp / "w")
@@ -200,7 +237,7 @@ def test_run_keeps_a_stage_whose_inputs_are_unchanged():
     try:
         ir.geo_hunyuan2mv, ir.zerogpu, ir.secret = fake_geo, (lambda t: {"seconds": 300.0, "runs": 8}), (lambda n: "x" * 20 if n == "HF_TOKEN" else "")
         args = dict(source=str(tmp / "w"), view=[], out=str(tmp / "rig"), geometry="hunyuan2mv", all=False, rig="", rig_spec="tripo", parts=False,
-                    steps=5, octree=256, shape_only=False, texture=1024, target_faces=0, min_gpu=90.0, max_credits=60.0, force=False)
+                    steps=5, octree=256, shape_only=False, texture=1024, rig_faces=30000, target_faces=0, min_gpu=90.0, max_credits=60.0, force=False)
         assert ir.run(Namespace(**args)) == 0 and len(calls) == 1
         assert ir.run(Namespace(**args)) == 0 and len(calls) == 1, "unchanged inputs: not run again"
         assert ir.run(Namespace(**{**args, "steps": 8})) == 0 and len(calls) == 2, "a changed setting runs it"

@@ -5,13 +5,14 @@ multiview.py's cut-outs, nothing spends without a guard, and no key is ever prin
 
     python tools/characters/image2rig.py doctor                      # keys (set or not), account, ZeroGPU quota, Tripo credits, Spaces up or down
     python tools/characters/image2rig.py run witch_green_t2          # build/views/NAME/views/*.png -> build/rigs/NAME/  (free Space, one GPU run)
-    python tools/characters/image2rig.py run witch_green_t2 --rig anigen --parts       # more stages: each uses quota, so each is asked for
+    python tools/characters/image2rig.py run witch_green_t2 --rig skintokens --parts   # more stages: each uses quota, so each is asked for
+    python tools/characters/image2rig.py decimate in.glb out.glb --faces 30000       # local quadric decimation (free); --rig does it for you
     python tools/characters/image2rig.py run witch_green_t2 --geometry tripo --rig tripo --max-credits 60    # Tripo: credits, not quota
     python tools/characters/image2rig.py inspect a.glb b.glb         # triangles, joints, textures, size, and the gap to the game's budget
     python tools/characters/image2rig.py preview a.glb out.png       # four views of a mesh (flat shaded, textured when it has a texture), no GPU
 
 Two budgets, and the quota is the tight one (free account: 300 GPU-seconds and 8 runs a day, rolling 24 h from the first call):
-* **Spaces** (Hunyuan3D-2mv for geometry from the four views, AniGen for a mesh with a skeleton from the front view, Hunyuan3D-Part for parts)
+* **Spaces** (Hunyuan3D-2mv for geometry from the four views, SkinTokens to rig THAT mesh, AniGen for its own mesh with a skeleton from the front view, Hunyuan3D-Part for parts)
   are for sampling and validating. Every GPU call is checked against the live quota first (`--min-gpu`) and the seconds it really cost are written to
   the manifest. A provider that rejects a call for its GPU duration says so: lower `--steps` or `--octree`, or wait for the reset.
 * **Tripo** (multiview to model, rig) is for volume: credits. The balance must cover `--max-credits` before anything is sent; the spend is measured.
@@ -41,10 +42,10 @@ ENV_FILE = Path(os.getenv("HF_ENV_FILE") or ROOT / ".env.local")
 SECRETS = ("HF_TOKEN", "TRIPO_API_KEY", "HF_KEY")
 
 SLOTS = ("front", "left", "back", "right")           # Tripo's order; Hunyuan3D-2mv names the same four
-SPACES = {"hunyuan2mv": "tencent/Hunyuan3D-2mv", "anigen": "VAST-AI/AniGen", "parts": "tencent/Hunyuan3D-Part"}
+SPACES = {"hunyuan2mv": "tencent/Hunyuan3D-2mv", "skintokens": "VAST-AI/SkinTokens", "mia": "jasongzy/Make-It-Animatable", "anigen": "VAST-AI/AniGen", "parts": "tencent/Hunyuan3D-Part"}
 GAME = {"triangles": 9000, "surfaces": 2, "texture": 256}
 GEOMETRY = ("hunyuan2mv", "tripo")
-RIGS = ("anigen", "tripo")
+RIGS = ("skintokens", "mia", "anigen", "tripo")
 
 
 class Refused(Exception):
@@ -166,7 +167,8 @@ def call(client, api_name, **kw):
     except Exception as e:
         msg = redact(e)
         if re.search(r"quota|GPU duration|exceeded|ZeroGPU", msg, re.I):
-            raise QuotaError("%s refused %s: %s. Lower --steps/--octree, or wait for the quota to reset." % (client.src, api_name, msg[:200]))
+            raise QuotaError("%s refused %s: %s. Lower --steps/--octree where the provider has them; a request above the account's per-call cap (SkinTokens asks for 450 s) "
+                             "cannot run on this tier at all: that needs a bigger account or your own GPU." % (client.src, api_name, msg[:200]))
         hint = " (its own PyMeshLab step failed; the Hunyuan texture stage did this on the witch at 5 and 30 steps and at octree 192 and 256: use --shape-only and texture elsewhere)" if "PyMeshLab" in msg else ""
         raise SpaceError("%s failed in %s: %s%s" % (client.src, api_name, msg[:200], hint))
 
@@ -178,7 +180,7 @@ def _files(result):
         if isinstance(r, dict):
             r = r.get("value") or r.get("path") or r.get("name")
             r = r.get("path") if isinstance(r, dict) else r
-        if isinstance(r, str) and r.lower().endswith((".glb", ".obj", ".ply")):
+        if isinstance(r, str) and r.lower().endswith((".glb", ".obj", ".ply", ".fbx")):
             found.append(r)
     return found
 
@@ -220,6 +222,42 @@ def rig_anigen(front, out, token, texture=1024, client=None):
     shutil.copyfile(files[0], dest)
     if len(files) > 1:
         shutil.copyfile(files[1], out / "skeleton_anigen.glb")
+    return dest
+
+
+def rig_skintokens(mesh, out, token, faces=30000, client=None):
+    """VAST-AI/SkinTokens: skeleton and skin weights for a MESH (any: it does not make its own), so the best geometry can be the one that is rigged.
+    The mesh is decimated first (`faces`): a Space cannot take half a million triangles."""
+    from gradio_client import handle_file
+    src = Path(mesh)
+    if glb_inspect(src).get("triangles", 0) > faces:
+        src = decimate(src, out / "rig_input.glb", faces)
+    c = client or make_client(SPACES["skintokens"], token)
+    res = call(c, "/run_gradio", files=[handle_file(str(src))])
+    files = _files(res)
+    if not files:
+        raise SpaceError("skintokens returned no rigged mesh; it answered %s" % redact(repr(res))[:500])
+    dest = out / "rig_skintokens.glb"
+    shutil.copyfile(files[-1], dest)
+    return dest
+
+
+def rig_mia(mesh, out, token, faces=30000, client=None):
+    """Make-It-Animatable: skeleton and skin weights for a MESH in about a minute on its own (and it can retarget a clip onto it: /vis_blender).
+    Experimental here: its pipeline has thirteen unnamed parameters, all left at their defaults."""
+    from gradio_client import handle_file
+    src = Path(mesh)
+    if glb_inspect(src).get("triangles", 0) > faces:
+        src = decimate(src, out / "rig_input.glb", faces)
+    c = client or make_client(SPACES["mia"], token)
+    res = call(c, "/pipeline", progress=handle_file(str(src)), param_11=None)
+    files = _files(res)
+    glbs = [f for f in files if f.lower().endswith(".glb")]
+    pick = (glbs or files or [None])[-1]
+    if not pick:
+        raise SpaceError("make-it-animatable returned no rigged model; it answered %s" % redact(repr(res))[:500])
+    dest = out / ("rig_mia" + Path(pick).suffix.lower())
+    shutil.copyfile(pick, dest)
     return dest
 
 
@@ -401,6 +439,57 @@ def accessor(gltf, binary, idx):
     return out.astype(np.float64) if dt.kind == "f" else out.astype(np.int64)
 
 
+def write_glb(path, positions, faces):
+    """A bare triangle mesh as a .glb (positions, vertex normals, one grey material)."""
+    import numpy as np
+    P, F = np.asarray(positions, np.float32), np.asarray(faces, np.uint32)
+    N = np.zeros_like(P)
+    tri = np.cross(P[F[:, 1]] - P[F[:, 0]], P[F[:, 2]] - P[F[:, 0]])
+    for k in range(3):
+        np.add.at(N, F[:, k], tri)
+    N = (N / np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)).astype(np.float32)
+    blob = P.tobytes() + N.tobytes() + F.tobytes()
+    gltf = {"asset": {"version": "2.0", "generator": "image2rig"}, "scene": 0, "scenes": [{"nodes": [0]}], "nodes": [{"mesh": 0, "name": "mesh"}],
+            "meshes": [{"primitives": [{"attributes": {"POSITION": 0, "NORMAL": 1}, "indices": 2, "material": 0}]}],
+            "materials": [{"pbrMetallicRoughness": {"baseColorFactor": [0.7, 0.7, 0.7, 1], "metallicFactor": 0, "roughnessFactor": 0.9}}],
+            "accessors": [{"bufferView": 0, "componentType": 5126, "count": len(P), "type": "VEC3", "min": P.min(0).tolist(), "max": P.max(0).tolist()},
+                          {"bufferView": 1, "componentType": 5126, "count": len(N), "type": "VEC3"},
+                          {"bufferView": 2, "componentType": 5125, "count": F.size, "type": "SCALAR"}],
+            "bufferViews": [{"buffer": 0, "byteOffset": 0, "byteLength": P.nbytes}, {"buffer": 0, "byteOffset": P.nbytes, "byteLength": N.nbytes},
+                            {"buffer": 0, "byteOffset": P.nbytes + N.nbytes, "byteLength": F.nbytes}],
+            "buffers": [{"byteLength": len(blob)}]}
+    js = json.dumps(gltf).encode()
+    js += b" " * (-len(js) % 4)
+    blob += b"\0" * (-len(blob) % 4)
+    body = struct.pack("<I4s", len(js), b"JSON") + js + struct.pack("<I4s", len(blob), b"BIN\0") + blob
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    Path(path).write_bytes(b"glTF" + struct.pack("<II", 2, 12 + len(body)) + body)
+    return Path(path)
+
+
+def decimate(src, dest, faces):
+    """Quadric decimation of every mesh in a .glb to about `faces` triangles (fast_simplification; the texture is dropped), vertices welded first."""
+    import numpy as np
+    import fast_simplification
+    gltf, binary = load_glb(src)
+    pts, tris, base = [], [], 0
+    for m in gltf["meshes"]:
+        for prim in m["primitives"]:
+            pos = accessor(gltf, binary, prim["attributes"]["POSITION"])
+            idx = accessor(gltf, binary, prim["indices"]).reshape(-1, 3) if "indices" in prim else np.arange(len(pos)).reshape(-1, 3)
+            pts.append(pos)
+            tris.append(idx + base)
+            base += len(pos)
+    P, F = np.concatenate(pts), np.concatenate(tris)
+    keys = np.round(P * 1e5).astype(np.int64)
+    _, first, inverse = np.unique(keys, axis=0, return_index=True, return_inverse=True)
+    P, F = P[first], inverse.reshape(-1)[F]
+    F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
+    if len(F) > faces:
+        P, F = fast_simplification.simplify(P.astype(np.float32), F.astype(np.int32), target_reduction=1.0 - faces / len(F))
+    return write_glb(dest, P, F)
+
+
 def preview(path, dest, size=480):
     """Four orthographic views (0, 90, 180, 270 degrees round the up axis) of the first mesh, painter's algorithm, flat key light, the base colour
     texture sampled at each face's centre (grey without one). A judgement aid, not the game's renderer."""
@@ -538,6 +627,12 @@ def run(a):
             if tripo_rig is None:
                 raise Refused("Tripo rigs only its own meshes: use --geometry tripo with --rig tripo")
             rigged = tripo_rig
+        elif r == "skintokens":
+            gpu_guard(hf, a.min_gpu)
+            rigged = stage("space:skintokens", [sha(master), a.rig_faces], lambda: ([rig_skintokens(master, out, hf, a.rig_faces)], {}))[0]
+        elif r == "mia":
+            gpu_guard(hf, a.min_gpu)
+            rigged = stage("space:mia", [sha(master), a.rig_faces], lambda: ([rig_mia(master, out, hf, a.rig_faces)], {}))[0]
         else:
             gpu_guard(hf, a.min_gpu)
             rigged = stage("space:anigen", [a.texture], lambda: ([rig_anigen(views["front"], out, hf, a.texture)], {}))[0]
@@ -591,6 +686,10 @@ def main(argv=None):
     sub.add_parser("doctor")
     i = sub.add_parser("inspect")
     i.add_argument("files", nargs="+")
+    dc = sub.add_parser("decimate")
+    dc.add_argument("file")
+    dc.add_argument("out")
+    dc.add_argument("--faces", type=int, default=30000)
     pv = sub.add_parser("preview")
     pv.add_argument("file")
     pv.add_argument("out")
@@ -600,7 +699,8 @@ def main(argv=None):
     r.add_argument("--out")
     r.add_argument("--geometry", default="hunyuan2mv", help="comma list, tried in order: " + ", ".join(GEOMETRY))
     r.add_argument("--all", action="store_true", help="run every listed geometry provider and keep the best (uses all their budgets)")
-    r.add_argument("--rig", default="", help="anigen (a Space, front view only) or tripo (credits; needs --geometry tripo)")
+    r.add_argument("--rig", default="", help="skintokens or mia (both rig the mesh that won the geometry stage), anigen (its own mesh, front view only) or tripo (credits; needs --geometry tripo)")
+    r.add_argument("--rig-faces", type=int, default=30000, help="skintokens: decimate the mesh to about this many triangles first")
     r.add_argument("--rig-spec", choices=("tripo", "mixamo"), default="tripo", help="Tripo's skeleton: its own, or Mixamo's names")
     r.add_argument("--parts", action="store_true", help="split the mesh into parts (Hunyuan3D-Part, one more GPU run)")
     r.add_argument("--steps", type=int, default=5, help="Hunyuan3D-2mv sampling steps (5 = the Space's Turbo mode)")
@@ -615,6 +715,10 @@ def main(argv=None):
     try:
         if a.cmd == "doctor":
             return doctor()
+        if a.cmd == "decimate":
+            print(decimate(a.file, a.out, a.faces))
+            show(a.out)
+            return 0
         if a.cmd == "preview":
             print(preview(a.file, a.out))
             return 0
