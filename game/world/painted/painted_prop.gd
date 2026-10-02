@@ -87,10 +87,9 @@ func _build_card(room: PaintedRoom, plate: Texture2D, plate_smooth: Texture2D) -
 	var vertices := PackedVector3Array()
 	var uvs := PackedVector2Array()
 	var uvs2 := PackedVector2Array()
-	var size := room.image_size()
 	for corner in corners:
 		vertices.append(room.pixel_at_depth(corner, depth) - position)
-		uvs.append(corner / size)
+		uvs.append(room.plate_uv(corner))
 		uvs2.append((corner - Vector2(rect.position)) / Vector2(rect.size))
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)

@@ -23,6 +23,9 @@ const SHADOW_RADIUS := {"witch": 0.32, "raccoon": 0.28}
 @export var actor_light := 1.0
 @export var actor_sun := 0.4
 @export var actor_rim := 0.25
+# Use the room's margin (overscan.json, see PaintedOverscan) when it has one; false = the painting as it was,
+# zooming in to hide its edges.
+@export var overscan := true
 
 var room: Dictionary = {}
 var camera: Camera3D
@@ -36,6 +39,10 @@ var _grid_w := 0
 var _grid_h := 0
 var _grid := PackedFloat32Array()
 var _step := 8.0
+var _margin := Vector2.ZERO
+var _grid_origin := Vector2.ZERO
+var _offset := Vector3.ZERO
+var _roll_deg := 0.0
 var _plate_material: ShaderMaterial
 var _screen_material: ShaderMaterial
 var _plate: Texture2D
@@ -57,11 +64,22 @@ func _ready() -> void:
 	_step = float(room["grid_step"])
 	_grid = PackedFloat32Array(room["depth_grid"])
 	var props_data := _load_props()
-	_plate = _texture(str(room.get("plate", "plate.png")))
+	var plate_file := str(room.get("plate", "plate.png"))
+	var empty_file := str(props_data.get("plate_empty", ""))
+	var margin_data: Dictionary = PaintedOverscan.load_for(room, room_dir) if overscan else {}
+	if not margin_data.is_empty():
+		_margin = PaintedOverscan.margin_of(margin_data)
+		_grid_origin = Vector2(float(margin_data["grid_origin"][0]), float(margin_data["grid_origin"][1]))
+		_grid_w = int(margin_data["grid_size"][0])
+		_grid_h = int(margin_data["grid_size"][1])
+		_grid = PackedFloat32Array(margin_data["depth_grid"])
+		plate_file = str(margin_data.get("plate", plate_file))
+		empty_file = str(margin_data.get("plate_empty", plate_file)) if empty_file != "" else ""
+	_plate = _texture(plate_file)
 	# With lifted props the room shows the painting without them; the props put them back.
 	var behind := _plate
-	if props_data.has("plate_empty"):
-		behind = _texture(str(props_data["plate_empty"]))
+	if empty_file != "":
+		behind = _texture(empty_file)
 	_plate_smooth = _plate
 	_build_camera()
 	_build_room(behind)
@@ -96,6 +114,22 @@ func view_axis() -> Vector3:
 func view_up() -> Vector3:
 	return Vector3(0.0, cos(_pitch), sin(_pitch))
 
+# Extra painting (pixels of the plate) on each side of the frame; zero without overscan.
+func margin() -> Vector2:
+	return _margin
+
+# Where painting pixel `px` sits in the plate texture (0..1), margin included.
+func plate_uv(px: Vector2) -> Vector2:
+	return PaintedOverscan.plate_uv(px, _size, _margin)
+
+# The shape of the view the camera has to cover: the window's, once there is a margin to cover it with (the
+# painting's own shape otherwise, as before the margin existed).
+func view_aspect() -> float:
+	if _margin == Vector2.ZERO or camera == null or not camera.is_inside_tree():
+		return _size.x / _size.y
+	var view := camera.get_viewport().get_visible_rect().size
+	return view.x / maxf(view.y, 1.0)
+
 # The world direction through painting pixel `px`, scaled so its component along the view axis is 1:
 # the point at camera depth z is eye + ray * z.
 func ray(px: Vector2) -> Vector3:
@@ -108,8 +142,8 @@ func pixel_at_depth(px: Vector2, depth: float) -> Vector3:
 
 # Camera depth (metres) of the painting at pixel `px`, bilinear in the depth grid.
 func depth_at(px: Vector2) -> float:
-	var gx := clampf(px.x / _step, 0.0, _grid_w - 1.001)
-	var gy := clampf(px.y / _step, 0.0, _grid_h - 1.001)
+	var gx := clampf((px.x - _grid_origin.x) / _step, 0.0, _grid_w - 1.001)
+	var gy := clampf((px.y - _grid_origin.y) / _step, 0.0, _grid_h - 1.001)
 	var x0 := int(gx)
 	var y0 := int(gy)
 	var fx := gx - x0
@@ -152,26 +186,31 @@ func _build_camera() -> void:
 	add_child(camera)
 	set_camera_offset(Vector3.ZERO, 0.0)
 	camera.make_current()
+	camera.get_viewport().size_changed.connect(_refresh_camera)
+
+func _refresh_camera() -> void:
+	set_camera_offset(_offset, _roll_deg)
 
 # Moves the camera off the painting's viewpoint (metres, in the camera's frame) and rolls it (degrees):
 # a held shot's breathing, the Dutch tilt, or a test of how far the painting holds up.
 func set_camera_offset(offset: Vector3, roll_deg: float) -> void:
+	_offset = offset
+	_roll_deg = roll_deg
 	var roll := deg_to_rad(roll_deg)
 	var basis := Basis(Vector3.RIGHT, _pitch) * Basis(Vector3.BACK, roll)
 	camera.transform = Transform3D(basis, Vector3(0.0, _eye, 0.0) + basis * offset)
-	# The painting has no margin: a rolled frame zooms in until its corners stay inside it.
-	var aspect := _size.x / _size.y
-	var cover := cos(absf(roll)) + aspect * sin(absf(roll))
-	camera.fov = rad_to_deg(2.0 * atan(tan(deg_to_rad(float(room["fov_v"])) * 0.5) / cover))
+	# A rolled or wider-than-painted frame zooms in only as far as its corners need to stay inside the painting
+	# and its margin (none: the painting's own shape and the roll alone decide, as before the margin existed).
+	camera.fov = PaintedOverscan.fov_for(float(room["fov_v"]), _size, _margin, view_aspect(), roll)
 
 func _build_room(texture: Texture2D) -> void:
 	var vertices := PackedVector3Array()
 	var uvs := PackedVector2Array()
 	for j in _grid_h:
 		for i in _grid_w:
-			var px := Vector2(minf(i * _step, _size.x), minf(j * _step, _size.y))
+			var px := PaintedOverscan.vertex_pixel(i, j, _grid_origin, _step, _size, _margin)
 			vertices.append(pixel_at_depth(px, _grid[j * _grid_w + i]))
-			uvs.append(px / _size)
+			uvs.append(plate_uv(px))
 	var indices := PackedInt32Array()
 	for j in _grid_h - 1:
 		for i in _grid_w - 1:
@@ -270,12 +309,14 @@ func _build_screen() -> void:
 # PSX on: coarse texels, snapped vertices, affine mapping, 15-bit colour. Off: the painting as painted.
 func set_psx(on: bool) -> void:
 	psx = on
+	# The texture covers the margin too: more texels, so each stays the size it has without one.
+	var texels := texel_res * (_size + _margin * 2.0) / _size
 	_plate_material.set_shader_parameter("psx", on)
-	_plate_material.set_shader_parameter("texel_res", texel_res)
+	_plate_material.set_shader_parameter("texel_res", texels)
 	_plate_material.set_shader_parameter("snap_res", snap_res)
 	_screen_material.set_shader_parameter("enabled", on)
 	for prop in props:
-		prop.set_psx(on, texel_res, snap_res)
+		prop.set_psx(on, texels, snap_res)
 
 # ---- taps ----------------------------------------------------------------------------------------------
 
