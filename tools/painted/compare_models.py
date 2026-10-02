@@ -98,6 +98,10 @@ def fit(parts, limit):
 
 def prompt_for(run, brief, layout, style_ref=False):
     """The prompt of one run (see the module docstring); every channel carries the same look, scene and constraints."""
+    if STYLE == "hall":                       # the original house prompt (new_scene.compose_prompt), not the master prompt
+        spec = ns.resolve(brief["kind"], brief)
+        note = GUIDE_NOTE + (STYLE_REF_NOTE if style_ref else "")
+        return note + ns.compose_prompt(spec, brief["prompt"], "hall", brief)
     mine = brief["styles"][STYLE]
     labels = ", ".join(e["label"] for e in layout["elements"])
     scene = "Scene: %s, %s. Elements: %s." % (mine["title"], mine["prompt"].split(",")[0].strip(), labels)
@@ -182,31 +186,38 @@ def cmd_run(args):
     root.mkdir(parents=True, exist_ok=True)
     sl.render(layout).save(guide)
     (root / "layout.json").write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
-    ref, tag = (STYLE_REF, "hall") if args.set == "hall" else (Path(args.style_ref) if args.style_ref else None, args.tag or "ref")
-    hall = ref is not None
-    base = HALL_SET if args.set == "hall" else [r for r in RUNS if r["id"] in (args.only.split(",") if args.only else [r["id"] for r in RUNS if "guide" in r["channel"]])]
-    runs = [dict(r, id=r["id"] + "+" + tag) for r in base] if hall else RUNS
-    if hall:
+    if args.trio:        # three runs: grok with the guide and the reference; marketing with the guide alone, and with the reference too
+        by_id = {r["id"]: r for r in RUNS}
+        tag = args.tag or "ref"
+        ref = Path(args.style_ref)
+        runs = [dict(by_id[i], id=i + ("+" + tag if with_ref else ""), _ref=with_ref)
+                for i, with_ref in (("grok_guide", True), ("marketing_guide", False), ("marketing_guide", True))]
+    else:
+        ref, tag = (STYLE_REF, "hall") if args.set == "hall" else (Path(args.style_ref) if args.style_ref else None, args.tag or "ref")
+        base = HALL_SET if args.set == "hall" else [r for r in RUNS if r["id"] in (args.only.split(",") if args.only else [r["id"] for r in RUNS if "guide" in r["channel"]])]
+        runs = [dict(r, id=r["id"] + "+" + tag, _ref=True) for r in base] if ref else [dict(r, _ref=False) for r in RUNS]
+    if ref:
         (root / "style_ref.json").write_text(json.dumps({"path": str(ref), "tag": tag}) + "\n", encoding="utf-8")
     results = json.loads((root / "results.json").read_text()) if (root / "results.json").exists() else {}
     spent = sum(r.get("usd") or 0 for r in results.values())
     for run in runs:
         if run["id"] in results and results[run["id"]].get("image"):
             continue
-        prompt = prompt_for(run, brief, layout, style_ref=hall)
+        use_ref = ref if run.get("_ref") else None
+        prompt = prompt_for(run, brief, layout, style_ref=bool(use_ref))
         done = find_image(root / run["id"])
         if done:                                           # already generated (a crash after the paid call): keep it, do not pay again
             results[run["id"]] = {"image": str(done.relative_to(root)), "usd": job_usd(root / run["id"]), "chars": len(prompt)}
             spent += results[run["id"]]["usd"] or 0
             print("recovered %s" % run["id"])
             continue
-        est = hf(run, prompt, guide, 0, root / run["id"], estimate_only=True, style_ref=ref)
+        est = hf(run, prompt, guide, 0, root / run["id"], estimate_only=True, style_ref=use_ref)
         if est is None or spent + est > args.budget:
             print("skip %s (estimate %s, spent %.2f of %.2f)" % (run["id"], est, spent, args.budget))
             results[run["id"]] = {"skipped": True, "estimate": est}
             continue
         print("run %s ($%.3f) ..." % (run["id"], est), flush=True)
-        proc = hf(run, prompt, guide, est * 1.5 + 0.01, root / run["id"], style_ref=ref)
+        proc = hf(run, prompt, guide, est * 1.5 + 0.01, root / run["id"], style_ref=use_ref)
         image = find_image(root / run["id"])
         if proc.returncode != 0 or not image:
             tail = (proc.stdout[-300:] + proc.stderr[-300:]).strip().replace("\n", " | ")
@@ -273,13 +284,15 @@ def cmd_score(args):
 
 
 def main(argv=None):
+    global BRIEF, STYLE
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("plan"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_plan)
-    p = sub.add_parser("run"); p.add_argument("name"); p.add_argument("--set", choices=["hall"], help="hall: layout guide + the original room painting as style reference"); p.add_argument("--style-ref", help="a style reference image (with --tag): the guide runs of --only (default: every guide run) are redone with it"); p.add_argument("--tag"); p.add_argument("--only"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_run)
+    p = sub.add_parser("run"); p.add_argument("name"); p.add_argument("--set", choices=["hall"], help="hall: layout guide + the original room painting as style reference"); p.add_argument("--style-ref", help="a style reference image (with --tag): the guide runs of --only (default: every guide run) are redone with it"); p.add_argument("--tag"); p.add_argument("--only"); p.add_argument("--trio", action="store_true", help="grok guide + reference, marketing guide alone, marketing guide + reference (needs --style-ref)"); p.add_argument("--brief", default=BRIEF); p.add_argument("--look", default=STYLE, choices=["ps1", "hall"], help="the master prompt (ps1) or the original house prompt (hall)"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_run)
     p = sub.add_parser("blind"); p.add_argument("name"); p.add_argument("--include-from", action="append"); p.add_argument("--only"); p.add_argument("--reference", nargs="?", const=True, help="critics also rate the style match to this image (default: the run's own style reference)"); p.add_argument("--seed", type=int, default=7); p.set_defaults(fn=cmd_blind)
     p = sub.add_parser("score"); p.add_argument("name"); p.add_argument("critics", nargs="+"); p.set_defaults(fn=cmd_score)
     args = ap.parse_args(argv)
+    BRIEF, STYLE = getattr(args, "brief", BRIEF), getattr(args, "look", STYLE)
     return args.fn(args)
 
 

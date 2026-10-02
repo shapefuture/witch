@@ -3,5 +3,109 @@
  "kind": "garden",
  "title": "The garden",
  "prompt": "A walled garden behind a house in late afternoon: raised beds, a gravel path, an old pear tree, a stone bench and a small sundial. Only one kind of flower blooms, in the same neat places, while the rest of the beds are bare earth and dry stalks. The arrangement should look quietly deliberate and slightly too tidy.",
- "story": "Show, don't tell: the player should infer that the garden is her way of keeping the past; the picture never explains it."
+ "story": "Show, don't tell: the player should infer that the garden is her way of keeping the past; the picture never explains it.",
+ "layout": {
+  "_about": "Where the garden's elements go (fractions of the frame). An outdoor scene: the horizon is the far wall's base, the ground a gravel path and lawn.",
+  "horizon": 0.6,
+  "ground": [
+   0.3,
+   0.7,
+   0.7,
+   0.98
+  ],
+  "elements": [
+   {
+    "label": "OLD CROOKED PEAR TREE",
+    "at": [
+     0.02,
+     0.04,
+     0.28,
+     0.62
+    ],
+    "layer": "mid"
+   },
+   {
+    "label": "LOW STONE WALL with a small arched gate",
+    "at": [
+     0.28,
+     0.42,
+     0.8,
+     0.6
+    ],
+    "layer": "bg"
+   },
+   {
+    "label": "HOUSE with a lit window, behind the wall",
+    "at": [
+     0.6,
+     0.08,
+     0.96,
+     0.42
+    ],
+    "layer": "bg"
+   },
+   {
+    "label": "STONE POST with a hanging lantern",
+    "at": [
+     0.4,
+     0.26,
+     0.46,
+     0.44
+    ],
+    "layer": "bg"
+   },
+   {
+    "label": "STONE BENCH under the tree",
+    "at": [
+     0.1,
+     0.64,
+     0.3,
+     0.75
+    ],
+    "layer": "mid"
+   },
+   {
+    "label": "SUNDIAL on a stone base",
+    "at": [
+     0.58,
+     0.57,
+     0.67,
+     0.69
+    ],
+    "layer": "mid",
+    "shape": "ellipse"
+   },
+   {
+    "label": "RAISED BEDS, one kind of flower",
+    "at": [
+     0.72,
+     0.62,
+     0.98,
+     0.8
+    ],
+    "layer": "mid"
+   },
+   {
+    "label": "WHEELBARROW",
+    "at": [
+     0.02,
+     0.81,
+     0.2,
+     0.97
+    ],
+    "layer": "fg"
+   },
+   {
+    "label": "WATERING CAN",
+    "at": [
+     0.82,
+     0.84,
+     0.95,
+     0.98
+    ],
+    "layer": "fg",
+    "shape": "ellipse"
+   }
+  ]
+ }
 }
