@@ -34,7 +34,7 @@ PALETTE = ("Palette: jewel-toned theatrical daylight; shadows deep cobalt, viole
            "gold; ground and walls turquoise, teal, petrol; accents coral, hot-pink, cream; moss green, mustard, burnt orange; matte dry opaque pigment. ")
 CAMERA = ("Fixed point-and-click stage-play camera with strong barrel curvature inside the geometry; no vignette, no frame, no outlines, no ink lines. ")
 STYLE_REF_NOTE = ("The SECOND reference image shows the target look only (palette, rendering, mood, how surfaces and light are painted): "
-                  "match that look, but do not copy its rooms, objects or composition. ")
+                  "match that look, but do not copy its rooms, objects, characters or composition. ")
 STYLE_REF = ROOT / "assets/painted/hall_clean/plate_empty.png"     # the original painting (characters removed): the first room
 TAIL = "A large clear empty floor area fills the foreground. No people, no witch, no raccoon, no text, no letters."
 SHORT_LOOK = ("Screenshot of a crude 1997 PS1-style low-poly point-and-click game: wedge and slab geometry, blunt facets, dry matte painted textures, "
@@ -182,9 +182,12 @@ def cmd_run(args):
     root.mkdir(parents=True, exist_ok=True)
     sl.render(layout).save(guide)
     (root / "layout.json").write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
-    hall = args.set == "hall"
-    runs = [dict(r, id=r["id"] + "+hall") for r in HALL_SET] if hall else RUNS
-    ref = STYLE_REF if hall else None
+    ref, tag = (STYLE_REF, "hall") if args.set == "hall" else (Path(args.style_ref) if args.style_ref else None, args.tag or "ref")
+    hall = ref is not None
+    base = HALL_SET if args.set == "hall" else [r for r in RUNS if r["id"] in (args.only.split(",") if args.only else [r["id"] for r in RUNS if "guide" in r["channel"]])]
+    runs = [dict(r, id=r["id"] + "+" + tag) for r in base] if hall else RUNS
+    if hall:
+        (root / "style_ref.json").write_text(json.dumps({"path": str(ref), "tag": tag}) + "\n", encoding="utf-8")
     results = json.loads((root / "results.json").read_text()) if (root / "results.json").exists() else {}
     spent = sum(r.get("usd") or 0 for r in results.values())
     for run in runs:
@@ -225,10 +228,11 @@ def cmd_blind(args):
     results = json.loads((root / "results.json").read_text())
     pics = {i: root / r["image"] for i, r in results.items() if r.get("image")}
     combined = {i: dict(r, image=str(pics[i])) for i, r in results.items() if r.get("image")}
-    if args.include_from:                                        # earlier pictures, to compare against (e.g. the no-reference runs)
-        other = ROOT / "build/compare" / args.include_from
+    for spec_ in args.include_from or []:                         # earlier pictures to compare against: ROOT or ROOT:id,id
+        name, _, only = spec_.partition(":")
+        other = ROOT / "build/compare" / name
         for i, r in json.loads((other / "results.json").read_text()).items():
-            if r.get("image") and (not args.only or i in args.only.split(",")):
+            if r.get("image") and (not only or i in only.split(",")):
                 pics[i] = other / r["image"]
                 combined[i] = dict(r, image=str(pics[i]))
     brief, spec, layout = load()
@@ -241,9 +245,13 @@ def cmd_blind(args):
         name = "pic_%02d.png" % n
         Image.open(pics[i]).convert("RGB").resize((1280, 720), Image.LANCZOS).save(blind / name)
         key[name] = i
+    ref_path = args.reference if args.reference and args.reference is not True else None
+    if args.reference is True and (root / "style_ref.json").exists():
+        ref_path = json.loads((root / "style_ref.json").read_text())["path"]
     reference = bool(args.reference)
     if reference:
-        Image.open(STYLE_REF).convert("RGB").resize((1280, 720), Image.LANCZOS).save(blind / "style_reference.png")
+        ref_img = Image.open(ref_path or STYLE_REF).convert("RGB")
+        ref_img.resize((1280, max(1, round(ref_img.height * 1280 / ref_img.width))), Image.LANCZOS).save(blind / "style_reference.png")
     (root / "blind_key.json").write_text(json.dumps(key, indent=1) + "\n", encoding="utf-8")
     (root / "blind_results.json").write_text(json.dumps(combined, indent=1) + "\n", encoding="utf-8")
     names = [e["label"].split(":")[0] if ":" in e["label"] else e["label"] for e in layout["elements"]]
@@ -268,8 +276,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("plan"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_plan)
-    p = sub.add_parser("run"); p.add_argument("name"); p.add_argument("--set", choices=["hall"], help="hall: layout guide + the original room painting as style reference"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_run)
-    p = sub.add_parser("blind"); p.add_argument("name"); p.add_argument("--include-from"); p.add_argument("--only"); p.add_argument("--reference", action="store_true"); p.add_argument("--seed", type=int, default=7); p.set_defaults(fn=cmd_blind)
+    p = sub.add_parser("run"); p.add_argument("name"); p.add_argument("--set", choices=["hall"], help="hall: layout guide + the original room painting as style reference"); p.add_argument("--style-ref", help="a style reference image (with --tag): the guide runs of --only (default: every guide run) are redone with it"); p.add_argument("--tag"); p.add_argument("--only"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_run)
+    p = sub.add_parser("blind"); p.add_argument("name"); p.add_argument("--include-from", action="append"); p.add_argument("--only"); p.add_argument("--reference", nargs="?", const=True, help="critics also rate the style match to this image (default: the run's own style reference)"); p.add_argument("--seed", type=int, default=7); p.set_defaults(fn=cmd_blind)
     p = sub.add_parser("score"); p.add_argument("name"); p.add_argument("critics", nargs="+"); p.set_defaults(fn=cmd_score)
     args = ap.parse_args(argv)
     return args.fn(args)
