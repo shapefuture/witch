@@ -57,7 +57,7 @@ static func echo_rule(delay: int = 3, policy: String = "replace") -> Dictionary:
 			"id": "t.door_bell", "domain": "physical", "form": "direct", "source": "door",
 			"relation": {"id": "answers_later", "polarity": "+", "bindings": {"q": "door", "a": "bell"}},
 			"trigger": {"event_kind": "KNOCK", "subject": "door"},
-			"transformation": {"schedule": [{"delay": delay, "event": {"kind": "ECHO", "actor": "world", "subject": "bell", "data": {"reaction": "$reaction", "answers": "$subject"}}, "key": "echo", "if_pending": policy}]},
+			"transformation": {"schedule": [{"delay": delay, "event": {"kind": "ECHO", "actor": "world", "subject": "bell", "data": {"reaction": "$reaction", "answers": "$subject"}}, "slot": "echo", "if_pending": policy}]},
 			"evidence": {"holders": ["player"], "at": "consequence", "knowledge_effects": [{"id": "echo.$data_answers", "proposition": {"answered_by": "$subject"}, "status": "SUPPORTED"}]},
 		}],
 	}

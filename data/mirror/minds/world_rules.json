@@ -38,7 +38,7 @@
 						{
 							"delay": 3,
 							"event": {"kind": "PROP_ECHOED", "actor": "hall", "subject": "statue", "data": {"reaction": "$reaction", "answers": "$subject"}},
-							"key": "echo", "if_pending": "replace",
+							"slot": "echo", "if_pending": "replace",
 							"on_replace": {
 								"holders": ["player"],
 								"knowledge_effects": [{"id": "echo_forgotten", "proposition": {"hall": "answers_only_the_latest"}, "status": "SUPPORTED"}],
@@ -53,7 +53,7 @@
 					"model_effects": [{"type": "ensure", "rule_id": "m.hall.every_poke_answered", "subject_id": "hall", "proposition": {"hall": "answers_every_poke"}, "scope": "hall", "confidence": 0.4, "status": "HYPOTHESIS"}]
 				},
 				"conventions": {
-					"conv.hall.globe_is_a_toy": {"patch": {"set": {"schedule.0.delay": 1, "schedule.0.event.data.reaction": "hop"}}}
+					"conv.hall.globe_is_a_toy": {"patch": {"set": {"schedule.0.delay": 1}, "reactions_add": [{"op": "APPROACH", "actor": "raccoon", "target": "statue"}]}}
 				}
 			},
 			{
@@ -66,7 +66,7 @@
 						{
 							"delay": 3,
 							"event": {"kind": "PROP_ECHOED", "actor": "hall", "subject": "globe", "data": {"reaction": "$reaction", "answers": "$subject"}},
-							"key": "echo", "if_pending": "replace",
+							"slot": "echo", "if_pending": "replace",
 							"on_replace": {
 								"holders": ["player"],
 								"knowledge_effects": [{"id": "echo_forgotten", "proposition": {"hall": "answers_only_the_latest"}, "status": "SUPPORTED"}],
@@ -91,7 +91,7 @@
 						{
 							"delay": 5,
 							"event": {"kind": "PROP_POKED", "actor": "raccoon", "subject": "$subject", "data": {"reaction": "$reaction", "imitation": "yes"}},
-							"key": "imitate", "if_pending": "replace"
+							"slot": "imitate", "if_pending": "replace"
 						}
 					]
 				},
@@ -245,7 +245,7 @@
 						{
 							"delay": 4,
 							"event": {"kind": "PROP_POKED", "actor": "raccoon", "subject": "globe", "data": {"reaction": "hop", "imitation": "no"}},
-							"key": "solo_play", "if_pending": "skip"
+							"slot": "solo_play", "if_pending": "skip"
 						}
 					]
 				},

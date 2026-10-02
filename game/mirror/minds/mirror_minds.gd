@@ -506,7 +506,7 @@ func _observer(observers: Dictionary, holder: String) -> Dictionary:
 		observers[holder] = _accumulator(holder)
 	return observers[holder]
 
-# One scheduled consequence: numbered, keyed, bounded. A pending entry with the same key is replaced,
+# One scheduled consequence: numbered, slotted, bounded. A pending entry in the same slot is replaced,
 # skipped over, or stacked on, per the spec; a full queue or a too-deep chain drops the new entry instead.
 func _schedule(spec: Dictionary, vars: Dictionary, origin_ref: Dictionary, at: int, depth: int, plan: Dictionary, observers: Dictionary, witness_ids: Array, place: String, limits: Dictionary) -> void:
 	var entry_event: Dictionary = MindsTemplate.apply(spec.get("event", {}), vars)
@@ -514,20 +514,20 @@ func _schedule(spec: Dictionary, vars: Dictionary, origin_ref: Dictionary, at: i
 		entry_event["place"] = place
 	if not entry_event.has("actor"):
 		entry_event["actor"] = "world"
-	var key := str(MindsTemplate.apply(spec.get("key", ""), vars))
+	var slot := str(MindsTemplate.apply(spec.get("slot", ""), vars))
 	var policy := str(spec.get("if_pending", "stack"))
 	if depth + 1 > int(limits["max_chain_depth"]):
-		(plan["dropped"] as Array).append({"why": "chain_depth", "key": key})
+		(plan["dropped"] as Array).append({"why": "chain_depth", "slot": slot})
 		return
 	var pending: Array = plan["pending"]
 	var same: Array = []
-	if not key.is_empty():
+	if not slot.is_empty():
 		for entry in pending:
-			if str(entry.get("key", "")) == key:
+			if str(entry.get("slot", "")) == slot:
 				same.append(entry)
 	if not same.is_empty():
 		if policy == "skip":
-			(plan["dropped"] as Array).append({"why": "already_pending", "key": key})
+			(plan["dropped"] as Array).append({"why": "already_pending", "slot": slot})
 			return
 		if policy == "replace":
 			for old in same:
@@ -543,7 +543,7 @@ func _schedule(spec: Dictionary, vars: Dictionary, origin_ref: Dictionary, at: i
 					(plan["cancelled"] as Array).append(str(old["id"]))
 				_deliver(old.get("on_replace", {}), vars, witness_ids, observers, place)
 	if pending.size() >= int(limits["max_pending"]):
-		(plan["dropped"] as Array).append({"why": "queue_full", "key": key})
+		(plan["dropped"] as Array).append({"why": "queue_full", "slot": slot})
 		return
 	var scheduled_now: Array = plan["scheduled"]
 	var entry: Dictionary = {
@@ -551,7 +551,7 @@ func _schedule(spec: Dictionary, vars: Dictionary, origin_ref: Dictionary, at: i
 		"due": at + maxi(0, int(spec.get("delay", 0))),
 		"event": entry_event,
 		"origin": {"rule": str(origin_ref["rule"]), "variant": str(origin_ref["variant"]), "depth": depth + 1},
-		"key": key,
+		"slot": slot,
 	}
 	if spec.has("when"):
 		entry["when"] = spec["when"]

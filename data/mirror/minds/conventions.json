@@ -23,6 +23,7 @@
 		"_about": "The counterexample the hall keeps handing out: only the raccoon reads the statue as play, Tomas never does, so this one never forms.",
 		"label_key": "conv.hall.statue_is_a_toy.label",
 		"meaning": {"key": "conv.hall.statue_is_a_toy.meaning"},
+		"counterexample": true,
 		"community": "household",
 		"reads": "play",
 		"subjects": ["statue"],

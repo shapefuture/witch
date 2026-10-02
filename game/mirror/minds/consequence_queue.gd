@@ -5,7 +5,7 @@ extends RefCounted
 # when you come back"). Derived state: it is rebuilt from the event log and never saved on its own, so it
 # cannot drift from the history, cannot be forged, and cannot touch the catalog fingerprint.
 #
-# An entry is {id, due, event, origin, key, when}. `event` is a world-event spec exactly like the ones
+# An entry is {id, due, event, origin, slot, when}. `event` is a world-event spec exactly like the ones
 # MirrorMinds.perceive() takes; `due` is a point on the Mirror clock; ids ("c1", "c2", ...) are issued in
 # the order entries were scheduled, which is also the tie-break between entries due at the same time. That
 # (due, id) order is the whole determinism contract: advancing the clock in one step or in many fires the
@@ -57,12 +57,12 @@ func due(now: int) -> Array:
 			out.append(entry)
 	return out
 
-func with_key(key: String) -> Array:
+func in_slot(slot: String) -> Array:
 	var out: Array = []
-	if key.is_empty():
+	if slot.is_empty():
 		return out
 	for entry in pending():
-		if str(entry.get("key", "")) == key:
+		if str(entry.get("slot", "")) == slot:
 			out.append(entry)
 	return out
 
