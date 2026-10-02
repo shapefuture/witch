@@ -482,17 +482,19 @@ class Model:
         return tris
 
 
-def bake_uvs(tris, atlas, col):
+def bake_uvs(tris, atlas, col, soft=()):
     """Register swatches for every flat colour, pack the atlas, and resolve per-corner UVs.
 
-    Returns arrays P, N, UV, J, W ready for the exporter and the preview renderer.
+    Returns arrays P, N, UV, J, W ready for the exporter and the preview renderer; with `soft` (tile names), also C:
+    per-corner RGBA whose alpha is 0 on those tiles' faces (psx_lit_actor.gdshader lights them softly) and 1 elsewhere.
     """
     for t in tris:
         if t['tex'] is None and not atlas.has('c:' + t['key']):
             atlas.swatch('c:' + t['key'], col[t['key']])
     atlas.pack()
-    P, Nn, UV, J, W = [], [], [], [], []
+    P, Nn, UV, J, W, Cc = [], [], [], [], [], []
     for t in tris:
+        Cc.append(np.tile((1., 1., 1., 0. if t['tex'] in soft else 1.), (3, 1)))
         if t['tex'] is None:
             u, v = atlas.centre('c:' + t['key'])
             uv = np.tile((u, v), (3, 1))
@@ -506,5 +508,8 @@ def bake_uvs(tris, atlas, col):
         W.append(t['W'])
     W = np.concatenate(W).astype(float)
     W /= W.sum(1, keepdims=True)
-    return dict(P=np.concatenate(P), N=np.concatenate(Nn), UV=np.concatenate(UV),
-                J=np.concatenate(J).astype(np.uint8), W=W)
+    out = dict(P=np.concatenate(P), N=np.concatenate(Nn), UV=np.concatenate(UV),
+               J=np.concatenate(J).astype(np.uint8), W=W)
+    if soft:
+        out['C'] = np.concatenate(Cc)
+    return out

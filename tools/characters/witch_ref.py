@@ -20,6 +20,7 @@ The rest pose is the pose she holds in the sheet (the wand arm raised, the bird 
 bones are translation-only, and every clip keys every bone against that rest.
 """
 import argparse
+import json
 import math
 import os
 import sys
@@ -184,7 +185,9 @@ def skirt_pts():
 
 
 # ---- the head -----------------------------------------------------------------------------------------------
-HEAD_R = [(.905, .050, .060, .030), (.935, .095, .100, .030), (.990, .130, .125, .015), (1.060, .135, .130, .005),
+# the jaw rows hug the face's outline (tools/characters/ref/witch_face.json), so the head never shows around her chin
+HEAD_R = [(.905, .036, .050, .020), (.935, .050, .100, .030), (.960, .086, .115, .025), (.990, .112, .125, .015),
+          (1.060, .135, .130, .005),
           (1.130, .125, .125, 0.), (1.190, .100, .100, -.010), (1.235, .050, .060, -.010)]
 HEAD_E = 2.2
 FACE_X = .115
@@ -485,6 +488,148 @@ def paint_hood_tile(P, size=(144, 60)):
     return img.resize(size, Image.LANCZOS)
 
 
+# ---- the face from the user's close-up (tools/characters/face_from_ref.py writes ref/witch_face.png + .json) --------------
+FACE_REF = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ref', 'witch_face')
+EYE_Y = 1.057                                    # where the eye line sits on the head (the painted plate's was the same)
+
+
+def face_ref():
+    """(meta, tile image, depth or None) of the face cut out of the reference, or None when the tile has not been made.
+    The depth (0..1 per texel of the tile, 1 nearest) is the depth model's, unitless."""
+    if not (os.path.exists(FACE_REF + '.json') and os.path.exists(FACE_REF + '.png')):
+        return None
+    with open(FACE_REF + '.json') as fh:
+        meta = json.load(fh)
+    depth = None
+    if os.path.exists(FACE_REF + '_depth.png'):
+        depth = np.asarray(Image.open(FACE_REF + '_depth.png').convert('L'), float) / 255.
+    return meta, Image.open(FACE_REF + '.png').convert('RGB'), depth
+
+
+def membrane(values, mask):
+    """The smoothest surface (Laplace) through `values` on the mask's border, over the mask's inside."""
+    from scipy import sparse
+    from scipy.sparse.linalg import spsolve
+    inner = mask.copy()
+    inner[0, :] = inner[-1, :] = inner[:, 0] = inner[:, -1] = False
+    inner[1:-1, 1:-1] &= mask[:-2, 1:-1] & mask[2:, 1:-1] & mask[1:-1, :-2] & mask[1:-1, 2:]
+    idx = -np.ones(mask.shape, int)
+    ys, xs = np.nonzero(inner)
+    idx[ys, xs] = np.arange(len(ys))
+    rows, cols, vals = [], [], []
+    b = np.zeros(len(ys))
+    for k, (y, x) in enumerate(zip(ys, xs)):
+        rows.append(k), cols.append(k), vals.append(4.)
+        for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            j = idx[y + dy, x + dx]
+            if j >= 0:
+                rows.append(k), cols.append(j), vals.append(-1.)
+            else:
+                b[k] += values[y + dy, x + dx]
+    out = values.astype(float).copy()
+    out[ys, xs] = spsolve(sparse.csr_matrix((vals, (rows, cols)), shape=(len(ys), len(ys))), b)
+    return out
+
+
+def _inside(poly, pts):
+    """Even-odd test of points against a polygon, both (n, 2)."""
+    x, y = pts[:, 0], pts[:, 1]
+    inside = np.zeros(len(pts), bool)
+    n = len(poly)
+    for i in range(n):
+        x1, y1 = poly[i]
+        x2, y2 = poly[(i + 1) % n]
+        cross = ((y1 > y) != (y2 > y)) & (x < (x2 - x1) * (y - y1) / ((y2 - y1) or 1e-12) + x1)
+        inside ^= cross
+    return inside
+
+
+FACE_POINTS = 110          # vertices of the sculpted face (the outline's 40 included)
+FACE_TOL = .0012           # ...or fewer, once no texel's relief is further than this from the facets (metres)
+FACE_LIFT = .004           # the plate floats this far off the head, so the head never shows through it
+FACE_RELIEF = 1.0          # the depth model's relief, exaggerated (1: as measured)
+
+
+def face_height(meta, depth):
+    """z of the face on every texel of its tile (NaN outside the outline). The depth model's face is much flatter than
+    the head it sits on and has no unit, so only its relief is used: how far each texel stands out of the smooth surface
+    its own outline spans (nose, brows, cheeks, lips, chin; the eye sockets lower), in the unit that best fits the
+    depth to the head, raised off the head's own surface. On the outline the relief is nil, so the face meets the head."""
+    w_m, h_m = meta['size_m']
+    mid_u, eye_v = meta['mid_u'], meta['eye_line_v']
+    th, tw = depth.shape
+    u, v = np.meshgrid((np.arange(tw) + .5) / tw, (np.arange(th) + .5) / th)
+    X, Y = (u - mid_u) * w_m, EYE_Y - (v - eye_v) * h_m
+    H = np.vectorize(head_z)(X, Y)
+    xy_out = A([((a - mid_u) * w_m, EYE_Y - (b - eye_v) * h_m) for a, b in meta['outline']])
+    inside = _inside(xy_out, np.stack([X.ravel(), Y.ravel()], 1)).reshape(X.shape)
+    ring = inside.copy()
+    ring[1:-1, 1:-1] |= inside[:-2, 1:-1] | inside[2:, 1:-1] | inside[1:-1, :-2] | inside[1:-1, 2:]
+    relief = depth - membrane(np.where(ring, depth, 0.), ring)
+    unit = np.polyfit(depth[inside], H[inside], 1)[0]          # metres per unit of the model's depth
+    Z = H + FACE_LIFT + np.maximum(relief, 0.) * unit * FACE_RELIEF
+    Z[~inside] = np.nan
+    return X, Y, Z, xy_out, unit
+
+
+def face_plate_ref(meta, depth=None, spacing=.03):
+    """The face's own outline as a mesh. With a relief: sculpted, vertices added one at a time where the facets so far
+    miss the relief most (the low-poly look of the reference: big planes on the cheeks, many small ones at the nose,
+    brows, lips). Without: a loose grid that follows the head. UVs are where each point sits in the tile."""
+    from scipy.spatial import Delaunay
+    w_m, h_m = meta['size_m']
+    mid_u, eye_v = meta['mid_u'], meta['eye_line_v']
+    if depth is not None:
+        X, Y, Z, xy_out, _ = face_height(meta, depth)
+        ok = ~np.isnan(Z)
+        cand = np.stack([X[ok], Y[ok]], 1)
+        cz = Z[ok]
+        d = np.min(np.linalg.norm(cand[:, None, :] - xy_out[None, :, :], axis=2), axis=1)
+        cand, cz = cand[d > .008], cz[d > .008]
+        pts, zs = list(xy_out), [head_z(x, y) + FACE_LIFT for x, y in xy_out]
+        while len(pts) < FACE_POINTS:
+            P2 = A(pts)
+            tri = Delaunay(P2)
+            simp = tri.find_simplex(cand)
+            T = tri.transform[simp]
+            bc = np.einsum('nij,nj->ni', T[:, :2], cand - T[:, 2])
+            bary = np.concatenate([bc, 1 - bc.sum(1, keepdims=True)], 1)
+            zl = np.sum(A(zs)[tri.simplices[simp]] * bary, 1)
+            err = np.abs(zl - cz)
+            err[simp < 0] = 0.
+            k = int(np.argmax(err))
+            if err[k] < FACE_TOL:
+                break
+            pts.append(cand[k])
+            zs.append(cz[k])
+        pts, zs = A(pts), A(zs)
+    else:
+        xy_out = A([((u - mid_u) * w_m, EYE_Y - (v - eye_v) * h_m) for u, v in meta['outline']])
+        lo, hi = xy_out.min(0), xy_out.max(0)
+        gx, gy = np.meshgrid(np.arange(lo[0], hi[0], spacing), np.arange(lo[1], hi[1], spacing))
+        grid = np.stack([gx.ravel(), gy.ravel()], 1)
+        grid = grid[_inside(xy_out, grid)]
+        if len(grid):
+            d = np.min(np.linalg.norm(grid[:, None, :] - xy_out[None, :, :], axis=2), axis=1)
+            grid = grid[d > spacing * .45]
+        pts = np.concatenate([xy_out, grid], 0)
+        zs = A([head_z(x, y) + FACE_LIFT for x, y in pts])
+    tri = Delaunay(pts).simplices
+    cen = pts[tri].mean(1)
+    tri = tri[_inside(xy_out, cen)]
+    V = np.concatenate([pts, zs[:, None]], 1)
+    F = []
+    for a, b, c in tri:
+        cr = (pts[b, 0] - pts[a, 0]) * (pts[c, 1] - pts[a, 1]) - (pts[b, 1] - pts[a, 1]) * (pts[c, 0] - pts[a, 0])
+        F.append((a, b, c) if cr > 0 else (a, c, b))
+    F = A(F, int)
+    uv = A([(mid_u + x / w_m, eye_v - (y - EYE_Y) / h_m) for x, y in pts], float)
+    Q = V[F]
+    fn = np.cross(Q[:, 1] - Q[:, 0], Q[:, 2] - Q[:, 0])
+    ln = np.maximum(np.linalg.norm(fn, axis=1, keepdims=True), 1e-12)
+    return dict(V=V, F=F, ax=Q.mean(1) - .012 * fn / ln, fb=None, fuv=uv[F])
+
+
 def paint_face_tile(size=(64, 56)):
     """The face plate: peach skin with planes, big blue eyes with a heavy upper lid, orange brows, a small nose,
     a closed smile, rosy cheeks. u across (x from -FACE_X to FACE_X), v from the brow ring down to the chin."""
@@ -631,22 +776,26 @@ def build_parts(M):
         add(tube([bc + A((sgn * .03, .025, .01)), bc + A((sgn * .085, .06, -.04)), bc + A((sgn * .13, .095, -.10))], [.034, .030, .004], N=4, ratio=.22, flat=(0, 1, 0), cap=(0, 0)), 'bird_d', bone='bird')
 
     # ===== neck, head, face plate
-    add(loft([((0, y, 0.01), (r, 0, 0), (0, 0, r)) for y, r in ((.84, .050), (.93, .045))], 8, 2., cap=(0, 0)), 'skin_d', bone='neck')
+    add(loft([((0, y, 0.01), (r, 0, 0), (0, 0, r)) for y, r in ((.84, .036), (.93, .033))], 8, 2., cap=(0, 0)), 'skin_d', bone='neck')
     head = loft([((0, y, cz), (rx, 0, 0), (0, 0, rz)) for y, rx, rz, cz in HEAD_R], 10, HEAD_E, cap=(.004, .004), j=.0015)
     add(head, lambda c, n: 'skin_d' if c[1] < .985 else 'hair1', bone='head')
-    # the face plate is a rounded square: a square grid pulled in at the corners so the face has a jaw and a brow, not a box
-    ab = np.linspace(-1, 1, 8)
-    bb = np.linspace(-1, 1, 7)
-    yc, hy = (FACE_Y0 + FACE_Y1) / 2, (FACE_Y1 - FACE_Y0) / 2
-    plate = []
-    for b in bb:
-        row = []
-        for a in ab:
-            x = FACE_X * a * math.sqrt(1 - b * b / 2)
-            y = yc + hy * b * math.sqrt(1 - a * a / 2)
-            row.append((x, y, head_z(x, y) + .004))
-        plate.append(row)
-    fp_ = gp(plate, False, u=[(a + 1) / 2 for a in ab], v=[(1 - b) / 2 for b in bb])
+    ref = face_ref()
+    if ref is not None:
+        fp_ = face_plate_ref(ref[0], ref[2])
+    else:
+        # the painted fallback: a rounded square, a square grid pulled in at the corners so the face has a jaw and a brow
+        ab = np.linspace(-1, 1, 8)
+        bb = np.linspace(-1, 1, 7)
+        yc, hy = (FACE_Y0 + FACE_Y1) / 2, (FACE_Y1 - FACE_Y0) / 2
+        plate = []
+        for b in bb:
+            row = []
+            for a in ab:
+                x = FACE_X * a * math.sqrt(1 - b * b / 2)
+                y = yc + hy * b * math.sqrt(1 - a * a / 2)
+                row.append((x, y, head_z(x, y) + .004))
+            plate.append(row)
+        fp_ = gp(plate, False, u=[(a + 1) / 2 for a in ab], v=[(1 - b) / 2 for b in bb])
     add(fp_, 'skin', bone='head', tex='face')
 
     # ===== the hood: dome with a front opening, its lining, the peak, the flower wreath on the rim
@@ -876,7 +1025,8 @@ def make_model():
     M = Model(BONES, COL)
     at = atl.Atlas(256)
     P = hood_pts()
-    tiles = {'skirt': paint_skirt_tile(), 'hood': paint_hood_tile(P), 'face': paint_face_tile()}
+    ref = face_ref()
+    tiles = {'skirt': paint_skirt_tile(), 'hood': paint_hood_tile(P), 'face': ref[1] if ref is not None else paint_face_tile()}
     for k, im in tiles.items():
         at.alloc(k, *im.size)
     for k, im in tiles.items():
@@ -890,7 +1040,7 @@ def build(out_dir, preview=None, name='witch'):
     M, at = make_model()
     clips = clip_set(M)
     tris = M.flatten()
-    arr = bake_uvs(tris, at, M.COL)
+    arr = bake_uvs(tris, at, M.COL, soft=('face',))
     top = float(arr['P'][:, 1].max())
     scale = HEIGHT / top
     ex = dict(variant='reference', tris=len(tris), hood_top_m=HEIGHT, units_per_m=1 / scale)

@@ -31,12 +31,12 @@ python tools/characters/witch_turnaround.py OUT.png --ref REF_SHEET.png         
 
 | | witch.glb |
 |---|---|
-| triangles (budget 9,000; the brief asks for about 3,000) | 3,022 |
+| triangles (budget 9,000; the brief asks for about 3,000) | 3,136 (the sculpted face is 178 of them) |
 | surfaces after `CharacterModels` folds flat colours | 1 (one atlas, one material) |
 | bones | 22: the 21 every witch has had + `hat_tip` (the hood's peak and upper hood, which lag the head) |
 | clips | idle 4.0 s, walk 1.0 s, talk 3.0 s, cast 1.6 s (not looping); every bone keyed in every clip |
 | size | 1.33 m (hood top), 1.02 m across the curls, 0.92 m across the hem (the sheet's 0.67 of her height) |
-| texture | one 256 px atlas, 41 % used: the skirt's star tile (240 x 40), the hood's (144 x 60), the face (64 x 56), 4 px colour swatches; 5-bit |
+| texture | one 256 px atlas, 53 % used: the skirt's star tile (240 x 40), the hood's (144 x 60), the face (112 x 99, cut from the user's close-up), 4 px colour swatches; 5-bit |
 
 Authored in metres, y up, facing +Z, +X her left, feet on y = 0; the rest pose is the pose she holds on the sheet
 (wand arm raised, bird arm held out), not a T-pose, so the clips rotate the arms relative to that. Colours are albedo
@@ -56,8 +56,25 @@ only: the room lights her.
   Hair vertices weight to `head`, `hairB.*` and `hairT.*` by height and side, so the curls swing in every clip.
 - *Cloak* (shoulders to a hem just below the hair, open at the front, on `cape`), *vest* with two pocket boxes and
   things sticking out of them, a crescent pendant and its chain, bell sleeves, small hands, the wand and its pink star
-  (`hand.R`), the bird (`bird`, parented to `hand.L`), the head with a rounded face plate (the tile has the eyes,
-  brows, nose, mouth and cheeks).
+  (`hand.R`), the bird (`bird`, parented to `hand.L`), the head with the sculpted face (below).
+
+**The face** comes from the user's camera-facing close-up (not in the repository). `tools/characters/face_from_ref.py
+<image>` levels the eyes, cuts the skin out (forehead under the flowers as an arch, the neck where the face narrows,
+the outline's convex hull), paints the flowers' cast shadows and the hair's fringe over with the skin around them, and
+runs Depth Anything V2 (the painted room's model) on the head; it writes `tools/characters/ref/witch_face.png` (the
+tile), `witch_face_depth.png` (the depth, normalised over the face) and `witch_face.json` (outline, eye line, scale:
+eye to chin is 0.134 m). `ref/` holds a `.gdignore`: these are the builder's inputs, not game assets.
+`witch_ref.py` then sculpts it: the depth model's face is much flatter than the head and has no unit, so only its
+*relief* is used (each texel's height over the smooth surface its own outline spans: nose, brows, cheekbones, lips and
+chin up, the eye sockets less), in metres from the line that best fits the depth to the head, and laid on the head's
+own surface (`head_z`) 4 mm out, so the outline meets the head. The mesh starts as the 40-point outline and gains a
+vertex at a time where the facets so far miss that surface most (`FACE_POINTS` 110, `FACE_TOL` 1.2 mm), which gives
+the reference's low-poly look: big planes on the cheeks and forehead, small ones at the nose and lips. The head's jaw
+rows hug the outline (`HEAD_R`) so no head shows around the chin, and the neck is thin, as in the close-up.
+The face's vertices carry vertex-colour alpha 0 (`bake_uvs(..., soft=('face',))`, exported as `COLOR_0`):
+`psx_lit_actor.gdshader` lights them without the key's bands, never below `soft_floor` of it and only half tinted by the
+room (`soft_neutral`), because the tile already carries the reference's own soft planes; everything else keeps alpha 1
+and the stepped key. `tools/characters/capture_face.gd` renders her face in the painted room's light from four sides.
 
 **Lessons from the room's light** (`docs/art/painted_room.md`, "Actor lighting"). A facet is lit in steps by a key from
 above and the beam's side, and only facets tilted at least about 25 degrees up from vertical catch any: a vertical back
@@ -78,8 +95,9 @@ row height; the game sees her at about 100 px). No image generation was used: th
 - The hair is a smooth flute mass with thin tails; the sheet's is layered, with thick rounded locks and more, bigger
   spirals. The curls' ribbons are 4-5 sided tubes, so at the sheet's scale they look sharper.
 - The hood is a rounded bell with one ridge; the sheet's is more peaked and its tip bends toward the viewer.
-- The face is simplified (a rounded plate with a painted face, no hair strands between it and the hood's edge except
-  two locks); the flowers are flat five-point stars, not layered petals; the hands are small blocks; the bird is a
+- The face is the close-up's, but rounder at the cheeks than the reference (it lies on the head's ellipsoid), its
+  skin a little warmer in the room's gold light, and no hair parts over the forehead as in the close-up (two locks
+  only); the flowers are flat five-point stars, not layered petals; the hands are small blocks; the bird is a
   few flat shapes; no sparkles, no floating moon, no gem and plant things in the pockets beyond three blobs.
 - The vest is boxy, the pockets plain; no medallions on the cloak.
 - In the room the hair reads golden-brown, not orange: the actor light there is dim and warm (`actor_light`,

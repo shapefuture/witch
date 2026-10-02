@@ -263,7 +263,10 @@ room they now have what the painting's figures have: facets with a core shadow, 
 - **Key light** (`psx_lit_actor.gdshader`, `key_strength` > 0, set by `PaintedRoom.actor_key`): each flat facet is lit in
   `key_bands` steps by a key direction (the beam's, turned partly toward the camera's side by `key_front` so backs show
   some form), gated by how lit the floor under the character is; facets turned away keep only the floor's own purple
-  (the core shadow), tops are brighter than undersides. The hall's characters keep `key_strength = 0`: nothing changes there.
+  (the core shadow), tops are brighter than undersides. A soft fill from the camera's side (`key_fill`) keeps a face turned
+  from the beam dim, not black. Faces with vertex-colour alpha 0 (the witch's face, whose tile already carries the
+  reference's planes) take the key without bands, never below `soft_floor` of it, and half neutral (`soft_neutral`).
+  The hall's characters keep `key_strength = 0`: nothing changes there.
 - **Cast shadow** (`painted_actor_shadow.gdshader`, `PaintedRoom.actor_shadow`): each character mesh gets this as a
   `material_overlay`, so the shadow is the skinned mesh itself flattened onto the floor along the beam, in every pose.
   Multiplied into the painting through the stencil buffer, so the overlap of limbs and body darkens only once. It fades

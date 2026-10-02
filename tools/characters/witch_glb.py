@@ -165,6 +165,8 @@ def export(path, model, arr, atlas_img, clips, scale, mesh_name='Witch', generat
              'TEXCOORD_0': acc(arr['UV'].astype(np.float32), 5126, 'VEC2', False, 34962),
              'JOINTS_0': acc(arr['J'].astype(np.uint8), 5121, 'VEC4', False, 34962),
              'WEIGHTS_0': acc(arr['W'].astype(np.float32), 5126, 'VEC4', False, 34962)}
+    if 'C' in arr:
+        attrs['COLOR_0'] = acc(arr['C'].astype(np.float32), 5126, 'VEC4', False, 34962)
     prim = {'attributes': attrs, 'material': 0, 'mode': 4}
 
     png = io.BytesIO()
