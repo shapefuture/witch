@@ -112,7 +112,7 @@ func test_the_witch_has_the_new_references_proportions_and_palette() -> void:
 		var arrays := mesh_instance.mesh.surface_get_arrays(surface)
 		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
 		triangles += (indices.size() if not indices.is_empty() else (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()) / 3
-	ok(triangles <= 4500, "the witch stays within her 4.5k triangle budget (%d)" % triangles)
+	ok(triangles <= 6500, "the witch stays within her 6.5k triangle budget (%d)" % triangles)
 	var material := mesh_instance.mesh.surface_get_material(0) as BaseMaterial3D
 	var texture := material.albedo_texture if material != null else null
 	ok(texture != null and texture.get_width() <= 256 and texture.get_height() <= 256, "one atlas of at most 256 px")

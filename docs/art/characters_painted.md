@@ -35,7 +35,7 @@ the reference's studio render; the room shots use the room's own light.
 
 | | witch.glb |
 |---|---|
-| triangles (budget 9,000; the test holds her to 4,500) | 4,476 (the sculpted face is 178 of them) |
+| triangles (budget 9,000; the test holds her to 6,500) | 6,340 (the sculpted face is 178 of them, the hair about 3,400) |
 | surfaces after `CharacterModels` folds flat colours | 1 (one atlas, one material) |
 | bones | 22: the 21 every witch has had + `hat_tip` (the hood's peak and upper hood, which lag the head) |
 | clips | idle 4.0 s, walk 1.0 s, talk 3.0 s, cast 1.6 s (not looping); every bone keyed in every clip |
@@ -50,27 +50,31 @@ only: the room lights her.
 - *Skirt*: a 12-sided cone, three rows, every second corner pulled in 4.5 % at the hem (pleats); its tile has the stars
   and crescents sized in metres (compensated for the cone's narrowing) and a tone per panel and triangle. The hem
   follows the legs a little in `walk`.
-- *Hood*: a seven-ring dome with a wide, rounded crown (the sheet's back view), open at the front below the brow
-  ring, with a lining and a thick rolled hem across the back and sides at the shoulders; the back-centre column is
-  pulled out to the folded tip. Its upper back weights to `hat_tip`. Front to back it is as shallow as the sheet's
-  side view (the face sits behind the flowers, not out of the hood).
+- *Hood*: a seven-ring dome that hugs the head, open round the face above the jaw and closed under it (so no dark
+  lining shows below the face), with a lining; the back-centre column is pulled out to the folded tip, and the
+  bottom edge dips at the centre back like draped cloth (an earlier rolled hem read as a hat brim). Its upper back
+  weights to `hat_tip`. Front to back it is as shallow as the sheet's side view (the face sits behind the flowers).
 - *Flower crown*: nine five-petal flowers along the opening's rim from temple to temple, clustered at the temples,
   each petal a fan of three facets (a darker side, the lit tip), a raised gold centre, olive leaves between.
-- *Hair*: a short scalp mass under the hood's back, and from under the hem seven thick locks side by side down to the
-  waist, each with an S through it and a big curl at its end (the sheet's "octopus" back); two locks frame the face
-  from under the flowers over the shoulders into an outward curl; swept bangs over the forehead's corners; per side a
-  big curl at the shoulder and one at the hip, and two upper curls that leave her hair at the temple, behind the
-  flowers, sweep out over the hood's front edge and curl beside it. The spirals are polylines walked by a turtle
-  (`turtle()`: a stalk, then a spiral that shrinks), swept as 4- or 5-sided tubes. Hair vertices weight to `head`,
-  `hairB.*` and `hairT.*` by height and side, so the curls swing in every clip.
-- *Cloak* (shoulders to a hem just below the hair, open at the front from -45 to +45 degrees so the vest shows from
-  the collar, on `cape`) and a collar round the base of the neck, with a short shaded neck above it. *Vest*, slim front
-  to back, with two big pockets on the hips (wider at the bottom, a flap), stuffed: a spoon, a toy mouse, a feather and
-  herbs; sweets, a cookie and a folded note; a big silver crescent on a gold chain, a small crescent and a stud, four
-  gold buttons. Bell sleeves whose cuffs follow the forearm (`arm_lower`). *Hands*: her right a fist closed round the
+- *Hair*: a cap that bulges out under the hood's back, and from under the hood nine round locks (`LOCKS`), each
+  built hanging in the back's plane and turned half way round her toward its place, of staggered lengths: the middle
+  one short with a small spiral at mid-back, the long inner ones curling in down to the skirt, the outer ones
+  splaying into big outward spirals, so the hair is widest at the bottom (the sheet's "octopus" back). In front, one
+  continuous lock a side (`FRAME`, smoothed with `catmull`) from under the flowers down the cheek, in front of the
+  hood's lower edge, over the shoulder, behind the arm, into a big curl at the hip; swept bangs over the forehead's
+  corners; per side a curl at the shoulder and a big one at the hip from under the hood's back; one small curl high on
+  her left only (the sheet is not symmetric there). Every curl is the end of a lock, never stuck on the hood. Spirals
+  take ten steps a turn (`CURL_SEG`), tubes are 5-6 sided and stay thick into the curl. Hair vertices weight to
+  `head`, `hairB.*` and `hairT.*` by height and side, so the curls swing in every clip.
+- *Capelet* (shoulders to just above the skirt, on `cape`), open at the front in a V: narrow at the collar, -45 to +45
+  degrees below, so the vest shows; a round collar at the base of the neck with a short shaded neck above it. *Vest*,
+  dark and slim front to back, with two rounded pouch pockets apart on the hips (a flap each), stuffed: a spoon, a toy
+  mouse peeking out, a feather and herbs; sweets, a cookie and a folded note; a silver crescent high on the chest on a
+  gold chain from the collar, a small crescent and a stud below, four gold buttons. Bell sleeves whose cuffs follow the forearm (`arm_lower`). *Hands*: her right a fist closed round the
   wand (a palm, a roll of knuckles across the stick, a thumb over them; wand and fist both rigid on `hand.R`, so the
   grip holds through `cast`), her left open palm up with the fingers curving up and the thumb out, the bird
-  (`bird`, parented to `hand.L`) standing on it. The head with the sculpted face (below).
+  (`bird`, parented to `hand.L`) standing on it: a plump grey-blue songbird with a white belly, folded wings, an
+  upturned tail and dark eyes. The wand's star is a thick five-point bipyramid. The head with the sculpted face (below).
 
 **The face** comes from the user's camera-facing close-up (not in the repository). `tools/characters/face_from_ref.py
 <image>` levels the eyes, cuts the skin out (forehead under the flowers as an arch, the neck where the face narrows,
@@ -105,11 +109,13 @@ texels). `painted_walk_check.sh` passes (0 failures; occlusion unchanged). Frame
 (reference | studio | room), the room at game resolution with PSX on, and the three sizes (100 %, 50 %, 25 % of the
 row height; the game sees her at about 100 px). No image generation was used: the sheet already is a turnaround.
 
+**Palette** (after a blind critique against the sheet: the first purples were too bright and pink): hood and skirt one
+deep violet (about 0.43, 0.25, 0.62 and 0.46, 0.26, 0.62), capelet and sleeves a little darker, all the skirt's moons
+gold (four motifs a panel), the vest a dark chocolate brown, the hair a warm honey-orange.
+
 **Still different from the sheet**
-- The back locks are 5-sided tubes on regular spacing, so they read more ordered than the sheet's; its locks overlap
-  in layers and its small spiral in the middle of the back is not modelled.
-- The sleeves and the cloak are plain purple (the sheet prints stars and moons on them); the bird is a few blobs; the
-  wand's star is flat; no sparkles and no floating moon.
+- The capelet is plain purple (the sheet prints stars and moons on it; the sleeves have them); no sparkles and no
+  floating moon.
 - The face lies on the head's ellipsoid, so it is rounder at the cheeks than the close-up; in the room's gold light
   her skin is a little warmer and her eyes a little greener than in the studio.
 - In the room the hair reads golden-brown: the actor light there is dim and warm (`actor_light`, `actor_sun` in
