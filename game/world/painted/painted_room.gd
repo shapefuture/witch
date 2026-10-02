@@ -28,6 +28,7 @@ var room: Dictionary = {}
 var camera: Camera3D
 var actors: Dictionary = {}
 var props: Array[PaintedProp] = []
+var life: PaintedLife
 var _focal := 1.0
 var _pitch := 0.0
 var _eye := 1.3
@@ -72,6 +73,7 @@ func _ready() -> void:
 		add_child(prop)
 		prop.setup(self, data, _plate, _plate_smooth)
 		props.append(prop)
+	_build_life()
 	_build_screen()
 	set_psx(psx)
 
@@ -255,6 +257,15 @@ func _add_shadow(holder: Node3D, radius: float) -> void:
 	shadow.transform = Transform3D(Basis(Vector3.RIGHT, -PI * 0.5), holder.basis.inverse() * away + Vector3(0.0, 0.01, 0.0))
 	holder.add_child(shadow)
 
+# Light and life (painted_life.gd, life.json): built before the screen layer, so the quantisation reads the finished frame.
+func _build_life() -> void:
+	life = PaintedLife.new()
+	life.name = "Life"
+	add_child(life)
+	if not life.setup(self):
+		life.queue_free()
+		life = null
+
 func _build_screen() -> void:
 	var layer := CanvasLayer.new()
 	layer.name = "Screen"
@@ -274,6 +285,8 @@ func set_psx(on: bool) -> void:
 	_plate_material.set_shader_parameter("texel_res", texel_res)
 	_plate_material.set_shader_parameter("snap_res", snap_res)
 	_screen_material.set_shader_parameter("enabled", on)
+	if life != null:
+		life.set_psx(on, texel_res, snap_res)
 	for prop in props:
 		prop.set_psx(on, texel_res, snap_res)
 

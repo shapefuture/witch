@@ -1,0 +1,54 @@
+{
+  "_about": "Light and life in the painting (game/world/painted/painted_life.gd). Every position is a pixel of plate.png (1280x720); the room maps pixels to depth. Colours are display-referred 0..1. Add a light by adding an entry to lights.",
+  "fps": 8,
+  "glow": {"levels": 6, "depth": 0.97, "spare": 6},
+  "lights": [
+    {"id": "oculus", "pixel": [876, 54], "radius": 165, "core": 0.14, "color": [1.0, 0.94, 0.74], "strength": 0.26, "depth_mode": "near",
+     "flicker": {"kind": "breath", "amount": 0.14, "seed": 3, "shift": 0.12}},
+    {"id": "candle_a", "pixel": [855, 226], "radius": 44, "core": 0.2, "color": [1.0, 0.72, 0.32], "strength": 0.3,
+     "flicker": {"kind": "candle", "amount": 0.3, "seed": 11, "shift": 0.4}},
+    {"id": "candle_b", "pixel": [837, 243], "radius": 36, "core": 0.2, "color": [1.0, 0.72, 0.32], "strength": 0.3,
+     "flicker": {"kind": "candle", "amount": 0.32, "seed": 23, "shift": 0.4}},
+    {"id": "candle_c", "pixel": [893, 264], "radius": 36, "core": 0.2, "color": [1.0, 0.74, 0.34], "strength": 0.3,
+     "flicker": {"kind": "candle", "amount": 0.32, "seed": 37, "shift": 0.4}},
+    {"id": "candle_d", "pixel": [823, 272], "radius": 34, "core": 0.2, "color": [1.0, 0.7, 0.3], "strength": 0.26,
+     "flicker": {"kind": "candle", "amount": 0.34, "seed": 41, "shift": 0.4}},
+    {"id": "lamp_shelf_l", "pixel": [607, 68], "radius": 34, "core": 0.3, "color": [0.72, 0.38, 1.0], "strength": 0.4,
+     "flicker": {"kind": "magic", "amount": 0.35, "seed": 5, "shift": 0.0}},
+    {"id": "lamp_shelf_c", "pixel": [725, 136], "radius": 34, "core": 0.3, "color": [0.72, 0.38, 1.0], "strength": 0.4,
+     "flicker": {"kind": "magic", "amount": 0.35, "seed": 7, "shift": 0.0}},
+    {"id": "lamp_shelf_r", "pixel": [955, 115], "radius": 28, "core": 0.3, "color": [0.72, 0.38, 1.0], "strength": 0.34,
+     "flicker": {"kind": "magic", "amount": 0.35, "seed": 13, "shift": 0.0}},
+    {"id": "lamp_wall_r", "pixel": [1080, 184], "radius": 32, "core": 0.3, "color": [0.72, 0.38, 1.0], "strength": 0.34,
+     "flicker": {"kind": "magic", "amount": 0.35, "seed": 17, "shift": 0.0}},
+    {"id": "sconce_l", "pixel": [316, 118], "radius": 30, "core": 0.3, "color": [0.72, 0.38, 1.0], "strength": 0.4,
+     "flicker": {"kind": "magic", "amount": 0.3, "seed": 19, "shift": 0.0}},
+    {"id": "lantern_arch", "pixel": [563, 373], "radius": 24, "core": 0.32, "color": [1.0, 0.76, 0.4], "strength": 0.34,
+     "flicker": {"kind": "candle", "amount": 0.28, "seed": 29, "shift": 0.4}},
+    {"id": "lantern_far", "pixel": [492, 482], "radius": 20, "core": 0.34, "color": [1.0, 0.76, 0.4], "strength": 0.3,
+     "flicker": {"kind": "candle", "amount": 0.28, "seed": 31, "shift": 0.4}},
+    {"id": "corridor", "pixel": [350, 400], "radius": 105, "core": 0.1, "color": [1.0, 0.86, 0.58], "strength": 0.13,
+     "flicker": {"kind": "lamp", "amount": 0.18, "seed": 43, "shift": 0.2}}
+  ],
+  "beam": {
+    "source": "oculus",
+    "color": [1.0, 0.88, 0.58],
+    "shade": [0.16, 0.1, 0.2],
+    "flicker": {"kind": "breath", "amount": 0.12, "seed": 3},
+    "shaft": {
+      "polygon": [[842, 58], [905, 34], [925, 150], [928, 330], [922, 500], [905, 575], [640, 585], [690, 470], [745, 330], [800, 190]],
+      "feather": 36, "base": 0.05, "gain": 1.2, "taper": 0.5, "shadow": 0.35, "taper_rows": [40, 600]
+    },
+    "pool": {
+      "polygon": [[470, 612], [580, 592], [740, 586], [870, 598], [915, 632], [850, 670], [690, 688], [540, 672]],
+      "feather": 40, "base": 0.04, "gain": 1.0, "shadow": 0.6
+    },
+    "motes": {"cell": 9, "density": 0.3, "speed": 0.16, "strength": 0.6, "color": [1.0, 0.93, 0.7]}
+  },
+  "frame": {"strength": 0.12, "breath": 0.5, "tint": [0.34, 0.24, 0.4]},
+  "occluders": {
+    "witch": {"radius": 0.26, "height": 1.2},
+    "raccoon": {"radius": 0.2, "height": 0.5}
+  },
+  "actors": {"follow": 1.0}
+}
