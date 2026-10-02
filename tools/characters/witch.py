@@ -5,10 +5,12 @@ photo-projected face plate taken from the concept sheet.
 
     python tools/characters/witch.py --out assets/characters --refs <dir with the concept art>
 
-builds `witch.glb` and (unless `--only v1`) `witch_antler.glb` via `witch_antler.py`. The concept
-art is not in the repository: without `--refs` the face texture is read back out of the GLB
-already in `--out`, so the model can be rebuilt anywhere. `--preview DIR` writes six-view and
-face close-up PNGs (the idle pose, and the rest pose).
+builds `witch.glb` (the witch of the user's new references, `witch_ref.py`) and `witch_antler.glb`
+(`witch_antler.py`). This file keeps the concept-sheet witch described above (`--only v1`, written as
+`witch_concept.glb`, not shipped), the previous painted-hat witch (`--only painted`, `witch_painted.glb`, not
+shipped) and the kit pieces the antler witch reuses. The concept art is not in the repository: without `--refs` the
+face texture is read back out of the GLB already in `--out`, so the model can be rebuilt anywhere.
+`--preview DIR` writes six-view and face close-up PNGs (the idle pose, and the rest pose).
 
 Authoring space: y up, she faces +Z, +X is her left, feet at y=0, about 3.3 units tall. The
 export scales so the top of the hood is 1.30 m.
@@ -762,14 +764,17 @@ def export_character(name, M, at, clips, out_dir, preview, extras, mesh_name):
 
 
 def build_v1(refs, out_dir, preview=None):
-    print('witch (v1)')
+    """The concept-sheet witch, kept reproducible as `witch_concept.glb`: `witch.glb` is now the witch of the new
+    references (witch_ref.py). Without --refs the face is read from a previous witch_concept.glb in `out_dir`
+    (the last concept `witch.glb` is in git history, commit a8a1bbf)."""
+    print('witch (v1, concept sheet)')
     M = Model(BONES, COL)
     spec = face_spec(refs)
     at = atl.Atlas(256)
     at.alloc('face', *spec.size)
-    at.paste('face', face_texture(spec, os.path.join(out_dir, 'witch.glb'), spec.size))
+    at.paste('face', face_texture(spec, os.path.join(out_dir, 'witch_concept.glb'), spec.size))
     build_parts(M, 'face', spec)
-    return export_character('witch', M, at, clip_set(M), out_dir, preview, {'variant': 'v1'}, 'Witch')
+    return export_character('witch_concept', M, at, clip_set(M), out_dir, preview, {'variant': 'v1'}, 'Witch')
 
 
 def main(argv=None):
@@ -777,10 +782,18 @@ def main(argv=None):
     ap.add_argument('--out', default='assets/characters')
     ap.add_argument('--refs', default=os.environ.get('WITCH_REFS'), help='directory with the concept art (not in the repo)')
     ap.add_argument('--preview', default=None, help='write preview PNGs here')
-    ap.add_argument('--only', choices=('v1', 'antler'), default=None)
+    ap.add_argument('--only', choices=('ref', 'painted', 'v1', 'antler'), default=None,
+                    help='default: ref (witch.glb) and antler; v1 is the concept-sheet witch (witch_concept.glb), '
+                         'painted the previous painted-hat witch (witch_painted.glb); neither ships')
     a = ap.parse_args(argv)
     os.makedirs(a.out, exist_ok=True)
-    if a.only in (None, 'v1'):
+    if a.only in (None, 'ref'):
+        import witch_ref
+        witch_ref.build(a.out, a.preview)
+    if a.only == 'painted':
+        import witch_painted
+        witch_painted.build(a.out, a.preview, name='witch_painted')
+    if a.only == 'v1':
         build_v1(a.refs, a.out, a.preview)
     if a.only in (None, 'antler'):
         import witch_antler

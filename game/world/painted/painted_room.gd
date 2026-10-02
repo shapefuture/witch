@@ -20,7 +20,7 @@ const CAST_SHADOW_SHADER := preload("res://game/world/painted/painted_actor_shad
 const SCREEN_SHADER := preload("res://game/world/painted/painted_screen.gdshader")
 # Where each character looks: away from the camera, into the hall, as in the painting.
 const FACING := {"witch": PI, "raccoon": PI * 0.92}
-const SHADOW_RADIUS := {"witch": 0.32, "raccoon": 0.28}
+const SHADOW_RADIUS := {"witch": 0.5, "raccoon": 0.3}
 
 @export var room_dir := "res://assets/painted/hall_clean"
 @export var psx := true
