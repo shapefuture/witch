@@ -49,3 +49,55 @@ its style (as the first colour guide did) needs the anchor (`docs/art/scenes.md`
 
 Reproduce: `python tools/painted/compare_models.py run r1`, `blind r1`, then critics, then `score r1 a.json b.json`
 (`build/compare/r1/` holds the pictures and is not committed).
+
+# Run r2: with the original room painting as the style reference
+
+**Setup.** Four models, each given the layout guide (grey shapes) **and** the original room painting (`assets/painted/hall_clean/plate_empty.png`,
+the first room, characters removed) as a second reference image "for the look only", same master-prompt style block and layout as r1. Grok's
+words run became `grok_both+hall` (guide, placement words and reference together). The no-reference pictures of r1 were scored again in the
+same blind set, with a new question: `style` = how close the picture's *look* (palette, how surfaces are painted and faceted, light, mood) is
+to the hall painting, 0-10, judged by critics who were shown the painting but not told which pictures had it. USD 0.32; 8 pictures, 2 critics
+(median box distance 0.004 over 88 shared boxes; the critics' style marks differed by at most 1).
+
+| run | USD | placement | box overlap | objects on ground | jewel palette | cute modern (lower is better) | **style match to the hall** |
+|---|---|---|---|---|---|---|---|
+| marketing_guide **+hall** | 0.066 | 0.74 | 0.25 | 2.5 | 6.5 | **3.0** | **7.5** |
+| qwen_edit_guide **+hall** | 0.075 | 0.81 | 0.35 | 0.5 | **8.0** | 3.5 | 6.5 |
+| marketing_guide | 0.065 | 0.79 | 0.30 | 1.0 | 5.0 | 4.5 | 6.0 |
+| grok_words | 0.080 | 0.88 | 0.36 | 0.0 | 8.5 | 3.5 | 4.5 |
+| qwen_edit_guide | 0.075 | **0.90** | **0.51** | 0.5 | 8.0 | 5.5 | 3.5 |
+| grok_both **+hall** | 0.090 | **0.90** | 0.36 | 2.5 | 7.5 | 7.0 | 3.5 |
+| grok_guide | 0.090 | 0.89 | 0.50 | 3.0 | 6.0 | 7.0 | 3.5 |
+| grok_guide **+hall** | 0.090 | 0.75 | 0.29 | 2.0 | 6.0 | 6.0 | 3.5 |
+
+What the reference changed, model by model (with minus without):
+
+| model | placement | style match | cute modern | jewel palette |
+|---|---|---|---|---|
+| Qwen Image 3 Edit | -0.09 | **+3.0** | -2.0 | 0 |
+| Marketing Studio (1k) | -0.05 | +1.5 | -1.5 | +1.5 |
+| Grok guide | -0.14 | 0 | -1.0 | 0 |
+| Grok (words vs guide + words) | +0.02 | -1.0 | +3.5 | -1.0 |
+
+## Reading
+
+- **Qwen Image 3 Edit takes the style reference best**: its look moves a long way toward the hall (style match 3.5 to 6.5, much less cute and toy-like)
+  and it keeps most of its placement (0.90 to 0.81), an empty floor and its jewel colours. **Qwen with guide and reference is the best balance** for
+  a scene that should look like the first room.
+- **Marketing Studio matches the hall's look best** (7.5) and is the cheapest of the four, but its placement is the weakest (0.74) and it leaves
+  objects on the floor (2.5).
+- **Grok barely uses the reference**: its style match stays at 3.5 (a point lower with the guide, words and reference together) and its pictures
+  stay in its own faceted pastel patchwork; adding the reference cost it placement (-0.14) and gained nothing. Use Grok for placement, not for
+  matching a given look.
+- **Every reference costs placement** (0.05-0.14): the model spends attention on the second image. If a placement is critical, state it in
+  words as well, or generate without the reference and match the look afterwards.
+- **For the master-prompt look, with no hall reference** (r1), Qwen Edit with the guide still leads. Which reference to use is a choice of look:
+  the hall painting (olive, ochre, hazy light; style match up to 7.5) or none (jewel teal, plum and amber; the master prompt's own palette).
+  The two look different, and the master prompt's "NOT papercraft" sits uneasily with a papercraft reference.
+
+**Caveats.** One scene, one generation per model. Subjective marks are noisy: the same r1 pictures scored 1 to 2 points differently for `jewel`
+and `cute modern` between the two critic pairs (placement agreed to within 0.01), so read those columns as direction, not value. `grok_both+hall`
+changes three things at once against `grok_words`. Marketing Studio ran at 1k.
+
+Reproduce: `compare_models.py run r2 --set hall`, `blind r2 --include-from r1 --only grok_words,grok_guide,marketing_guide,qwen_edit_guide
+--reference`, then critics, then `score r2 a.json b.json`.
