@@ -17,6 +17,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
+from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[2]
 LUMA = np.array([0.2126, 0.7152, 0.0722])
@@ -131,12 +132,12 @@ def make_variant(plate, out, model="marketing", max_usd=0.12):
     return found[0] if found else None
 
 
-def measure_auto(edit_path, plate_path):
-    """Finds the balls and measures them; `ok` says whether to trust it (see GOOD_FIT / GOOD_AGREEMENT)."""
+def measure_auto(edit_path, plate_path, zone=None):
+    """Finds the balls (in `zone`, see find_spheres) and measures them; `ok` says whether to trust it (see GOOD_FIT / GOOD_AGREEMENT)."""
     plate = Image.open(plate_path)
     edit = Image.open(edit_path)
     try:
-        grey, chrome = find_spheres(edit, plate)
+        grey, chrome = find_spheres(edit, plate, zone=zone)
     except ValueError as e:
         return dict(ok=False, why=str(e))
     res = measure(edit.resize(plate.size, Image.LANCZOS), grey, chrome)
@@ -163,7 +164,78 @@ def measure(image, grey, chrome):
                 grey_vs_chrome_correlation=round(cross_check(lin, grey, chrome), 3))
 
 
-def find_spheres(edit, plate, rmin=40, rmax=130):
+def _smooth_seed(e, zone, sat_max=0.16, sd_max=0.02, min_px=1500):
+    """A point inside the matte grey ball: the biggest patch in the zone that is nearly colourless and smooth (the ground and plants are neither)."""
+    luma = e @ np.array([0.2126, 0.7152, 0.0722])
+    sat = (e.max(2) - e.min(2)) / (e.max(2) + 1e-3)
+    m1, m2 = ndimage.uniform_filter(luma, 9), ndimage.uniform_filter(luma * luma, 9)
+    flat = np.sqrt(np.maximum(m2 - m1 * m1, 0)) < sd_max
+    H, W = luma.shape
+    inside = np.zeros(luma.shape, bool)
+    inside[int(zone[1] * H):int(zone[3] * H), int(zone[0] * W):int(zone[2] * W)] = True
+    mask = ndimage.binary_opening((ndimage.uniform_filter(sat, 9) < sat_max) & flat & inside, iterations=4)
+    labels, count = ndimage.label(mask)
+    if count == 0:
+        return None
+    sizes = ndimage.sum(mask, labels, range(1, count + 1))
+    best = int(np.argmax(sizes)) + 1
+    if sizes[best - 1] < min_px:
+        return None
+    ys, xs = np.nonzero(labels == best)
+    return float(xs.mean()), float(ys.mean()), float(np.sqrt(len(ys) / np.pi))
+
+
+def _outline_score(gx, gy, cx, cy, r, theta):
+    """How strongly the picture's edges run along the circle (a ball's outline); edges that cross it (shelves, planks) do not count."""
+    H, W = gx.shape
+    c, s = np.cos(theta), np.sin(theta)
+    yy, xx = np.clip(np.round(cy + r * s).astype(int), 0, H - 1), np.clip(np.round(cx + r * c).astype(int), 0, W - 1)
+    return float(np.abs(gx[yy, xx] * c + gy[yy, xx] * s).mean())
+
+
+def find_spheres(edit, plate, rmin=45, rmax=140, zone=None):
+    """The grey ball and the chrome ball in an edited plate, as (x, y, r) circles in the plate's pixels, in a `zone` (x0, y0, x1, y1 as fractions of
+    the picture) where they were asked for; the default is the lower middle. The grey ball is the one smooth, nearly colourless patch there, so
+    it is seeded from that and its circle fitted to the outline; the chrome ball is then the same-sized circle in the same row, either side.
+    A picture that also had objects taken away (toys.py) changed pixels elsewhere: the colour cue ignores them, which a vote over changed pixels could not.
+    Falls back to the vote (_find_spheres_by_vote) when there is no such patch. The chrome circle is the less exact of the two (its inside is a
+    whole reflected scene whose edges are strong): within about 10 % of its radius."""
+    zone = zone or (0.2, 0.45, 0.85, 0.95)
+    e = np.asarray(edit.convert("RGB").resize(plate.size, Image.LANCZOS), np.float32) / 255.0
+    seed = _smooth_seed(e, zone)
+    if seed is None:
+        return _find_spheres_by_vote(edit, plate, rmin, rmax)
+    luma = ndimage.gaussian_filter(e.mean(2), 1.5)
+    gx, gy = ndimage.gaussian_filter(ndimage.sobel(luma, axis=1), 1.0), ndimage.gaussian_filter(ndimage.sobel(luma, axis=0), 1.0)
+    H, W = luma.shape
+    theta = np.linspace(0, 2 * np.pi, 120, endpoint=False)
+    best = None
+    for r in range(max(rmin, int(seed[2] * 0.9)), rmax + 1, 3):
+        for dy in range(-60, 61, 4):
+            for dx in range(-60, 61, 4):
+                sc = _outline_score(gx, gy, seed[0] + dx, seed[1] + dy, r, theta)
+                if best is None or sc > best[0]:
+                    best = (sc, seed[0] + dx, seed[1] + dy, r)
+    grey = (int(best[1]), int(best[2]), int(best[3]))
+    r1, second = grey[2], None
+    for side in (1, -1):                       # the prompt puts the chrome ball to the right of the grey one; look left only if there is no room
+        for r in range(int(0.92 * r1), int(1.08 * r1) + 1, 2):
+            for dy in range(-int(0.35 * r1), int(0.35 * r1) + 1, 3):
+                for dx in range(int(1.8 * r1), int(3.8 * r1) + 1, 3):
+                    cx, cy = grey[0] + side * dx, grey[1] + dy
+                    if not (r < cx < W - r and r < cy < H - r) or not (zone[0] * W <= cx <= zone[2] * W and zone[1] * H <= cy <= zone[3] * H):
+                        continue
+                    sc = _outline_score(gx, gy, cx, cy, r, theta)
+                    if second is None or sc > second[0]:
+                        second = (sc, cx, cy, r)
+        if second is not None:
+            break
+    if second is None:
+        raise ValueError("found one sphere, not two: draw the circles by hand (sphere_probe.py grid / measure)")
+    return grey, (int(second[1]), int(second[2]), int(second[3]))
+
+
+def _find_spheres_by_vote(edit, plate, rmin=40, rmax=130):
     """The grey ball (left) and the chrome ball (right) in an edited plate, as (x, y, r) circles in the plate's pixels.
     Where the edit differs from the plate marks the new objects; a gradient-direction Hough vote over those edges finds the two circles."""
     from scipy import ndimage

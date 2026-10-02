@@ -153,7 +153,9 @@ hit; the caller that owns input dispatches prop, then floor walk, then `fallback
 blocks in `props.json` plus the image edits (`--without NAME=PATH`). Cutout cards are aligned to the mesh's
 8 px grid so the PSX vertex snap treats card and painting alike, and `plate_empty.png` is the plate bit for bit
 outside the masks (the fill is colour-matched to the ring around its hole and faded in over 3 px), so the room
-at rest is the painting. `tools/painted/lift_prop.py` does one prop the same way.
+at rest is the painting. `tools/painted/lift_prop.py` does one prop the same way. Rooms the factory generates get their toys from the layout instead of by hand: `tools/painted/toys.py`
+(docs/art/scenes.md, Toys): one Marketing Studio edit takes the marked objects away and paints the lighting spheres, the changed pixels inside each object's box become
+its cutout (kept above the floor for what stands on it), and what does not come off becomes a hotspot.
 
 **Cost of the objects** (Qwen Image 3 Edit, 2k, 16:9, seed 7, `prompt_extend` false, $0.075 per call; the raw
 outputs are in `build/higgsfield`, git-ignored, the manifests are `job_toys_{a,b,c}.json`):

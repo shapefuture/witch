@@ -1,0 +1,329 @@
+{
+ "props": [
+  {
+   "id": "tree",
+   "reactions": {
+    "press": [
+     {
+      "do": "rattle",
+      "sound": "rattle"
+     },
+     {
+      "do": "ripple",
+      "sound": "whoosh"
+     },
+     {
+      "do": "flash",
+      "sound": "sparkle"
+     }
+    ]
+   },
+   "kind": "hotspot",
+   "polygon": [
+    [
+     0,
+     0
+    ],
+    [
+     435,
+     0
+    ],
+    [
+     435,
+     432
+    ],
+    [
+     0,
+     432
+    ]
+   ],
+   "rect": [
+    0,
+    0,
+    448,
+    448
+   ],
+   "mask": "tree_mask.png"
+  },
+  {
+   "id": "bell",
+   "reactions": {
+    "press": [
+     {
+      "do": "swing",
+      "sound": "chime"
+     },
+     {
+      "do": "shiver",
+      "sound": "chime"
+     },
+     {
+      "do": "swing",
+      "sound": "tick"
+     }
+    ]
+   },
+   "kind": "hotspot",
+   "polygon": [
+    [
+     621,
+     252
+    ],
+    [
+     659,
+     252
+    ],
+    [
+     659,
+     299
+    ],
+    [
+     621,
+     299
+    ]
+   ],
+   "rect": [
+    608,
+    240,
+    64,
+    72
+   ],
+   "mask": "bell_mask.png"
+  },
+  {
+   "id": "window",
+   "reactions": {
+    "press": [
+     {
+      "do": "flash",
+      "sound": "sparkle"
+     },
+     {
+      "do": "blink",
+      "sound": "chime"
+     },
+     {
+      "do": "pulse",
+      "sound": "blip"
+     }
+    ]
+   },
+   "kind": "hotspot",
+   "polygon": [
+    [
+     1050,
+     104
+    ],
+    [
+     1111,
+     104
+    ],
+    [
+     1111,
+     176
+    ],
+    [
+     1050,
+     176
+    ]
+   ],
+   "rect": [
+    1032,
+    88,
+    96,
+    104
+   ],
+   "mask": "window_mask.png"
+  },
+  {
+   "id": "lantern",
+   "reactions": {
+    "press": [
+     {
+      "do": "swing",
+      "sound": "creak"
+     },
+     {
+      "do": "pulse",
+      "sound": "chime"
+     },
+     {
+      "do": "rattle",
+      "sound": "rattle"
+     }
+    ]
+   },
+   "kind": "cutout",
+   "rect": [
+    456,
+    128,
+    96,
+    104
+   ],
+   "mask": "lantern_mask.png",
+   "pivot": [
+    502,
+    137
+   ],
+   "lift": {
+    "without": "edit",
+    "keep_mask": true
+   },
+   "depth": 40.0
+  },
+  {
+   "id": "bench",
+   "reactions": {
+    "press": [
+     {
+      "do": "pulse",
+      "sound": "thunk"
+     },
+     {
+      "do": "ripple",
+      "sound": "sparkle"
+     },
+     {
+      "do": "flash",
+      "sound": "chime"
+     }
+    ]
+   },
+   "kind": "hotspot",
+   "polygon": [
+    [
+     77,
+     367
+    ],
+    [
+     301,
+     367
+    ],
+    [
+     301,
+     518
+    ],
+    [
+     77,
+     518
+    ]
+   ],
+   "rect": [
+    64,
+    352,
+    256,
+    184
+   ],
+   "mask": "bench_mask.png"
+  },
+  {
+   "id": "sundial",
+   "reactions": {
+    "press": [
+     {
+      "do": "wobble",
+      "sound": "creak"
+     },
+     {
+      "do": "spin",
+      "sound": "whoosh"
+     },
+     {
+      "do": "squash",
+      "sound": "thunk"
+     }
+    ]
+   },
+   "kind": "cutout",
+   "rect": [
+    768,
+    296,
+    192,
+    184
+   ],
+   "mask": "sundial_mask.png",
+   "pivot": [
+    863,
+    477
+   ],
+   "lift": {
+    "without": "edit",
+    "keep_mask": true
+   },
+   "depth": 7.796
+  },
+  {
+   "id": "wheelbarrow",
+   "reactions": {
+    "press": [
+     {
+      "do": "rattle",
+      "sound": "rattle"
+     },
+     {
+      "do": "hop",
+      "sound": "boing"
+     },
+     {
+      "do": "tilt_fall",
+      "sound": "thunk"
+     }
+    ]
+   },
+   "kind": "cutout",
+   "rect": [
+    0,
+    496,
+    384,
+    216
+   ],
+   "mask": "wheelbarrow_mask.png",
+   "pivot": [
+    170,
+    708
+   ],
+   "lift": {
+    "without": "edit",
+    "keep_mask": true
+   },
+   "depth": 1.995
+  },
+  {
+   "id": "watering_can",
+   "reactions": {
+    "press": [
+     {
+      "do": "wobble",
+      "sound": "thunk"
+     },
+     {
+      "do": "tilt_fall",
+      "sound": "thunk"
+     },
+     {
+      "do": "hop",
+      "sound": "boing"
+     }
+    ]
+   },
+   "kind": "cutout",
+   "rect": [
+    776,
+    544,
+    272,
+    176
+   ],
+   "mask": "watering_can_mask.png",
+   "pivot": [
+    922,
+    719
+   ],
+   "lift": {
+    "without": "edit",
+    "keep_mask": true
+   },
+   "depth": 2.65
+  }
+ ],
+ "plate_empty": "plate_empty.png"
+}

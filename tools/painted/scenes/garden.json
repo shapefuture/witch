@@ -22,7 +22,14 @@
      0.28,
      0.62
     ],
-    "layer": "mid"
+    "layer": "mid",
+    "toy": "tree",
+    "toy_at": [
+     0.0,
+     0.0,
+     0.34,
+     0.6
+    ]
    },
    {
     "label": "LOW STONE WALL with a small arched gate",
@@ -32,7 +39,15 @@
      0.8,
      0.6
     ],
-    "layer": "bg"
+    "layer": "bg",
+    "toy": "bell",
+    "toy_at": [
+     0.485,
+     0.35,
+     0.515,
+     0.415
+    ],
+    "toy_note": "hanging in the arched gate"
    },
    {
     "label": "HOUSE with a lit window, behind the wall",
@@ -42,7 +57,14 @@
      0.96,
      0.42
     ],
-    "layer": "bg"
+    "layer": "bg",
+    "toy": "window",
+    "toy_at": [
+     0.82,
+     0.145,
+     0.868,
+     0.245
+    ]
    },
    {
     "label": "STONE POST with a hanging lantern",
@@ -52,7 +74,15 @@
      0.46,
      0.44
     ],
-    "layer": "bg"
+    "layer": "bg",
+    "toy": "lantern",
+    "toy_at": [
+     0.367,
+     0.19,
+     0.428,
+     0.31
+    ],
+    "toy_note": "hanging from the stone post"
    },
    {
     "label": "STONE BENCH under the tree",
@@ -62,7 +92,14 @@
      0.3,
      0.75
     ],
-    "layer": "mid"
+    "layer": "mid",
+    "toy": "bench",
+    "toy_at": [
+     0.06,
+     0.51,
+     0.235,
+     0.72
+    ]
    },
    {
     "label": "SUNDIAL on a stone base",
@@ -73,7 +110,14 @@
      0.69
     ],
     "layer": "mid",
-    "shape": "ellipse"
+    "shape": "ellipse",
+    "toy": "sundial",
+    "toy_at": [
+     0.615,
+     0.42,
+     0.745,
+     0.64
+    ]
    },
    {
     "label": "RAISED BEDS, one kind of flower",
@@ -93,7 +137,14 @@
      0.2,
      0.97
     ],
-    "layer": "fg"
+    "layer": "fg",
+    "toy": "wheelbarrow",
+    "toy_at": [
+     0.005,
+     0.7,
+     0.3,
+     0.96
+    ]
    },
    {
     "label": "WATERING CAN",
@@ -104,9 +155,17 @@
      0.98
     ],
     "layer": "fg",
-    "shape": "ellipse"
+    "shape": "ellipse",
+    "toy": "watering_can",
+    "toy_at": [
+     0.61,
+     0.775,
+     0.815,
+     1.0
+    ]
    }
-  ]
+  ],
+  "_toys": "Elements with \"toy\" are lifted into the room's toy box (tools/painted/toys.py): toy_at is the object's own box in the finished plate, which the generator placed a little differently from the guide."
  },
  "styles": {
   "ps1p": {

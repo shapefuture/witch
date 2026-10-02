@@ -1,0 +1,46 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "aspect_ratio": "16:9",
+    "resolution": "1k",
+    "quality": "medium",
+    "prompt": "The same scene from exactly the same camera position, angle and framing, with identical layout, colours and light, with the small bell hanging in the arched gate in the middle of the picture, the hanging lantern hanging from the stone post in the upper centre of the picture, the sundial on its stone base on the right of the picture, the wooden wheelbarrow in the lower left of the picture and the watering can in the lower right of the picture taken away: the ground, the plants, the walls and the sky that were behind each of them continue where it stood.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/2979c576-4ca5-4a77-b033-268c0f7a7b4c.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "0.885",
+    "usd": "0.056",
+    "discount": null
+  },
+  "idempotency_key": "0ae5af0b-6d34-4dee-af0a-0b8984735a14",
+  "created_at": "2026-10-02T19:54:55+00:00",
+  "request_id": "05591928-19ff-4ae2-8ab8-3dcf782d2880",
+  "status_url": "https://platform.higgsfield.ai/requests/05591928-19ff-4ae2-8ab8-3dcf782d2880/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/05591928-19ff-4ae2-8ab8-3dcf782d2880/cancel",
+  "status": "completed",
+  "correlation_id": "461851a50b24481ca737f12112ed4d5c",
+  "result": {
+    "status": "completed",
+    "request_id": "05591928-19ff-4ae2-8ab8-3dcf782d2880",
+    "status_url": "https://platform.higgsfield.ai/requests/05591928-19ff-4ae2-8ab8-3dcf782d2880/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/05591928-19ff-4ae2-8ab8-3dcf782d2880/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/1ab11556-9de9-47c4-a555-cf57342ba6cc.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T19:55:24+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/1ab11556-9de9-47c4-a555-cf57342ba6cc.png",
+      "path": "image_0.png",
+      "sha256": "cbe8fd51110ab041679223b71e0f949faa70950b6e2e60e611bc0fc713e1753d",
+      "bytes": 1846208
+    }
+  ]
+}

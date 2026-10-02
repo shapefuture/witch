@@ -4,7 +4,8 @@
 > a **grey layout guide** (the brief's `layout`), the **master prompt with nothing forbidden** (`--style ps1p`), and **no style-reference picture**
 > (a reference leaks its objects into other scenes). It is the default of `new_scene.py`. Result: every element placed where the guide puts it, a rich
 > painterly look on faceted low-poly geometry. A scene built over an existing one needs `--force`. A brief with no `layout` is generated without a guide,
-> which is weaker: give each brief a layout first (only `shop` and `garden` have one so far).
+> which is weaker: give each brief a layout first (only `shop` and `garden` have one so far). A layout can also mark its objects as **toys**
+> (`"toy": "<type>"`): the same run then makes them poke-able, with one extra editing call that also measures the lighting (see Toys, below).
 
 The painted-room pipeline (`docs/art/painted_room.md`) is not only for rooms. `tools/painted/new_scene.py` turns a **brief**
 (`tools/painted/scenes/<id>.json`) of a **kind** (`tools/painted/scenes/kinds.json`) into a playable scene under `assets/painted/<id>/`.
@@ -102,6 +103,47 @@ Lessons from the shop:
   anchor picture (`tools/painted/scenes/anchors/ps1.jpg`, the first accepted picture in that look) sent as the second reference, with a note
   to match its palette and rendering but not copy its objects. With guide and anchor the shop kept its jewel-dark look and most placements.
 - Placement is followed approximately, not exactly: expect most elements within a box's width, a few moved or mirrored. Check the check image.
+
+## Toys: making a scene's objects alive (`toys.py`)
+
+The hall's objects answer a poke (`docs/art/painted_room.md`, Toy box); `tools/painted/toys.py` does the same for any generated scene, from its layout.
+
+1. **Mark the objects.** A layout element gets `"toy": "<type>"` (types of `tools/painted/scenes/toys.json`: lantern, sundial, wheelbarrow, watering_can,
+   bell, teapot, bag, creature, crate for objects that come off; bench, tree, window, gate, plants, thing for things that stay put), optionally `"toy_at"`
+   (the object's own box, when the element is bigger than the object, as a tree is bigger than a bench under it) and `"toy_note"` (where it is, for the prompt:
+   "hanging in the arched gate"). A type fixes how the object is cut (`cutout`: lifted onto a card that moves; `hotspot`: nothing moves, the painting itself
+   ripples, shakes or flashes), its noun for the prompt, the point a cutout turns about (`base`, `top`) and its answers to successive pokes (words and sounds
+   the engine already has; no line of text, since a text key would need Russian in `data/text/ru.json`).
+2. **One edit.** `toys.py` sends the plate to **Marketing Studio** (always: it is the editor that keeps the frame registered; Qwen's larger edits stretched it
+   1.6 %) with one positive instruction: the cutout objects "taken away" (each named by its noun and place in the picture) and, in the same picture, the two
+   calibration spheres of `sphere_probe.py` on the layout's open ground. About USD 0.056, and the lighting measurement costs nothing more.
+3. **Lift what changed.** For each cutout, the pixels the edit changed inside its box (the box searched 8 to 16 px bigger, since the generator puts things where it
+   likes) become its mask, with three guards. Objects that stand on the ground are kept only where the room's calibrated depth puts them above the floor
+   (`RAISED` 0.08 m): the edit redraws the gravel behind a removed wheelbarrow, so its change alone would take the gravel with it. The two spheres are painted
+   back to the plate before anything is read. A card is at one depth, so its depth is set from its nearest pixels, else a long object's near corner would
+   sit behind the room's own mesh and show the ground (the wheelbarrow did).
+4. **What does not come off becomes a hotspot** with the same answers: an object the edit left alone (under 12 % of its box changed), a mask that is not object-sized,
+   a mask that fills its whole window (the edit redrew everything around it: the garden's bell, whose gate was redrawn), or any edit that is not registered to the
+   plate (more than 2.5 px off). The report says which and why; `build/rooms/NAME/toys/toys_preview.png` draws every box and mask over the plate: a box that sits off
+   its object is moved by editing `toy_at`, then `--toys-only --edit <the same picture>` is free.
+5. **Checks.** `toys.py check ROOM` (and `tools/painted/test_toys.py`, offline) verify the toy box the way the engine does: vocabulary and sounds exist, cards sit on the
+   mesh grid, masks match their rects, `plate_empty.png` is the plate bit for bit outside every mask. `tests/render/test_painted_generated_toys.gd` runs every
+   generated room's toys in the engine (a tap inside answers, plays a sound, moves, comes to rest; a second poke answers differently). `capture_painted.gd ... toys`
+   joins every reaction into one sheet per toy (`build/rooms/NAME/toys_sheets/`).
+
+```sh
+python tools/painted/toys.py prompt garden                      # the toys the brief marks and the edit's prompt (free)
+python tools/painted/new_scene.py garden                        # a new scene: generate, then ONE edit for toys + spheres, lift, light, capture (--no-toys to skip)
+python tools/painted/new_scene.py garden --toys-only            # add the toys to a scene already built (about USD 0.06; the lighting is kept)
+python tools/painted/new_scene.py garden --toys-only --edit P   # ... from a picture that edit already made (free)
+python tools/painted/toys.py check assets/painted/garden        # the toy box's invariants
+```
+
+The garden got eight toys: a lantern, sundial, wheelbarrow and watering can lifted as cutouts, and the bell, the pear tree, the bench and the lit window as
+hotspots. Known limits: where the edit also redraws what surrounds an object (grass beside the wheelbarrow, flowers beside the sundial) a little of it comes along in
+the card, since a pixel's colour cannot tell the two apart (a colour test against the ring around the box was tried and rejected: most objects share colours with their
+surroundings); the toys of a scene built from a new picture rest on the guide's boxes, which the generator only roughly follows (read the preview, move `toy_at`);
+a hotspot is a rectangle or ellipse of the painting, not the object's outline.
 
 ## Which model follows our guidance? (`compare_models.py`)
 

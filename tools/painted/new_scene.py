@@ -8,6 +8,7 @@
     python tools/painted/new_scene.py NAME --image picture.png --kind street   # skip the generation: build from a picture you have
     python tools/painted/new_scene.py --list                            # the briefs, their kinds and which are built
     python tools/painted/new_scene.py --all --budget 1.0                # every unbuilt brief, stopping before the budget is spent
+    python tools/painted/new_scene.py garden --toys-only [--edit P]     # add the toys to a scene already built (docs/art/scenes.md, Toys)
 
 A *kind* (scenes/kinds.json) says how a sort of place is composed, calibrated and lit: its horizon, where the bare ground is, whether
 the light is a source in the picture or a fixed direction (a dusk, a night), whether it gets a beam, what counts as a lamp, where the
@@ -21,11 +22,14 @@ overridden from the command line; every choice is printed.
    the hall 0.65, the chamber 0.62, a hallway asked for 0.667 came out 0.70). A floor fit over the bare ground is printed as a sanity
    check; --fit-horizon searches with it (weak). Give --horizon when the picture's horizon is visibly elsewhere.
 3. **Build** (`build_painted.py`): room.json, light_map.png, depth_preview.png, the plate; the characters on the foreground ground.
-4. **Life** (life.json): the plate's bright-against-surroundings blobs become glow lights (large ones above the horizon a breath, violet
+4. **Toys** (`toys.py`, when the layout marks objects with `"toy"`; --no-toys skips): ONE Marketing Studio edit takes the cutout objects out of the plate and
+   paints the two calibration spheres (the lighting is measured from the same picture: no second call); the changed pixels become cutouts, what does not come
+   off becomes a hotspot; props.json, masks, plate_empty.png, job_toys.json, and a contact sheet per toy in build/rooms/NAME/toys_sheets/.
+5. **Life** (life.json): the plate's bright-against-surroundings blobs become glow lights (large ones above the horizon a breath, violet
    ones magic, the rest candles; ground highlights are not lamps; a sky too large to be a lamp is ignored); a kind with `beam` also
    gets a beam from the largest source onto the brightest ground. A draft: edit by hand.
-5. **Walkable**: `walkable.py` writes the standable ground into room.json.
-6. **Capture** (--godot or $GODOT, and xvfb-run): the standard views and a contact sheet, build/rooms/NAME/sheet.png.
+6. **Walkable**: `walkable.py` writes the standable ground into room.json.
+7. **Capture** (--godot or $GODOT, and xvfb-run): the standard views and a contact sheet, build/rooms/NAME/sheet.png.
 """
 import argparse
 import json
@@ -48,6 +52,7 @@ import build_painted as bp  # noqa: E402
 import scene_layout as sl  # noqa: E402
 import relight  # noqa: E402
 import sphere_probe  # noqa: E402
+import toys as toys_mod  # noqa: E402
 
 # The generators (docs/art/model_comparison.md: grok and qwen led the blind comparison). With references the `edit` model takes them as
 # images; with none the `text` model is used.
@@ -100,7 +105,7 @@ def load_brief(brief_id):
 def list_briefs():
     out = []
     for path in sorted(SCENES.glob("*.json")):
-        if path.name not in ("kinds.json", "styles.json"):
+        if path.name not in ("kinds.json", "styles.json", "toys.json"):
             out.append(json.loads(path.read_text(encoding="utf-8")))
     return out
 
@@ -317,8 +322,9 @@ def job_cost(job):
 
 
 def make(name, spec, picture, source_note, *, lighting=None, spheres=False, from_plate=False, style="hall", horizon=None, floor_box=None, sun=None, sun_pixel=None, life=True, godot=None,
-         brief=None, fit_horizon=False):
-    """Calibrate, build, draft the life, mark the walkable ground and capture. Returns the report."""
+         brief=None, fit_horizon=False, toys=True, layout_data=None):
+    """Calibrate, build, lift the toys (one edit, shared with the sphere measurement), light the characters, draft the life, mark the walkable
+    ground and capture. Returns the report."""
     out = ROOT / "assets/painted" / name
     scratch = ROOT / "build/rooms" / name
     scratch.mkdir(parents=True, exist_ok=True)
@@ -370,12 +376,18 @@ def make(name, spec, picture, source_note, *, lighting=None, spheres=False, from
     # how the characters are lit: the measured lighting (sphere_probe.py) if given, else derived from the plate's own colours
     # how the characters are lit: measured lighting (a lighting.json), or measured now from calibration spheres painted into the plate
     # (about USD 0.07), or derived from the plate's own colours (opt-in: it is a poor guess in interiors), or the floor-map light
+    # the toys (toys.py): ONE edit takes the layout's cutout objects out of the plate and paints the two calibration balls, so the lighting costs nothing more
+    toy_result = None
+    if toys and layout_data and toys_mod.toys_of(layout_data):
+        toy_result = toys_mod.run(out, scratch / "toys", layout_data, spheres=bool(spheres and not lighting and lighting is not False))
     if lighting is False:
         relight.apply(out, remove=True)
     else:
-        if not lighting and spheres:
+        measured = toy_result["measured"] if toy_result else None
+        if not lighting and spheres and measured is None:
             edit = sphere_probe.make_variant(picture, scratch / "spheres")
             measured = sphere_probe.measure_auto(edit, picture) if edit else dict(ok=False, why="the sphere edit made no picture")
+        if measured is not None:
             (out / "lighting_measured.json").write_text(json.dumps(measured, indent=1) + "\n", encoding="utf-8")
             if measured.get("ok"):
                 lighting = out / "lighting_measured.json"
@@ -415,9 +427,13 @@ def make(name, spec, picture, source_note, *, lighting=None, spheres=False, from
 
     report = {"name": name, "kind": spec["kind"], "horizon": horizon, "floor_fit_residual": round(res, 4), "floor_box": list(box),
               "sun_dir": room["sun_dir"], "actors": room["actors"], "lights": lights}
+    if toy_result:
+        report["toys"] = toy_result["toys"]
     (scratch / "report.json").write_text(json.dumps(report, indent=1) + "\n", encoding="utf-8")
     if godot and shutil.which("xvfb-run"):
         capture(godot, name, scratch)
+        if (out / "props.json").exists():
+            capture_toys(godot, name, scratch)
     else:
         print("no Godot given (--godot or $GODOT): skipped the capture")
     print("ready: assets/painted/%s  (report: build/rooms/%s/report.json)" % (name, name))
@@ -456,6 +472,7 @@ def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=N
             shutil.copy(job / "job.json", ROOT / "assets/painted" / target / "job_room.json")
             note = "%s: variant %r of %s: %s (job_room.json)" % (MODELS[GEN]["edit"], variant, name, brief["variants"][variant][:140])
         kw["spheres"] = False                                   # the same camera and light: the base scene's measurement is reused
+        kw["toys"] = False                                      # (and its objects are not lifted again)
         report = make(target, spec, picture, note, style=style, godot=godot, brief=brief, **kw)
         if base.get("lighting") and kw.get("lighting") is not False:
             room_path = ROOT / "assets/painted" / target / "room.json"
@@ -498,7 +515,7 @@ def build_one(name, *, brief=None, kind=None, prompt=None, variant=None, image=N
         base_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy(job / "job.json", base_dir / "job_room.json")
         note = "%s: %s (job_room.json)" % (MODELS[GEN]["edit" if (guide or refs or style_refs(style)) else "text"], text.strip()[:160])
-    return make(name, spec, picture, note, style=style, godot=godot, brief=brief, **kw), cost
+    return make(name, spec, picture, note, style=style, godot=godot, brief=brief, layout_data=layout_data, **kw), cost
 
 
 def main(argv=None):
@@ -526,6 +543,9 @@ def main(argv=None):
     ap.add_argument("--sun-pixel", type=float, nargs=2, metavar=("X", "Y"))
     ap.add_argument("--sun", type=float, nargs=3, metavar=("X", "Y", "Z"), help="the light's direction (default: the kind's)")
     ap.add_argument("--no-life", action="store_true")
+    ap.add_argument("--no-toys", dest="toys", action="store_false", default=True, help="do not lift the layout's marked objects into toys (one edit, shared with the spheres)")
+    ap.add_argument("--toys-only", action="store_true", help="add the toys to a scene that is already built (no new picture; the lighting is kept)")
+    ap.add_argument("--edit", help="--toys-only: a picture that edit already made (free), instead of paying for one")
     ap.add_argument("--lighting", help="lighting.json from sphere_probe.py measure: the characters are lit by it")
     ap.add_argument("--spheres", dest="spheres", action="store_true", default=None, help="measure the lighting from calibration spheres painted into the plate (default for a generated scene; about USD 0.07)")
     ap.add_argument("--no-spheres", dest="spheres", action="store_false")
@@ -546,7 +566,11 @@ def main(argv=None):
         print("kinds: " + ", ".join(sorted(kinds)) + "   (* = variant built)")
         return 0
 
-    common = dict(lighting=False if args.no_relight else args.lighting, spheres=args.spheres, from_plate=args.lighting_from_plate, force=args.force, layout=False if args.no_layout else args.layout, layout_only=args.layout_only, godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
+    if args.toys_only:
+        if not args.name:
+            ap.error("--toys-only needs a scene name")
+        return toys_only(args)
+    common = dict(toys=args.toys, lighting=False if args.no_relight else args.lighting, spheres=args.spheres, from_plate=args.lighting_from_plate, force=args.force, layout=False if args.no_layout else args.layout, layout_only=args.layout_only, godot=args.godot, max_usd=args.max_usd, style=args.style, life=not args.no_life, fit_horizon=args.fit_horizon)
     if args.all:
         spent, built = 0.0, []
         suffix = "" if args.style == DEFAULT_STYLE else "_" + args.style
@@ -581,6 +605,42 @@ def main(argv=None):
                         refs=args.ref, horizon=args.horizon, floor_box=args.floor_box, sun=args.sun, sun_pixel=args.sun_pixel, **common)
     print("generation cost about USD %.2f" % cost)
     return 0
+
+
+def toys_only(args):
+    """The toys for a scene that exists: one edit (or --edit PICTURE), the toys lifted, the walkable ground redone, the capture. The lighting stays as it is."""
+    name = args.name
+    out = ROOT / "assets/painted" / name
+    if not (out / "room.json").exists():
+        sys.exit("build %s first (assets/painted/%s/room.json is missing)" % (name, name))
+    brief = load_brief(name) or json.loads((out / "brief.json").read_text(encoding="utf-8"))
+    if not brief.get("layout"):
+        sys.exit("%s has no layout: mark its objects with \"toy\" in the brief's layout" % name)
+    layout = sl.with_defaults(brief["layout"], resolve(args.kind or brief["kind"], brief))
+    scratch = ROOT / "build/rooms" / name
+    result = toys_mod.run(out, scratch / "toys", layout, spheres=False, max_usd=args.max_usd, edit=args.edit)
+    if result is None:
+        sys.exit("the layout marks no toys")
+    import walkable
+    walkable.main([str(out)])
+    if args.godot and shutil.which("xvfb-run"):
+        capture_toys(args.godot, name, scratch)
+    print("toys: %d lifted (%s); edit cost about USD %.3f" % (len(result["toys"]), ", ".join("%s %s" % (t["id"], t["kind"]) for t in result["toys"]), result["cost"]))
+    return 0
+
+
+def capture_toys(godot, name, scratch):
+    """Every toy through every reaction (capture_painted.gd toys), joined into one sheet per toy: scratch/toys_sheets/."""
+    frames = scratch / "toy_frames"
+    cmd = ["xvfb-run", "-a", godot, "--path", str(ROOT), "--rendering-method", "gl_compatibility", "--rendering-driver", "opengl3",
+           "--resolution", "1280x720", "--script", "res://tools/painted/capture_painted.gd", "--", str(frames), "res://assets/painted/%s" % name, "toys"]
+    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    errors = [l for l in proc.stdout.splitlines() if "SCRIPT ERROR" in l or "Parse Error" in l]
+    if errors:
+        print("toy capture errors:\n" + "\n".join(errors[:5]))
+    import toy_sheet
+    toy_sheet.main([str(frames), str(scratch / "toys_sheets")])
+    print("toy sheets: %s" % (scratch / "toys_sheets"))
 
 
 def capture(godot, name, scratch):

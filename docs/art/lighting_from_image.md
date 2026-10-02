@@ -83,8 +83,12 @@ brown to a warm taupe; in the shop the characters stopped being muddy and took t
 - **A sanity gate** on the measurement (`sphere_probe.GOOD_FIT` 0.85: the grey ball must be explained by one light; `GOOD_AGREEMENT` 0.6: the grey ball's shading must follow the chrome ball's irradiance). A measurement that fails leaves the characters on the floor-map light, never on a bad guess.
 - **Smooth spheres in the prompt**: in the shop style the generator painted faceted balls, which breaks the shading fit and the circle search; "perfectly smooth, perfectly round, the same size" fixed that.
 - **Plate-derived lighting is a poor guess in interiors** (`relight.py --plate`, opt-in): the "sky" is the ceiling and the "ground" the teal floor, so on the shop it washed the raccoon out to yellow. Only the grade and exposure are safe to take from a plate alone.
-- **Finding the balls automatically** (`sphere_probe.find_spheres`): a gradient Hough vote finds the grey ball exactly (within 3 px on the garden); the chrome ball is then found by its outline in the same row to its right. It works on the garden (fit 0.97, agreement 0.89) but not yet on the faceted shop, which needed circles read off a grid by hand (`sphere_probe.py grid`, then `measure --grey ... --chrome ...`).
-  The pipeline's gate catches a failed search, so the cost is a missing improvement, not a worse picture.
+- **Finding the balls automatically** (`sphere_probe.find_spheres`): the grey ball is the one smooth, nearly colourless patch in the zone where the balls were asked for
+  (the layout's open ground), so it is seeded from that patch and its circle fitted to the outline (within 1 to 3 px of a hand reading on four pictures); the chrome ball is the
+  same-sized circle in the same row, to its right (the prompt puts it there). Its inside is a whole reflected scene whose edges are strong, so its circle is the less exact (about
+  10 % of its radius). This replaced a vote over the pixels the edit changed, which a combined edit (objects taken away too) fooled, and which needed hand circles on the faceted
+  shop; the same finder now finds the shop's balls (fit 0.90, agreement 0.77) and the garden's from either generator. The pipeline's gate still catches a failed search, so the
+  cost is a missing improvement, not a worse picture.
 
 **One edit for objects and spheres (tested on the garden, one call each).** Asking one editing call to take four objects away (wheelbarrow, watering can, sundial, lantern) *and* paint the two balls works, so the toy box's "without" edit and the sphere probe can share a call.
 
@@ -95,8 +99,8 @@ brown to a warm taupe; in the shop the characters stopped being muddy and took t
 | rest of the picture | **registered exactly** (0 px shift in every region, as in the sphere-only edits) | **stretched about 1.6 % sideways** (7 px at the left, 19 px at the right of 1280): every lasso and diff against the plate would be off |
 | lighting from the balls (hand circles) | fit 0.97, agreement 0.92, key direction within 7 degrees of the sphere-only edit | fit 0.95, agreement 0.92, within 10 degrees |
 
-The edit with the balls only is pixel-aligned in both models; it is the larger edit that makes Qwen redraw the frame. So the combined call goes to Marketing Studio. Open: `find_spheres` is fooled by the pixels the removed objects changed
-(it found a sundial remnant and a half-ball), so after a combined edit the circles are still read by hand (`sphere_probe.py grid`, then `measure`); an automatic search that ignores the removal boxes is not built. The key colour came out a little more orange
+The edit with the balls only is pixel-aligned in both models; it is the larger edit that makes Qwen redraw the frame. So the combined call goes to Marketing Studio. `find_spheres` used to be fooled by the pixels the removed objects changed; it now
+seeds on the grey ball by colour and works on a combined edit (`toys.py`, docs/art/scenes.md, Toys). The key colour came out a little more orange
 than in the sphere-only call (1.0, 0.57, 0.27 against 1.0, 0.66, 0.42): the colour varies between generations, the direction does not.
 A bug found on the way: `cross_check` paired every grey-ball pixel with every chrome-ball pixel (about 10 GB for balls of 120 px) and was killed; it now takes a regular subsample of each (same result, 1.6 s).
 
