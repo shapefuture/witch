@@ -35,6 +35,8 @@ capture() {
 capture start --capture-frames 90
 capture mundane --capture-frames 40 --sim-first impulsive_recovery --show-options path_out
 capture magic --capture-frames 40 --sim-first impulsive_recovery --show-options path_out --magic 1.0
+# The painted room: walking, feet on the tapped pixel, and occlusion of the walker (real pixels).
+GODOT="$GODOT" ./tests/render/painted_walk_check.sh "$OUT/painted_walk" || fail=1
 [ "$fail" -ne 0 ] && { echo "RENDER FAILED"; exit 1; }
 
 "$GODOT" --headless --path . --script res://tests/render/analyze_shots.gd -- \
