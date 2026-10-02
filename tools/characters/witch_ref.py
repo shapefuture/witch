@@ -1025,7 +1025,8 @@ def build_parts(M):
             return {'head': 1 - a, 'hairB.L': a * (1 - b) * .5, 'hairB.R': a * (1 - b) * .5, 'hairT.L': a * b * .5, 'hairT.R': a * b * .5}
         return {'head': 1 - a, 'hairB' + d: a * (1 - b), 'hairT' + d: a * b}
     J, W = weights(M, hm['V'], hair_w)
-    add(hm, lit_toned('hair'), J=J, W=W)
+    # the mass lies under the hood and faces up at its top: it takes the darker tones only, so it matches the locks below it
+    add(hm, lambda c, nrm: 'hair0', J=J, W=W)
 
     for name, side, pts, width, nsides, n_st in curl_paths():
         m = len(pts)
