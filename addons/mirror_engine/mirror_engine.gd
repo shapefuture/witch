@@ -862,6 +862,11 @@ func record_world_event(actor_id: String, subject_id: String, payload: Dictionar
         transaction_committed.emit(result)
     return result
 
+# The id the next record_world_event() will give its happening, so a caller can name it (as the origin of
+# something it records in the same payload) before it exists.
+func next_world_event_id() -> String:
+    return "tx_world_%s:event" % str(event_store.next_sequence())
+
 # Public form of the requirement check actions use (claims, models, operators), for callers that gate
 # their own content on a holder's beliefs rather than on the player's: witness interpretation rules.
 func check_requirements(definition: Dictionary, holder_id: String, context: Dictionary = {}) -> Dictionary:
