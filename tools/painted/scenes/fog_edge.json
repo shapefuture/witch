@@ -1,0 +1,10 @@
+{
+ "id": "fog_edge",
+ "kind": "threshold",
+ "title": "The edge of the fog",
+ "prompt": "The edge of town where a dirt path leaves the last fence and runs into thick pale fog. Beside the path, a single dead flower on a bent stem, its head closed and grey. The far end of the path vanishes in white. A little low light that is not quite where the sun should be.",
+ "story": "The ending: at the edge of the ordinary world a dead flower opens (variant 'open', in a third colour, gold) and someone calls 'Come on'.",
+ "variants": {
+  "open": "the dead flower has opened: a single bloom with petals of warm gold light, the fog around it slightly parted, the light bending the wrong way; nothing else changed"
+ }
+}

@@ -197,6 +197,7 @@ def main(argv=None):
         "source": args.source,
         "image_size": [W, H],
         "fov_v": FOV_V,
+        "horizon": round(HORIZON_FRAC, 4),
         "eye_height": EYE_H,
         "pitch_deg": round(math.degrees(pitch), 4),
         "grid_step": GRID_STEP,

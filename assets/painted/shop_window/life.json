@@ -1,0 +1,329 @@
+{
+ "_about": "Drafted by tools/painted/new_scene.py from the plate's bright blobs: edit by hand (see docs/art/painted_room.md, Light and life).",
+ "fps": 8,
+ "glow": {
+  "levels": 6,
+  "depth": 0.97,
+  "spare": 6
+ },
+ "lights": [
+  {
+   "id": "breath_0",
+   "pixel": [
+    135,
+    321
+   ],
+   "radius": 35,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.76,
+    0.38
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 3,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "candle_1",
+   "pixel": [
+    971,
+    206
+   ],
+   "radius": 30,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.82,
+    0.44
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 14,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "breath_2",
+   "pixel": [
+    1182,
+    133
+   ],
+   "radius": 32,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.73,
+    0.36
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 25,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "candle_3",
+   "pixel": [
+    666,
+    233
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.82,
+    0.44
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 36,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_4",
+   "pixel": [
+    374,
+    109
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.73,
+    0.35
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 47,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_5",
+   "pixel": [
+    171,
+    164
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.68,
+    0.34
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 58,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_6",
+   "pixel": [
+    932,
+    284
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.8,
+    0.44
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 69,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_7",
+   "pixel": [
+    786,
+    289
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.81,
+    0.43
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 80,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_8",
+   "pixel": [
+    1134,
+    313
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.78,
+    0.41
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 91,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_9",
+   "pixel": [
+    225,
+    473
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.77,
+    0.45
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 102,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_10",
+   "pixel": [
+    405,
+    365
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    0.87,
+    0.91,
+    0.52
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 113,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_11",
+   "pixel": [
+    865,
+    307
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.81,
+    0.45
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 124,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_12",
+   "pixel": [
+    1258,
+    298
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.69,
+    0.38
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 135,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_13",
+   "pixel": [
+    649,
+    167
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.72,
+    0.34
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 146,
+    "shift": 0.4
+   }
+  }
+ ],
+ "frame": {
+  "strength": 0.12,
+  "breath": 0.5,
+  "tint": [
+   0.34,
+   0.24,
+   0.4
+  ]
+ },
+ "occluders": {
+  "witch": {
+   "radius": 0.26,
+   "height": 1.2
+  },
+  "raccoon": {
+   "radius": 0.2,
+   "height": 0.5
+  }
+ },
+ "actors": {
+  "follow": 1.0
+ }
+}

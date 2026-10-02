@@ -1,0 +1,65 @@
+{
+  "_about": "Kinds of painted scene for tools/painted/new_scene.py: how a kind is asked for, calibrated and lit. A brief (scenes/<id>.json) picks a kind and may override any key. Everything is English: this is tooling, not player text.",
+  "interior": {
+    "composition": "An enclosed room seen from just inside its entrance, looking across a large clear area of floor. Vaulted or beamed ceiling, walls of shelves and stone, light coming from a window, skylight or lamps.",
+    "horizon": 0.62,
+    "floor": {"x": [0.30, 0.70], "from": 0.50, "to": 0.98},
+    "actors": {"witch": [0.50, 0.72], "raccoon": [0.60, 0.80]},
+    "sun": {"mode": "source"},
+    "beam": true,
+    "life": {"luma_min": 0.45, "contrast": 0.20, "max_area": 6000, "floor_cut": 0.35}
+  },
+  "street": {
+    "composition": "An outdoor street or lane of a small town seen from the middle of the way, looking along it: houses leaning in on both sides, a wide clear stretch of ground in the foreground to walk on, the sky and a bend or a far gate at the end.",
+    "palette": "Natural world first, strange colour second: autumnal melancholy, moss green, dusky blue, plum shadows, warm lamplight in windows.",
+    "horizon": 0.60,
+    "floor": {"x": [0.30, 0.70], "from": 0.55, "to": 0.98},
+    "actors": {"witch": [0.50, 0.74], "raccoon": [0.60, 0.82]},
+    "sun": {"mode": "fixed", "dir": [-0.5, 0.5, -0.7]},
+    "beam": false,
+    "life": {"luma_min": 0.50, "contrast": 0.18, "max_area": 2500, "floor_cut": 0.30},
+    "frame": {"strength": 0.14, "breath": 0.4, "tint": [0.22, 0.2, 0.36]}
+  },
+  "garden": {
+    "composition": "An enclosed outdoor garden seen from its gate or its path, looking in: beds, a stone path and wall, trees, a clear stretch of path and lawn in the foreground to walk on, open sky above.",
+    "palette": "Moss, dusky blue, plum shadows, warm late-afternoon light; a quiet place that is slightly too orderly.",
+    "horizon": 0.60,
+    "floor": {"x": [0.30, 0.70], "from": 0.55, "to": 0.98},
+    "actors": {"witch": [0.50, 0.74], "raccoon": [0.60, 0.82]},
+    "sun": {"mode": "fixed", "dir": [0.4, 0.7, -0.5]},
+    "beam": false,
+    "life": {"luma_min": 0.55, "contrast": 0.20, "max_area": 2500, "floor_cut": 0.30}
+  },
+  "cellar": {
+    "composition": "A low vaulted basement room reached by stairs, seen from the foot of the stairs: a clear stretch of stone floor in the foreground, arches, shelves and crates, the light only from a few lamps and one small opening.",
+    "palette": "Dark and close, plum shadows, a violet and a deep blue lamp, small warm candles.",
+    "horizon": 0.62,
+    "floor": {"x": [0.30, 0.70], "from": 0.50, "to": 0.98},
+    "actors": {"witch": [0.50, 0.72], "raccoon": [0.60, 0.80]},
+    "sun": {"mode": "fixed", "dir": [0.0, 0.9, -0.2]},
+    "beam": false,
+    "life": {"luma_min": 0.35, "contrast": 0.15, "max_area": 3000, "floor_cut": 0.35},
+    "frame": {"strength": 0.2, "breath": 0.5, "tint": [0.3, 0.2, 0.42]}
+  },
+  "threshold": {
+    "composition": "The edge of the settled world: a path or field leading away from the foreground into thick pale fog, the far distance dissolving, almost nothing built, a clear stretch of path to walk on.",
+    "palette": "Pale grey-white fog, dusky blue, a little moss and plum, one small point of warm or gold light.",
+    "horizon": 0.58,
+    "floor": {"x": [0.30, 0.70], "from": 0.55, "to": 0.98},
+    "actors": {"witch": [0.50, 0.76], "raccoon": [0.60, 0.84]},
+    "sun": {"mode": "fixed", "dir": [0.0, 0.6, -0.8]},
+    "beam": false,
+    "life": {"luma_min": 0.55, "contrast": 0.22, "max_area": 1500, "floor_cut": 0.30},
+    "frame": {"strength": 0.2, "breath": 0.6, "tint": [0.3, 0.3, 0.38]}
+  },
+  "firstperson": {
+    "composition": "Seen from eye height from behind a shop counter, looking out through a large window and its frame onto the street: the counter's edge and the window frame in the foreground, shelves at the sides, the street and its doorstep beyond the glass, a clear patch of doorstep for a visitor to stand on. No hands, no people.",
+    "palette": "Warm lamplight inside, dusky blue evening outside.",
+    "horizon": 0.52,
+    "floor": {"x": [0.35, 0.65], "from": 0.50, "to": 0.80},
+    "actors": {},
+    "sun": {"mode": "fixed", "dir": [-0.3, 0.6, -0.7]},
+    "beam": false,
+    "life": {"luma_min": 0.50, "contrast": 0.20, "max_area": 4000, "floor_cut": 0.30}
+  }
+}

@@ -1,0 +1,10 @@
+{
+ "id": "shop",
+ "kind": "interior",
+ "title": "The witch's shop",
+ "prompt": "A small crowded potion-and-curiosities shop, shabby and warm: a long wooden counter with brass scales and jars, shelves of odd objects, a cupboard and a chair that look as though they have opinions, a round window onto the street with a bell above the door, hanging dried herbs, a wide clear floor of worn boards.",
+ "story": "Where the loop lives. Everything responds to a click; recurring objects escalate from joke to clue. Variant 'quiet': the same shop after the magic is gone.",
+ "variants": {
+  "quiet": "the magic has gone from the shop and the change is physical, not a grey filter: the jars are half empty and cloudy, the herbs are brittle and dull, dust on the counter, a few shelves bare, the colours drier and thinner, the light flatter; nothing else moved"
+ }
+}

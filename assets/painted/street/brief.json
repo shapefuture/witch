@@ -1,0 +1,10 @@
+{
+ "id": "street",
+ "kind": "street",
+ "title": "The town street",
+ "prompt": "The main street of a small hillside town at dusk, cobbled and uneven: crooked three-storey houses with lit windows and blank sign boards, a shop with a round window on the left, hanging lanterns, bare autumn trees, a stone bridge or a gate at the far end, a few chimneys smoking.",
+ "story": "The town the shop sits in: its people adapt when the magic goes, and alternatives open. Citizens are actors, not painted.",
+ "variants": {
+  "quiet": "the same street some weeks later: the shop's lights are off, a different new shop across the way is busy and bright, fewer lanterns, fallen leaves in drifts"
+ }
+}
