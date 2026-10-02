@@ -9,7 +9,7 @@ witch (`witch.py`, kept as `--only v1` -> `witch_concept.glb`) plus one extra bo
 The design comes from the painting (the figure seen from behind in the reference still) and a
 front/side/back turnaround generated from it (`tools/characters/ref/witch_turnaround.png`, see
 docs/art/characters_painted.md). Authored in metres: y up, she faces +Z, +X is her left, feet at
-y = 0, the hat tip at 1.30 m. One atlas (nearest, 5 bit): the hat's star tile, the face, and flat
+y = 0, the hat tip at 1.33 m. One atlas (nearest, 5 bit): the hat's star tile, the face, and flat
 colour swatches; one surface.
 
 The rest pose is relaxed (arms hang), not a T-pose: bones are still translation-only, and every
@@ -28,7 +28,7 @@ import atlas as atl            # noqa: E402
 import witch_glb as glb         # noqa: E402
 from witch_kit import A, N_, Model, bake_uvs, loft, rotm, tube   # noqa: E402
 
-HEIGHT = 1.30
+HEIGHT = 1.33          # the painted figure measures about 2% taller than the 1.30 m the room was calibrated with
 
 # Display-referred colours (what the unshaded PSX actor shader multiplies by the room's light).
 COL = {
@@ -55,8 +55,8 @@ for _s, _d in ((1, '.L'), (-1, '.R')):
     BONES['arm_upper' + _d] = ('spine', (_s * .136, .60, 0))
     BONES['arm_lower' + _d] = ('arm_upper' + _d, (_s * .166, .45, 0))
     BONES['hand' + _d] = ('arm_lower' + _d, (_s * .174, .30, .015))
-    BONES['leg' + _d] = ('hips', (_s * .058, .34, 0))
-    BONES['foot' + _d] = ('leg' + _d, (_s * .058, .07, 0))
+    BONES['leg' + _d] = ('hips', (_s * .062, .34, 0))
+    BONES['foot' + _d] = ('leg' + _d, (_s * .062, .07, 0))
     BONES['hairB' + _d] = ('head', (_s * .09, .76, -.04))
     BONES['hairT' + _d] = ('hairB' + _d, (_s * .10, .64, -.06))
 BONES['bird'] = ('hand.L', (.18, .27, .04))      # carried over from the concept witch; nothing hangs on it
@@ -287,7 +287,7 @@ def build_parts(M):
     add = M.add
     # ===== boots and legs
     for s, d in ((1, '.L'), (-1, '.R')):
-        bx = s * .058
+        bx = s * .062
         shaft = loft([((bx, y, -.003), (rx, 0, 0), (0, 0, rz)) for y, rx, rz in ((.005, .034, .040), (.085, .032, .038), (.150, .031, .036))],
                      8, 2.4, cap=(0, 0), j=.002)
         J, W = weights(M, shaft['V'], lambda p: {'foot' + d: 1. - smooth((p[1] - .10) / .06), 'leg' + d: smooth((p[1] - .10) / .06)})
