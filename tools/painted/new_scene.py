@@ -83,7 +83,7 @@ def load_brief(brief_id):
 def list_briefs():
     out = []
     for path in sorted(SCENES.glob("*.json")):
-        if path.name != "kinds.json":
+        if path.name not in ("kinds.json", "styles.json"):
             out.append(json.loads(path.read_text(encoding="utf-8")))
     return out
 
