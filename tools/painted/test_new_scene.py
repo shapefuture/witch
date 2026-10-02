@@ -188,6 +188,15 @@ def test_sphere_probe_recovers_a_known_light():
     assert res["sun_color"][0] >= res["sun_color"][2] and res["sky_color"][2] >= res["sky_color"][0], res   # warm sun, cool sky
 
 
+def test_the_sphere_cross_check_stays_small_for_big_balls():
+    import resource
+    rng = np.random.default_rng(3)
+    lin = rng.random((400, 900, 3))
+    c = sp.cross_check(lin, (150, 200, 140), (700, 200, 140))          # 60k pixels against 60k pixels would be about 30 GB unsampled
+    assert np.isfinite(c)
+    assert resource.getrusage(resource.RUSAGE_SELF).ru_maxrss < 2_000_000, "the cross-check allocated a pixel-by-pixel matrix"   # KB
+
+
 def test_relight_world_conversion_and_blocks():
     assert np.allclose(rl.to_world((0.3, 0.5, 0.2), 0.0), np.array([0.3, 0.5, 0.2]) / np.linalg.norm([0.3, 0.5, 0.2]))
     up = rl.to_world((0.0, 1.0, 0.0), 90.0)                       # a camera looking straight up: its "up" is the world's toward-the-camera axis

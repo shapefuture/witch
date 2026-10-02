@@ -109,8 +109,10 @@ def cross_check(lin, grey_circle, chrome_circle):
     """How well the grey ball's shading follows the irradiance predicted from the chrome ball (correlation over the ball's normals)."""
     m, N = disk(lin.shape[:2], grey_circle)
     R, L, dOm = chrome_environment(lin, chrome_circle)
-    pred = irradiance(R, L, dOm, N)
-    return float(np.corrcoef(pred, lin[m] @ LUMA)[0, 1])
+    # every grey pixel against every chrome pixel is gigabytes for a big ball: a regular subsample of each measures the same thing
+    ns, rs = max(1, len(N) // 3000), max(1, len(R) // 6000)
+    pred = irradiance(R[::rs], L[::rs], dOm * rs, N[::ns])
+    return float(np.corrcoef(pred, (lin[m] @ LUMA)[::ns])[0, 1])
 
 
 GOOD_FIT, GOOD_AGREEMENT = 0.85, 0.6           # a measurement is trusted when the grey ball is one-light Lambert and the two balls agree
