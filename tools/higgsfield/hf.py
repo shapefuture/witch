@@ -46,7 +46,8 @@ from urllib.parse import urlparse
 import httpx
 
 ROOT = Path(__file__).resolve().parents[2]
-ENV_FILE = ROOT / ".env.local"
+# HF_ENV_FILE points a git worktree (which has no .env.local of its own) at the main checkout's file.
+ENV_FILE = Path(os.getenv("HF_ENV_FILE") or ROOT / ".env.local")
 DEFAULT_OUT = ROOT / "build" / "higgsfield"
 CATALOG_DIR = Path(__file__).resolve().parent / "catalog"
 DOCS = "https://docs.higgsfield.ai"
