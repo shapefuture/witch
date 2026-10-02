@@ -302,3 +302,8 @@ The hat is a straight upright cone (the sheet's, not the crooked one), and the t
 like the sheet's: `TAIL_SIDE` in `tools/characters/raccoon.py` is -1 (out to the raccoon's right, which is the left of the
 sheet's front view); +1 puts it on his left. In the painted room he looks toward the witch, so with -1 the tail shows to the
 screen's right and with +1 it points at the camera.
+
+## Six views for image-to-3D and rigging
+
+`docs/art/character_views.md` (`tools/characters/multiview.py`): one generated sheet of a character in six views, cropped, with a chroma-key matte and an optional T-pose.
+The witch's two sheets from the user's own picture are in `tools/characters/ref/views/witch/`.
