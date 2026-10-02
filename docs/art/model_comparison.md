@@ -101,3 +101,40 @@ changes three things at once against `grok_words`. Marketing Studio ran at 1k.
 
 Reproduce: `compare_models.py run r2 --set hall`, `blind r2 --include-from r1 --only grok_words,grok_guide,marketing_guide,qwen_edit_guide
 --reference`, then critics, then `score r2 a.json b.json`.
+
+# Run r3: the engine render of the hall as the style reference
+
+**Setup.** The three guide runs (Grok, Marketing Studio at 1k, Qwen Edit) redone with the layout guide and a *different* style reference: a render of the game's own
+real-time hall (`1280x360`: two views side by side, one a distorted close-up; supplied by the user, not committed). Same master-prompt style
+block and layout. 9 pictures were scored blind by two critics against that engine render: these three, their no-reference versions (r1) and their
+original-room-painting versions (r2). USD 0.23 for the new runs.
+
+| run | USD | placement | box overlap | objects on ground | jewel palette | cute modern (lower is better) | **style match to the engine render** |
+|---|---|---|---|---|---|---|---|
+| marketing_guide **+eng** | 0.066 | 0.68 | 0.18 | 0.5 | 8.5 | 3.5 | **7.0** |
+| marketing_guide **+hall** | 0.066 | 0.74 | 0.27 | 2.0 | 6.5 | 3.5 | **7.0** |
+| qwen_edit_guide **+hall** | 0.075 | 0.80 | 0.32 | 0.5 | 8.5 | 3.5 | 6.0 |
+| marketing_guide | 0.065 | 0.80 | 0.32 | 1.0 | 6.5 | 4.0 | 6.0 |
+| qwen_edit_guide **+eng** | 0.075 | 0.83 | 0.39 | 1.5 | 8.0 | 3.5 | 4.5 |
+| qwen_edit_guide | 0.075 | **0.90** | 0.48 | 0.5 | 8.5 | 5.0 | 4.0 |
+| grok_guide **+hall** | 0.090 | 0.76 | 0.29 | 1.0 | 6.5 | 6.5 | 4.0 |
+| grok_guide **+eng** | 0.090 | 0.89 | 0.35 | **0.0** | 7.5 | 6.5 | 3.5 |
+| grok_guide | 0.090 | **0.90** | **0.51** | 1.5 | 6.0 | 6.5 | 3.5 |
+
+## Reading
+
+- **The engine render did not transfer better than the original painting.** Marketing Studio scores 7.0 with either reference (6.0 with none);
+  Qwen scores 4.5 with the engine render but 6.0 with the painting (4.0 with none); Grok stays at 3.5-4.0 whatever it is given. The painting
+  and the engine render come from the same hall, so the critics saw them as close to each other; a wide strip with a distorted half is also a
+  poor reference, and the models may have taken little from it.
+- **What the engine reference did change**: Marketing Studio's picture got a richer jewel palette (8.5) and a darker, more textured room, at the
+  cost of placement (0.80 to 0.68); Qwen lost a little placement (0.90 to 0.83) and moved only slightly toward it; Grok ignored it (0.89,
+  an empty floor, the same faceted pastel look).
+- **Best overall remains** Qwen Edit with the guide (placement 0.90) for control, and Qwen or Marketing Studio **with the original room painting**
+  for a look matched to the first room. A reference's value depends on how typical it is: a clean, single-view image of the look would likely
+  do better than this strip.
+- **The critics disagreed on style here** by up to 4 points on a single picture (placement agreed to 0.004), so style differences under about
+  1.5 points are noise.
+
+Reproduce: `compare_models.py run r3 --style-ref IMAGE --tag eng --only grok_guide,marketing_guide,qwen_edit_guide`, `blind r3 --reference
+--include-from r1:... --include-from r2:...`, critics, `score r3 a.json b.json`.
