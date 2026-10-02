@@ -379,7 +379,7 @@ def curl_paths():
         # the outer curls face back and out (they show from the side too) while their splay still widens her outline
         s_ = 1 if off < 0 else -1 if off > 0 else 1                # her left (+x) for the locks left of the centre
         dirn = s_ if way == 'out' else -s_
-        splay = -off * .45 if abs(off) > 50 else -off * .15
+        splay = -off * .50          # rays: every lock leaves the hood's rim pointing away from the back's centre
         wave = 7. * dirn
         stalk = [(length, splay * .30 + wave), (length, splay * .15 - 2 * wave), (length * .85, -splay * .20 + wave)]
         local, _ = turtle(A((0., p0[1], 0.)), -90. + splay * .5, stalk, r0, .034, 1.15, dirn, CURL_SEG, dz=.012)
