@@ -3,6 +3,7 @@
 import io
 import json
 import os
+import shutil
 import struct
 import sys
 import tempfile
@@ -246,6 +247,35 @@ def test_decimation_keeps_the_shape_and_skintokens_rigs_the_decimated_mesh():
         assert False
     except ir.SpaceError as e:
         assert "no skeleton found" in str(e) and "it answered" in str(e)
+
+
+def test_the_front_view_providers_make_the_calls_their_spaces_expect():
+    tmp = Path(tempfile.mkdtemp())
+    out = tmp / "out"
+    out.mkdir()
+    front = tmp / "front.png"
+    Image.new("RGBA", (8, 8)).save(front)
+    glb = _glb(tmp / "m.glb")
+    sf = FakeClient([], answers={"/run_button": ({"value": str(tmp / "bg.png")}, {"value": str(glb), "__type__": "update"})})
+    assert ir.geo_sf3d(front, out, "t", client=sf).name == "mesh_sf3d.glb"
+    assert sf.calls[0][0] == "/run_button" and sf.calls[0][1]["remesh_option"] == "None" and sf.calls[0][1]["vertex_count"] == -1
+    tr = FakeClient([], answers={"/extract_glb": (str(glb), str(glb))})
+    assert ir.geo_trellis2(front, out, "t", faces=50000, client=tr).name == "mesh_trellis2.glb"
+    assert [c[0] for c in tr.calls] == ["/start_session", "/image_to_3d", "/extract_glb"] and tr.calls[2][1]["decimation_target"] == 50000
+    px = FakeClient([], answers={"/generate_3d": ({"state": "/tmp/gradio/abc/state.pt"},), "/extract_glb_api": ({"path": "/home/user/app/tmp/m.glb", "url": "x"},)})
+    real_fetch, ir.fetch = ir.fetch, (lambda c, h, dest, tok: Path(shutil.copyfile(glb, dest)))
+    try:
+        assert ir.geo_pixal3d(front, out, "t", client=px).name == "mesh_pixal3d.glb"
+    finally:
+        ir.fetch = real_fetch
+    assert [c[0] for c in px.calls] == ["/generate_3d", "/extract_glb_api"]
+    assert px.calls[1][1]["state_path"] == "/tmp/gradio/abc/state.pt" and px.calls[1][1]["session_id"] == px.calls[0][1]["session_id"]
+    lost = FakeClient([], answers={"/generate_3d": ("nothing",)})
+    try:
+        ir.geo_pixal3d(front, out, "t", client=lost)
+        assert False
+    except ir.SpaceError as e:
+        assert "no state path" in str(e)
 
 
 def test_run_keeps_a_stage_whose_inputs_are_unchanged():

@@ -34,6 +34,9 @@ the git-ignored `.env.local`; never printed, not even in part (`redact()` covers
 | Hunyuan3D-2mv, shape only, 30 steps (4 views) | Worked: a clean, recognisable T-pose witch (hood with the flower crown, curls, jacket with pockets, skirt, shoes), 515,770 triangles, 9 GPU-seconds, 1 run. |
 | Hunyuan3D-2mv, textured | **Failed three times inside the Space** (`PyMeshLabException` in its own post-processing: 5 steps, 30 steps, octree 192 and 256). Not ours to fix: use `--shape-only` and texture elsewhere. The 5-step Turbo mode is not the cause. |
 | AniGen (front view only) | Worked technically: one skinned mesh, 26 joints, 15,115 triangles, one 1024 px texture; 84 GPU-seconds, 2 runs. **The result is worse than our `assets/characters/witch.glb`** (the user's verdict, and a side-by-side shows it): it sees only the front, so the back is an invented dark mass, the texture is noisy triangle mottling, and the joints are anonymous (`joint_0` ... `joint_25`). Useful only as a skeleton-topology reference. |
+| TRELLIS.2 (front view only; `--geometry trellis2`) | **Worked**: a textured mesh, 95,734 triangles, two 1024 px WebP textures (colour, and metal/roughness), consistent from every side (the back is orange hair and a purple hood, not an invented dark mass); 58 GPU-seconds, 2 runs. Colours come out darker and flatter than the picture and the skirt's stars are coarse; clearly better than AniGen, still short of our own witch. |
+| Stable Fast 3D (`--geometry sf3d`) | **Fails inside its Space** ("the upstream app raised an exception"), with the transparent front view and with the white-background one; no quota spent. |
+| Pixal3D (`--geometry pixal3d`) | **Unfinished.** The first try ran its generation (75 GPU-seconds) and then my client lost the result on an HTTP 403 for one of the Space's own preview images. The client now does not download previews, but the retry was refused on quota ("120 s requested vs. 164 s left"), so the whole route is untested end to end. |
 | SkinTokens (rigs a mesh) | **Refused up front**: it asks the Space for 450 GPU-seconds in one call, above this account's per-call cap, so it cannot run on the free tier (nothing spent). Wired (`--rig skintokens`, decimates to 30k triangles first) and tested offline only. |
 | Make-It-Animatable (rigs a mesh) | **Does not work through the API.** Tried twice (two accounts): `/pipeline` answers nine empty Gradio updates, no model. Its endpoints are a web-UI event chain with thirteen unnamed parameters and its `app.py` is a stub that loads the real code at runtime, so the sequence the UI performs cannot be read from here. The provider was removed (it is in the git history of this file). |
 | Hunyuan3D-Part | Not run (quota). |
@@ -41,6 +44,8 @@ the git-ignored `.env.local`; never printed, not even in part (`redact()` covers
 
 With the **legless** T-pose views (`multiview.py --pose t --no-legs`, see `docs/art/character_views.md`) the same shape stage gives a clean bell of a body with the
 T-pose arms and nothing below the hem: 572,922 triangles, 9 GPU-seconds, 1 run (`build/rigs/witch_t_nolegs`). That is the geometry to model and rig from: no legs, so no leg animation.
+
+Note on the quota figure: the endpoint reports 164 GPU-seconds and 3 runs left and a 120 s request was still refused ("exceeded your free ZeroGPU quota"), so `doctor`'s number is an upper bound, not a promise.
 
 Quota after the first account's tests: **148 s but 0 runs left**: the 8 runs a day were the limit that bit, not the seconds, and a run that fails inside the Space (the three texture attempts) still counts.
 Budget the runs: a validation day is about eight calls.
@@ -90,9 +95,9 @@ Licences (user's research): AniGen, TRELLIS, UniRig and Pixal3D are MIT.
 |---|---|---|
 | Rig a mesh | VAST-AI/SkinTokens | Takes a mesh, so the best geometry can be the one rigged. Needs 450 s of GPU per call: **refused on the free tier**. |
 | Rig and retarget | jasongzy/Make-It-Animatable | Not usable by script (see above): drive it in the browser. |
-| Rig, from an image | VAST-AI/AniGen, kirikir13/image-to-rigged-3d | AniGen wired and tried: worse than our own witch. |
+| Rig, from an image | VAST-AI/AniGen, kirikir13/image-to-rigged-3d | AniGen wired and tried: worse than our own witch. The other asks for 480 s of GPU in its source: cannot run on the free tier (not tried). |
 | Mesh from the four views | tencent/Hunyuan3D-2mv | Wired: the shape works, the texture stage crashes. |
-| Mesh from one view | TencentARC/Pixal3D (best), microsoft/TRELLIS.2, stabilityai/stable-fast-3d, Wuvin/Unique3D, LGM | Single view: they would ignore three of our four views. Not wired. |
+| Mesh from one view | microsoft/TRELLIS.2 (works), TencentARC/Pixal3D (unfinished), stabilityai/stable-fast-3d (broken), Wuvin/Unique3D (asks for 600 to 1,500 s), LGM-mini (600 s) | Wired: sf3d, trellis2, pixal3d (front view only: they ignore three of our four views). Unique3D and LGM-mini cannot run on the free tier by their own source. |
 | Multi-view from one view | TencentARC/InstantMesh | Not needed: `multiview.py` makes the views. |
 | Parts | tencent/Hunyuan3D-Part | Wired, not run. |
 | Unusable (user's census) | microsoft/TRELLIS (broken), tencent/Hunyuan3D-2.1 (running, no API), Step1X-3D, PartCrafter, Direct3D-S2, TripoSR, UniRig (Space) | Do not spend time. |
@@ -107,3 +112,13 @@ A real environment variable wins over `.env.local` (the repo's convention, as in
 is read from `HUGGINGFACE_TOKEN` first and `HF_TOKEN` second: `HF_TOKEN` is the name every other Hugging Face tool reads, so it may hold another account's token (it did: a second free account,
 with its own 300 GPU-seconds and 8 runs a day, was added after the first account's runs were spent, and the old value in the environment shadowed the file). Each account's quota is its own:
 the tool does not rotate between accounts.
+
+### How the durations were found
+
+A Space's source says what GPU time it asks for per call (`@spaces.GPU(duration=...)`), and a free account refuses a request above its cap before spending anything (450 s was refused; 90 and 120 s were accepted).
+Read it before spending a run: SkinTokens 450, kirikir13 rigger 480, Unique3D 600 and 1,500, LGM-mini 600, InstantMesh 210 (and not needed) are out; Hunyuan3D-2mv 40 and 90, TRELLIS.2 120 and Pixal3D 30, 120
+and 240 are in range.
+
+### Providers that need an account first (not tried)
+
+Tencent's Hunyuan3D API, PiAPI, Modal, Meshy, fal.ai: no keys here. The Tencent API stays the best next candidate (see above).

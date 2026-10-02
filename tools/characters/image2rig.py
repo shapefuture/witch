@@ -43,9 +43,9 @@ HF_NAMES = ("HUGGINGFACE_TOKEN", "HF_TOKEN")     # ours first: HF_TOKEN is what 
 SECRETS = HF_NAMES + ("TRIPO_API_KEY", "HF_KEY")
 
 SLOTS = ("front", "left", "back", "right")           # Tripo's order; Hunyuan3D-2mv names the same four
-SPACES = {"hunyuan2mv": "tencent/Hunyuan3D-2mv", "skintokens": "VAST-AI/SkinTokens", "anigen": "VAST-AI/AniGen", "parts": "tencent/Hunyuan3D-Part"}
+SPACES = {"hunyuan2mv": "tencent/Hunyuan3D-2mv", "sf3d": "stabilityai/stable-fast-3d", "trellis2": "microsoft/TRELLIS.2", "pixal3d": "TencentARC/Pixal3D", "skintokens": "VAST-AI/SkinTokens", "anigen": "VAST-AI/AniGen", "parts": "tencent/Hunyuan3D-Part"}
 GAME = {"triangles": 9000, "surfaces": 2, "texture": 256}
-GEOMETRY = ("hunyuan2mv", "tripo")
+GEOMETRY = ("hunyuan2mv", "tripo", "sf3d", "trellis2", "pixal3d")        # the last three read the FRONT view only
 RIGS = ("skintokens", "anigen", "tripo")
 
 
@@ -175,9 +175,22 @@ def tripo_guard(balance, max_credits):
 
 
 # ---- Spaces (gradio_client) -------------------------------------------------------------------------------------------
-def make_client(space, token):
+def make_client(space, token, download=True):
+    """download=False: file outputs come back as handles, not downloaded (a Space whose preview files answer 403 would otherwise lose the whole result)."""
     from gradio_client import Client
-    return Client(space, token=token or None, verbose=False)
+    return Client(space, token=token or None, verbose=False, **({} if download else {"download_files": False}))
+
+
+def fetch(client, handle, dest, token):
+    """Downloads one file handle ({'path', 'url'}) from a Space, with the token."""
+    import urllib.error
+    url = handle.get("url") or "%s/gradio_api/file=%s" % (str(client.src).rstrip("/"), handle["path"])
+    req = urllib.request.Request(url, headers={"Authorization": "Bearer " + token, "User-Agent": "image2rig"} if token else {"User-Agent": "image2rig"})
+    try:
+        Path(dest).write_bytes(urllib.request.urlopen(req, timeout=180).read())
+    except urllib.error.HTTPError as e:
+        raise SpaceError("%s would not serve %s (HTTP %s)" % (client.src, Path(str(handle.get("path", url))).name, e.code))
+    return Path(dest)
 
 
 def call(client, api_name, **kw):
@@ -242,6 +255,66 @@ def rig_anigen(front, out, token, texture=1024, client=None):
     if len(files) > 1:
         shutil.copyfile(files[1], out / "skeleton_anigen.glb")
     return dest
+
+
+def _first_path(obj):
+    """The first path-like string in a nested answer (Pixal3D hands back the server-side state as a path)."""
+    if isinstance(obj, str):
+        return obj if "/" in obj and len(obj) > 8 else None
+    for v in (obj.values() if isinstance(obj, dict) else obj if isinstance(obj, (list, tuple)) else ()):
+        got = _first_path(v)
+        if got:
+            return got
+    return None
+
+
+def _copy_mesh(res, out, name):
+    files = _files(res)
+    if not files:
+        raise SpaceError("%s returned no mesh; it answered %s" % (name, redact(repr(res))[:400]))
+    dest = out / ("mesh_%s.glb" % name)
+    shutil.copyfile(files[-1], dest)
+    return dest
+
+
+def geo_sf3d(front, out, token, texture=1024, faces=0, client=None):
+    """Stable Fast 3D: one call, a textured UV-mapped mesh from one picture in seconds of GPU. The front view only."""
+    from gradio_client import handle_file
+    c = client or make_client(SPACES["sf3d"], token)
+    return _copy_mesh(call(c, "/run_button", input_image=handle_file(str(front)), foreground_ratio=0.85, remesh_option="None", vertex_count=faces or -1,
+                           texture_size=texture), out, "sf3d")
+
+
+def geo_trellis2(front, out, token, texture=1024, faces=0, client=None):
+    """TRELLIS.2 (MIT): image_to_3d, then extract_glb of what the session holds. The front view only."""
+    from gradio_client import handle_file
+    c = client or make_client(SPACES["trellis2"], token)
+    try:
+        call(c, "/start_session")
+    except (SpaceError, QuotaError):
+        pass
+    call(c, "/image_to_3d", image=handle_file(str(front)), seed=0, resolution="1024")
+    return _copy_mesh(call(c, "/extract_glb", decimation_target=faces or 100000, texture_size=texture), out, "trellis2")
+
+
+def geo_pixal3d(front, out, token, texture=1024, faces=0, client=None):
+    """Pixal3D (MIT, the census's best mesh): generate_3d answers a server-side state, extract_glb_api turns it into a GLB. The front view only."""
+    import uuid
+    from gradio_client import handle_file
+    c = client or make_client(SPACES["pixal3d"], token, download=False)      # its preview images answer 403: do not fetch what we do not need
+    sid = uuid.uuid4().hex[:12]
+    state = call(c, "/generate_3d", image=handle_file(str(front)), seed=0, resolution=1024, session_id=sid)
+    path = _first_path(state)
+    if not path:
+        raise SpaceError("pixal3d gave no state path; it answered %s" % redact(repr(state))[:300])
+    res = call(c, "/extract_glb_api", state_path=path, decimation_target=faces or 100000, texture_size=texture, session_id=sid)
+    handle = next((h for h in (res if isinstance(res, (list, tuple)) else [res]) if isinstance(h, dict) and str(h.get("path") or h.get("url") or "").lower().endswith(".glb")), None)
+    if handle is None:
+        raise SpaceError("pixal3d returned no GLB; it answered %s" % redact(repr(res))[:400])
+    return fetch(c, handle, out / "mesh_pixal3d.glb", token)
+
+
+SINGLE = {"sf3d": geo_sf3d, "trellis2": geo_trellis2, "pixal3d": geo_pixal3d}
 
 
 def rig_skintokens(mesh, out, token, faces=30000, client=None):
@@ -317,19 +390,13 @@ def _pick_tripo(files, dest):
 
 # ---- inspecting a GLB (no dependencies) -------------------------------------------------------------------------------
 def _image_size(b):
-    if b[:8] == b"\x89PNG\r\n\x1a\n":
-        return struct.unpack(">II", b[16:24])
-    if b[:2] == b"\xff\xd8":
-        i = 2
-        while i + 9 < len(b):
-            if b[i] != 0xFF:
-                break
-            m, ln = b[i + 1], struct.unpack(">H", b[i + 2:i + 4])[0]
-            if m in (0xC0, 0xC1, 0xC2):
-                h, w = struct.unpack(">HH", b[i + 5:i + 9])
-                return w, h
-            i += 2 + ln
-    return None
+    """(width, height) of PNG, JPEG or WebP bytes, or None."""
+    import io
+    from PIL import Image
+    try:
+        return Image.open(io.BytesIO(b)).size
+    except Exception:
+        return None
 
 
 def glb_inspect(path):
@@ -372,7 +439,7 @@ def glb_inspect(path):
     for im in gltf.get("images") or []:
         if "bufferView" in im:
             bv = gltf["bufferViews"][im["bufferView"]]
-            sizes.append(_image_size(binary[bv.get("byteOffset", 0):bv.get("byteOffset", 0) + 32 + bv["byteLength"]]))
+            sizes.append(_image_size(binary[bv.get("byteOffset", 0):bv.get("byteOffset", 0) + bv["byteLength"]]))
         else:
             sizes.append(None)
     st.update(ok=True, triangles=tris, vertices=verts, surfaces=surfaces, joints=joints, joint_names=names, animations=len(gltf.get("animations") or []),
@@ -510,7 +577,9 @@ def preview(path, dest, size=480):
     tex = None
     try:
         t = (gltf["materials"][0]["pbrMetallicRoughness"]["baseColorTexture"]["index"])
-        bv = gltf["bufferViews"][gltf["images"][gltf["textures"][t]["source"]]["bufferView"]]
+        tx = gltf["textures"][t]
+        src = tx["source"] if "source" in tx else tx["extensions"]["EXT_texture_webp"]["source"]           # WebP textures (TRELLIS.2) sit in an extension
+        bv = gltf["bufferViews"][gltf["images"][src]["bufferView"]]
         tex = np.asarray(Image.open(__import__("io").BytesIO(binary[bv.get("byteOffset", 0):bv.get("byteOffset", 0) + bv["byteLength"]])).convert("RGB"))
     except (KeyError, IndexError, TypeError):
         pass
@@ -597,6 +666,9 @@ def run(a):
                 gpu_guard(hf, a.min_gpu)
                 meshes[g] = stage("space:hunyuan2mv" + (":shape" if a.shape_only else ""), [a.steps, a.octree, a.target_faces, a.shape_only], lambda: (
                     [geo_hunyuan2mv(views, out, hf, a.steps, a.octree, not a.shape_only, a.target_faces)], {}))[0]
+            elif g in SINGLE:
+                gpu_guard(hf, a.min_gpu)
+                meshes[g] = stage("space:" + g, [a.texture, a.target_faces], lambda: ([SINGLE[g](views["front"], out, hf, a.texture, a.target_faces)], {}))[0]
             else:
                 if not tripo:
                     raise Refused("no TRIPO_API_KEY")
@@ -661,7 +733,7 @@ def doctor():
             print("  HF account     token rejected (%s)" % redact(e)[:80])
         q = zerogpu(hf)
         if q and "seconds" in q:
-            print("  ZeroGPU        %.0f GPU-seconds and %d runs left (rolling 24 h from the first call)" % (q["seconds"], q["runs"]))
+            print("  ZeroGPU        %.0f GPU-seconds and %d runs left, as reported (an upper bound: a request below that can still be refused)" % (q["seconds"], q["runs"]))
     print("  TRIPO_API_KEY  %s" % (("set, from the %s" % source("TRIPO_API_KEY")) if tripo else "MISSING"))
     if tripo:
         try:
@@ -694,7 +766,7 @@ def main(argv=None):
     r.add_argument("source", help="a multiview.py result: its name under build/views, or a folder")
     r.add_argument("--view", action="append", default=[], metavar="SLOT=PATH", help="replace one view (front, left, back, right)")
     r.add_argument("--out")
-    r.add_argument("--geometry", default="hunyuan2mv", help="comma list, tried in order: " + ", ".join(GEOMETRY))
+    r.add_argument("--geometry", default="hunyuan2mv", help="comma list, tried in order: " + ", ".join(GEOMETRY) + " (sf3d, trellis2, pixal3d read the front view only)")
     r.add_argument("--all", action="store_true", help="run every listed geometry provider and keep the best (uses all their budgets)")
     r.add_argument("--rig", default="", help="skintokens (rigs the mesh that won the geometry stage), anigen (its own mesh, front view only) or tripo (credits; needs --geometry tripo)")
     r.add_argument("--rig-faces", type=int, default=30000, help="skintokens: decimate the mesh to about this many triangles first")
@@ -703,7 +775,7 @@ def main(argv=None):
     r.add_argument("--steps", type=int, default=5, help="Hunyuan3D-2mv sampling steps (5 = the Space's Turbo mode)")
     r.add_argument("--shape-only", action="store_true", help="Hunyuan3D-2mv: the untextured shape (far less GPU time; texture it elsewhere)")
     r.add_argument("--octree", type=int, default=256, help="Hunyuan3D-2mv octree resolution (16..512)")
-    r.add_argument("--texture", type=int, default=1024, help="AniGen texture size")
+    r.add_argument("--texture", type=int, default=1024, help="texture size of AniGen, SF3D, TRELLIS.2 and Pixal3D")
     r.add_argument("--target-faces", type=int, default=0, help="reduce to about this many faces (Hunyuan export, Tripo face_limit)")
     r.add_argument("--min-gpu", type=float, default=90.0, help="refuse a Space call when fewer GPU-seconds than this are left")
     r.add_argument("--max-credits", type=float, default=60.0, help="Tripo: the balance must cover this before anything is sent")
