@@ -125,11 +125,11 @@ static func five_tests(data: Dictionary, table: Dictionary = {}) -> Dictionary:
 	for rule in data.get("rules", []):
 		var id := str(rule.get("id", ""))
 		var statement_key := str(rule.get("statement", {}).get("key", ""))
-		var manifestations := _manifestations(rule)
+		var shown: Array = manifestations(rule)
 		out[id] = {
 			"can_state_it": not statement_key.is_empty() and (table.is_empty() or table.has(statement_key)),
-			"can_demonstrate_it": manifestations.size() >= 2,
-			"can_infer_it": manifestations.all(func(v: Dictionary) -> bool: return not _player_evidence(v).is_empty()),
+			"can_demonstrate_it": shown.size() >= 2,
+			"can_infer_it": shown.all(func(v: Dictionary) -> bool: return not _player_evidence(v).is_empty()),
 			"can_recombine": not (meets.get(id, []) as Array).is_empty(),
 			"can_surprise": not (rule.get("exceptions", []) as Array).is_empty(),
 		}
@@ -226,7 +226,7 @@ static func _check_reaction_ops(node: Variant, id: String, ops: Array, findings:
 static func _check_text(node: Variant, id: String, table: Dictionary, findings: Array) -> void:
 	if table.is_empty():
 		return
-	for key in _text_keys(node):
+	for key in text_keys(node):
 		if not table.has(key):
 			findings.append(_finding(0, "error", id, "missing_text", "text key %s is not in data/text/ru.json" % key))
 
@@ -291,13 +291,13 @@ static func _constraint_problems(variant: Dictionary, constraints: Dictionary) -
 
 static func _law_two(rule: Dictionary, settings: Dictionary, findings: Array) -> void:
 	var id := str(rule.get("id", ""))
-	var manifestations := _manifestations(rule)
+	var shown: Array = manifestations(rule)
 	var needed := int(settings["major_manifestations"]) if bool(rule.get("major", false)) else int(settings["min_manifestations"])
 	var sources: Array = []
 	var domains: Array = []
 	var forms: Array = []
 	var seen_keys: Array = []
-	for variant in manifestations:
+	for variant in shown:
 		var variant_id := str(variant.get("id", ""))
 		if str(variant.get("domain", "")) not in DOMAINS:
 			findings.append(_finding(2, "error", variant_id, "unknown_domain", "domain '%s' is not one of %s" % [variant.get("domain", ""), ", ".join(DOMAINS)]))
@@ -319,7 +319,7 @@ static func _law_two(rule: Dictionary, settings: Dictionary, findings: Array) ->
 		findings.append(_finding(2, "error", id, "too_few_manifestations", "%d independent manifestation(s) (distinct sources: %s); %s needs %d. Add another prop, character or situation that shows the same relation." % [sources.size(), ", ".join(sources), "a major rule" if bool(rule.get("major", false)) else "a rule", needed]))
 	if domains.size() < int(settings["min_domains"]):
 		findings.append(_finding(2, "error", id, "too_few_domains", "all manifestations are in domain %s; show the rule in at least %d different domains (physical, social, epistemic...) so it cannot be mistaken for one puzzle's trick" % [", ".join(domains), int(settings["min_domains"])]))
-	if forms.size() < 2 and manifestations.size() >= 2:
+	if forms.size() < 2 and shown.size() >= 2:
 		findings.append(_finding(2, "warning", id, "single_form_of_evidence", "every manifestation is '%s' evidence; mix direct, social, historical, counter and predictive evidence" % ", ".join(forms)))
 
 # ---- law 3 ---------------------------------------------------------------------------------------------------
@@ -455,7 +455,7 @@ static func _triggerables(rule: Dictionary) -> Array:
 	return out
 
 # What the player can be shown: a rule's variants, plus its exceptions that fire in the world.
-static func _manifestations(rule: Dictionary) -> Array:
+static func manifestations(rule: Dictionary) -> Array:
 	return _triggerables(rule).filter(func(v: Dictionary) -> bool: return not bool(v.get("flavor", false)))
 
 static func _schedules(variant: Dictionary) -> Array:
@@ -508,15 +508,15 @@ static func _collect(node: Variant, field: String) -> Array:
 	return out
 
 # Every text key a structure refers to (`label_key` and `key` fields).
-static func _text_keys(node: Variant) -> Array:
+static func text_keys(node: Variant) -> Array:
 	var out: Array = []
 	if node is Dictionary:
 		for key in node.keys():
 			if (str(key) == "label_key" or str(key) == "key") and node[key] is String and not (node[key] as String).is_empty():
 				out.append(node[key])
 			else:
-				out.append_array(_text_keys(node[key]))
+				out.append_array(text_keys(node[key]))
 	elif node is Array:
 		for item in node:
-			out.append_array(_text_keys(item))
+			out.append_array(text_keys(item))
 	return out

@@ -60,6 +60,11 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 - Dialogue reads Mirror and never writes it; choices are recorded as `DIALOGUE_CHOICE` actions.
 - Touch and mouse produce the same `PlayerIntent` (emulated-mouse duplicates of a touch are ignored).
 - Every authored action/response must load with **zero errors and zero warnings**.
+- **The Minds layer** (`game/mirror/minds`, data in `data/mirror/minds`, `docs/MINDS.md`): a happening (a poked prop)
+  is committed with `Mirror.minds.perceive(event)`, one atomic transaction recording who witnessed it and what each
+  made of it; deferred consequences fall due with the Mirror clock; conventions form from repeated readings. Its
+  state is derived from the event log (never saved separately), its data is outside the catalog fingerprint, and the
+  authored rules must pass the four-laws linter (`tests/mirror/test_four_laws.gd`).
 
 ## Code conventions
 
@@ -79,7 +84,7 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 
 `addons/mirror_engine` (engine, locally patched: see PROVENANCE) . `addons/dialogue_manager`
 (unmodified) . `autoload/` . `game/{mirror,interaction,npc,dialogue,world,player,camera,presentation,ui,save,debug,main}`
-(`game/world/archive` is the hall, `game/ui` the diegetic UI) . `data/{mirror,text,conversations,sim}`
+(`game/world/archive` is the hall, `game/ui` the diegetic UI, `game/mirror/minds` the Minds layer, `game/mirror/prop_events.gd` its painted-room adapter) . `data/{mirror,text,conversations,sim}`
 . `render/psx` (shaders, StageLight) . `assets/archive` (baked set, tiles, anchors) . `tools/blender`
 (the art kit) . `tools/visual_gauntlet` . `tests/` (+ `tests/golden`) . `docs/` (+ `docs/visual-gauntlet`).
 
@@ -110,5 +115,5 @@ only: tap/click the ground to walk, an object to get its options. No WASD.
 
 ## Not built yet (by design)
 
-Raccoon tele-somatic signal, Vera/Elian/Ilya, the town graph, LimboAI, a world compiler from
+Raccoon tele-somatic signal (as a perception channel of the Minds layer), Vera/Elian/Ilya, `PaintedRoom` emitting `walked` and playing `PropEvents` reactions (coordinator wiring), the town graph, LimboAI, a world compiler from
 place resources, on-device mobile profiling, a main menu, the full ending, the shadow/antler witch in a scene.

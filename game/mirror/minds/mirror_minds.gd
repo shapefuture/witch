@@ -195,18 +195,25 @@ func _fire(entry: Dictionary) -> Dictionary:
 	var spec: Dictionary = entry["event"]
 	var event := _normalize(spec)
 	event["time"] = int(entry["due"])
+	# An entry whose event kind has since left the data would otherwise fail at every pump: drop it, on record.
+	if not data["event_kinds"].has(str(event["kind"])):
+		return _fizzle(entry, origin, event, "unknown_event_kind")
 	if entry.has("when"):
 		var tags := _subject_tags(event)
 		var context := _context(event, tags, [], state.conventions.active_ids(), int(entry["due"]))
 		if not MirrorConditions.matches(entry["when"], context):
-			var payload := {"kind": "consequence.fizzled", "time": int(entry["due"]), "fired": [str(entry["id"])], "origin": origin, "reason": "conditions", "subject": str(event["subject"])}
-			var fizzled := engine.record_world_event("world", str(event["subject"]), payload)
-			if fizzled.get("ok", false):
-				_sync()
-				fizzled["fired"] = [str(entry["id"])]
-				fizzled["kind"] = "consequence.fizzled"
-			return fizzled
+			return _fizzle(entry, origin, event, "conditions")
 	return _commit_event(event, origin)
+
+# A consequence that can no longer happen is removed from the queue by an event saying so.
+func _fizzle(entry: Dictionary, origin: Dictionary, event: Dictionary, reason: String) -> Dictionary:
+	var payload := {"kind": "consequence.fizzled", "time": int(entry["due"]), "fired": [str(entry["id"])], "origin": origin, "reason": reason, "subject": str(event["subject"])}
+	var fizzled := engine.record_world_event("world", str(event["subject"]), payload)
+	if fizzled.get("ok", false):
+		_sync()
+		fizzled["fired"] = [str(entry["id"])]
+		fizzled["kind"] = "consequence.fizzled"
+	return fizzled
 
 # Starting beliefs are written once, as the first event of the layer, so they are history like everything else.
 func _ensure_seeded() -> Dictionary:

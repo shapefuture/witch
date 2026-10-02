@@ -112,6 +112,14 @@ func test_a_condition_checked_at_the_time_can_cancel_a_consequence() -> void:
 	eq(fired[0]["kind"], "consequence.fizzled", "the bell was taken: nothing to answer with")
 	eq(rig.minds.pending().size(), 0, "and the entry is gone")
 
+func test_a_consequence_whose_kind_has_left_the_data_is_dropped_on_record_not_retried_forever() -> void:
+	var rig := _rig()
+	rig.minds.perceive(MindsFixtures.knock())
+	rig.minds.data["event_kinds"].erase("ECHO")
+	var fired: Array = rig.minds.advance_time(3)["fired"]
+	eq(fired[0]["kind"], "consequence.fizzled", "recorded as fizzled")
+	eq(rig.minds.pending().size(), 0, "and gone from the queue")
+
 func test_the_queue_is_bounded_and_so_is_a_chain_of_consequences() -> void:
 	var data := MindsFixtures.raw()
 	var rule := MindsFixtures.echo_rule(1, "stack")

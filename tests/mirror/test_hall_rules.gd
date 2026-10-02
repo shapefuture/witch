@@ -36,7 +36,7 @@ func test_the_catalog_holds_ids_and_keys_never_prose_and_every_key_exists() -> v
 			continue
 		var text := FileAccess.get_file_as_string("res://data/mirror/minds/" + file_name)
 		ok(cyrillic.search(text) == null, "%s has no Russian prose" % file_name)
-		for key in FourLawsLinter._text_keys(JSON.parse_string(text)):
+		for key in FourLawsLinter.text_keys(JSON.parse_string(text)):
 			if not table.has(key):
 				missing.append("%s: %s" % [file_name, key])
 	eq(missing, [], "every text key the minds data refers to is in ru.json")
@@ -57,7 +57,7 @@ func test_each_rule_has_independent_manifestations_in_different_domains() -> voi
 	for rule_id in by_rule.keys():
 		var sources: Array = []
 		var domains: Array = []
-		for variant in FourLawsLinter._manifestations(by_rule[rule_id]):
+		for variant in FourLawsLinter.manifestations(by_rule[rule_id]):
 			if variant["source"] not in sources:
 				sources.append(variant["source"])
 			if variant["domain"] not in domains:
