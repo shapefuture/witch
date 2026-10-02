@@ -210,8 +210,8 @@ func _build_card(room: PaintedRoom, plate: Texture2D, plate_smooth: Texture2D) -
 	_material.set_shader_parameter("plate_smooth", plate_smooth)
 	_material.set_shader_parameter("mask", ImageTexture.create_from_image(_mask))
 	if kind != "cutout":
-		_material.set_shader_parameter("plate_px", size)
-		_material.set_shader_parameter("center_uv", Vector2(rect.get_center()) / size)
+		_material.set_shader_parameter("plate_px", room.image_size() + room.margin() * 2.0)
+		_material.set_shader_parameter("center_uv", room.plate_uv(Vector2(rect.get_center())))
 	_card = MeshInstance3D.new()
 	_card.mesh = mesh
 	_card.material_override = _material
