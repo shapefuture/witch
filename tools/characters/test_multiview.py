@@ -172,6 +172,10 @@ def test_a_rigging_pose_is_asked_for_and_drawn_on_the_guide():
     assert (flat[row - 2:row + 3] < 255).sum() < (shoulders[row - 2:row + 3] < 255).sum(), "the shoulder line is only in the T guide"
 
 
+def test_legs_are_left_out_only_when_asked():
+    assert "no legs, feet" in mv.compose("", key="white", legless=True) and "no legs" not in mv.compose("", key="white")
+
+
 def test_make_sends_the_guide_first_then_the_character_and_crops_the_result():
     sent = {}
     tmp = Path(tempfile.mkdtemp())

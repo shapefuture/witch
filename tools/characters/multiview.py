@@ -5,7 +5,7 @@
     python tools/characters/multiview.py make witch --ref front.png            # ONE paid generation, then the crop
     python tools/characters/multiview.py make fox --text "a fox in a red coat, faceted low-poly"   # from words only
     python tools/characters/multiview.py make witch --ref front.png --key white   # on white instead of chroma-key green (see 3.)
-    python tools/characters/multiview.py make witch --ref front.png --pose t     # in a T-pose, for rigging (or --pose a)
+    python tools/characters/multiview.py make witch --ref front.png --pose t --no-legs   # in a T-pose, skirt to the ground, no legs to rig
     python tools/characters/multiview.py crop SHEET.png --out DIR              # only the crop: a sheet made elsewhere, or by hand
 
 1. **Guide**: a canvas (the key colour, see 3.) of three columns by two rows, one framed cell per view with its label, a dashed head line, a dashed foot line,
@@ -25,6 +25,9 @@
 **Pose** (`--pose keep|t|a`): `keep` is the pose of the reference. `t` / `a` ask for a rigging pose (arms straight out / angled down about 40 degrees,
 hands open and empty, head forward, legs straight; what she held is left out, so a wand or a bird becomes a separate piece), and the guide
 gets a dashed shoulder line (T) so the span of the arms stays inside its cell. Auto-riggers (Mixamo, Meshy, Tripo) want one of the two.
+
+`--no-legs` (for a character in a long skirt or robe, like the witch) asks for the hem on the ground and no legs, feet or shoes in any view: the legs are the
+biggest animation burden of a rig and are never seen.
 
 View names say which way she FACES in the picture: `right` = she faces the right edge, so we see her right side; `left` the other.
 """
@@ -73,6 +76,9 @@ POSES = {"keep": "",
                "down about 40 degrees from the body with the hands open and EMPTY, the legs straight; anything she held is left out of the "
                "picture. ")}
 DEFAULT_POSE = "keep"
+# for a character in a long skirt or robe: nothing to rig or animate below the hem (the legs are the biggest animation burden and would never be seen)
+LEGLESS = ("The long skirt reaches all the way to the ground and covers the legs completely: the figure stands on its hem like a bell, and no legs, feet, "
+           "shoes or boots are visible in any view. ")
 SHOULDER = 0.30                  # the T-pose guide's shoulder line, as a fraction of a cell's height
 GUIDE_SIZE = (1920, 1280)
 HEAD, FOOT = 0.14, 0.92          # the head and foot lines, as fractions of a cell's height
@@ -140,7 +146,7 @@ SHOULDERS = ("A dashed line across each cell at shoulder height marks where the 
 GRID = ("A grid of three columns by two rows of equal cells. ")
 
 
-def compose(subject, ref=True, use_guide=True, look="", key=DEFAULT_KEY, pose=DEFAULT_POSE):
+def compose(subject, ref=True, use_guide=True, look="", key=DEFAULT_KEY, pose=DEFAULT_POSE, legless=False):
     """`subject`: the character in words (with a reference it adds to the picture). Returns the prompt."""
     bg = KEYS[key][1]
     rows = ["Top row, left to right: " + "; ".join(v[2] for v in VIEWS[:3]) + ". ",
@@ -150,7 +156,7 @@ def compose(subject, ref=True, use_guide=True, look="", key=DEFAULT_KEY, pose=DE
     if subject.strip():
         who += "The character: %s. " % subject.strip().rstrip(".")
     return ("A character model sheet for 3D modelling: the SAME character shown six times on one %s background. " % bg
-            + (NOTE.format(bg=bg) + (SHOULDERS if pose == "t" else "") if use_guide else GRID) + "".join(rows) + who + POSES[pose]
+            + (NOTE.format(bg=bg) + (SHOULDERS if pose == "t" else "") if use_guide else GRID) + "".join(rows) + who + POSES[pose] + (LEGLESS if legless else "")
             + "All six views show one and the same character in the same pose, with the same face, hair, clothes, colours and rendering "
             "style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour "
             "fall on the character, with no cast shadows, no floor and no ground, and a clear gap of background around every figure. "
@@ -343,7 +349,7 @@ def crop(sheet_path, out_dir, size=1024, cols=COLS, rows=ROWS, key=None):
 
 
 # ---- the whole thing -----------------------------------------------------------------------------------------------------
-def make(name, ref=None, text="", model=DEFAULT_MODEL, use_guide=True, look="", out=None, max_usd=0.35, size=1024, key=DEFAULT_KEY, pose=DEFAULT_POSE):
+def make(name, ref=None, text="", model=DEFAULT_MODEL, use_guide=True, look="", out=None, max_usd=0.35, size=1024, key=DEFAULT_KEY, pose=DEFAULT_POSE, legless=False):
     out = Path(out or ROOT / "build/views" / name)
     out.mkdir(parents=True, exist_ok=True)
     gen = MODELS[model]
@@ -353,7 +359,7 @@ def make(name, ref=None, text="", model=DEFAULT_MODEL, use_guide=True, look="", 
         refs.append(out / "guide.png")
     if ref:
         refs.append(Path(ref))
-    prompt = compose(text, ref=bool(ref), use_guide=use_guide, look=look, key=key, pose=pose)
+    prompt = compose(text, ref=bool(ref), use_guide=use_guide, look=look, key=key, pose=pose, legless=legless)
     args = dict(gen["args"], prompt=prompt)
     job = run_hf(gen["edit"] if refs else gen["text"], args, refs, max_usd, out)
     (out / "sheet.png").write_bytes((job / "image_0.png").read_bytes())
@@ -379,6 +385,7 @@ def main(argv=None):
     m.add_argument("--model", choices=sorted(MODELS), default=DEFAULT_MODEL)
     m.add_argument("--key", choices=sorted(KEYS), default=DEFAULT_KEY, help="the background to ask for: chroma-key green (cleaner cut-out) or white (for a character with green in it)")
     m.add_argument("--pose", choices=sorted(POSES), default=DEFAULT_POSE, help="keep the reference's pose, or ask for a T-pose / A-pose for rigging")
+    m.add_argument("--no-legs", action="store_true", help="a long skirt or robe to the ground: no legs, feet or shoes drawn (nothing to rig below the hem)")
     m.add_argument("--no-guide", action="store_true", help="describe the grid in words only (to compare)")
     m.add_argument("--look", default="", help="more style words appended to the prompt")
     m.add_argument("--out")
@@ -398,7 +405,7 @@ def main(argv=None):
     if a.cmd == "make":
         if not a.ref and not a.text:
             sys.exit("give --ref or --text")
-        report = make(a.name, a.ref, a.text, a.model, not a.no_guide, a.look, a.out, a.max_usd, a.size, a.key, a.pose)
+        report = make(a.name, a.ref, a.text, a.model, not a.no_guide, a.look, a.out, a.max_usd, a.size, a.key, a.pose, a.no_legs)
     else:
         report = crop(a.sheet, a.out, a.size, key=a.key)
     print("%d views -> %s" % (len(report["views"]), a.out or ROOT / "build/views" / a.name))

@@ -46,6 +46,13 @@ Not tested: feeding the six views to an image-to-3D tool (this account's Higgsfi
 What the picture does not show (her feet, the back of the vest) the model invents, and it invents differently on each run (boots in one
 run, buckled shoes in the next): if the invented parts matter, keep one run and re-crop it, do not regenerate.
 
+## No legs (`--no-legs`)
+
+For a character in a long skirt or robe the legs are the biggest animation burden of a rig and are never seen. `--no-legs` asks for the hem on the ground and no
+legs, feet or shoes in any view. The witch from the user's picture, `--pose t --no-legs` (green key, Marketing Studio, about USD 0.10): the skirt reaches the ground in all six
+views, no boots or shoes, arms straight out with open empty hands, no crop problems. A T-pose run without it had drawn boots (and, in the next run, buckled shoes) that someone
+would have had to rig. Not for characters whose legs show (the raccoon, Tomas).
+
 ## Limits
 
 - The views are painted, not rendered: they agree on the design, not to the pixel. Counts of up to about 3 % in height between views are

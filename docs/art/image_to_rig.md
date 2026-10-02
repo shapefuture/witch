@@ -35,7 +35,10 @@ the git-ignored `.env.local`; never printed, not even in part (`redact()` covers
 | Hunyuan3D-Part | Not run (quota). |
 | Tripo | **Not run: this key's balance is 0 credits** (checked on both API versions, v2 `/user/balance` and v3 `/account/balance`). The code path is written against the vendor SDK and untested live; the signup credits do not appear on this key. |
 
-GPU quota after the tests: 165 s and 3 runs of the day.
+With the **legless** T-pose views (`multiview.py --pose t --no-legs`, see `docs/art/character_views.md`) the same shape stage gives a clean bell of a body with the
+T-pose arms and nothing below the hem: 572,922 triangles, 9 GPU-seconds, 1 run (`build/rigs/witch_t_nolegs`). That is the geometry to model and rig from: no legs, so no leg animation.
+
+GPU quota after all the tests: 156 s and 2 runs of the day.
 
 ## What was changed from the draft, and why
 
@@ -62,3 +65,16 @@ To use one: decimate, bake the texture down to the atlas, and retarget the joint
 Worth doing next, if at all: texture the Hunyuan shape (through Tripo once the account has credits, or by projecting the four views onto it), rig it (Tripo, whose SDK has `import_model`,
 or a retarget of our own skeleton by weight transfer), then decimate and bake to the game's budget. Until then the shape is a sculpt to model from, and `--rig anigen` is not recommended for
 the look. The free Space route stays the place to validate a character before spending credits.
+
+## Other routes (from the user's research of free tiers; first-party quotes there, NOT checked by me except where marked)
+
+| Route | What it is for | Status here |
+|---|---|---|
+| **Tencent Hunyuan3D API** ("HY3D": 200 credits per user, valid 1 year; geometry-only 15, normal 25, LowPoly 30, +MultiView 10, +PBR 10, **Auto Rigging only 10**, 3D Part Generation 30, Smart Topology 50; failed tasks are not charged) | The best fit: official Hunyuan3D, so textured output from the four views where the Space's texture stage crashes, a LowPoly mode for our 9,000-triangle budget, and rigging for 10 credits. About 8 textured or 20 untextured results from the free credits. | Not wired: needs an account and key, and I have not seen its API. First candidate for the next provider. |
+| **Tripo** (2,000 signup credits, first-party but from 2024: verify the balance on key creation) | Volume: multiview to model, rig. | The user's key shows a balance of **0 credits** (checked), consistent with that caveat. Code written against the SDK, untested live. |
+| **PiAPI** ($0.50 signup credit; Trellis, Pixal3D and Skin Tokens APIs) | A fully API-driven route: Pixal3D for the mesh, Skin Tokens for skeleton and skin weights. | Not wired. |
+| **Modal** ($30 a month, T4 about USD 0.59 an hour; the credit does not cover Shared Endpoints) | Host Hunyuan3D-2mv or Pixal3D (`TencentARC/Pixal3D` has `inference_mv.py`, a multi-view script) ourselves: no ZeroGPU day limit and no dependence on the Space's broken texture stage. | Not wired; the natural home if the Spaces stay too tight. |
+| Hugging Face Spaces (300 GPU-seconds and 8 runs a day: **measured here**) | Sampling and validation. | Wired (this file). |
+| Meshy free (100 credits a month, no API on the free plan), Colab free (its terms forbid automation) | | Not usable by a script. |
+
+Licences (user's research): AniGen, TRELLIS, UniRig and Pixal3D are MIT.
