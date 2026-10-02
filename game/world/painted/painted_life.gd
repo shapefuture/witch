@@ -567,6 +567,14 @@ func actor_level() -> float:
 		flare += float(light["pulse"])
 	return clampf(_beam_level + 0.1 * flare, 0.0, 2.0)
 
+# Takes the node out of the picture: the characters are lit as the room itself lights them again.
+func _exit_tree() -> void:
+	if loaded and room != null:
+		for material in _actor_materials:
+			if is_instance_valid(material):
+				material.set_shader_parameter("light_scale", room.actor_light)
+				material.set_shader_parameter("sun_color", _sun_base)
+
 func _apply_actor_light() -> void:
 	var level := lerpf(1.0, actor_level(), _actor_follow * intensity)
 	for material in _actor_materials:
