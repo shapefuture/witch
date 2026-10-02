@@ -85,7 +85,7 @@
 				"id": "echo.raccoon_repeats_the_poke",
 				"domain": "social", "form": "social", "source": "raccoon",
 				"relation": {"id": "answers_in_kind_later", "polarity": "+", "bindings": {"question": "witch", "answer": "raccoon"}},
-				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "witnessed_by": "raccoon"},
+				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "seen_by": "raccoon"},
 				"transformation": {
 					"schedule": [
 						{
@@ -130,7 +130,7 @@
 				"polarity": "+",
 				"scope": "a poke the raccoon did not see",
 				"teaches": {"key": "rule.hall.regard.teaches"},
-				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "unwitnessed_by": "raccoon"},
+				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "unseen_by": "raccoon"},
 				"transformation": {},
 				"evidence": {
 					"holders": ["player"], "at": "trigger",
@@ -144,7 +144,7 @@
 				"id": "regard.raccoon_turns_to_look",
 				"domain": "social", "form": "direct", "source": "raccoon",
 				"relation": {"id": "attends_to_motion", "polarity": "+", "bindings": {"mover": "$subject", "watcher": "raccoon"}},
-				"trigger": {"event_kind": ["PROP_POKED", "PROP_ECHOED"], "witnessed_by": "raccoon", "actor_not": ["raccoon"]},
+				"trigger": {"event_kind": ["PROP_POKED", "PROP_ECHOED"], "seen_by": "raccoon", "actor_not": ["raccoon"]},
 				"transformation": {
 					"reactions": [{"op": "LOOK_AT", "actor": "$holder", "target": "$subject"}]
 				},
@@ -172,7 +172,7 @@
 				"id": "regard.tomas_remarks",
 				"domain": "relational", "form": "social", "source": "tomas",
 				"relation": {"id": "attends_to_motion", "polarity": "+", "bindings": {"mover": "$subject", "watcher": "tomas"}},
-				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "witnessed_by": "tomas", "when": {"reads.tomas": "tampering"}},
+				"trigger": {"event_kind": "PROP_POKED", "actor": "player", "seen_by": "tomas", "when": {"reads.tomas": "tampering"}},
 				"transformation": {
 					"reactions": [{"op": "COMMENT", "actor": "$holder", "key": "line.hall.tomas_saw"}]
 				},
@@ -259,7 +259,7 @@
 				"id": "name.tomas_says_so",
 				"domain": "epistemic", "form": "social", "source": "tomas",
 				"relation": {"id": "shared_reading_becomes_custom", "polarity": "+", "bindings": {"reading": "play", "custom": "said_out_loud"}},
-				"trigger": {"convention_change": {"id": "conv.hall.globe_is_a_toy", "change": "adopted"}, "witnessed_by": "tomas"},
+				"trigger": {"convention_change": {"id": "conv.hall.globe_is_a_toy", "change": "adopted"}, "seen_by": "tomas"},
 				"transformation": {
 					"reactions": [{"op": "COMMENT", "actor": "$holder", "key": "line.hall.tomas_toy"}]
 				},

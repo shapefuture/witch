@@ -181,7 +181,7 @@ static func _structure(data: Dictionary, index: Dictionary, options: Dictionary,
 			for subject in _as_list(trigger.get("subject", [])) + _as_list(trigger.get("subject_not", [])):
 				if subject != "*" and subject not in index["subjects"]:
 					findings.append(_finding(0, "error", id, "unknown_subject", "trigger names subject %s, which no place in minds.json has" % subject))
-			for field in ["witnessed_by", "unwitnessed_by"]:
+			for field in ["witnessed_by", "unwitnessed_by", "seen_by", "unseen_by"]:
 				if trigger.has(field) and str(trigger[field]) not in index["holders"]:
 					findings.append(_finding(0, "error", id, "unknown_holder", "trigger %s names %s, who is not in minds.json" % [field, trigger[field]]))
 			for holder in variant.get("evidence", {}).get("holders", []):

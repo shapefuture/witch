@@ -9,6 +9,7 @@ extends RefCounted
 #
 # A variant:
 #   trigger: {event_kind, subject, subject_not, subject_tags, actor, actor_not, witnessed_by, unwitnessed_by,
+#             seen_by, unseen_by (witnessed by sight, or not),
 #             requires_convention, convention_change: {id, change}, when, max_depth}
 #   transformation: {reactions: [...], schedule: [...], effects: {world, npc_state}}
 #   evidence: {holders, at: trigger|consequence, knowledge_effects, model_effects, ...}
@@ -141,6 +142,15 @@ func _match(trigger: Dictionary, event: Dictionary, witness_ids: Array, tags: Ar
 	if trigger.has("unwitnessed_by"):
 		bound = str(trigger["unwitnessed_by"])
 		if bound in witness_ids or not data.get("holders", {}).has(bound):
+			return {}
+	# Seen means eyes on it (sight, or doing it): hearing something from the next room is not looking.
+	if trigger.has("seen_by"):
+		bound = str(trigger["seen_by"])
+		if str(context.get("channels", {}).get(bound, "")) not in ["sight", "direct"]:
+			return {}
+	if trigger.has("unseen_by"):
+		bound = str(trigger["unseen_by"])
+		if str(context.get("channels", {}).get(bound, "")) in ["sight", "direct"] or not data.get("holders", {}).has(bound):
 			return {}
 	if trigger.has("when") and not MirrorConditions.matches(trigger["when"], context):
 		return {}

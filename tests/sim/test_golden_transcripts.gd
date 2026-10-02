@@ -17,7 +17,12 @@ func _transcript(script: Dictionary) -> Dictionary:
 	var r := GameFixtures.runtime()
 	r.next_story()
 	var steps: Array = []
+	var uses_minds := false
 	for step in script["steps"]:
+		if SimulationRunner.is_minds_step(step):
+			uses_minds = true
+			steps.append(SimulationRunner.summarize_minds(step, SimulationRunner.run_step(r, step)))
+			continue
 		var result := r.resolve_now(r.make_action(str(step["action"]), str(step["target"])))
 		var entry := {"action": step["action"], "target": step["target"], "ok": result.get("ok", false)}
 		if result.get("ok", false):
@@ -40,14 +45,35 @@ func _transcript(script: Dictionary) -> Dictionary:
 	var models := {}
 	for rule in e.models.query_rules("", "", "player"):
 		models[rule["id"]] = _name(MirrorDomain.ModelStatus, int(rule["status"]))
+	var final := {
+		"world": e.world_state, "npc_state": e.npc_state, "knowledge": knowledge, "models": models,
+		"operators": e.operators.all("player").map(func(o): return o["id"]),
+		"event_count": e.event_store.size(), "head_hash": e.event_store.head_hash(),
+	}
+	if uses_minds:
+		final["minds"] = _minds_state(r)
+	return {"name": script.get("name", ""), "steps": steps, "final": final}
+
+# The minds layer's end state, for scripts that use it: what is pending, which customs formed, and what each
+# non-player mind came to believe.
+func _minds_state(r: MirrorRuntime) -> Dictionary:
+	var minds := r.minds
+	var conventions := {}
+	for id in minds.state.conventions.ids():
+		var state := minds.convention_state(str(id))
+		conventions[id] = {"tally": int(state["tally"]), "adopted": bool(state["adopted"]), "stalled": bool(state["stalled"]), "holders": state["holders"].keys(), "origin_events": state["origin_events"].size()}
+	var holders := {}
+	for holder in ["raccoon", "tomas"]:
+		var held := {}
+		for claim in r.engine.knowledge.all(holder):
+			held[claim["id"]] = _name(MirrorDomain.EpistemicStatus, int(claim["status"]))
+		var beliefs := {}
+		for rule in r.engine.models.query_rules("", "", holder):
+			beliefs[rule["id"]] = "%s %.2f" % [_name(MirrorDomain.ModelStatus, int(rule["status"])), float(rule["confidence"])]
+		holders[holder] = {"knowledge": held, "models": beliefs}
 	return {
-		"name": script.get("name", ""),
-		"steps": steps,
-		"final": {
-			"world": e.world_state, "npc_state": e.npc_state, "knowledge": knowledge, "models": models,
-			"operators": e.operators.all("player").map(func(o): return o["id"]),
-			"event_count": e.event_store.size(), "head_hash": e.event_store.head_hash(),
-		},
+		"pending": minds.pending().map(func(c: Dictionary) -> String: return "%s due %d: %s on %s" % [c["id"], int(c["due"]), c["event"]["kind"], c["event"]["subject"]]),
+		"conventions": conventions, "holders": holders,
 	}
 
 func test_every_sim_matches_its_golden_transcript() -> void:

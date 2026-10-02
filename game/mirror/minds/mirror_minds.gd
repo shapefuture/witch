@@ -298,6 +298,10 @@ func _commit_event(event: Dictionary, origin: Dictionary) -> Dictionary:
 	for reading in interpretations:
 		reads_by_holder[str(reading["holder"])] = str(reading["reads"])
 	context["reads"] = reads_by_holder
+	var channels: Dictionary = {}
+	for witness in witnesses:
+		channels[str(witness["holder"])] = str(witness["channel"])
+	context["channels"] = channels
 	context["convention_changes"] = evaluation["changes"]
 
 	# The variant this very event is the consequence of: its evidence lands now, for whoever sees it.
@@ -465,6 +469,11 @@ func _resolve_models(effects: Array, holder: String, seen: Dictionary) -> Array:
 	var out: Array = []
 	for effect in effects:
 		if str(effect.get("type", "")) != "ensure":
+			# A model revised or contradicted in this very transaction is no longer the one to support.
+			if str(effect.get("type", "")) == "revise":
+				seen[str(effect.get("old_rule_id", ""))] = true
+			elif str(effect.get("type", "")) == "contradict":
+				seen[str(effect.get("rule_id", ""))] = true
 			out.append(effect)
 			continue
 		var rule_id := str(effect.get("rule_id", ""))
