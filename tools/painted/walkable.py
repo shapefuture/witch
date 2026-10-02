@@ -37,7 +37,7 @@ from scipy import ndimage as ndi
 CELL = 0.25            # metres; the nav grid of game/world/painted/painted_walkable.gd
 MIN_NY = 0.85          # up-facing surface: normal.y (about 32 degrees of slope)
 FLOOR_BELOW = 0.12     # metres below the floor plane that still counts as floor (depth noise)
-MAX_STEP = 0.45        # metres above the floor plane: the dais is walkable, a shelf plinth is not
+MAX_STEP = 0.36        # metres above the floor plane: the dais (0.3) is walkable, a rock or a shelf plinth is not
 SMOOTH_PX = 4.0        # smoothing of the lifted points before the normal is taken
 CLEARANCE = 0.30       # the character's radius: the stored region is where her centre may be
 MIN_FOOTPRINT = 0.40   # a prop's footprint radius is read from its mask, but never smaller than this

@@ -11,13 +11,16 @@ const CELL := 0.5
 var _grid := AStarGrid2D.new()
 var _origin := Vector2.ZERO
 var _size := Vector2i.ZERO
+var _cell := CELL
 
-# `bounds` is the walkable rectangle in world XZ.
-func _init(bounds: Rect2) -> void:
+# `bounds` is the walkable rectangle in world XZ; `cell` the size of a grid cell (a painted room is
+# mapped at 0.25 m, the archive hall at 0.5).
+func _init(bounds: Rect2, cell: float = CELL) -> void:
+	_cell = cell
 	_origin = bounds.position
-	_size = Vector2i(ceili(bounds.size.x / CELL), ceili(bounds.size.y / CELL))
+	_size = Vector2i(ceili(bounds.size.x / _cell), ceili(bounds.size.y / _cell))
 	_grid.region = Rect2i(Vector2i.ZERO, _size)
-	_grid.cell_size = Vector2(CELL, CELL)
+	_grid.cell_size = Vector2(_cell, _cell)
 	_grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
 	_grid.default_compute_heuristic = AStarGrid2D.HEURISTIC_OCTILE
 	_grid.default_estimate_heuristic = AStarGrid2D.HEURISTIC_OCTILE
@@ -25,7 +28,7 @@ func _init(bounds: Rect2) -> void:
 
 func block_disc(center: Vector3, radius: float) -> void:
 	var c := _to_cell(Vector2(center.x, center.z))
-	var reach := ceili(radius / CELL) + 1
+	var reach := ceili(radius / _cell) + 1
 	for dx in range(-reach, reach + 1):
 		for dy in range(-reach, reach + 1):
 			var cell := c + Vector2i(dx, dy)
@@ -109,10 +112,10 @@ func _nearest_free(cell: Vector2i) -> Vector2i:
 	return Vector2i(-1, -1)
 
 func _to_cell(p: Vector2) -> Vector2i:
-	return Vector2i(floori((p.x - _origin.x) / CELL), floori((p.y - _origin.y) / CELL))
+	return Vector2i(floori((p.x - _origin.x) / _cell), floori((p.y - _origin.y) / _cell))
 
 func _cell_center(cell: Vector2i) -> Vector2:
-	return _origin + (Vector2(cell) + Vector2(0.5, 0.5)) * CELL
+	return _origin + (Vector2(cell) + Vector2(0.5, 0.5)) * _cell
 
 func _in_grid(cell: Vector2i) -> bool:
 	return cell.x >= 0 and cell.y >= 0 and cell.x < _size.x and cell.y < _size.y

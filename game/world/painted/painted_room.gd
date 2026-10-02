@@ -7,6 +7,8 @@ extends Node3D
 # answer a tap. From the painting's camera the frame is the painting; characters stand in it, lit by it.
 
 signal prop_pressed(prop_id: String, reaction: String, world_position: Vector3)
+# She arrived at a tapped spot of the floor: the painting pixel that was tapped and where she stands.
+signal walked(pixel: Vector2, world_position: Vector3)
 
 const PLATE_SHADER := preload("res://game/world/painted/painted_plate.gdshader")
 const SHADOW_SHADER := preload("res://game/world/painted/painted_shadow.gdshader")
@@ -28,6 +30,8 @@ var room: Dictionary = {}
 var camera: Camera3D
 var actors: Dictionary = {}
 var props: Array[PaintedProp] = []
+var walk: PaintedWalk
+var input: IntentInput
 var _focal := 1.0
 var _pitch := 0.0
 var _eye := 1.3
@@ -40,6 +44,7 @@ var _plate_material: ShaderMaterial
 var _screen_material: ShaderMaterial
 var _plate: Texture2D
 var _plate_smooth: Texture2D
+var _tap_pixel := Vector2(-1.0, -1.0)
 
 func _ready() -> void:
 	var text := FileAccess.get_file_as_string(room_dir.path_join("room.json"))
@@ -73,6 +78,7 @@ func _ready() -> void:
 		prop.setup(self, data, _plate, _plate_smooth)
 		props.append(prop)
 	_build_screen()
+	_build_walk()
 	set_psx(psx)
 
 func _load_props() -> Dictionary:
@@ -252,6 +258,7 @@ func _add_shadow(holder: Node3D, radius: float) -> void:
 	# Flat on the floor, pushed a little away from the sun (the holder turns with the character).
 	var sun: Array = room["sun_dir"]
 	var away := -Vector3(float(sun[0]), 0.0, float(sun[2])).normalized() * radius * 0.35
+	shadow.set_meta("away", away)
 	shadow.transform = Transform3D(Basis(Vector3.RIGHT, -PI * 0.5), holder.basis.inverse() * away + Vector3(0.0, 0.01, 0.0))
 	holder.add_child(shadow)
 
@@ -279,18 +286,52 @@ func set_psx(on: bool) -> void:
 
 # ---- taps ----------------------------------------------------------------------------------------------
 
-func _unhandled_input(event: InputEvent) -> void:
-	var button := event as InputEventMouseButton
-	if button != null and button.pressed and button.button_index == MOUSE_BUTTON_LEFT:
-		if press(screen_to_pixel(button.position)) != "":
-			get_viewport().set_input_as_handled()
+# Pointer events become PlayerIntents as in the archive hall (IntentInput: a mouse click and a touch are the same
+# tap, a drag or a second finger is not one); every intent lands in tap().
+func _build_walk() -> void:
+	walk = PaintedWalk.new()
+	walk.name = "Walk"
+	add_child(walk)
+	walk.setup(self)
+	walk.walked.connect(func(pixel: Vector2, world_position: Vector3) -> void: walked.emit(pixel, world_position))
+	input = IntentInput.new()
+	input.name = "IntentInput"
+	input.picker = _pick
+	input.intent_emitted.connect(func(_intent: PlayerIntent) -> void: tap(_tap_pixel))
+	add_child(input)
 
-# Pokes whatever is at painting pixel `px` (the nearest prop that contains it). Returns the prop's id.
-func press(px: Vector2) -> String:
+# IntentInput's picker: a prop under the tap is what was pointed at, anything else inside the frame is ground.
+func _pick(screen: Vector2) -> Dictionary:
+	_tap_pixel = screen_to_pixel(screen)
+	var inside := Rect2(Vector2.ZERO, _size).has_point(_tap_pixel)
+	var prop := prop_at(_tap_pixel) if inside else null
+	return {"target_id": prop.prop_id if prop != null else "", "ground": pixel_to_world(_tap_pixel) if inside else Vector3.ZERO, "has_ground": inside}
+
+# What a tap at painting pixel `px` means, in this order: a prop answers it; else the floor is a walk; else it is
+# a miss (fallback). Returns "prop", "walk" or "fallback".
+func tap(px: Vector2) -> String:
+	if press(px) != "":
+		return "prop"
+	if walk != null and walk.walk_to_pixel(px):
+		return "walk"
+	fallback(px)
+	return "fallback"
+
+# A tap that is neither a prop nor the floor (a wall, the ceiling, a corner she cannot reach). Nothing yet.
+func fallback(_px: Vector2) -> void:
+	pass
+
+# The nearest prop that contains painting pixel `px`, or null.
+func prop_at(px: Vector2) -> PaintedProp:
 	var best: PaintedProp = null
 	for prop in props:
 		if prop.contains(px) and (best == null or prop.depth < best.depth):
 			best = prop
+	return best
+
+# Pokes whatever is at painting pixel `px` (the nearest prop that contains it). Returns the prop's id.
+func press(px: Vector2) -> String:
+	var best := prop_at(px)
 	if best == null:
 		return ""
 	var reaction := best.react("press")
