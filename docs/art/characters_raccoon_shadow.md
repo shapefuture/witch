@@ -6,16 +6,11 @@ sheet and the reference photos are **not** in the repo.
 
 | asset | height | triangles | bones | surfaces | clips (all loop) |
 |---|---|---|---|---|---|
-| `assets/characters/raccoon.glb` | 0.70 m with the hat | 1,424 | 22 | 19 materials (1 surface in the game) | idle 4.0 s, walk 0.9 s, talk 2.4 s, watch 4.0 s |
+| `assets/characters/raccoon.glb` | 0.70 m with the hat | 1,942 | 22 | 12 | idle 4.0 s, walk 0.9 s, talk 2.4 s, watch 4.0 s |
 | `assets/characters/shadow.glb` | 1.70 m with the hood | 5,347 | 22 | 25 | idle 4.0 s, walk 1.1 s, talk 2.4 s |
 | `assets/characters/shadow_lady.glb` | 1.65 m | 4,847 | 23 | 16 | idle 4.0 s, walk 1.1 s, talk 2.4 s |
 
 The sources were 1,630 triangles (raccoon, T-pose) and 4,895 (Lady, T-pose).
-
-> **Update.** `raccoon.glb` was rebuilt after the painted room (`docs/art/characters_painted.md`): a dark,
-> four-legged raccoon with a fat ringed tail and a tall straight hat, on the same skeleton names; only the head
-> (mask, muzzle, eyes) is still the concept sheet's. The numbered "Raccoon: changes against the sheet" list
-> below describes the earlier upright, arms-crossed version. The Shadow and the Lady are unchanged.
 
 ```sh
 python tools/characters/raccoon.py --out assets/characters [--preview DIR]

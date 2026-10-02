@@ -62,29 +62,6 @@ func test_every_surface_is_psx_actor_shaded_and_textures_are_used() -> void:
 					ok(bool(material.get_shader_parameter("use_texture")), "%s surface %d samples its texture" % [id, surface])
 		visual.queue_free()
 
-# The witch and the raccoon were rebuilt to look like the painting (docs/art/characters_painted.md); the
-# skeletons keep the names the clips and any later game code address.
-const SKELETONS := {
-	"witch": ["root", "hips", "spine", "neck", "head", "cape", "arm_upper.L", "arm_lower.L", "hand.L", "leg.L", "foot.L",
-		"hairB.L", "hairT.L", "arm_upper.R", "arm_lower.R", "hand.R", "leg.R", "foot.R", "hairB.R", "hairT.R", "bird"],
-	"raccoon": ["root", "hips", "spine", "chest", "head", "hat", "hat_tip", "ear.L", "upper_arm.L", "forearm.L", "hand.L",
-		"leg.L", "foot.L", "ear.R", "upper_arm.R", "forearm.R", "hand.R", "leg.R", "foot.R", "tail1", "tail2", "tail3"],
-}
-
-func test_the_painted_characters_keep_their_bone_names() -> void:
-	for id in SKELETONS:
-		var visual := _spawn(id)
-		if visual == null:
-			ok(false, "%s loads" % id)
-			continue
-		var skeletons := visual.find_children("*", "Skeleton3D", true, false)
-		ok(skeletons.size() == 1, "%s has one skeleton" % id)
-		if skeletons.size() == 1:
-			var skeleton := skeletons[0] as Skeleton3D
-			for bone in SKELETONS[id]:
-				ok(skeleton.find_bone(bone) >= 0, "%s keeps bone %s" % [id, bone])
-		visual.queue_free()
-
 # In the tree like in the game: freeing an orphan skinned instance trips a dummy-renderer
 # material lookup (headless only) once the full suite has run.
 func _spawn(id: String) -> Node3D:
