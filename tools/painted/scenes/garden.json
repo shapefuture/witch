@@ -107,5 +107,13 @@
     "shape": "ellipse"
    }
   ]
+ },
+ "styles": {
+  "ps1p": {
+   "title": "The Garden That Remembers",
+   "prompt": "late afternoon golden hour, a walled garden behind a house: an old crooked pear tree on the left with a stone bench beneath it, a low stone wall with a small arched gate across the back, the house with a warm lit window rising behind the wall, a stone post with a hanging lantern, a sundial on a stone base, raised beds all planted with one kind of flower in tidy rows, a wheelbarrow and a watering can close to the viewer, a gravel path winding to the gate, mismatched patches and repairs on the wall, a dust gap on the bench where something used to sit.",
+   "ui": "blank paper tags knotted to a few of the plants.",
+   "motifs": "a wedge mark carved into the sundial, a small bell hanging at the gate"
+  }
  }
 }

@@ -111,3 +111,20 @@ python tools/painted/compare_models.py run r1 --budget 1.0  # generate (paid); a
 python tools/painted/compare_models.py blind r1             # anonymised copies and critic instructions
 python tools/painted/compare_models.py score r1 a.json b.json
 ```
+
+## The positive-only master prompt (`ps1p`)
+
+A prompt that says what *not* to draw can make a model draw it, and a guide image's "do not copy" can read as "copy". `ps1p` in `styles.json` is the
+master prompt with every instruction about what NOT to do removed or turned positive: no "NOT papercraft" sentence, no avoid list, no "no outline,
+vignette or bloom", no "never gray", no "no people, no text" (an empty scene is asked for as "a large open stretch of empty ground"), and the
+layout-guide and style-reference notes reworded the same way (`compare_models.py`). What it asks for is unchanged. A test fails if a `ps1p`
+prompt contains no / not / never / without / avoid / nothing. A brief may give a `styles.ps1p` entry (otherwise its `ps1` entry is used).
+
+On the garden scene (run r6 of `docs/art/model_comparison.md`), against the original house prompt on the same guide:
+
+- **Grok with the engine-render reference**: the reference's dark pillars and purple crystal, which had leaked into the picture, were gone; the
+  look became crude and chunky (faceted-ball foliage, a polyhedral roof, pyramids and cones scattered on the ground), every labeled element was
+  placed, and the ground gained scattered pyramids.
+- **Marketing Studio, guide only**: every element of the guide in its place (pear tree, bench, wall and gate with a small bell, lantern post, house,
+  sundial, raised beds with blank tags knotted to the flowers, wheelbarrow, watering can), a clear gravel path, golden-hour light; a rich
+  painterly look with faceted textures, less crude than Grok's.

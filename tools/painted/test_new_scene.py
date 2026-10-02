@@ -132,6 +132,20 @@ def test_benchmark_prompts_fit_each_model_and_carry_no_anchor():
     assert cm.master_style() in full                                            # the master prompt's style block, verbatim
 
 
+def test_the_positive_master_prompt_forbids_nothing():
+    import re
+    forbidding = r"\b(no|not|never|without|avoid|don't|do not|none|nothing|nobody|cannot)\b"
+    for b in nr.list_briefs():
+        if "ps1p" not in (b.get("styles") or {}):
+            continue
+        spec = nr.resolve(b["kind"], b)
+        text = nr.compose_prompt(spec, b["prompt"], "ps1p", b)
+        assert "{" not in text and not re.findall(forbidding, text, flags=re.I), (b["id"], re.findall(forbidding, text, flags=re.I))
+    brief, spec, layout = cm.load()
+    for note in (cm.GUIDE_NOTE_POS, cm.STYLE_REF_NOTE_POS, sl.GROUND_LABEL):
+        assert not re.findall(forbidding, note, flags=re.I), note
+
+
 def test_resolve_overrides_in_order_kind_brief_explicit():
     spec = nr.resolve("street", {"palette": "night", "sun": {"mode": "fixed", "dir": [0, 1, 0]}}, horizon=0.55)
     assert spec["palette"] == "night" and spec["sun"]["dir"] == [0, 1, 0] and spec["horizon"] == 0.55

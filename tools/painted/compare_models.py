@@ -33,6 +33,12 @@ GUIDE_NOTE = ("The reference image is a LAYOUT GUIDE, not a picture to copy: gre
 PALETTE = ("Palette: jewel-toned theatrical daylight; shadows deep cobalt, violet-blue-black, plum, indigo (never gray); light incandescent amber and pale "
            "gold; ground and walls turquoise, teal, petrol; accents coral, hot-pink, cream; moss green, mustard, burnt orange; matte dry opaque pigment. ")
 CAMERA = ("Fixed point-and-click stage-play camera with strong barrel curvature inside the geometry; no vignette, no frame, no outlines, no ink lines. ")
+# the same notes with nothing forbidden (for the positive-only master prompt, look ps1p)
+GUIDE_NOTE_POS = ("The reference image is a layout guide: labeled grey boxes mark where each element of the scene goes and how big it is (FG foreground, "
+                  "MID middle ground, BG background; GROUND is the open empty ground; the dashed line is the horizon). Place every labeled element at its "
+                  "box's position and size, as a finished object painted in this scene's own colours, light and style. ")
+STYLE_REF_NOTE_POS = ("The second reference image shows the target look (palette, rendering, mood): take its look and invent the content from the scene "
+                      "description. ")
 STYLE_REF_NOTE = ("The SECOND reference image shows the target look only (palette, rendering, mood, how surfaces and light are painted): "
                   "match that look, but do not copy its rooms, objects, characters or composition. ")
 STYLE_REF = ROOT / "assets/painted/hall_clean/plate_empty.png"     # the original painting (characters removed): the first room
@@ -98,10 +104,11 @@ def fit(parts, limit):
 
 def prompt_for(run, brief, layout, style_ref=False):
     """The prompt of one run (see the module docstring); every channel carries the same look, scene and constraints."""
-    if STYLE == "hall":                       # the original house prompt (new_scene.compose_prompt), not the master prompt
+    if STYLE in ("hall", "ps1p"):             # the original house prompt, or the master prompt with nothing forbidden (new_scene.compose_prompt)
         spec = ns.resolve(brief["kind"], brief)
-        note = GUIDE_NOTE + (STYLE_REF_NOTE if style_ref else "")
-        return note + ns.compose_prompt(spec, brief["prompt"], "hall", brief)
+        pos = STYLE == "ps1p"
+        note = (GUIDE_NOTE_POS if pos else GUIDE_NOTE) + ((STYLE_REF_NOTE_POS if pos else STYLE_REF_NOTE) if style_ref else "")
+        return note + ns.compose_prompt(spec, brief["prompt"], STYLE, brief)
     mine = brief["styles"][STYLE]
     labels = ", ".join(e["label"] for e in layout["elements"])
     scene = "Scene: %s, %s. Elements: %s." % (mine["title"], mine["prompt"].split(",")[0].strip(), labels)
@@ -186,7 +193,12 @@ def cmd_run(args):
     root.mkdir(parents=True, exist_ok=True)
     sl.render(layout).save(guide)
     (root / "layout.json").write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
-    if args.trio:        # three runs: grok with the guide and the reference; marketing with the guide alone, and with the reference too
+    if args.duo:
+        by_id = {r["id"]: r for r in RUNS}
+        tag = args.tag or "ref"
+        ref = Path(args.style_ref)
+        runs = [dict(by_id[i], id=i + ("+" + tag if with_ref else ""), _ref=with_ref) for i, with_ref in (("grok_guide", True), ("marketing_guide", False))]
+    elif args.trio:        # three runs: grok with the guide and the reference; marketing with the guide alone, and with the reference too
         by_id = {r["id"]: r for r in RUNS}
         tag = args.tag or "ref"
         ref = Path(args.style_ref)
@@ -288,7 +300,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("plan"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_plan)
-    p = sub.add_parser("run"); p.add_argument("name"); p.add_argument("--set", choices=["hall"], help="hall: layout guide + the original room painting as style reference"); p.add_argument("--style-ref", help="a style reference image (with --tag): the guide runs of --only (default: every guide run) are redone with it"); p.add_argument("--tag"); p.add_argument("--only"); p.add_argument("--trio", action="store_true", help="grok guide + reference, marketing guide alone, marketing guide + reference (needs --style-ref)"); p.add_argument("--brief", default=BRIEF); p.add_argument("--look", default=STYLE, choices=["ps1", "hall"], help="the master prompt (ps1) or the original house prompt (hall)"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_run)
+    p = sub.add_parser("run"); p.add_argument("name"); p.add_argument("--set", choices=["hall"], help="hall: layout guide + the original room painting as style reference"); p.add_argument("--style-ref", help="a style reference image (with --tag): the guide runs of --only (default: every guide run) are redone with it"); p.add_argument("--tag"); p.add_argument("--only"); p.add_argument("--duo", action="store_true", help="grok guide + reference, marketing guide alone"); p.add_argument("--trio", action="store_true", help="grok guide + reference, marketing guide alone, marketing guide + reference (needs --style-ref)"); p.add_argument("--brief", default=BRIEF); p.add_argument("--look", default=STYLE, choices=["ps1", "ps1p", "hall"], help="the master prompt (ps1) or the original house prompt (hall)"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_run)
     p = sub.add_parser("blind"); p.add_argument("name"); p.add_argument("--include-from", action="append"); p.add_argument("--only"); p.add_argument("--reference", nargs="?", const=True, help="critics also rate the style match to this image (default: the run's own style reference)"); p.add_argument("--seed", type=int, default=7); p.set_defaults(fn=cmd_blind)
     p = sub.add_parser("score"); p.add_argument("name"); p.add_argument("critics", nargs="+"); p.set_defaults(fn=cmd_score)
     args = ap.parse_args(argv)

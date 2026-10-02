@@ -129,7 +129,7 @@ def compose_prompt(spec, scene_prompt, style="hall", brief=None, layout=False):
 def _compose_prompt(spec, scene_prompt, style, brief):
     pct = int(round(spec["horizon"] * 100))
     st = load_styles()[style]
-    mine = ((brief or {}).get("styles") or {}).get(style, {})
+    mine = ((brief or {}).get("styles") or {}).get(style) or ((brief or {}).get("styles") or {}).get("ps1", {})
     if "template" not in st:
         return "%s %s Palette: %s. %s" % (scene_prompt.strip(), spec["composition"], spec.get("palette") or DEFAULT_PALETTE,
                                           STYLE.format(pct=pct))

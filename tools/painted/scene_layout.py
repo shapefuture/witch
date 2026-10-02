@@ -33,7 +33,7 @@ LAYERS = {"fg": (255, 150, 140), "mid": (140, 185, 255), "bg": (150, 220, 150), 
 GREYS = {"fg": (170, 170, 170), "mid": (200, 200, 200), "bg": (226, 226, 226), "ground": (242, 242, 242)}
 TAGS = {"fg": "FG", "mid": "MID", "bg": "BG", "ground": "GROUND"}
 ORDER = ["bg", "mid", "ground", "fg"]            # drawn back to front
-GROUND_LABEL = "GROUND: empty open floor, nothing here"
+GROUND_LABEL = "GROUND: open empty ground"
 
 NOTE = ("The FIRST reference image is a LAYOUT GUIDE, not a picture to copy and not a colour or style reference: a white canvas whose "
         "labeled grey boxes and shapes mark where each element of the scene goes and roughly how big it is. Each label begins with its "
