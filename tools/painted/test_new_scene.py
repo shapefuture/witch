@@ -12,6 +12,7 @@ import new_scene as nr  # noqa: E402
 import scene_layout as sl  # noqa: E402
 import layout_score as ls  # noqa: E402
 import compare_models as cm  # noqa: E402
+import sphere_probe as sp  # noqa: E402
 
 
 def synthetic_disparity(horizon, a=22.0, b=0.5):
@@ -150,6 +151,40 @@ def test_the_default_recipe_is_the_one_that_won():
     assert nr.DEFAULT_MODEL == "marketing" and nr.DEFAULT_STYLE == "ps1p" and nr.GEN == "marketing"
     assert nr.MODELS["marketing"]["edit"] == "marketing-studio/image"
     assert nr.load_styles()[nr.DEFAULT_STYLE]["refs"] == []                 # no style-reference picture: references leak their objects
+
+
+def _synthetic_spheres(sun, sky=(0.20, 0.28, 0.50), sun_rgb=(1.0, 0.8, 0.5), albedo=0.5):
+    """A grey ball and a chrome ball (camera space) in an environment of one sun and a flat sky, as sRGB images."""
+    size = 400
+    img = np.zeros((size, size, 3))
+    yy, xx = np.mgrid[0:size, 0:size]
+    for (cx, kind) in ((100, "grey"), (300, "chrome")):
+        nx, ny = (xx - cx) / 90.0, -(yy - 200) / 90.0
+        rr = nx ** 2 + ny ** 2
+        m = rr < 1
+        nz = np.sqrt(np.clip(1 - rr, 0, 1))
+        N = np.stack([nx, ny, nz], -1)
+        if kind == "grey":
+            lam = np.maximum(0, N @ sun)
+            col = albedo * (np.array(sky) + np.array(sun_rgb)[None, None, :] * 1.2 * lam[..., None])
+        else:
+            R = np.stack([2 * nz * nx, 2 * nz * ny, 2 * nz * nz - 1], -1)
+            hit = (R @ sun) > np.cos(np.radians(12))
+            col = 0.85 * (np.array(sky)[None, None, :] + np.array(sun_rgb)[None, None, :] * 1.2 * hit[..., None])
+        img[m] = col[m]
+    lin = np.clip(img, 0, 1)
+    srgb = np.where(lin <= 0.0031308, lin * 12.92, 1.055 * lin ** (1 / 2.4) - 0.055)
+    return Image.fromarray((srgb * 255).astype(np.uint8))
+
+
+def test_sphere_probe_recovers_a_known_light():
+    sun = np.array([0.55, 0.6, -0.1]); sun /= np.linalg.norm(sun)
+    res = sp.measure(_synthetic_spheres(sun), (100, 200, 90), (300, 200, 90))
+    assert res["angle_between_deg"] < 12, res                                      # the grey ball's key direction and the chrome ball's sun agree
+    got = np.array(res["sun_direction_from_chrome"])
+    assert np.degrees(np.arccos(np.clip(got @ sun, -1, 1))) < 12, res
+    assert res["grey_vs_chrome_correlation"] > 0.9 and res["grey_fit_r2"] > 0.9, res
+    assert res["sun_color"][0] >= res["sun_color"][2] and res["sky_color"][2] >= res["sky_color"][0], res   # warm sun, cool sky
 
 
 def test_resolve_overrides_in_order_kind_brief_explicit():
