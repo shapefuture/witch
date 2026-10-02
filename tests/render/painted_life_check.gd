@@ -313,7 +313,7 @@ func _run() -> void:
 				brighter += 1
 	var feet := live_room.world_to_pixel((live_room.actors["witch"] as Node3D).position)
 	_check(count > 150, "the characters cast a shadow on the beam (%d px darker)" % count)
-	_check(brighter < count / 10, "and it only darkens (%d px brighter)" % brighter)
+	_check(brighter < count * 0.1, "and it only darkens (%d px brighter)" % brighter)
 	if count > 0:
 		var centre := sum / count
 		_check(centre.x < feet.x + 40.0 and centre.y > feet.y - 30.0, "towards the camera, away from the oculus (shadow centre %s, witch's feet %s)" % [centre.round(), feet.round()])

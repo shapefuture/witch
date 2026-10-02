@@ -85,8 +85,11 @@ func setup(p_room: PaintedRoom, file: String = "life.json") -> bool:
 	var glow: Dictionary = data.get("glow", {})
 	_glow_levels = float(glow.get("levels", 6.0))
 	_glow_depth = float(glow.get("depth", 0.97))
-	for entry in data.get("lights", []):
-		_lights.append(_light_from(entry as Dictionary))
+	for entry: Dictionary in data.get("lights", []):
+		if entry.has("id") and entry.has("pixel"):
+			_lights.append(_light_from(entry))
+		else:
+			push_error("PaintedLife: a light in %s needs an id and a pixel" % path)
 	_spare = clampi(int(glow.get("spare", 6)), 0, maxi(MAX_SLOTS - _lights.size(), 0))
 	_occluder_config = data.get("occluders", {})
 	var actors: Dictionary = data.get("actors", {})
