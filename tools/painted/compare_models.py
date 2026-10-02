@@ -33,6 +33,9 @@ GUIDE_NOTE = ("The reference image is a LAYOUT GUIDE, not a picture to copy: gre
 PALETTE = ("Palette: jewel-toned theatrical daylight; shadows deep cobalt, violet-blue-black, plum, indigo (never gray); light incandescent amber and pale "
            "gold; ground and walls turquoise, teal, petrol; accents coral, hot-pink, cream; moss green, mustard, burnt orange; matte dry opaque pigment. ")
 CAMERA = ("Fixed point-and-click stage-play camera with strong barrel curvature inside the geometry; no vignette, no frame, no outlines, no ink lines. ")
+STYLE_REF_NOTE = ("The SECOND reference image shows the target look only (palette, rendering, mood, how surfaces and light are painted): "
+                  "match that look, but do not copy its rooms, objects or composition. ")
+STYLE_REF = ROOT / "assets/painted/hall_clean/plate_empty.png"     # the original painting (characters removed): the first room
 TAIL = "A large clear empty floor area fills the foreground. No people, no witch, no raccoon, no text, no letters."
 SHORT_LOOK = ("Screenshot of a crude 1997 PS1-style low-poly point-and-click game: wedge and slab geometry, blunt facets, dry matte painted textures, "
               "no outlines, no bloom, not papercraft, not cute modern. Cobalt and plum shadows, teal walls, amber light, never gray. Crooked potion shop. ")
@@ -53,6 +56,15 @@ RUNS = [
     dict(id="soul_words", model="higgsfield-ai/soul/v2/standard", channel="words", args=dict(resolution="1080p", aspect_ratio="16:9")),
     dict(id="recraft_words", model="recraft/v4.1/text-to-image", channel="words", args=dict(aspect_ratio="16:9")),
     dict(id="zimage_words", model="z-image/turbo", channel="words-short", args=dict(resolution="2k", aspect_ratio="16:9")),
+]
+
+
+# --set hall: the four models asked for, each with the layout guide (shapes) AND the original room painting as the style reference
+HALL_SET = [
+    dict(id="grok_both", model="xai/grok-imagine-image-2.0", channel="both", images="image_urls", args=dict(resolution="2k", quality="medium", aspect_ratio="16:9")),
+    dict(id="grok_guide", model="xai/grok-imagine-image-2.0", channel="guide", images="image_urls", args=dict(resolution="2k", quality="medium", aspect_ratio="16:9")),
+    dict(id="marketing_guide", model="marketing-studio/image", channel="guide", images="image_urls", args=dict(resolution="1k", quality="medium", aspect_ratio="16:9")),
+    dict(id="qwen_edit_guide", model="alibaba/qwen-image-3/edit", channel="guide", images="image_urls", args=dict(resolution="2k", aspect_ratio="16:9", prompt_extend=True)),
 ]
 
 
@@ -84,7 +96,7 @@ def fit(parts, limit):
     return " ".join(t for n, t in [(n, keep if n == "style" else t) for n, t in parts] if t)
 
 
-def prompt_for(run, brief, layout):
+def prompt_for(run, brief, layout, style_ref=False):
     """The prompt of one run (see the module docstring); every channel carries the same look, scene and constraints."""
     mine = brief["styles"][STYLE]
     labels = ", ".join(e["label"] for e in layout["elements"])
@@ -98,13 +110,13 @@ def prompt_for(run, brief, layout):
             if sum(len(p) + 2 for p in parts) + len(text) <= budget:
                 parts.append(text)
         return SHORT_LOOK + "; ".join(parts) + ". Empty floor in the foreground. No people, no text."
-    note = GUIDE_NOTE if channel == "guide" else ""
+    note = (GUIDE_NOTE + (STYLE_REF_NOTE if style_ref else "")) if channel in ("guide", "both") else ""
     placement = "" if channel == "guide" else "Placement of each element in the frame: " + ls.describe(layout)
     return fit([("note", note), ("style", master_style()), ("palette", PALETTE), ("camera", CAMERA), ("scene", scene),
                 ("placement", placement), ("tail", TAIL)], limit)
 
 
-def hf(run, prompt, guide, max_usd, out_dir, estimate_only=False):
+def hf(run, prompt, guide, max_usd, out_dir, estimate_only=False, style_ref=None):
     out_dir.mkdir(parents=True, exist_ok=True)
     args = dict(run["args"], prompt=prompt)
     (out_dir / "args.json").write_text(json.dumps(args, indent=2) + "\n", encoding="utf-8")
@@ -120,7 +132,8 @@ def hf(run, prompt, guide, max_usd, out_dir, estimate_only=False):
             return None
     cmd = base + ["run", run["model"], "--args-file", str(out_dir / "args.json"), "--max-usd", "%.3f" % max_usd, "--out", str(out_dir)]
     if run.get("images"):
-        cmd += ["--upload", "%s=%s" % (run["images"], guide)]
+        for pic in [guide] + ([style_ref] if style_ref else []):
+            cmd += ["--upload", "%s=%s" % (run["images"], pic)]
     with open(ROOT / ".hf.lock", "w") as lock:
         try:
             import fcntl
@@ -169,25 +182,28 @@ def cmd_run(args):
     root.mkdir(parents=True, exist_ok=True)
     sl.render(layout).save(guide)
     (root / "layout.json").write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
+    hall = args.set == "hall"
+    runs = [dict(r, id=r["id"] + "+hall") for r in HALL_SET] if hall else RUNS
+    ref = STYLE_REF if hall else None
     results = json.loads((root / "results.json").read_text()) if (root / "results.json").exists() else {}
-    spent = sum(r.get("usd", 0) for r in results.values())
-    for run in RUNS:
+    spent = sum(r.get("usd") or 0 for r in results.values())
+    for run in runs:
         if run["id"] in results and results[run["id"]].get("image"):
             continue
+        prompt = prompt_for(run, brief, layout, style_ref=hall)
         done = find_image(root / run["id"])
         if done:                                           # already generated (a crash after the paid call): keep it, do not pay again
-            results[run["id"]] = {"image": str(done.relative_to(root)), "usd": job_usd(root / run["id"]), "chars": len(prompt_for(run, brief, layout))}
+            results[run["id"]] = {"image": str(done.relative_to(root)), "usd": job_usd(root / run["id"]), "chars": len(prompt)}
             spent += results[run["id"]]["usd"] or 0
             print("recovered %s" % run["id"])
             continue
-        prompt = prompt_for(run, brief, layout)
-        est = hf(run, prompt, guide, 0, root / run["id"], estimate_only=True)
+        est = hf(run, prompt, guide, 0, root / run["id"], estimate_only=True, style_ref=ref)
         if est is None or spent + est > args.budget:
             print("skip %s (estimate %s, spent %.2f of %.2f)" % (run["id"], est, spent, args.budget))
             results[run["id"]] = {"skipped": True, "estimate": est}
             continue
         print("run %s ($%.3f) ..." % (run["id"], est), flush=True)
-        proc = hf(run, prompt, guide, est * 1.5 + 0.01, root / run["id"])
+        proc = hf(run, prompt, guide, est * 1.5 + 0.01, root / run["id"], style_ref=ref)
         image = find_image(root / run["id"])
         if proc.returncode != 0 or not image:
             tail = (proc.stdout[-300:] + proc.stderr[-300:]).strip().replace("\n", " | ")
@@ -207,20 +223,31 @@ def cmd_blind(args):
     from PIL import Image
     root = ROOT / "build/compare" / args.name
     results = json.loads((root / "results.json").read_text())
+    pics = {i: root / r["image"] for i, r in results.items() if r.get("image")}
+    combined = {i: dict(r, image=str(pics[i])) for i, r in results.items() if r.get("image")}
+    if args.include_from:                                        # earlier pictures, to compare against (e.g. the no-reference runs)
+        other = ROOT / "build/compare" / args.include_from
+        for i, r in json.loads((other / "results.json").read_text()).items():
+            if r.get("image") and (not args.only or i in args.only.split(",")):
+                pics[i] = other / r["image"]
+                combined[i] = dict(r, image=str(pics[i]))
     brief, spec, layout = load()
-    ids = [i for i, r in results.items() if r.get("image")]
+    ids = list(pics)
     random.Random(args.seed).shuffle(ids)
     blind = root / "blind"
     blind.mkdir(exist_ok=True)
     key = {}
     for n, i in enumerate(ids, 1):
         name = "pic_%02d.png" % n
-        Image.open(root / results[i]["image"]).convert("RGB").resize((1280, 720), Image.LANCZOS).save(blind / name)
+        Image.open(pics[i]).convert("RGB").resize((1280, 720), Image.LANCZOS).save(blind / name)
         key[name] = i
+    reference = bool(args.reference)
+    if reference:
+        Image.open(STYLE_REF).convert("RGB").resize((1280, 720), Image.LANCZOS).save(blind / "style_reference.png")
     (root / "blind_key.json").write_text(json.dumps(key, indent=1) + "\n", encoding="utf-8")
+    (root / "blind_results.json").write_text(json.dumps(combined, indent=1) + "\n", encoding="utf-8")
     names = [e["label"].split(":")[0] if ":" in e["label"] else e["label"] for e in layout["elements"]]
-    ground = layout["ground"]
-    (blind / "INSTRUCTIONS.md").write_text(ls.critic_instructions(names, ground, sorted(key)), encoding="utf-8")
+    (blind / "INSTRUCTIONS.md").write_text(ls.critic_instructions(names, layout["ground"], sorted(key), reference), encoding="utf-8")
     print("blind set: %s (%d pictures)" % (blind, len(key)))
     return 0
 
@@ -228,7 +255,8 @@ def cmd_blind(args):
 def cmd_score(args):
     root = ROOT / "build/compare" / args.name
     brief, spec, layout = load()
-    results = json.loads((root / "results.json").read_text())
+    both = root / "blind_results.json"
+    results = json.loads((both if both.exists() else root / "results.json").read_text())
     key = json.loads((root / "blind_key.json").read_text())
     rows = ls.score_all(layout, [json.loads(Path(c).read_text()) for c in args.critics], key, results)
     print(ls.table(rows))
@@ -240,8 +268,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("plan"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_plan)
-    p = sub.add_parser("run"); p.add_argument("name"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_run)
-    p = sub.add_parser("blind"); p.add_argument("name"); p.add_argument("--seed", type=int, default=7); p.set_defaults(fn=cmd_blind)
+    p = sub.add_parser("run"); p.add_argument("name"); p.add_argument("--set", choices=["hall"], help="hall: layout guide + the original room painting as style reference"); p.add_argument("--budget", type=float, default=1.0); p.set_defaults(fn=cmd_run)
+    p = sub.add_parser("blind"); p.add_argument("name"); p.add_argument("--include-from"); p.add_argument("--only"); p.add_argument("--reference", action="store_true"); p.add_argument("--seed", type=int, default=7); p.set_defaults(fn=cmd_blind)
     p = sub.add_parser("score"); p.add_argument("name"); p.add_argument("critics", nargs="+"); p.set_defaults(fn=cmd_score)
     args = ap.parse_args(argv)
     return args.fn(args)

@@ -94,22 +94,24 @@ def score_all(layout, critics, key, results):
             guide_leak=sum(bool(r.get("guide_leak")) for r in reports), text=sum(bool(r.get("text")) for r in reports),
             people=sum(bool(r.get("people")) for r in reports), critics=len(reports),
             crude_3d=round(mean(r.get("crude_3d", 0) for r in reports), 1), jewel=round(mean(r.get("jewel_palette", 0) for r in reports), 1),
-            cute_modern=round(mean(r.get("cute_modern", 0) for r in reports), 1)))
+            cute_modern=round(mean(r.get("cute_modern", 0) for r in reports), 1),
+            style_match=round(mean(r["style_match"] for r in reports if "style_match" in r), 1) if any("style_match" in r for r in reports) else None))
     return sorted(rows, key=lambda r: -r["placement"])
 
 
 def table(rows):
-    head = "%-16s %6s %9s %8s %7s %6s %5s %6s %5s %6s %9s" % (
-        "run", "USD", "placement", "presence", "iou", "ground", "leak", "text", "crude", "jewel", "cute(lo=ok)")
+    head = "%-22s %6s %9s %8s %7s %6s %5s %6s %5s %6s %9s %6s" % (
+        "run", "USD", "placement", "presence", "iou", "ground", "leak", "text", "crude", "jewel", "cute(lo=ok)", "style")
     lines = [head, "-" * len(head)]
     for r in rows:
-        lines.append("%-16s %6s %9.2f %8.2f %7.2f %6.1f %5d %6d %5.1f %6.1f %9.1f" % (
+        lines.append("%-22s %6s %9.2f %8.2f %7.2f %6.1f %5d %6d %5.1f %6.1f %9.1f %6s" % (
             r["run"], "%.3f" % r["usd"] if r["usd"] is not None else "?", r["placement"], r["presence"], r["mean_iou"], r["ground_objects"],
-            r["guide_leak"], r["text"], r["crude_3d"], r["jewel"], r["cute_modern"]))
+            r["guide_leak"], r["text"], r["crude_3d"], r["jewel"], r["cute_modern"],
+            "%.1f" % r["style_match"] if r.get("style_match") is not None else "-"))
     return "\n".join(lines)
 
 
-def critic_instructions(names, ground, pics):
+def critic_instructions(names, ground, pics, reference=False):
     return """# Locating elements in generated pictures (blind)
 
 For each picture below you will say where named things appear and answer a short checklist. You are not told anything about how or why the
@@ -131,9 +133,14 @@ Checklist per picture:
 - `crude_3d` 0-10: how much it looks like crude early-1997 low-polygon 3D (blunt wedges, cubes, slabs, visible facets, dry matte painted textures) rather than polished modern art.
 - `jewel_palette` 0-10: how much the colours are rich jewel tones (cobalt/plum/indigo shadows, teal walls, amber light) rather than muddy, grey or pastel.
 - `cute_modern` 0-10: how much it looks like cute polished modern 3D / toy-like renders (10 = very much; lower is better here).
-
+%s
 Write ONE JSON file (path given by the person who asked you) shaped like:
 {"pic_01.png": {"elements": {"%s": {"present": true, "box": [0.1, 0.2, 0.3, 0.4]}, ...}, "ground_objects": 0, "guide_leak": false,
- "text": false, "people": false, "crude_3d": 6, "jewel_palette": 7, "cute_modern": 3}, "pic_02.png": {...}}
+ "text": false, "people": false, "crude_3d": 6, "jewel_palette": 7, "cute_modern": 3%s}, "pic_02.png": {...}}
 Use exactly the element names above. Estimate boxes carefully: this is a measurement.
-""" % (", ".join(pics), "; ".join('"%s"' % n for n in names), ground[0], ground[2], ground[1], ground[3], names[0])
+""" % (", ".join(pics), "; ".join('"%s"' % n for n in names), ground[0], ground[2], ground[1], ground[3],
+       STYLE_ITEM if reference else "", names[0], ', "style_match": 7' if reference else "")
+
+STYLE_ITEM = """- `style_match` 0-10: open `style_reference.png` (a painting of a different room). How closely does the picture's LOOK match it: the palette, how
+  surfaces are painted and faceted, the light and mood. Judge the look only, never the content. 10 = it could be painted by the same hand.
+"""
