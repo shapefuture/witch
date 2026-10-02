@@ -47,6 +47,9 @@ func _run() -> void:
 	root.add_child(room)
 	await _frames(15)
 	room.walk.set_process(false)
+	# This check measures geometry (occlusion, feet); the light and life layer has its own pixel check.
+	if room.life != null:
+		room.life.intensity = 0.0
 	scale_to_image = root.get_texture().get_size().x / room.image_size().x
 	print("viewport %s, scale %.3f" % [root.get_texture().get_size(), scale_to_image])
 	(room.actors["raccoon"] as Node3D).visible = false
@@ -150,7 +153,8 @@ func _feet_scenario() -> void:
 func _depth_of_room(px: Vector2) -> float:
 	var d := room.depth_at(px)
 	for prop in room.props:
-		if prop.contains(px):
+		# Only a lifted card stands in front of anything; a hotspot is a region of the painting, not geometry.
+		if prop.kind == "cutout" and prop.contains(px):
 			d = minf(d, prop.depth)
 	return d
 

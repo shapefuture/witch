@@ -78,7 +78,7 @@ func test_a_tap_goes_to_a_prop_then_the_floor_then_the_fallback() -> void:
 	ok(room.walk.witch.is_walking(), "she is walking")
 	eq(room.tap(Vector2(640, 40)), "fallback", "the ceiling is neither")
 	eq(room.tap(Vector2(660, 500)), "fallback", "nor is the foot of the shelf")
-	eq(room.tap(Vector2(1150, 620)), "fallback", "nor is the rock in the right foreground")
+	eq(room.tap(Vector2(1150, 620)), "prop", "but the rock in the right foreground is a hotspot of the toy box")
 	_finish_walk(room)
 	eq(walked_to, [Vector2(640, 660)], "walked fires once, on arrival, with the tapped pixel")
 	room.queue_free()
