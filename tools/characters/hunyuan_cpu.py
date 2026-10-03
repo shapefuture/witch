@@ -36,7 +36,8 @@ def setup(root):
 def enable_merge(pipe, n):
     """Average the DINOv2 condition tokens in n x n blocks of each view's 37 x 37 patch grid (the class token stays): the DiT attends over the views' tokens joined to its 3,072
     latents, so 4,110 + 3,072 tokens become 1,086 + 3,072 for n = 2. Measured on the witch: 98 s a mesh instead of 211 s, silhouette IoU 0.853 against 0.866 (the seed-to-seed
-    noise floor of the shape distance is 0.0082, this costs 0.0108). Dropping background tokens, or keeping the figure at full resolution and merging only the background, was much worse."""
+    noise floor of the shape distance is 0.0082, this costs 0.0108). On the generated jug it changed nothing (IoU 0.845 against 0.849); on Vera it cost 0.07 to 0.08 of front and back
+    silhouette IoU: use it for props and drafts, not for characters. Dropping background tokens, or keeping the figure at full resolution and merging only the background, was much worse."""
     import torch
     F = torch.nn.functional
     orig = pipe.encode_cond
@@ -118,7 +119,7 @@ def main(argv=None):
     r.add_argument("--seed", type=int, default=1234)
     r.add_argument("--fp32", action="store_true", help="no int8 (about 2.5 x slower)")
     r.add_argument("--no-flash", action="store_true", help="the plain volume decoder (about 5 minutes more)")
-    r.add_argument("--merge", type=int, default=0, help="average the condition tokens in n x n blocks (2: twice as fast, see enable_merge)")
+    r.add_argument("--merge", type=int, default=0, help="average the condition tokens in n x n blocks (2: twice as fast; fine for props, costly for characters: see enable_merge)")
     b = sub.add_parser("batch")
     b.add_argument("dir")
     b.add_argument("out_dir")
@@ -126,7 +127,7 @@ def main(argv=None):
     b.add_argument("--steps", type=int, default=3)
     b.add_argument("--octree", type=int, default=128)
     b.add_argument("--seed", type=int, default=1234)
-    b.add_argument("--merge", type=int, default=0, help="average the condition tokens in n x n blocks (2: twice as fast, see enable_merge)")
+    b.add_argument("--merge", type=int, default=0, help="average the condition tokens in n x n blocks (2: twice as fast; fine for props, costly for characters: see enable_merge)")
     a = ap.parse_args(argv)
     if a.cmd == "batch":
         t0 = time.time()
