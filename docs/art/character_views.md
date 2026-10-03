@@ -64,3 +64,5 @@ would have had to rig. Not for characters whose legs show (the raccoon, Tomas).
 ## Next stage
 
 `docs/art/image_to_rig.md` (`tools/characters/image2rig.py`): the four canonical views to a 3D mesh, a rig and parts on free Spaces and Tripo, with the witch's results (the geometry is good; the textured and rigged results are not as good as our own `witch.glb`).
+
+The CPU-only continuation (shape on the CPU, paint, the game's own skeleton and clips on the result): `docs/art/cpu_pipeline.md`.

@@ -166,5 +166,9 @@ triangles without losing the detail (a bake to a UV atlas is the missing step; T
 
 * `unirig-cpu` (jasongzy/UniRig, a CPU Space): failed after 100 s with an empty error on the witch shape. `unirig-gpu` (Faisal786U/unirig-api) is wired and unverified here (the user's own test: 110 s, 44 joints named `bone_0`...).
 * The user's notes (not verified here): rebinding by **transferring skin weights from a donor skeleton** in headless Blender works on generated meshes where automatic weights fail. Our own `witch.glb` is the natural donor: its bones are
-  the game's names (`root`, `hips`, `spine`, ...) and its clips already exist, so a transfer would give the generated witch the game's rig directly. Blender is not installed in this container (`bpy` is not), and the donor's rest pose (wand arm raised) differs from the T-pose.
+  the game's names (`root`, `hips`, `spine`, ...) and its clips already exist, so a transfer would give the generated witch the game's rig directly. `pip install bpy` gives a headless Blender (5.0.1 here, used by `lowpoly_bake.py`). The donor's rest pose (wand arm raised) differs from the T-pose, which is what makes a plain transfer fail; the in-repo answer that avoids the problem is the other way round: **fit the game's skeleton to the new mesh and skin it by distance** (`template_rig.py`, `docs/art/cpu_pipeline.md`).
 * Mixamo via a browser-automation tool needs an Adobe login and automates a web UI; not wired.
+
+## The CPU-only route and the bottleneck analysis
+
+`docs/art/cpu_pipeline.md`: the shape on the CPU (Hunyuan3D-2mv-turbo, measured), a 10 s silhouette hull, the free paint, `template_rig.py` (the game's skeleton and clips on any T-pose mesh), TRIZ contradictions for every stage, and the CPU-friendly options per stage.
