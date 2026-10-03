@@ -1,7 +1,7 @@
 # A character from one picture on a CPU: the bottlenecks, and what dissolves them
 
 Everything here was run on the session's box: **4 vCPU Xeon 2.8 GHz (AVX-512 with VNNI, no bf16/AMX), a 14 GB memory cgroup, no GPU**. "Measured" means a number from a run here;
-"read" means taken from a README, a paper or a search result and not run. Tools: `silhouette_hull.py`, `template_rig.py`, `lowpoly_bake.py`, `image2rig.py` (all in `tools/characters/`,
+"read" means taken from a README, a paper or a search result and not run. Tools: `hunyuan_cpu.py`, `silhouette_hull.py`, `template_rig.py`, `lowpoly_bake.py`, `image2rig.py` (all in `tools/characters/`,
 offline tests `test_template_rig.py`, `test_image2rig.py`, `test_multiview.py`).
 
 ## The result first
@@ -43,8 +43,11 @@ So the working point is **int8 + FlashVDM, 3 steps, 3 views: 211 s a mesh, 3.8 x
 
 ## Where the cost is, from first principles
 
-What is scarce on this box is **floating-point work, not memory and not disk**. One DiT step is about 2 x 1.1 B x 3,072 tokens = 6.8 TFLOP of dense matrix work; at 80 s that is about 85 GFLOP/s, a fraction of
-the cores' fp32 peak. Everything that follows is a decision about which of that work to not do.
+What is scarce on this box is **floating-point work, not memory and not disk**. The DiT does not cross-attend to the image: it **concatenates** the 4,110 DINOv2 tokens of the three views with the 3,072 latent
+tokens and attends over all 7,182 in each of its 48 blocks (16 double-stream, 32 single-stream, hidden size 1,024). Per step that is about 8.7 TFLOP of Linear layers and 10.1 TFLOP of attention (211 GFLOP a block), 18.8 TFLOP in
+all, **more than half of it attention**. fp32 at 82 s a step is 230 GFLOP/s, about a third of the four cores' fp32 peak (about 700 GFLOP/s at 2.8 GHz with two AVX-512 FMA units). (An earlier version of this page counted only
+the 3,072 latents and called the machine about three times slower than it is.) Micro-benchmarks, one single-stream block on 7,182 tokens: attention 0.80 s (266 GFLOP/s), a 1024 to 7168 Linear 0.29 s in fp32 and 0.16 s in int8, the
+rest (norms, GELU, modulation, reshapes) about a third of the block. Everything that follows is a decision about which of that work to not do.
 
 The second look is at what the game needs. The spec is 9,000 triangles, 2 surfaces, a 256 px atlas, one fixed skeleton, a 480 x 360 viewport (`CLAUDE.md`, `tests/render/test_character_models.gd`). A 92,832-face
 sculpt, a 1024 px texture and a predicted skeleton are produced and then thrown away: **the generator is run at roughly a hundred times the information the screen can show**, and the one thing the game truly cannot get
@@ -83,7 +86,8 @@ silhouettes, relief from a network).
 | Fewer denoising steps (the turbo model is the distilled one); cache or skip (TeaCache, DeepCache, TGATE) | read: caching 1.5 to 2 x, training-free | **Measured: 3 steps equals 5 by silhouette IoU and Chamfer (211 s against 330 s); 2 steps fails.** Caching on top of 5 steps was not tried. |
 | Fewer tokens: fewer views, lower DINO resolution, token merging | read | **Views measured:** front + back 236 s (-28 %), front only 156 s, but side IoU falls from 0.85 to 0.78 and 0.79. DINO resolution and token merging not tried. |
 | Hierarchical or sparse volume decoding (FlashVDM) | Hunyuan3D-2 repo | **Measured: the volume decode fell from about 330 s to 16.5 s** with Tencent's turbo VAE (`hunyuan3d-vae-v2-0-turbo`, 0.8 GB). The biggest single saving. |
-| OpenVINO / ONNX Runtime / `torch.compile` | read: Real-ESRGAN on OpenVINO 3.2 to 3.4 x faster than PyTorch on an i7 | Not tried on the DiT; likely the next 1.5 to 3 x. |
+| OpenVINO / ONNX Runtime / `torch.compile` | read: Real-ESRGAN (a CNN) on OpenVINO 3.2 to 3.4 x faster than PyTorch on an i7 | **Measured on the whole DiT, OpenVINO 2026.4 with NNCF int8 weights: 55.4 s a forward against 59 s for torch int8 (7 %); fp32 66.6 s against about 82 s (1.25 x).** One block alone had suggested 1.3 to 1.4 x. Not worth the integration: attention is 38 of the 55 s and no backend here has a faster fp32 attention than PyTorch's fused kernel (266 GFLOP/s). ONNX Runtime and `torch.compile` not tried after this. |
+| Drop condition tokens that are background (token pruning, far transfer from ViT pruning: EViT, ToMe) | read | **Measured, rejected.** Of 4,110 condition tokens, 1,744 survive a one-patch dilation of the figure's mask: 125 s a mesh instead of 211 s, but the silhouette IoU falls from 0.87 to 0.71 (0.78 keeping 2,525 tokens, 0.68 keeping 1,331). The model reads where the figure is not. |
 | Step distillation (turbo, LCM, SDXS) | the checkpoint we run is one | Already used. |
 
 ## Every stage of the pipeline, with CPU-friendly options
@@ -111,7 +115,7 @@ separated hair are what the 7-minute model buys.
 
 ## Next, in order of expected gain per hour
 
-1. The working point is 3 steps at about 59 s each. Attention and norms stay fp32 under `quantize_dynamic`; ONNX Runtime or OpenVINO on the DiT (read: 1.5 to 3 x), a lower DINO resolution or two views instead of three are the next knobs. Seed noise (0.0082) is as large as the int8 difference (0.0063), so the softer face seen once is not evidence of a quantisation loss.
+1. The working point is 3 steps at about 59 s each, and attention is 38 of those seconds. OpenVINO (7 %) and pruning background tokens (breaks the shape) are measured dead ends. What is left is attention itself: an int8 or block-sparse attention kernel for AVX-512 (SageAttention is GPU only; none was found for CPU), or fewer tokens that keep their meaning (a coarser DINO grid, merging neighbouring patches with ToMe-style averaging instead of dropping them). Seed noise (0.0082) is as large as the int8 difference (0.0063), so the softer face seen once is not evidence of a quantisation loss.
 2. Hull as draft: restrict the volume decode to the dilated hull (the released VAE cannot encode, so a partial-noise start from the hull is out). Untested; speculative-decoding transfer.
 3. Separate the hair and the head from the body in the hull before skinning (carve them from the views by colour or by the guide's head line), and face relief from `face_plate.py` (already in this repo, from the concept art); if the clip check then passes, the heavy model is only needed for hero characters.
 4. Hair on the kit's `hairB`/`hairT` chain so it sways in the clips: a colour mask (vertices painted like the hair, beside or behind the face) was tried and **reverted**: the hair, the face and the sleeves overlap in colour after projection and the mask left stray spikes at the sleeve edges. It needs a geometric split of the hair from the body (a segmentation, or the hull-carving idea in item 3), not a palette.
@@ -123,7 +127,9 @@ separated hair are what the 7-minute model buys.
 ```sh
 python tools/characters/multiview.py make witch --ref witch.png --pose t --no-legs       # the sheet (the one paid call, USD 0.10)
 python tools/characters/silhouette_hull.py build/views/witch_t_nolegs/views hull.glb --faces 120000   # the free shape
-# or the CPU Hunyuan shape (its own venv: transformers 4.51.3, huggingface-hub below 1.0, torch cpu, torchvision, opencv-headless, diffusers)
+# or the CPU Hunyuan shape, in its own virtualenv (the module docstring lists the packages: transformers 4.51.3, huggingface-hub below 1.0, torch cpu, ...)
+python tools/characters/hunyuan_cpu.py setup ~/hy3d                                         # once: source and weights, about 6 GB
+python tools/characters/hunyuan_cpu.py run ~/hy3d build/views/witch_t_nolegs/views shape.glb  # 133 s to load, then 211 s; peak 13.5 GB of 14
 python tools/characters/template_rig.py build/views/witch_t_nolegs/views shape.glb witch_new.glb     # paint, decimate, atlas, skeleton, skin, clips
 python3 tools/characters/test_template_rig.py                                              # offline checks
 ```
