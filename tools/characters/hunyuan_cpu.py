@@ -33,7 +33,33 @@ def setup(root):
     print("ready in", root)
 
 
-def load(root, int8=True, flash=True, log=print):
+def enable_merge(pipe, n):
+    """Average the DINOv2 condition tokens in n x n blocks of each view's 37 x 37 patch grid (the class token stays): the DiT attends over the views' tokens joined to its 3,072
+    latents, so 4,110 + 3,072 tokens become 1,086 + 3,072 for n = 2. Measured on the witch: 98 s a mesh instead of 211 s, silhouette IoU 0.853 against 0.866 (the seed-to-seed
+    noise floor of the shape distance is 0.0082, this costs 0.0108). Dropping background tokens, or keeping the figure at full resolution and merging only the background, was much worse."""
+    import torch
+    F = torch.nn.functional
+    orig = pipe.encode_cond
+
+    def merged(image, additional_cond_inputs, do_classifier_free_guidance, dual_guidance):
+        cond = dict(orig(image, additional_cond_inputs, do_classifier_free_guidance, dual_guidance))
+        main = cond["main"]
+        views = image.shape[1]
+        per = main.shape[1] // views
+        side = int(round((per - 1) ** 0.5))
+        out = []
+        for v in range(views):
+            t = main[0, v * per:(v + 1) * per]
+            grid = t[1:].reshape(side, side, -1).permute(2, 0, 1)[None]
+            pad = (-side) % n
+            grid = F.pad(grid, (0, pad, 0, pad), mode="replicate")
+            out += [t[:1], F.avg_pool2d(grid, n)[0].permute(1, 2, 0).reshape(-1, t.shape[-1])]
+        cond["main"] = torch.cat(out, 0)[None]
+        return cond
+    pipe.encode_cond = merged
+
+
+def load(root, int8=True, flash=True, log=print, merge=0):
     """The pipeline, fp32 on the CPU, with the turbo VAE and int8 Linear layers unless switched off."""
     root = Path(root)
     sys.path.insert(0, str(root / "space"))
@@ -58,7 +84,9 @@ def load(root, int8=True, flash=True, log=print):
         pipe.model = quantize_dynamic(pipe.model, {torch.nn.Linear}, dtype=torch.qint8, inplace=True)   # inplace: a copy would be killed at the 14 GB limit
         pipe.conditioner = quantize_dynamic(pipe.conditioner, {torch.nn.Linear}, dtype=torch.qint8, inplace=True)
         gc.collect()
-    log("pipeline ready (int8=%s, flashvdm=%s)" % (int8, flash))
+    if merge > 1:
+        enable_merge(pipe, merge)
+    log("pipeline ready (int8=%s, flashvdm=%s, token merge=%s)" % (int8, flash, merge or "off"))
     return pipe
 
 
@@ -90,6 +118,7 @@ def main(argv=None):
     r.add_argument("--seed", type=int, default=1234)
     r.add_argument("--fp32", action="store_true", help="no int8 (about 2.5 x slower)")
     r.add_argument("--no-flash", action="store_true", help="the plain volume decoder (about 5 minutes more)")
+    r.add_argument("--merge", type=int, default=0, help="average the condition tokens in n x n blocks (2: twice as fast, see enable_merge)")
     b = sub.add_parser("batch")
     b.add_argument("dir")
     b.add_argument("out_dir")
@@ -97,10 +126,11 @@ def main(argv=None):
     b.add_argument("--steps", type=int, default=3)
     b.add_argument("--octree", type=int, default=128)
     b.add_argument("--seed", type=int, default=1234)
+    b.add_argument("--merge", type=int, default=0, help="average the condition tokens in n x n blocks (2: twice as fast, see enable_merge)")
     a = ap.parse_args(argv)
     if a.cmd == "batch":
         t0 = time.time()
-        pipe = load(a.dir)
+        pipe = load(a.dir, merge=a.merge)
         print("loaded in %.0f s" % (time.time() - t0), flush=True)
         for job in a.jobs:
             name, _, views = job.partition("=")
@@ -114,7 +144,7 @@ def main(argv=None):
         setup(a.dir)
         return 0
     t0 = time.time()
-    pipe = load(a.dir, int8=not a.fp32, flash=not a.no_flash)
+    pipe = load(a.dir, int8=not a.fp32, flash=not a.no_flash, merge=a.merge)
     print("loaded in %.0f s" % (time.time() - t0))
     mesh = shape(pipe, a.views, a.steps, a.octree, a.seed)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
