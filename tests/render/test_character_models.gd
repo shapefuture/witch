@@ -85,6 +85,36 @@ func test_the_painted_characters_keep_their_bone_names() -> void:
 				ok(skeleton.find_bone(bone) >= 0, "%s keeps bone %s" % [id, bone])
 		visual.queue_free()
 
+# A character added later (hand-built or from tools/characters/template_rig.py) is gated the day it ships: every
+# assets/characters/*.glb that MODELS does not list yet must meet the rules that do not depend on who it is.
+func test_a_character_added_later_meets_the_same_rules() -> void:
+	for file in DirAccess.get_files_at("res://assets/characters"):
+		if not file.ends_with(".glb") or MODELS.has(file.get_basename()):
+			continue
+		var id := file.get_basename()
+		var visual := _spawn(id)
+		ok(visual != null, "%s loads" % id)
+		if visual == null:
+			continue
+		for clip in ["idle", "walk", "talk"]:
+			ok(CharacterModels.has_clip(visual, clip), "%s has %s" % [id, clip])
+		var surfaces := 0
+		var triangles := 0
+		for node in visual.find_children("*", "MeshInstance3D", true, false):
+			var mesh := (node as MeshInstance3D).mesh
+			surfaces += mesh.get_surface_count()
+			for surface in mesh.get_surface_count():
+				var arrays := mesh.surface_get_arrays(surface)
+				var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+				triangles += (indices.size() if not indices.is_empty() else (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()) / 3
+				var source := mesh.surface_get_material(surface) as BaseMaterial3D
+				if source != null and source.albedo_texture != null:
+					ok(source.albedo_texture.get_width() <= 256 and source.albedo_texture.get_height() <= 256, "%s atlas is %d px" % [id, source.albedo_texture.get_width()])
+		ok(surfaces <= 2, "%s draws in %d surfaces" % [id, surfaces])
+		ok(triangles <= 9000, "%s has %d triangles" % [id, triangles])
+		ok(visual.find_children("*", "Skeleton3D", true, false).size() == 1, "%s has one skeleton" % id)
+		visual.queue_free()
+
 # In the tree like in the game: freeing an orphan skinned instance trips a dummy-renderer
 # material lookup (headless only) once the full suite has run.
 func _spawn(id: String) -> Node3D:
