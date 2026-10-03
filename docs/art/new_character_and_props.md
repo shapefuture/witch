@@ -24,6 +24,12 @@ In the room frame she reads as a red scarf, a purple shawl and an olive dress, w
 the Hunyuan shape (bottom row) is good, with sleeves, hands, scarf and the bandolier's bumps in place; the paint on it (top row) is where the face goes soft, because **her face is only about 70 px across in a 1024 px view**, and the shape's face is lumpy. More triangles or a bigger atlas would not help: the pixels are not there.
 The fix is a face close-up (a separate small generation, or the repo's `face_from_ref.py` and `face_plate.py`, which the witch's face came from) used as a second surface under the game's two-surface budget; `template_rig.py --hold` and the exporter's `extra_prims` already carry a second surface and atlas. Not done.
 
+## A generated prop carried on a bone
+
+`template_rig.py ... --faces 7500 --hold jug.glb:hand.L:0.16,-0.20,0.16` makes the jug Vera's second surface (body atlas 256 px, jug atlas 128 px, 8,998 triangles in all, inside the 9,000 and two-surface budgets), skinned rigidly to `hand.L`, so it follows the hand in every clip
+(`docs/art/cpu_rig/new/vera_holds_jug.png`: it hangs at her side in the idle pose). The first offset (straight below the hand) put it inside the flared skirt where nothing showed: the offset is in metres from the bone's rest head, so it has to clear the skirt.
+This is the "props from a generator" half of the earlier idea; the "hair from the kit" half was not tried on Vera (her braids and scarf came out of the generator acceptably; the soft face is the problem).
+
 ## Tools added
 
 `multiview.py --style PIC` (extra reference: the rendering style only) and `--kind object` (no pose, "object" wording); `hunyuan_cpu.py batch`; `prop_bake.py`; `capture_prop.gd`; `template_rig.py --hold PROP.glb:BONE:DX,DY,DZ` (a prop carried on a bone as the second surface); `witch_glb.export(extra_prims=)`. Offline tests cover each.
