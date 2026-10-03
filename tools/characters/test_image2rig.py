@@ -278,6 +278,141 @@ def test_the_front_view_providers_make_the_calls_their_spaces_expect():
         assert "no state path" in str(e)
 
 
+def test_painting_from_the_views_recovers_a_known_colour_field_and_hidden_sides_stay_separate():
+    import numpy as np
+    P, F = _sphere(90)
+    tmp = Path(tempfile.mkdtemp())
+    views, S, up = {}, 256, np.array([0, 1.0, 0])
+    j, i = np.meshgrid(np.arange(S), np.arange(S))
+    uu, vv = (j - (S - 1) / 2) / 100.0, ((S - 1) / 2 - i) / 100.0
+    inside = uu * uu + vv * vv < 1
+    ww = np.sqrt(np.clip(1 - uu * uu - vv * vv, 0, 1))
+    for slot, (d, r) in ir.CAMERAS.items():
+        d, r = np.array(d, float), np.array(r, float)
+        pt = uu[..., None] * r + vv[..., None] * up + ww[..., None] * (-d)         # the world point each pixel sees
+        rgba = np.zeros((S, S, 4))
+        rgba[..., :3], rgba[..., 3] = pt * 0.5 + 0.5, inside
+        Image.fromarray((np.clip(rgba, 0, 1) * 255).astype(np.uint8)).save(tmp / (slot + ".png"))
+        views[slot] = tmp / (slot + ".png")
+    col, stats = ir.paint_vertices(P, F, views)
+    err = np.abs(col - (P * 0.5 + 0.5)).mean(axis=1)
+    belt = np.abs(P[:, 1]) < 0.7                                    # away from the poles, where no camera looks squarely
+    assert np.median(err[belt]) < 0.03 and np.percentile(err[belt], 90) < 0.08, (np.median(err[belt]), np.percentile(err[belt], 90))
+    assert all(stats[s]["silhouette_iou"] > 0.9 for s in ir.CAMERAS), stats
+    assert stats["unseen_vertices"] < 0.25, stats            # the polar caps (a lat-long sphere packs many vertices there) face no side camera
+    # only the front view: the far side is not painted from it (it takes the nearest coloured vertex, never the front's own colours)
+    one, st1 = ir.paint_vertices(P, F, {"front": views["front"]})
+    back = P[:, 2] < -0.9
+    assert st1["unseen_vertices"] > 0.3 and back.any()
+    out = tmp / "painted.glb"
+    ir.write_glb(out, P, F, ir._srgb_to_linear(col))
+    assert ir.glb_inspect(out)["triangles"] == len(F)
+    ir.preview(out, tmp / "p.png", size=64)
+    assert (tmp / "p.png").exists()
+
+
+def test_unirig_cpu_and_gpu_spaces_are_called_the_way_each_expects():
+    tmp = Path(tempfile.mkdtemp())
+    out = tmp / "out"
+    out.mkdir()
+    mesh = _glb(tmp / "m.glb", tris=900, joints=0)
+    rigged = _glb(tmp / "r.glb", tris=900, joints=44)
+    cpu = FakeClient([], answers={"/process_pipeline": ({"value": str(rigged), "__type__": "update"},)})
+    dest = ir.rig_unirig(mesh, out, "t", "cpu", client=cpu)
+    assert cpu.calls[0][0] == "/process_pipeline" and cpu.calls[0][1]["output_format"] == "glb" and dest.name == "rig_unirig_cpu.glb"
+    gpu = FakeClient([], answers={"/rig_model": (str(rigged), "ok")})
+    dest = ir.rig_unirig(mesh, out, "t", "gpu", client=gpu)
+    assert gpu.calls[0][0] == "/rig_model" and "input_glb" in gpu.calls[0][1] and ir.glb_inspect(dest)["joints"] == 44
+
+
+def test_every_command_the_cli_offers_is_wired():
+    tmp = Path(tempfile.mkdtemp())
+    P, F = _sphere(30)
+    g = ir.write_glb(tmp / "a.glb", P, F)
+    views = _views(tmp / "v")
+    assert ir.main(["inspect", str(g)]) == 0
+    assert ir.main(["decimate", str(g), str(tmp / "b.glb"), "--faces", "300"]) == 0 and (tmp / "b.glb").exists()
+    assert ir.main(["preview", str(g), str(tmp / "p.png")]) == 0 and (tmp / "p.png").exists()
+    assert ir.main(["paint", str(g), str(views), str(tmp / "c.glb"), "--faces", "2000"]) == 0 and (tmp / "c.glb").exists()
+    assert ir.main(["run", str(tmp / "nowhere")]) == 2           # a refusal, not a traceback
+
+
+def test_tencent_jobs_are_submitted_polled_downloaded_and_refusals_say_why():
+    calls, key = [], "sk-" + "Z" * 40
+    out = Path(tempfile.mkdtemp())
+
+    def fake_post(path, body, k):
+        calls.append((path, body))
+        if path.endswith("submit"):
+            return 200, {"id": "42", "status": "queued"}
+        n = sum(1 for c in calls if c[0].endswith("query"))
+        return 200, ({"status": "in_progress"} if n < 2 else {"status": "completed", "data": [{"type": "fbx", "url": "https://cos.example/y.fbx?q-sign=1"}]})
+
+    class Resp:
+        def read(self):
+            return b"FBXDATA"
+    real = (ir.tencent_post, ir.urllib.request.urlopen)
+    try:
+        ir.tencent_post = fake_post
+        ir.urllib.request.urlopen = lambda *a, **k: Resp()
+        files = ir.tencent_job("rig", {"file_3d": {"url": "https://m/a.glb"}, "motion_type": 1}, key, out, poll=0)
+        assert calls[0][1] == {"file_3d": {"url": "https://m/a.glb"}, "motion_type": 1, "model": "hy-3d-rigging"}
+        assert calls[1][0].endswith("query") and calls[1][1] == {"model": "hy-3d-rigging", "id": "42"}
+        assert files[0].name == "rig_0.fbx" and files[0].read_bytes() == b"FBXDATA"
+        ir.tencent_post = lambda p, b, k: (400, {"Type": 2, "Code": 1001, "Msg": "file_3d is required for hy-3d-texture model"})
+        try:
+            ir.tencent_job("texture", {}, key, out)
+            assert False
+        except ir.TencentError as e:
+            assert "file_3d is required" in str(e) and "HTTP 400" in str(e)
+        ir.tencent_post = lambda p, b, k: (200, {"id": "", "status": "failed", "error": {"message": "The parameter is abnormal %s" % key, "code": "InvalidParameter.InvalidParameter"}})
+        os.environ["TENCENT_HY3D_KEY"] = key
+        try:
+            ir.tencent_job("texture", {}, key, out)
+            assert False
+        except ir.TencentError as e:
+            assert "InvalidParameter" in str(e) and key not in str(e), "the key never appears in a message"
+        finally:
+            os.environ.pop("TENCENT_HY3D_KEY", None)
+    finally:
+        ir.tencent_post, ir.urllib.request.urlopen = real
+
+
+def test_a_local_mesh_is_never_published_without_the_explicit_flag_and_bodies_follow_the_field_rules():
+    tmp = Path(tempfile.mkdtemp())
+    mesh = _glb(tmp / "m.glb")
+    assert ir.tencent_input("https://host/a.glb", None) == "https://host/a.glb"
+    try:
+        ir.tencent_input(str(mesh), None)
+        assert False, "a local file must not leave the machine unasked"
+    except ir.Refused as e:
+        assert "--stage" in str(e) and "tmpfiles" in str(e)
+    real = ir.STAGES["tmpfiles"]
+    ir.STAGES["tmpfiles"] = (real[0], real[1], lambda path: "https://tmp.example/dl/" + Path(path).name)
+    try:
+        assert ir.tencent_input(str(mesh), "tmpfiles") == "https://tmp.example/dl/m.glb"
+    finally:
+        ir.STAGES["tmpfiles"] = real
+    img = tmp / "f.png"
+    Image.new("RGB", (8, 8), (200, 10, 10)).save(img)
+    a = Namespace(image=str(img), prompt=None, pbr=False, texture_size=2048, motion_type=1, face_level="low", polygon_type="triangle", set=["foo=3", "bar=x"])
+    body = ir.tencent_body("texture", "https://m/a.glb", a)
+    assert body["file_3d"] == {"url": "https://m/a.glb"} and body["enable_pbr"] is False and body["texture_size"] == 2048
+    assert body["foo"] == 3 and body["bar"] == "x" and len(body["image"]["base64"]) > 20, "the image goes inline as base64, in an object"
+    assert ir.tencent_body("rig", "https://m/a.glb", a)["motion_type"] == 1
+    assert ir.tencent_body("retopo", "https://m/a.glb", a)["face_level"] == "low"
+    try:
+        ir.tencent_body("texture", "u", Namespace(image=None, prompt=None, pbr=False, texture_size=1, motion_type=1, face_level="", polygon_type="", set=None))
+        assert False
+    except ir.Refused:
+        pass
+    os.environ["TENCENT_HY3D_KEY"] = "sk-" + "Q" * 40
+    try:
+        assert ir.main(["tencent", "rig", str(mesh)]) == 2, "a local mesh without --stage is refused before any network call"
+    finally:
+        os.environ.pop("TENCENT_HY3D_KEY", None)
+
+
 def test_run_keeps_a_stage_whose_inputs_are_unchanged():
     tmp = Path(tempfile.mkdtemp())
     _views(tmp / "w")

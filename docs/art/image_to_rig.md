@@ -122,3 +122,49 @@ and 240 are in range.
 ### Providers that need an account first (not tried)
 
 Tencent's Hunyuan3D API, PiAPI, Modal, Meshy, fal.ai: no keys here. The Tencent API stays the best next candidate (see above).
+
+## Tencent HY 3D on TokenHub (credits): texture, rig, retopology, parts, UV, format
+
+The user's Tencent key (`TENCENT_HY3D_KEY`) is for **TokenHub's international gateway**, `https://tokenhub-intl.tencentcloudmaas.com` (the China host `tokenhub.tencentmaas.com` answers 401 to it).
+One endpoint pair, `POST /v1/api/3d/submit` and `/v1/api/3d/query`, `Authorization: Bearer <key>`; the `model` field picks the job: `hy-3d-texture`, `hy-3d-rigging`, `hy-3d-retopology`
+(internally `hy-3d-reduce-face`), `hy-3d-uv`, `hy-3d-format`, `hy-3d-component` (parts), and `hy-3d-3.1` for generation. Tencent's CamelCase parameters are snake_case (`File3D` is `file_3d`).
+A mesh is `{"file_3d": {"url": ...}}`, **a URL only** (no inline data); a reference picture is `{"image": {"base64": ...}}` or `{"image": {"url": ...}}` (a bare string is "Invalid param").
+Answers: `status` queued, in_progress, completed or failed; the files are `data: [{"type", "url"}]` (signed storage links). Validation errors (HTTP 400, or status failed with no job id) start nothing and are not charged.
+
+```sh
+python tools/characters/image2rig.py tencent texture SHAPE.glb --stage uguu --image build/views/NAME/white/front.png --texture-size 2048
+python tools/characters/image2rig.py tencent rig https://.../mesh.glb          # a URL needs no staging
+```
+
+A local mesh is **never uploaded unless `--stage` names a host**, because staging makes it public: `uguu` (uguu.se, kept about 3 hours), `tmpfiles` (tmpfiles.org, 60 minutes) or `litterbox`.
+
+Tried on the witch's legless shape (30k triangles, decimated from the Hunyuan shape):
+
+| Job | Result |
+|---|---|
+| `hy-3d-rigging` (Khronos fox, to learn the response) | 11 s, an FBX. |
+| `hy-3d-rigging` (witch shape) | 25 s, an FBX (`rig_0.fbx`). Bone names not inspected (FBX; convert with `hy-3d-format` to read them). |
+| `hy-3d-texture` (witch shape + the white-background front view) | **66 s. A UV-mapped GLB, 29,992 triangles, one 4096 px texture; also an OBJ with its MTL and the texture PNG.** The result is the best textured one yet: it reads as the witch from every side (purple hood with flowers, orange curls, the face with blue eyes, the star-pattern skirt, the moon pendant), with a clean texture map. Cost in credits: not shown by the API (the balance is only on the console). |
+
+The gateway's GLB has a 90 degree rotation on its node (Z-up under a Y-up node): the reader here applies node transforms (`mesh_world`), `inspect` and `preview` now show it upright.
+
+Hosts for the mesh, honestly: **Litterbox** answered 500 or "No file!" for every upload from this sandbox; **tmpfiles.org** took the file but its direct link redirects non-browsers to a web page, so Tencent's fetcher got
+"FileDownloadError"; **uguu.se** gave a plain direct link and worked. The same shape was therefore public for a short time on tmpfiles.org (60 minutes) and uguu.se (about 3 hours), by the user's choice. A hosting-free route
+would be a public URL the user already controls (the Tencent fetcher read raw.githubusercontent.com).
+
+Not run: retopology (`hy-3d-retopology`, 50 credits in Tencent's price list: the step that would take 30k triangles toward the game's 9,000) and UV (`hy-3d-uv`, 10); their request fields beyond `file_3d` are a guess
+(`face_level`, `polygon_type` from Tencent's `SubmitReduceFaceJob`) and untested.
+
+## Free local texturing: projecting the four views onto the mesh (`paint`)
+
+`image2rig.py paint SHAPE.glb NAME OUT.glb` colours the Hunyuan shape from the very views it was generated from, on the CPU, with no provider: each camera is fitted to its view's silhouette, the mesh is rasterised
+into a triangle-id buffer (so only visible surface is coloured) and the views are blended by facing. On the witch's legless shape: silhouette IoU 0.84 to 0.89 per view, 14 % of vertices unseen (top of the head, under the
+arms: they take the nearest coloured vertex). Result: vertex colours in the real art's palette, slightly soft where views meet and with dark specks at the finger tips; no UV texture, so it cannot go below about 100k
+triangles without losing the detail (a bake to a UV atlas is the missing step; Tencent's texture job does the UV for you).
+
+## Rigging without credits: what failed and what is untried
+
+* `unirig-cpu` (jasongzy/UniRig, a CPU Space): failed after 100 s with an empty error on the witch shape. `unirig-gpu` (Faisal786U/unirig-api) is wired and unverified here (the user's own test: 110 s, 44 joints named `bone_0`...).
+* The user's notes (not verified here): rebinding by **transferring skin weights from a donor skeleton** in headless Blender works on generated meshes where automatic weights fail. Our own `witch.glb` is the natural donor: its bones are
+  the game's names (`root`, `hips`, `spine`, ...) and its clips already exist, so a transfer would give the generated witch the game's rig directly. Blender is not installed in this container (`bpy` is not), and the donor's rest pose (wand arm raised) differs from the T-pose.
+* Mixamo via a browser-automation tool needs an Adobe login and automates a web UI; not wired.
