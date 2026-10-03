@@ -1,0 +1,157 @@
+{
+ "id": "shop",
+ "kind": "interior",
+ "title": "The witch's shop",
+ "prompt": "A small crowded potion-and-curiosities shop, shabby and warm: a long wooden counter with brass scales and jars, shelves of odd objects, a cupboard and a chair that look as though they have opinions, a round window onto the street with a bell above the door, hanging dried herbs, a wide clear floor of worn boards.",
+ "story": "Where the loop lives. Everything responds to a click; recurring objects escalate from joke to clue. Variant 'quiet': the same shop after the magic is gone.",
+ "variants": {
+  "quiet": "the magic has gone from the shop and the change is physical, not a grey filter: the jars are half empty and cloudy, the herbs are brittle and dull, dust on the counter, a few shelves bare, the colours drier and thinner, the light flatter; nothing else moved"
+ },
+ "styles": {
+  "ps1": {
+   "title": "The Shop That Is Bigger Inside",
+   "prompt": "late afternoon golden hour, the witch's potion-and-curiosities shop, one big crooked room that is clearly bigger on the inside than the outside: a long lopsided counter of chunky wooden slabs with a brass bell on a wooden mount and a sealed unlabeled envelope on it, a wedge mark carved into its front, a pulley with a rope bag hanging from a rafter, a staircase that goes sideways up one wall to a small absurd door set in the ceiling, shelves crowded with potion bottles, spools of thread knotted between unrelated objects, a bookshelf leaning as if about to fall, a giant teapot used as a stove, a low-poly pigeon holding a package perched on a rafter, a badger digging up through the floorboards, a frog asleep in a teacup, a round warped window pouring long blunt golden-hour light across the floor, repairs and mismatched patches everywhere, a dust gap on a shelf where something used to sit.",
+   "ui": "paper and cloth provenance tags, blank, knotted to a few objects.",
+   "motifs": "a wedge mark carved into the counter, a sealed envelope, a dust gap on a shelf"
+  }
+ },
+ "layout": {
+  "_about": "Where the shop's important elements go (fractions of the frame). Used by new_scene.py as a layout guide; edit it to re-direct the composition.",
+  "horizon": 0.62,
+  "ground": [
+   0.27,
+   0.68,
+   0.73,
+   0.98
+  ],
+  "elements": [
+   {
+    "label": "BOOKSHELF leaning over",
+    "at": [
+     0.0,
+     0.1,
+     0.13,
+     0.52
+    ],
+    "layer": "mid"
+   },
+   {
+    "label": "LONG COUNTER: bell + sealed envelope on top, wedge mark on front",
+    "at": [
+     0.03,
+     0.52,
+     0.4,
+     0.8
+    ],
+    "layer": "mid"
+   },
+   {
+    "label": "BADGER in broken floor",
+    "at": [
+     0.04,
+     0.82,
+     0.21,
+     0.98
+    ],
+    "layer": "fg",
+    "shape": "ellipse"
+   },
+   {
+    "label": "PIGEON + package on rafter",
+    "at": [
+     0.22,
+     0.12,
+     0.33,
+     0.27
+    ],
+    "layer": "bg",
+    "shape": "ellipse"
+   },
+   {
+    "label": "TINY DOOR in ceiling",
+    "at": [
+     0.52,
+     0.02,
+     0.62,
+     0.16
+    ],
+    "layer": "bg"
+   },
+   {
+    "label": "STAIRCASE climbing the wall sideways",
+    "shape": "poly",
+    "points": [
+     [
+      0.36,
+      0.6
+     ],
+     [
+      0.44,
+      0.6
+     ],
+     [
+      0.6,
+      0.17
+     ],
+     [
+      0.53,
+      0.17
+     ]
+    ],
+    "layer": "bg"
+   },
+   {
+    "label": "GIANT TEAPOT stove",
+    "at": [
+     0.44,
+     0.5,
+     0.58,
+     0.68
+    ],
+    "layer": "bg"
+   },
+   {
+    "label": "ROUND WARPED WINDOW, golden light",
+    "at": [
+     0.72,
+     0.1,
+     0.92,
+     0.5
+    ],
+    "layer": "mid",
+    "shape": "ellipse"
+   },
+   {
+    "label": "SHELVES of potion bottles, threads between",
+    "at": [
+     0.64,
+     0.54,
+     0.98,
+     0.76
+    ],
+    "layer": "mid"
+   },
+   {
+    "label": "PULLEY + rope bag",
+    "at": [
+     0.9,
+     0.0,
+     0.99,
+     0.42
+    ],
+    "layer": "fg"
+   },
+   {
+    "label": "FROG asleep in giant teacup, bottom-right corner",
+    "at": [
+     0.78,
+     0.84,
+     0.95,
+     0.99
+    ],
+    "layer": "fg",
+    "shape": "ellipse"
+   }
+  ]
+ }
+}

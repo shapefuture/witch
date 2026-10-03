@@ -1,0 +1,79 @@
+{
+  "sheet": "sheet.png",
+  "sheet_size": [
+    2048,
+    1360
+  ],
+  "background": [
+    10,
+    243,
+    15
+  ],
+  "size": 1024,
+  "fill": 0.84,
+  "problems": [],
+  "views": {
+    "front": {
+      "box": [
+        78,
+        30,
+        626,
+        661
+      ],
+      "height": 631,
+      "width": 548
+    },
+    "front34": {
+      "box": [
+        749,
+        30,
+        1259,
+        661
+      ],
+      "height": 631,
+      "width": 510
+    },
+    "right": {
+      "box": [
+        1523,
+        28,
+        1767,
+        661
+      ],
+      "height": 633,
+      "width": 244
+    },
+    "back": {
+      "box": [
+        79,
+        703,
+        626,
+        1320
+      ],
+      "height": 617,
+      "width": 547
+    },
+    "back34": {
+      "box": [
+        728,
+        703,
+        1217,
+        1321
+      ],
+      "height": 618,
+      "width": 489
+    },
+    "left": {
+      "box": [
+        1537,
+        702,
+        1783,
+        1320
+      ],
+      "height": 618,
+      "width": 246
+    }
+  },
+  "cost_usd": 0.104,
+  "prompt": "A character model sheet for 3D modelling: the SAME character shown six times on one flat chroma-key green (#00FF00), perfectly even background. The FIRST reference image is a LAYOUT GUIDE, not a picture to copy: a flat chroma-key green (#00FF00), perfectly even canvas of six framed cells, each with a label, a dashed head line near the top, a dashed foot line near the bottom, a dotted centre line and a symbol for the way the character faces. Draw one view of the character in each cell, the whole character from head to foot, centred on the centre line, the head just under the head line and the feet on the foot line, so that all six are the same size. Use the guide for placement only: the frames, lines, labels and symbols stay out of the picture, and the background stays flat chroma-key green (#00FF00), perfectly even and empty. A dashed line across each cell at shoulder height marks where the outstretched arms go, hands included, inside the cell. Top row, left to right: front view, facing the viewer; three-quarter front view, the whole body clearly turned a full 45 degrees, half way between the front view and the side view, so that her near shoulder is well in front of the far one, facing toward the lower right of the picture; right side view in profile, facing the right edge of the picture. Bottom row, left to right: back view, facing directly away from the viewer; three-quarter back view, the whole body clearly turned a full 45 degrees, half way between the back view and the side view, facing away and toward the left edge of the picture; left side view in profile, facing the left edge of the picture. The character is the one in the SECOND reference image: keep its design, proportions, colours and rendering style exactly, and invent the sides it does not show in the same style. Pose, the same in every view: a T-pose for rigging. She stands upright and straight, the head facing forward, the arms stretched out horizontally to both sides at shoulder height with the hands open, palms down and EMPTY, the legs straight; anything she held is left out of the picture. All six views show one and the same character in the same pose, with the same face, hair, clothes, colours and rendering style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour fall on the character, with no cast shadows, no floor and no ground, and a clear gap of background around every figure."
+}

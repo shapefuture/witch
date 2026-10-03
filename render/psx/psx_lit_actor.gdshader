@@ -14,7 +14,7 @@ global uniform vec4 fog_color : source_color;
 global uniform float fog_density;
 
 uniform vec4 modulate_color : source_color = vec4(1.0);
-uniform sampler2D albedoTex : source_color, filter_nearest, repeat_enable;
+uniform sampler2D albedoTex : source_color, filter_nearest_mipmap, repeat_enable;
 uniform bool use_texture = false;
 uniform float wobble_amount : hint_range(0.0, 0.02) = 0.005;
 uniform sampler2D light_map : filter_linear, repeat_disable;
@@ -24,6 +24,32 @@ uniform vec3 sun_dir = vec3(-0.36, 0.64, -0.68);
 uniform vec3 sun_color : source_color = vec3(1.0, 0.72, 0.4);
 uniform vec2 lit_range = vec2(0.28, 0.9); // luma of the floor in shade / in the shaft
 uniform float rim_strength = 1.3;
+// Experimental, so live actors sit in the painted plates: a faint paper grain fixed to the screen
+// (the plates are still pictures) and a small tone shift per facet (the plates' baked facet mosaic).
+uniform float paper_grain = 0.035;
+// Painted rooms (game/world/painted): a faceted key light with core shadows, like the painting's own forms.
+// 0 keeps the baked-set look above.
+uniform float key_strength = 0.0;
+uniform float key_bands = 3.0;
+uniform float key_fill = 0.3; // a soft light from the camera's side, so a face turned away from the beam is dim, not black
+uniform float key_front = 0.6; // 0: the key is the beam's own direction; 1: it comes from the camera's side of the room
+// Faces whose vertex colour alpha is 0 (the witch's face, painted from a lit picture, so its own planes are in the
+// texture) take the key without bands, never less than this share of it, and the room's tint only in part (so her
+// skin stays the reference's peach and her eyes blue under the gold beam).
+uniform float soft_floor = 0.55;
+uniform float soft_neutral = 0.5;
+uniform vec2 ambient_range = vec2(0.28, 0.8); // the floor's colour on an underside / on a top
+uniform float facet_tone = 0.05;
+// A room's own measured or derived lighting (room.json `lighting`; docs/art/lighting_from_image.md). 0 keeps the floor-map light above.
+// 1: a warm key from `sun_dir` (the room's real key direction; `sun_color` is its colour), a hemisphere fill (the sky's colour on
+// top-facing facets, the ground's bounce under them), and a sky-coloured rim, in place of the floor's own purple.
+uniform float lighting_mode = 0.0;
+uniform vec3 sky_color : source_color = vec3(0.8, 0.85, 1.0);
+uniform vec3 ground_color : source_color = vec3(0.9, 0.6, 0.35);
+uniform float fill_level = 0.35;
+// The plate's own colour cast (its grade), applied in part to the characters: everything in the scene is seen through the same light.
+uniform vec3 grade = vec3(1.0);
+uniform float grade_strength = 0.0;
 
 varying vec3 v_world;
 varying vec3 v_normal;
@@ -63,12 +89,46 @@ void fragment() {
 	vec3 n = normalize(v_normal);
 	float half_lambert = dot(n, normalize(sun_dir)) * 0.5 + 0.5;
 	// shade colour is the floor's own purple; the shaft adds gold on sun-facing sides
-	vec3 shade = floor_light * mix(0.85, 1.05, half_lambert);
-	vec3 gold = sun_color * (0.25 + 0.75 * half_lambert) * in_sun * 0.95;
+	vec3 shade = floor_light * mix(0.7, 0.95, half_lambert);
+	vec3 gold = sun_color * (0.25 + 0.75 * half_lambert) * in_sun * 0.55;
 	vec3 view = normalize(-(VIEW_MATRIX * vec4(v_world, 1.0)).xyz);
 	vec3 n_view = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
 	float rim = pow(clamp(1.0 - dot(n_view, view), 0.0, 1.0), 2.4) * rim_strength;
 	vec3 col = base * (shade + gold) + sun_color * rim * (0.35 + 0.65 * in_sun) * 0.6;
+	if (key_strength > 0.0) {
+		// Flat facets (the painting is made of them), lit in a few steps by the beam's direction. Facets turned away
+		// from it keep only the floor's own purple: the core shadow that gives them volume.
+		vec3 nf = normalize(cross(dFdx(v_world), dFdy(v_world)));
+		nf = dot(nf, n) < 0.0 ? -nf : nf;
+		vec3 key_dir = normalize(vec3(sun_dir.x, sun_dir.y, mix(sun_dir.z, -sun_dir.z, key_front)));
+		float lam = clamp(dot(nf, key_dir), 0.0, 1.0);
+		float stepped = mix(mix(soft_floor, 1.0, lam), floor(lam * key_bands + 0.5) / key_bands, COLOR.a);
+		float hemi = nf.y * 0.5 + 0.5;
+		vec3 ambient = floor_light * mix(ambient_range.x, ambient_range.y, hemi);
+		vec3 key = sun_color * stepped * (0.3 + 0.7 * in_sun) * key_strength;
+		float facing = clamp(dot(n_view, view), 0.0, 1.0);
+		vec3 light = ambient + key + floor_light * key_fill * facing;
+		vec3 rim_color = sun_color;
+		if (lighting_mode > 0.5) {
+			// the fill is a share (fill_level) of the key's own peak, so it follows the room's flicker and exposure together
+			ambient = mix(ground_color, sky_color, hemi) * fill_level * max(sun_color.r, max(sun_color.g, sun_color.b)) * key_strength;
+			key = sun_color * stepped * (0.35 + 0.65 * in_sun) * key_strength;
+			light = ambient + key;
+			rim_color = sky_color * 0.8;
+		}
+		light = mix(light, vec3(dot(light, vec3(0.3, 0.55, 0.15))), soft_neutral * (1.0 - COLOR.a));
+		col = base * light + rim_color * rim * (0.35 + 0.65 * in_sun) * 0.6;
+	}
+	vec3 facet = normalize(cross(dFdx(v_world), dFdy(v_world)));
+	float facet_hash = fract(sin(dot(floor(facet * 23.0), vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+	if (lighting_mode > 0.5) {
+		col *= mix(vec3(1.0), grade, grade_strength);
+	}
+	col *= 1.0 + (facet_hash - 0.5) * 2.0 * facet_tone * mix(0.3, 1.0, COLOR.a);
+	// grain cells of one pixel of a 360-row picture, whatever the render size
+	vec2 cell = floor(FRAGCOORD.xy / max(VIEWPORT_SIZE.y / 360.0, 1.0));
+	float grain = fract(sin(dot(cell, vec2(127.1, 311.7))) * 43758.5453) - 0.5;
+	col *= 1.0 + grain * paper_grain;
 	float haze = (1.0 - exp(-fog_density * v_dist)) * exp(-max(v_world.y, 0.0) * 0.035);
 	col = mix(col, fog_color.rgb, clamp(haze, 0.0, 0.9));
 	ALBEDO = max(col, vec3(0.0));

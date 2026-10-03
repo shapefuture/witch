@@ -1,0 +1,46 @@
+{
+  "model": "xai/grok-imagine-image-2.0",
+  "arguments": {
+    "prompt": "A round stone observatory chamber high in the library: a great round skylight in the vaulted ceiling letting a cool silver-gold shaft of light fall onto the floor, a big faceted stone armillary sphere and star charts on the walls, curved shelves of scrolls, a few purple crystal lamps and candles, a wide open carpeted floor with a ring pattern. Keep exactly the same painting style as the reference pictures: faceted low-poly papercraft, olive, ochre and purple colours, mottled stone, warm dusty low-key light, a dark foreground frame. Eye height low, the horizon (where the floor meets the far wall) about two thirds down the frame, and a large clear area of floor, unobstructed, in the foreground to walk on. No people, no witch, no raccoon, no animals, no text, no letters.",
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "quality": "medium",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/1af86640-cb1f-4c78-90c3-e6ab06394549.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.440",
+    "usd": "0.090",
+    "discount": null
+  },
+  "idempotency_key": "ec0c8313-1193-45a9-8467-0d2c47345c75",
+  "created_at": "2026-10-02T16:28:50+00:00",
+  "request_id": "76f4990b-ced6-4c46-89ea-c5b6498ddc94",
+  "status_url": "https://platform.higgsfield.ai/requests/76f4990b-ced6-4c46-89ea-c5b6498ddc94/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/76f4990b-ced6-4c46-89ea-c5b6498ddc94/cancel",
+  "status": "completed",
+  "correlation_id": "1155e8c14a7443ccae5841ef54432ae8",
+  "result": {
+    "status": "completed",
+    "request_id": "76f4990b-ced6-4c46-89ea-c5b6498ddc94",
+    "status_url": "https://platform.higgsfield.ai/requests/76f4990b-ced6-4c46-89ea-c5b6498ddc94/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/76f4990b-ced6-4c46-89ea-c5b6498ddc94/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/6503eaf8-741e-4574-b0f5-29ee8f48ce36.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T16:29:19+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/6503eaf8-741e-4574-b0f5-29ee8f48ce36.png",
+      "path": "image_0.png",
+      "sha256": "98bebd78c57f99835d69c7625f5b2bab8dbf4489e3172f62c61970483fe67f45",
+      "bytes": 5765928
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+ "id": "shop_window",
+ "kind": "firstperson",
+ "title": "Through the shop window",
+ "prompt": "The inside of the same small potion shop seen from behind the counter, looking out through the big front window at the street at dusk: a doorstep in front of the shop where a visitor can stand, lamps lit across the way, the window frame and the counter edge closing the picture.",
+ "story": "The first-person scene: a visitor seen through the store window, a wand in one hand (the hand is added in-engine). Leave the doorstep empty."
+}

@@ -1,0 +1,47 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "resolution": "2k",
+    "quality": "medium",
+    "aspect_ratio": "3:2",
+    "prompt": "An object model sheet for 3D modelling: the SAME object shown six times on one flat chroma-key green (#00FF00), perfectly even background. The FIRST reference image is a LAYOUT GUIDE, not a picture to copy: a flat chroma-key green (#00FF00), perfectly even canvas of six framed cells, each with a label, a dashed top line near the top, a dashed base line near the bottom, a dotted centre line and a symbol for the way the object faces. Draw one view of the object in each cell, the whole object from top to bottom, centred on the centre line, the top just under the top line and the base on the base line, so that all six are the same size. Use the guide for placement only: the frames, lines, labels and symbols stay out of the picture, and the background stays flat chroma-key green (#00FF00), perfectly even and empty. Top row, left to right: front view, facing the viewer; three-quarter front view, the whole body clearly turned a full 45 degrees, half way between the front view and the side view, so that her near shoulder is well in front of the far one, facing toward the lower right of the picture; right side view in profile, facing the right edge of the picture. Bottom row, left to right: back view, facing directly away from the viewer; three-quarter back view, the whole body clearly turned a full 45 degrees, half way between the back view and the side view, facing away and toward the left edge of the picture; left side view in profile, facing the left edge of the picture. The object: a heavy grey stone mortar with a hexagonal faceted bowl and a smooth wooden pestle standing in it, chipped edges, warm brown wood. No green anywhere. All six views show one and the same object with the same shape, parts, colours and rendering style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour fall on the object, with no cast shadows, no floor and no ground, and a clear gap of background around every figure. The SECOND reference image shows only the RENDERING STYLE to match: soft faceted low-poly modelling, painted surfaces, a muted palette with purple accents, gentle even lighting. Take its style and nothing else: do not copy its characters or objects.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/37874a97-6b4b-496c-9f67-e4a4be044129.png",
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/0a73abbf-c1ad-4f60-8c43-262a1e146788.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.642",
+    "usd": "0.103",
+    "discount": null
+  },
+  "idempotency_key": "18d05bcf-6587-4d21-a214-6f51df2c997d",
+  "created_at": "2026-10-03T03:55:45+00:00",
+  "request_id": "98d8986b-0bf8-4e68-8266-87e89f09180e",
+  "status_url": "https://platform.higgsfield.ai/requests/98d8986b-0bf8-4e68-8266-87e89f09180e/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/98d8986b-0bf8-4e68-8266-87e89f09180e/cancel",
+  "status": "completed",
+  "correlation_id": "a1d770f4a78c401a98381ab5f31a525d",
+  "result": {
+    "status": "completed",
+    "request_id": "98d8986b-0bf8-4e68-8266-87e89f09180e",
+    "status_url": "https://platform.higgsfield.ai/requests/98d8986b-0bf8-4e68-8266-87e89f09180e/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/98d8986b-0bf8-4e68-8266-87e89f09180e/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/40a75e32-7d59-474f-b3ac-5ed6873df393.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-03T03:56:14+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/40a75e32-7d59-474f-b3ac-5ed6873df393.png",
+      "path": "image_0.png",
+      "sha256": "bd63a88f20d80be96376debad35d532b72809ce5422ef651c30b2c51da53a929",
+      "bytes": 2498687
+    }
+  ]
+}

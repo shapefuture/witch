@@ -1,0 +1,79 @@
+{
+  "sheet": "sheet.png",
+  "sheet_size": [
+    2048,
+    1360
+  ],
+  "background": [
+    12,
+    233,
+    18
+  ],
+  "size": 1024,
+  "fill": 0.84,
+  "problems": [],
+  "views": {
+    "front": {
+      "box": [
+        115,
+        38,
+        566,
+        663
+      ],
+      "height": 625,
+      "width": 451
+    },
+    "front34": {
+      "box": [
+        767,
+        35,
+        1227,
+        666
+      ],
+      "height": 631,
+      "width": 460
+    },
+    "right": {
+      "box": [
+        1503,
+        33,
+        1882,
+        662
+      ],
+      "height": 629,
+      "width": 379
+    },
+    "back": {
+      "box": [
+        118,
+        701,
+        553,
+        1315
+      ],
+      "height": 614,
+      "width": 435
+    },
+    "back34": {
+      "box": [
+        777,
+        701,
+        1164,
+        1316
+      ],
+      "height": 615,
+      "width": 387
+    },
+    "left": {
+      "box": [
+        1482,
+        701,
+        1807,
+        1316
+      ],
+      "height": 615,
+      "width": 325
+    }
+  },
+  "cost_usd": 0.101,
+  "prompt": "A character model sheet for 3D modelling: the SAME character shown six times on one flat chroma-key green (#00FF00), perfectly even background. The FIRST reference image is a LAYOUT GUIDE, not a picture to copy: a flat chroma-key green (#00FF00), perfectly even canvas of six framed cells, each with a label, a dashed head line near the top, a dashed foot line near the bottom, a dotted centre line and a symbol for the way the character faces. Draw one view of the character in each cell, the whole character from head to foot, centred on the centre line, the head just under the head line and the feet on the foot line, so that all six are the same size. Use the guide for placement only: the frames, lines, labels and symbols stay out of the picture, and the background stays flat chroma-key green (#00FF00), perfectly even and empty. Top row, left to right: front view, facing the viewer; three-quarter front view, turned 45 degrees to face toward the right edge of the picture; right side view in profile, facing the right edge of the picture. Bottom row, left to right: back view, facing directly away from the viewer; three-quarter back view, turned away 45 degrees toward the left edge of the picture; left side view in profile, facing the left edge of the picture. The character is the one in the SECOND reference image: keep its design, proportions, colours and rendering style exactly, and invent the sides it does not show in the same style. All six views show one and the same character in the same pose, with the same face, hair, clothes, colours and rendering style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour fall on the character, with no cast shadows, no floor and no ground, and a clear gap of background around every figure."
+}

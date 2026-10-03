@@ -1,0 +1,11 @@
+# tools/characters/image2rig.py (the pipeline's other dependencies are numpy, Pillow and scipy)
+gradio_client==2.7.2
+tripo3d==0.4.2
+fast-simplification==0.2.0
+# tools/characters/silhouette_hull.py and template_rig.py (no network, no GPU)
+xatlas==0.0.11
+scikit-image==0.26.0
+trimesh==5.1.1
+# tools/characters/lowpoly_bake.py (headless Blender; optional, only for baking a textured mesh down to the game budget)
+# bpy==5.0.1
+# The CPU Hunyuan3D shape run lives in its own virtualenv (docs/art/cpu_pipeline.md): transformers==4.51.3, huggingface-hub<1.0, torch (cpu), torchvision, opencv-python-headless, diffusers, pymeshlab

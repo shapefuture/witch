@@ -1,0 +1,47 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "resolution": "2k",
+    "quality": "medium",
+    "aspect_ratio": "3:2",
+    "prompt": "A character model sheet for 3D modelling: the SAME character shown six times on one flat chroma-key green (#00FF00), perfectly even background. The FIRST reference image is a LAYOUT GUIDE, not a picture to copy: a flat chroma-key green (#00FF00), perfectly even canvas of six framed cells, each with a label, a dashed head line near the top, a dashed foot line near the bottom, a dotted centre line and a symbol for the way the character faces. Draw one view of the character in each cell, the whole character from head to foot, centred on the centre line, the head just under the head line and the feet on the foot line, so that all six are the same size. Use the guide for placement only: the frames, lines, labels and symbols stay out of the picture, and the background stays flat chroma-key green (#00FF00), perfectly even and empty. A dashed line across each cell at shoulder height marks where the outstretched arms go, hands included, inside the cell. Top row, left to right: front view, facing the viewer; three-quarter front view, the whole body clearly turned a full 45 degrees, half way between the front view and the side view, so that her near shoulder is well in front of the far one, facing toward the lower right of the picture; right side view in profile, facing the right edge of the picture. Bottom row, left to right: back view, facing directly away from the viewer; three-quarter back view, the whole body clearly turned a full 45 degrees, half way between the back view and the side view, facing away and toward the left edge of the picture; left side view in profile, facing the left edge of the picture. The character is the one in the SECOND reference image: keep its design, proportions, colours and rendering style exactly, and invent the sides it does not show in the same style. Pose, the same in every view: a T-pose for rigging. She stands upright and straight, the head facing forward, the arms stretched out horizontally to both sides at shoulder height with the hands open, palms down and EMPTY, the legs straight; anything she held is left out of the picture. All six views show one and the same character in the same pose, with the same face, hair, clothes, colours and rendering style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour fall on the character, with no cast shadows, no floor and no ground, and a clear gap of background around every figure.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/51a55a44-9ab9-47ef-babd-5c33a124eae8.png",
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/c36994dc-a430-40c9-9af5-1181fcf0fe7f.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.660",
+    "usd": "0.104",
+    "discount": null
+  },
+  "idempotency_key": "2ba08c5a-9d61-4fb5-8965-54880497a6b6",
+  "created_at": "2026-10-02T21:34:44+00:00",
+  "request_id": "ea6e273b-9804-4ecd-be7d-433224e69ee4",
+  "status_url": "https://platform.higgsfield.ai/requests/ea6e273b-9804-4ecd-be7d-433224e69ee4/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/ea6e273b-9804-4ecd-be7d-433224e69ee4/cancel",
+  "status": "completed",
+  "correlation_id": "575fd21624904d468885fcfa4e202fd4",
+  "result": {
+    "status": "completed",
+    "request_id": "ea6e273b-9804-4ecd-be7d-433224e69ee4",
+    "status_url": "https://platform.higgsfield.ai/requests/ea6e273b-9804-4ecd-be7d-433224e69ee4/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/ea6e273b-9804-4ecd-be7d-433224e69ee4/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/c75291a2-d232-44d2-9f4d-9f6c6dfe0c3a.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T21:35:24+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/c75291a2-d232-44d2-9f4d-9f6c6dfe0c3a.png",
+      "path": "image_0.png",
+      "sha256": "5ddd46318d563fe036fbf7672919bc260b60add41a2726c6e7ff5efaf5d1bae9",
+      "bytes": 2876952
+    }
+  ]
+}

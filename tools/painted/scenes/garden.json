@@ -1,0 +1,178 @@
+{
+ "id": "garden",
+ "kind": "garden",
+ "title": "The garden",
+ "prompt": "A walled garden behind a house in late afternoon: raised beds, a gravel path, an old pear tree, a stone bench and a small sundial. Only one kind of flower blooms, in the same neat places, while the rest of the beds are bare earth and dry stalks. The arrangement should look quietly deliberate and slightly too tidy.",
+ "story": "Show, don't tell: the player should infer that the garden is her way of keeping the past; the picture never explains it.",
+ "layout": {
+  "_about": "Where the garden's elements go (fractions of the frame). An outdoor scene: the horizon is the far wall's base, the ground a gravel path and lawn.",
+  "horizon": 0.6,
+  "ground": [
+   0.3,
+   0.7,
+   0.7,
+   0.98
+  ],
+  "elements": [
+   {
+    "label": "OLD CROOKED PEAR TREE",
+    "at": [
+     0.02,
+     0.04,
+     0.28,
+     0.62
+    ],
+    "layer": "mid",
+    "toy": "tree",
+    "toy_at": [
+     0.0,
+     0.0,
+     0.34,
+     0.6
+    ]
+   },
+   {
+    "label": "LOW STONE WALL with a small arched gate",
+    "at": [
+     0.28,
+     0.42,
+     0.8,
+     0.6
+    ],
+    "layer": "bg",
+    "toy": "bell",
+    "toy_at": [
+     0.485,
+     0.35,
+     0.515,
+     0.415
+    ],
+    "toy_note": "hanging in the arched gate"
+   },
+   {
+    "label": "HOUSE with a lit window, behind the wall",
+    "at": [
+     0.6,
+     0.08,
+     0.96,
+     0.42
+    ],
+    "layer": "bg",
+    "toy": "window",
+    "toy_at": [
+     0.82,
+     0.145,
+     0.868,
+     0.245
+    ]
+   },
+   {
+    "label": "STONE POST with a hanging lantern",
+    "at": [
+     0.4,
+     0.26,
+     0.46,
+     0.44
+    ],
+    "layer": "bg",
+    "toy": "lantern",
+    "toy_at": [
+     0.367,
+     0.19,
+     0.428,
+     0.31
+    ],
+    "toy_note": "hanging from the stone post"
+   },
+   {
+    "label": "STONE BENCH under the tree",
+    "at": [
+     0.1,
+     0.64,
+     0.3,
+     0.75
+    ],
+    "layer": "mid",
+    "toy": "bench",
+    "toy_at": [
+     0.06,
+     0.51,
+     0.235,
+     0.72
+    ]
+   },
+   {
+    "label": "SUNDIAL on a stone base",
+    "at": [
+     0.58,
+     0.57,
+     0.67,
+     0.69
+    ],
+    "layer": "mid",
+    "shape": "ellipse",
+    "toy": "sundial",
+    "toy_at": [
+     0.615,
+     0.42,
+     0.745,
+     0.64
+    ]
+   },
+   {
+    "label": "RAISED BEDS, one kind of flower",
+    "at": [
+     0.72,
+     0.62,
+     0.98,
+     0.8
+    ],
+    "layer": "mid"
+   },
+   {
+    "label": "WHEELBARROW",
+    "at": [
+     0.02,
+     0.81,
+     0.2,
+     0.97
+    ],
+    "layer": "fg",
+    "toy": "wheelbarrow",
+    "toy_at": [
+     0.005,
+     0.7,
+     0.3,
+     0.96
+    ]
+   },
+   {
+    "label": "WATERING CAN",
+    "at": [
+     0.82,
+     0.84,
+     0.95,
+     0.98
+    ],
+    "layer": "fg",
+    "shape": "ellipse",
+    "toy": "watering_can",
+    "toy_at": [
+     0.61,
+     0.775,
+     0.815,
+     1.0
+    ]
+   }
+  ],
+  "_toys": "Elements with \"toy\" are lifted into the room's toy box (tools/painted/toys.py): toy_at is the object's own box in the finished plate, which the generator placed a little differently from the guide."
+ },
+ "styles": {
+  "ps1p": {
+   "title": "The Garden That Remembers",
+   "prompt": "late afternoon golden hour, a walled garden behind a house: an old crooked pear tree on the left with a stone bench beneath it, a low stone wall with a small arched gate across the back, the house with a warm lit window rising behind the wall, a stone post with a hanging lantern, a sundial on a stone base, raised beds all planted with one kind of flower in tidy rows, a wheelbarrow and a watering can close to the viewer, a gravel path winding to the gate, mismatched patches and repairs on the wall, a dust gap on the bench where something used to sit.",
+   "ui": "blank paper tags knotted to a few of the plants.",
+   "motifs": "a wedge mark carved into the sundial, a small bell hanging at the gate"
+  }
+ }
+}

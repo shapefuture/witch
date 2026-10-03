@@ -1,0 +1,47 @@
+{
+  "model": "xai/grok-imagine-image-2.0",
+  "arguments": {
+    "prompt": "The chamber at the very end of the long arched hallway in the first reference picture (the doorway with the warm glow). The camera has just stepped through that doorway and now stands inside a spacious round vaulted reading room, looking across a wide open floor. A large clear area of carpeted floor fills the lower half of the frame, with a big spiral pattern in purple and olive, plenty of empty space to walk around. In the middle distance stands a heavy faceted stone reading table with an open book and a few scrolls, and behind it a tall arched window with a warm golden evening light streaming in and a soft shaft of dusty light falling across the floor. Curved walls lined with tall wooden bookshelves full of scrolls, boxes and books, purple crystal lamps and candles on the walls, a second small arched doorway on one side. Keep exactly the same painting style as both references: faceted low-poly papercraft, olive, ochre and purple colours, mottled stone, warm dusty low-key light, a dark foreground frame. Eye height low, the horizon about two thirds down the frame, the floor clearly visible and unobstructed in the foreground. No people, no witch, no raccoon, no text, no letters.",
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "quality": "medium",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/7c30da0b-bb7a-44d0-9a35-1e1599ad99d7.png",
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/8c53f1f0-3d2b-40c4-92ff-dc94dc6dba0f.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.600",
+    "usd": "0.100",
+    "discount": null
+  },
+  "idempotency_key": "ec6a57ea-87ef-47a3-8abd-ce77220b93e1",
+  "created_at": "2026-10-02T16:18:41+00:00",
+  "request_id": "10b765d4-8df5-4805-8d98-d01a2a1423a8",
+  "status_url": "https://platform.higgsfield.ai/requests/10b765d4-8df5-4805-8d98-d01a2a1423a8/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/10b765d4-8df5-4805-8d98-d01a2a1423a8/cancel",
+  "status": "completed",
+  "correlation_id": "268f1b99df744dfbb39d17763cdd341c",
+  "result": {
+    "status": "completed",
+    "request_id": "10b765d4-8df5-4805-8d98-d01a2a1423a8",
+    "status_url": "https://platform.higgsfield.ai/requests/10b765d4-8df5-4805-8d98-d01a2a1423a8/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/10b765d4-8df5-4805-8d98-d01a2a1423a8/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/8951520d-17a2-448a-85f1-044edf4c5ba8.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T16:19:22+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/8951520d-17a2-448a-85f1-044edf4c5ba8.png",
+      "path": "image_0.png",
+      "sha256": "2785f1347fbe2c716c826f725bb456cdd0172b4e4d795bdb334045b0873a717a",
+      "bytes": 5663463
+    }
+  ]
+}

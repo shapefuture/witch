@@ -25,7 +25,11 @@ godot --headless --path . --script res://tools/perf_probe.gd
 # the art: scripted in Blender (pip install bpy), committed as GLB; rebuild only when the art changes
 python tools/blender/build_hall.py --out assets/archive --samples 96   # ~40 s, then run the gate
 GODOT=... tools/visual_gauntlet/capture.sh out_dir                      # the standard frames for a critic
+# image/video/audio generation (Higgsfield): estimate first, every run is capped by --max-usd
+python tools/higgsfield/hf.py run <model-path> --args-file job.json --max-usd 1   # see tools/higgsfield/README.md
+python tools/higgsfield/hf.py catalog        # refresh tools/higgsfield/catalog/CATALOG.md (models, inputs, prices, docs)
 ```
+`.env.local` (git-ignored) holds `HF_KEY=key-id:key-secret`. Never print it, commit it or copy it into another file.
 Run the gate before committing. **Godot exits 0 even when GDScript fails to compile**: never trust an
 exit code; the gate greps for `SCRIPT ERROR` / `Parse Error` / `ERROR:` and requires `TESTS PASSED`.
 New `class_name`s need `--import` first (the gate does it). Real rendering (screenshots, shader
@@ -37,9 +41,10 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 - The first scene is the **archive hall** (`game/world/archive/`), built from the user's reference
   still: faceted, mottled, olive-and-purple, one shaft of light. **Do not invent a different scene.**
   Its Mirror room id is still `"clearing"` (ids are data; looks are not).
-- Characters are **placeholders on purpose** (`game/world/placeholders.gd`); do not model them.
-- Set art is baked in Blender (vertex-colour light + painted tiles) and drawn **unshaded**; there are
-  no Godot lights. Shaders write display-referred colour (Compatibility does not sRGB-encode).
+- The hall is **pre-rendered plates** (Cycles, `tools/blender/build_plates.py`, see `docs/art/plates.md` and
+  `docs/art/PLATE_CONTRACT.md`) projected onto a low-poly proxy so actors are occluded correctly; Godot draws only
+  what moves. There are no Godot lights. Shaders write display-referred colour (Compatibility does not sRGB-encode).
+  Characters are real skinned models (`tools/characters/`, `assets/characters/`, loaded by `game/world/character_models.gd`).
 - **No 2D UI.** Speech bubbles, option plaques and the pause menu are 3D slabs (`game/ui/`, `Diegetic`).
 - The camera is **bolted** (never follows); shot changes are cuts; only the spell eases (fisheye + 45 degrees).
 - Mobile budgets are tests: <= 60k static triangles, <= 28 surfaces, painted tiles <= 256 px.
@@ -55,6 +60,11 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 - Dialogue reads Mirror and never writes it; choices are recorded as `DIALOGUE_CHOICE` actions.
 - Touch and mouse produce the same `PlayerIntent` (emulated-mouse duplicates of a touch are ignored).
 - Every authored action/response must load with **zero errors and zero warnings**.
+- **The Minds layer** (`game/mirror/minds`, data in `data/mirror/minds`, `docs/MINDS.md`): a happening (a poked prop)
+  is committed with `Mirror.minds.perceive(event)`, one atomic transaction recording who witnessed it and what each
+  made of it; deferred consequences fall due with the Mirror clock; conventions form from repeated readings. Its
+  state is derived from the event log (never saved separately), its data is outside the catalog fingerprint, and the
+  authored rules must pass the four-laws linter (`tests/mirror/test_four_laws.gd`).
 
 ## Code conventions
 
@@ -74,7 +84,7 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 
 `addons/mirror_engine` (engine, locally patched: see PROVENANCE) . `addons/dialogue_manager`
 (unmodified) . `autoload/` . `game/{mirror,interaction,npc,dialogue,world,player,camera,presentation,ui,save,debug,main}`
-(`game/world/archive` is the hall, `game/ui` the diegetic UI) . `data/{mirror,text,conversations,sim}`
+(`game/world/archive` is the hall, `game/ui` the diegetic UI, `game/mirror/minds` the Minds layer, `game/mirror/prop_events.gd` its painted-room adapter) . `data/{mirror,text,conversations,sim}`
 . `render/psx` (shaders, StageLight) . `assets/archive` (baked set, tiles, anchors) . `tools/blender`
 (the art kit) . `tools/visual_gauntlet` . `tests/` (+ `tests/golden`) . `docs/` (+ `docs/visual-gauntlet`).
 
@@ -89,8 +99,9 @@ only: tap/click the ground to walk, an object to get its options. No WASD.
 - Dialogue Manager 3.10.4 leaks its resource at process exit; the gate allow-lists exactly those two messages.
 - `.uid` files are git-ignored (repo convention); the addon's were force-tracked by PR #1.
 - `pixel.ttf` provenance/licence isn't recorded: confirm before shipping.
-- Characters are placeholder primitives (`game/world/placeholders.gd`); real models are to be supplied.
-  The set is real (Blender kit), but its source of truth is `tools/blender/` plus the committed GLB.
+- The witch, Tomas and the raccoon are real models; the primitives in `game/world/placeholders.gd` remain only as a
+  fallback when a GLB is missing. The shadow, the second (antler) witch and the unhooded woman are built but not yet
+  placed in a scene.
 - The reference image the user supplied is NOT in the repo (it reached the session inline; I did not commit
   someone's artwork without being asked). Put it at `docs/visual-gauntlet/bar/reference_hall.png` and
   `blind_ab.py` + `metrics.py` compare against the real thing; `visual-gauntlet/BAR.md` holds the numbers
@@ -104,5 +115,5 @@ only: tap/click the ground to walk, an object to get its options. No WASD.
 
 ## Not built yet (by design)
 
-Raccoon tele-somatic signal, Vera/Elian/Ilya, the town graph, LimboAI, a world compiler from
-place resources, on-device mobile profiling, a main menu, the full ending, real character models.
+Raccoon tele-somatic signal (as a perception channel of the Minds layer), Vera/Elian/Ilya, `PaintedRoom` emitting `walked` and playing `PropEvents` reactions (coordinator wiring), the town graph, LimboAI, a world compiler from
+place resources, on-device mobile profiling, a main menu, the full ending, the shadow/antler witch in a scene.

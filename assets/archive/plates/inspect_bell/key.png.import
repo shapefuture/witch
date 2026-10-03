@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://c12lmy11m1od6"
+path="res://.godot/imported/key.png-342b11f9dd50908aa085ff1ee2d65341.image"
+
+[deps]
+
+source_file="res://assets/archive/plates/inspect_bell/key.png"
+dest_files=["res://.godot/imported/key.png-342b11f9dd50908aa085ff1ee2d65341.image"]
+
+[params]
+

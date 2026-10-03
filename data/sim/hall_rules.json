@@ -1,0 +1,54 @@
+{
+	"name": "The hall's three rules: it answers late, everything that moves is looked at, what two minds agree on becomes custom",
+	"steps": [
+		{"poke": "globe", "reaction": "hop"},
+		{"advance": 3},
+		{"advance": 5},
+		{"advance": 2},
+		{"poke": "globe", "reaction": "wobble"},
+		{"poke": "globe", "reaction": "spin"},
+		{"advance": 3},
+		{"poke": "globe", "reaction": "hop"},
+		{"advance": 2},
+		{"poke": "globe", "reaction": "hop"},
+		{"advance": 14},
+		{"poke": "statue", "reaction": "shiver"},
+		{"poke": "statue", "reaction": "shiver"},
+		{"poke": "statue", "reaction": "shiver"},
+		{"advance": 10},
+		{"poke": "lamp", "reaction": "wobble", "hints": {"attention": {"raccoon": "away"}}},
+		{"presence": {"holder": "tomas", "place": "back_hall"}},
+		{"poke": "lamp", "reaction": "hop"},
+		{"presence": {"holder": "tomas", "place": "clearing"}},
+		{"advance": 10}
+	],
+	"expect": {
+		"knows": [
+			"poked.globe", "hall_answers.globe.statue", "raccoon_repeats.globe", "echo_forgotten",
+			"raccoon_looks_at.globe", "statue_leans_in.globe", "tomas_watches_the_witch",
+			"custom_needs_two", "hall_custom.globe_is_a_toy", "globe_answers_as_a_toy", "raccoon_plays_alone",
+			"poke_unremarked.lamp"
+		],
+		"model_status": {
+			"m.hall.every_poke_answered": "REVISED",
+			"m.hall.latest_poke_answered": "REVISED",
+			"m.hall.everything_watches": "REVISED",
+			"m.hall.seen_motion_is_watched": "REVISED",
+			"m.hall.repetition_makes_custom": "REVISED"
+		},
+		"conventions": ["conv.hall.globe_is_a_toy"],
+		"not_conventions": ["conv.hall.statue_is_a_toy"],
+		"holders_know": {
+			"raccoon": ["saw_witch_play.globe", "conv.hall.globe_is_a_toy"],
+			"tomas": ["conv.hall.globe_is_a_toy", "tomas_saw_play", "tomas_blames_the_raccoon"]
+		},
+		"holders_not_know": {
+			"tomas": ["saw_witch_play.globe"],
+			"raccoon": ["tomas_blames_the_raccoon"]
+		},
+		"holder_models": {
+			"tomas": {"m.tomas.pokes_harmless": "SUPPORTED"}
+		},
+		"pending": 0
+	}
+}

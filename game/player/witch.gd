@@ -10,6 +10,8 @@ signal walk_ended(reached: bool)
 const SPEED := 2.8
 const ARRIVE_DISTANCE := 0.12
 const TURN_RATE := 10.0
+# "witch" (purple star hood, orange curls) or "witch_antler" (felt hood, branch antlers).
+const MODEL_ID := "witch"
 
 var navigator: GridNavigator
 var animation := WitchAnimation.new()
@@ -30,7 +32,8 @@ func _ready() -> void:
 	shape.shape = capsule
 	shape.position = Vector3(0, 0.8, 0)
 	add_child(shape)
-	set_visual(Placeholders.witch())
+	var model := CharacterModels.instantiate(MODEL_ID)
+	set_visual(model if model != null else Placeholders.witch())
 	add_child(animation)
 	BlobShadow.attach(self, 0.42, 1.05)
 

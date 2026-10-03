@@ -1,0 +1,10 @@
+{
+ "id": "house",
+ "kind": "interior",
+ "title": "The witch's house",
+ "prompt": "The living room of a small cluttered house, tidy in a hurried way: a sofa under a blanket, a table with unsold trinkets, a staircase down to a door on the right, a window with evening light, a wide clear floor with a worn rug.",
+ "story": "Before and after the finale. Variant 'after': the same house reinvigorated, vibrant and full of fun, explored by the player when she is not there.",
+ "variants": {
+  "after": "the house is now cheerful and lived-in: colourful bunting and paper stars, cushions, plants on every sill, a bowl of fruit, a bright rug, warm light, playful clutter; layout and furniture positions unchanged"
+ }
+}

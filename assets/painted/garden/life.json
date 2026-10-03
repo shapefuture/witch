@@ -1,0 +1,334 @@
+{
+ "_about": "Drafted by tools/painted/new_scene.py from the plate's bright blobs: edit by hand (see docs/art/painted_room.md, Light and life).",
+ "fps": 8,
+ "glow": {
+  "levels": 6,
+  "depth": 0.97,
+  "spare": 6
+ },
+ "lights": [
+  {
+   "id": "breath_0",
+   "pixel": [
+    814,
+    101
+   ],
+   "radius": 59,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.83,
+    0.63
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 3,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "breath_1",
+   "pixel": [
+    290,
+    131
+   ],
+   "radius": 53,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.84,
+    0.64
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 14,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "breath_2",
+   "pixel": [
+    1071,
+    145
+   ],
+   "radius": 46,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.77,
+    0.35
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 25,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "breath_3",
+   "pixel": [
+    644,
+    289
+   ],
+   "radius": 40,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.79,
+    0.51
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 36,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "breath_4",
+   "pixel": [
+    404,
+    94
+   ],
+   "radius": 34,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.86,
+    0.71
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 47,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "breath_5",
+   "pixel": [
+    229,
+    429
+   ],
+   "radius": 33,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.81,
+    0.52
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 58,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "breath_6",
+   "pixel": [
+    903,
+    369
+   ],
+   "radius": 30,
+   "core": 0.14,
+   "color": [
+    1.0,
+    0.79,
+    0.5
+   ],
+   "strength": 0.26,
+   "depth_mode": "near",
+   "flicker": {
+    "kind": "breath",
+    "amount": 0.14,
+    "seed": 69,
+    "shift": 0.12
+   }
+  },
+  {
+   "id": "candle_7",
+   "pixel": [
+    1274,
+    183
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.81,
+    0.55
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 80,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_8",
+   "pixel": [
+    1202,
+    479
+   ],
+   "radius": 28,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.79,
+    0.51
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 91,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_9",
+   "pixel": [
+    1141,
+    82
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.81,
+    0.56
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 102,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_10",
+   "pixel": [
+    34,
+    210
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.78,
+    0.52
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 113,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_11",
+   "pixel": [
+    1022,
+    231
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.74,
+    0.44
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 124,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_12",
+   "pixel": [
+    139,
+    446
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.81,
+    0.52
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 135,
+    "shift": 0.4
+   }
+  },
+  {
+   "id": "candle_13",
+   "pixel": [
+    491,
+    308
+   ],
+   "radius": 26,
+   "core": 0.25,
+   "color": [
+    1.0,
+    0.76,
+    0.42
+   ],
+   "strength": 0.3,
+   "flicker": {
+    "kind": "candle",
+    "amount": 0.32,
+    "seed": 146,
+    "shift": 0.4
+   }
+  }
+ ],
+ "frame": {
+  "strength": 0.0,
+  "breath": 0.5,
+  "tint": [
+   0.34,
+   0.24,
+   0.4
+  ]
+ },
+ "occluders": {
+  "witch": {
+   "radius": 0.26,
+   "height": 1.2
+  },
+  "raccoon": {
+   "radius": 0.2,
+   "height": 0.5
+  }
+ },
+ "actors": {
+  "follow": 1.0
+ }
+}

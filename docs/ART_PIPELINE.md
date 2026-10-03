@@ -4,6 +4,12 @@ The first scene, the **archive hall**, is built from the user's reference still:
 mottled, olive-and-purple library with one shaft of light (see `visual-gauntlet/BAR.md`). It is
 authored in code, baked, and committed; the game never needs Blender at run time.
 
+> **Now drawn from pre-rendered plates.** The set below is rendered offline into plates that the game
+> projects onto proxy geometry: see [`art/PLATE_CONTRACT.md`](art/PLATE_CONTRACT.md) for the files and
+> [`art/compositor.md`](art/compositor.md) for the Godot side. Steps 4 and 6 and the foreground frame
+> described below are the old real-time path. The vertex-colour `archive_set.glb` remains as the
+> source of the live machine and bell, and of the stub plates (`tools/plates_stub/make_stub.py`).
+
 ```
 tools/blender/kit/textures.py   hand-painted 128px tiles (numpy + Pillow)   -> assets/archive/textures/*.png
 tools/blender/kit/common.py     faceted-mesh Part builder (bmesh, Godot-space authoring)
@@ -85,10 +91,10 @@ top of the frame, so the beam has a visible source and passes 1 m clear of the s
 by `CAMERA_*` in `build_hall.py`: change both, and re-bake, because the foreground frame is baked for
 that camera); `CameraDirector` changes shot by **cutting**, and only the spell's `magic_reveal` eases
 (fisheye swing via the `lens_warp` global and a 45 degree tilt; the cut back to the wide is the snap).
-The walkable floor (`ArchiveHall.stage_allows`) is trimmed so she is always inside the 4:3 frame; a
-test projects every walkable cell through the real camera. The dark foreground shelf, globe and rock
-(`FgLeft`/`FgRight`) are baked in camera space and ride on the camera; `GameRoot._fit_foreground`
-pushes them to the screen edges at any aspect, and they are hidden in close-up cuts.
+The walkable floor (the `walkable` polygon in `anchors.json`, read by `ArchiveHall.stage_allows`) is
+trimmed so she is always inside the 4:3 frame; a test projects every walkable cell through the real
+camera. (The camera-space foreground frame, `FgLeft`/`FgRight`, is gone with the real-time set: a
+frame now belongs in the plates.)
 
 ## Diegetic UI (no 2D)
 

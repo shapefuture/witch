@@ -49,3 +49,28 @@ image itself with `tools/visual_gauntlet/metrics.py` after downscaling it to 640
 ## What the critic should reject
 - Cartoon outlines, clean vector flats, 2D UI furniture, horror, claymation, voxels, fabric/paper
   photographs, flat even lighting, a muddy single-brown image with no bright pool and no purple.
+
+## Tools
+`tools/visual_gauntlet/`, Python 3 with numpy, Pillow, scipy and scikit-image
+(`pip install numpy pillow scipy scikit-image`). Each tool runs `--selftest` on synthetic images.
+- `metrics.py FRAME...`: the whole-frame numbers above.
+- `squint.py A B`: value structure at thumbnail scale. Both images are centre-cropped to one aspect,
+  then compared with SSIM of luma at 32x18 and at 64x36, a rank correlation of the values (exposure
+  does not matter), and notan agreement. `squint` is the mean of the first three. Other tools import
+  `score` and `load`.
+- `regions.py REF OURS [--overlay out.png]`: median luma, p99, saturation, contrast, edge density
+  and facet gradient in five fixed regions read off the reference: the outer frame ring, the shelves,
+  the arch passage, the beam (oculus to the pool of light) and the statue. Both images are measured
+  at 640x360.
+- `grade.py fit REF OURS lut.png`: a grade from per-channel Lab quantile matching. It is smoothed,
+  monotonic and blended by `--strength` (0.6), and it is fitted to histograms only, so it can never
+  copy the picture. It writes a 17^3 LUT strip (289x17: x = r + 17*b, y = g, so import it in Godot
+  as a Texture3D with 17 horizontal slices). `grade.py apply` previews the grade on any frame.
+- `blind_ab.py OURS REF DIR --print-prompt`: the blind pair, in matched mode by default. Both images
+  get the same crop and one working resolution, then are scaled to 1280x720, and metadata is stripped.
+  Labels are random. The key goes to `DIR_KEY.json` beside the folder. It prints `critic_prompt.md`
+  with the two paths filled in, ready for a fresh critic.
+
+Baseline, the `wide_169` of each round against the reference: `squint` was 0.16 for r01, 0.37 for r04
+(the best) and 0.32 for r08 (SSIM 0.23 / 0.18, value correlation 0.56). Use frames without UI. The
+r08 speech bubble sits inside `shelves` and `arch_passage` and inflates their p99.

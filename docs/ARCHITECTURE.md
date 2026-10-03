@@ -37,11 +37,11 @@ and present committed results; `Mirror` (the `MirrorRuntime` autoload) is the on
 | `addons/mirror_engine/` | Epistemic-social runtime: event log, knowledge, models, evidence, relationships, predictions, operators, storylets, planner, persistence. Vendored; see `PROVENANCE.md`. |
 | `addons/dialogue_manager/` | Language/runtime layer for `.dialogue` files (unmodified, v3.10.4). |
 | `autoload/` | `Localization` (loads the one text table), `SettingsState` (volume), `SceneManager` (fade transitions). `Mirror` (`game/mirror/mirror_runtime.gd`) and `DialogueManager` are also autoloads. |
-| `game/mirror/` | `MirrorRuntime` facade, `MirrorCatalog` (loads `data/mirror`), `ActionQueue`, `EventLogView`. |
+| `game/mirror/` | `MirrorRuntime` facade, `MirrorCatalog` (loads `data/mirror`), `ActionQueue`, `EventLogView`. `minds/`: the Minds layer (`MirrorMinds`: witnesses, per-holder interpretation, deferred consequences, folklore, the four-laws linter; see `MINDS.md`). `PropEvents`: the painted-room adapter. |
 | `game/interaction/` | `PlayerIntent`, `PointerTracker`, `IntentInput`, `InteractionProbe`, `InteractionResolver`, `InteractionOption/Context`, `InteractionFlow`. |
 | `game/npc/` | `Expectation` (the hidden variable), `ResponsePolicy`, `NPC` (poses). |
 | `game/dialogue/` | `DialogueBridge` (runs conversations, records choices), `MirrorDialogueContext` (the read-only window `.dialogue` sees). |
-| `game/world/` | `Room`, `Interactable`, `GridNavigator`, `Placeholders` (the characters, and the spec of the machine's named parts), `MachineView`. `game/world/archive/`: `ArchiveHall` (the first room: gameplay anchors, interactables), `ArchiveSet` (loads the baked GLB), `HallAtmosphere` (shaft, dust, glow). |
+| `game/world/` | `Room`, `Interactable`, `GridNavigator`, `Placeholders` (the characters, and the spec of the machine's named parts), `MachineView`. `game/world/archive/`: `ArchiveHall` (the first room: gameplay anchors, interactables), `PlateSet`/`PlateStage` (the pre-rendered plates on the proxy: `docs/art/compositor.md`), `ArchiveProps` (the live machine and bell), `HallAtmosphere` (dust). |
 | `game/player/` | `Witch` (movement), `WitchAnimation`. |
 | `game/camera/` | `DioramaCamera` (pose + roll, cuts, capture lock), `CameraDirector` (pure `compute_pose`, cuts vs the eased spell shot, the `stay` contract). |
 | `game/presentation/` | `PresentationDirector`, `MagicPresentation`, `PSXActorPresenter`, `FocusOutline`. |
@@ -49,7 +49,7 @@ and present committed results; `Mirror` (the `MirrorRuntime` autoload) is the on
 | `game/save/` | `SaveCodec`, `SaveGame`. |
 | `game/debug/` | `SimulationRunner`, `MirrorInspector`. |
 | `game/main/` | `GameRoot` (composition root + command-line hooks) and `main.tscn`. |
-| `data/mirror/` | The authored catalog: `world.json`, `prologue.json`, `actions/*.json`, `operators.json`, `storylets.json`, `hypotheses.json`. |
+| `data/mirror/` | The authored catalog: `world.json`, `prologue.json`, `actions/*.json`, `operators.json`, `storylets.json`, `hypotheses.json`. `minds/`: the Minds layer's data (events, interpretations, world rules, conventions); outside the catalog fingerprint. |
 | `data/text/ru.json` | **Every** player-visible string. |
 | `data/conversations/` | `.dialogue` structure (line keys, conditions). |
 | `data/sim/` | Deterministic playthroughs with expectations. |

@@ -4,7 +4,8 @@ extends RefCounted
 # Runtime control of the project shader globals (declared in project.godot):
 #   precision_multiplier  vertex-snap coarseness (0.5 = chunky PSX; 1.0 = smooth)
 #   magic_amount          how far reality has "broken" (0 = mundane, 1 = full magic)
-#   snap_grid             the vertex-snap lattice, derived from the render size (half the pixels)
+#   snap_grid             the vertex-snap lattice: half the pixels of a 360-row picture, whatever the
+#                         real render height (540 rows), so the PS1 wobble keeps its size
 #   stage_time            the diorama's own clock, so wind, shimmer and captures are reproducible
 #   lens_warp             the spell's fisheye swing (0..1)
 #   fog_color, fog_density  the golden haze between you and the far hills
@@ -36,9 +37,12 @@ static func magic() -> float:
 static func precision() -> float:
 	return _precision
 
-# One vertex-snap cell is about two render pixels, whatever the aspect.
+# The render is 540 rows (so the plates' detail survives) but actors still snap to the lattice of a
+# 360-row picture: one cell is two of those pixels, whatever the aspect.
+const SNAP_ROWS := 360.0
+
 static func set_render_size(size: Vector2) -> void:
-	_grid = size * 0.5
+	_grid = Vector2(size.x / maxf(size.y, 1.0) * SNAP_ROWS, SNAP_ROWS) * 0.5
 	RenderingServer.global_shader_parameter_set(&"snap_grid", _grid)
 
 static func snap_grid() -> Vector2:

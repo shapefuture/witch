@@ -1,0 +1,16 @@
+{
+ "id": "festival",
+ "kind": "street",
+ "title": "The Night of Returning",
+ "prompt": "The same kind of hillside town street at night during a once-a-year procession: strings of paper lanterns, a painted theatre cart with a curtain and a crescent-and-pomegranate emblem, banners with symbolic glyphs (no real letters), a cleared wide road for the procession, torches and candles, a deep dusky-blue sky.",
+ "palette": "Night, dusky blue and plum, warm lantern gold and a few violet lights.",
+ "sun": {
+  "mode": "fixed",
+  "dir": [
+   0.0,
+   0.8,
+   -0.4
+  ]
+ },
+ "story": "Shadow's obsession: a procession about the descent and return. Greek-mystery symbolism in the glyphs, never explained."
+}

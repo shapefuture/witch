@@ -1,0 +1,52 @@
+{
+	"_about": "The Minds layer's world: who can perceive what, where. Ids and text keys only. The hall's Mirror room id is still 'clearing'. Tuning lives here (limits, perception); everything a rule decides is written into the event log when it happens, so retuning never invalidates a save.",
+	"limits": {"max_pending": 32, "max_fired_per_pump": 16, "max_chain_depth": 3, "max_active_conventions": 12, "max_origin_events": 5},
+	"perception": {"overheard_clarity": 35, "min_clarity": 10},
+	"reaction_ops": ["PROP_REACT", "LOOK_AT", "FOLLOW", "APPROACH", "COMMENT"],
+	"default_place": "clearing",
+	"event_kinds": {
+		"PROP_POKED": {
+			"_about": "A prop was pressed. Sight needs the room and a clear line; the thump carries into the next room, where it is only overheard.",
+			"channels": {"sight": {"range": 14}, "sound": {"range": 8, "carries": true}},
+			"truth": {"outcome": "prop_moved"}
+		},
+		"PROP_ECHOED": {
+			"_about": "A prop moved on its own, answering an earlier poke (world rule: the hall answers late).",
+			"channels": {"sight": {"range": 14}, "sound": {"range": 8, "carries": true}},
+			"truth": {"outcome": "prop_moved", "motive": "echo"}
+		},
+		"WALKED": {
+			"_about": "The witch crossed the floor. Quiet: written to the log only when somebody reacts to it.",
+			"quiet": true,
+			"channels": {"sight": {"range": 16}},
+			"truth": {"outcome": "walked"}
+		}
+	},
+	"places": {
+		"clearing": {
+			"adjacent": ["back_hall"],
+			"subjects": {
+				"globe": {"tags": ["round", "glass"]},
+				"statue": {"tags": ["stone", "hooded"]},
+				"lamp": {"tags": ["glass", "hanging"]}
+			}
+		},
+		"back_hall": {"adjacent": ["clearing"], "subjects": {}}
+	},
+	"holders": {
+		"player": {"tags": ["witch"], "place": "clearing"},
+		"raccoon": {"tags": ["animal", "familiar"], "place": "clearing"},
+		"tomas": {"tags": ["person"], "place": "clearing"}
+	},
+	"communities": {
+		"household": {"members": ["raccoon", "tomas"]}
+	},
+	"initial_beliefs": [
+		{
+			"holder": "tomas",
+			"model_effects": [
+				{"type": "upsert", "rule_id": "m.tomas.pokes_harmless", "subject_id": "player", "proposition": {"pokes": "harmless"}, "scope": "hall", "confidence": 0.3, "status": "HYPOTHESIS", "depth": 1}
+			]
+		}
+	]
+}

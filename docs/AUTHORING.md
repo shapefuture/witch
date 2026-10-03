@@ -11,6 +11,8 @@ data/mirror/actions/*.json    arrays of action definitions
 data/mirror/operators.json    learned abstractions
 data/mirror/storylets.json    content selected by state (the arrival beat)
 data/mirror/hypotheses.json   causal hypotheses (analysis, debug, reveal conditions)
+data/mirror/minds/*.json      what the minds around the witch make of what happens (see docs/MINDS.md):
+                              minds, interpretations, world_rules, conventions
 data/text/ru.json             ALL player-visible text, by key
 data/conversations/*.dialogue wording structure; every line is a key
 data/sim/*.json               deterministic playthroughs + expectations

@@ -1,0 +1,7824 @@
+{
+ "fetched_at": "2026-10-01T23:41:16+00:00",
+ "source": "GET https://api.higgsfield.ai/models?include_schema=true",
+ "count": 83,
+ "helper_endpoints_in_docs": [
+  "higgsfield-ai/soul/cinema",
+  "marketing-studio/image/presets",
+  "v1/custom-references",
+  "v1/text2image/soul-styles",
+  "v1/text2image/soul-styles/v2"
+ ],
+ "models": [
+  {
+   "slug": "alibaba/happy-horse/image-to-video",
+   "title": "Happy Horse 1.0",
+   "description": "Happy Horse 1.0 - Image to Video. Configured Alibaba route; cloned from hh/image-to-video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Happy horse",
+    "required": [
+     "image_url"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 2
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/happy-horse-1/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/happy-horse/image-to-video",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "11.200",
+     "usd": "0.700",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/happy-horse/reference-to-video",
+   "title": "Happy Horse 1.0",
+   "description": "Happy Horse 1.0 - Reference to Video. Configured Alibaba route; cloned from happy-horse/reference-to-video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Happy horse",
+    "required": [
+     "image_urls",
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 2
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      }
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/happy-horse-1/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/happy-horse/reference-to-video",
+   "baseline": {
+    "arguments": {
+     "image_urls": [
+      "https://cdn.example.com/input/example.jpeg"
+     ],
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "11.200",
+     "usd": "0.700",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/happy-horse/text-to-video",
+   "title": "Happy Horse 1.0",
+   "description": "Generates videos from text or image references with clips up to 15 seconds and 1080p resolution.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Happy Horse",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1",
+       "4:3",
+       "3:4"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "16:9"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/happy-horse-1/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/happy-horse/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "11.200",
+     "usd": "0.700",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/happy-horse/v1.1/image-to-video",
+   "title": "HappyHorse 1.1",
+   "description": "HappyHorse 1.1 - Image to Video. Configured Alibaba route; cloned from hh/image-to-video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Happy horse",
+    "required": [
+     "image_url"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 2
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "1080p"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/happy-horse-1-1/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/happy-horse/v1.1/image-to-video",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "14.400",
+     "usd": "0.900",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/happy-horse/v1.1/reference-to-video",
+   "title": "HappyHorse 1.1",
+   "description": "HappyHorse 1.1 - Reference to Video. Configured Alibaba route; cloned from happy-horse/reference-to-video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Happy horse",
+    "required": [
+     "image_urls",
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 2
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      }
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "1080p"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/happy-horse-1-1/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/happy-horse/v1.1/reference-to-video",
+   "baseline": {
+    "arguments": {
+     "image_urls": [
+      "https://cdn.example.com/input/example.jpeg"
+     ],
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "14.400",
+     "usd": "0.900",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/happy-horse/v1.1/text-to-video",
+   "title": "HappyHorse 1.1",
+   "description": "Generates videos from text or image references with output at 1080p and clips up to 15 seconds.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Happy Horse",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "1080p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1",
+       "4:3",
+       "3:4"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "16:9"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/happy-horse-1-1/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/happy-horse/v1.1/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "14.400",
+     "usd": "0.900",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/qwen-image-3/edit",
+   "title": "Qwen Image 3",
+   "description": "Edit images from an instruction and one to three ordered references with Qwen Image 3.",
+   "operation_type": [
+    "image_edit"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "text2image",
+   "input_schema": {
+    "type": "object",
+    "allOf": [
+     {
+      "if": {
+       "required": [
+        "enable_thinking"
+       ],
+       "properties": {
+        "enable_thinking": {
+         "const": true
+        }
+       }
+      },
+      "then": {
+       "required": [
+        "prompt_extend"
+       ],
+       "properties": {
+        "prompt_extend": {
+         "const": true
+        }
+       }
+      }
+     }
+    ],
+    "title": "Qwen Image 3 Edit",
+    "required": [
+     "prompt",
+     "image_urls"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483647,
+      "minimum": 0,
+      "description": "Optional random seed for similar, reproducible results."
+     },
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Positive prompt or editing instruction in Chinese or English. Alibaba recommends at most 4,500 tokens."
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 3,
+      "minItems": 1,
+      "description": "One to three ordered public image URLs used as editing references."
+     },
+     "resolution": {
+      "enum": [
+       "1k",
+       "2k"
+      ],
+      "type": "string",
+      "default": "1k",
+      "description": "Output resolution tier. Both tiers produce PNG images."
+     },
+     "aspect_ratio": {
+      "enum": [
+       "1:1",
+       "2:3",
+       "3:2",
+       "3:4",
+       "4:3",
+       "7:9",
+       "9:7",
+       "9:16",
+       "16:9",
+       "21:9"
+      ],
+      "type": "string",
+      "default": "1:1",
+      "description": "Output aspect ratio. Exact provider-recommended dimensions are selected automatically."
+     },
+     "prompt_extend": {
+      "type": "boolean",
+      "default": true,
+      "description": "Improve the prompt before generation. Required when thinking mode is enabled."
+     },
+     "enable_thinking": {
+      "type": "boolean",
+      "default": true,
+      "description": "Use model reasoning to improve image quality. Requires prompt enhancement."
+     },
+     "negative_prompt": {
+      "type": "string",
+      "description": "Content, styles, or artifacts to avoid in the output."
+     },
+     "prompt_extend_mode": {
+      "enum": [
+       "direct"
+      ],
+      "type": "string",
+      "default": "direct",
+      "description": "Direct enhancement is available for every request; agent enhancement is text-to-image only."
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/qwen-image-3/edit"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/qwen-image-3/edit",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_urls": [
+      "https://cdn.example.com/input/example.jpeg"
+     ]
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.640",
+     "usd": "0.040",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/qwen-image-3/text-to-image",
+   "title": "Qwen Image 3",
+   "description": "Generates images from English or Chinese text, with enhanced prompts and resolution up to 2K.",
+   "operation_type": [
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "text2image",
+   "input_schema": {
+    "type": "object",
+    "allOf": [
+     {
+      "if": {
+       "required": [
+        "enable_thinking"
+       ],
+       "properties": {
+        "enable_thinking": {
+         "const": true
+        }
+       }
+      },
+      "then": {
+       "required": [
+        "prompt_extend"
+       ],
+       "properties": {
+        "prompt_extend": {
+         "const": true
+        }
+       }
+      }
+     }
+    ],
+    "title": "Qwen Image 3 Text to Image",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483647,
+      "minimum": 0,
+      "description": "Optional random seed for similar, reproducible results."
+     },
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Positive prompt or editing instruction in Chinese or English. Alibaba recommends at most 4,500 tokens."
+     },
+     "resolution": {
+      "enum": [
+       "1k",
+       "2k"
+      ],
+      "type": "string",
+      "default": "1k",
+      "description": "Output resolution tier. Both tiers produce PNG images."
+     },
+     "aspect_ratio": {
+      "enum": [
+       "1:1",
+       "2:3",
+       "3:2",
+       "3:4",
+       "4:3",
+       "7:9",
+       "9:7",
+       "9:16",
+       "16:9",
+       "21:9"
+      ],
+      "type": "string",
+      "default": "1:1",
+      "description": "Output aspect ratio. Exact provider-recommended dimensions are selected automatically."
+     },
+     "prompt_extend": {
+      "type": "boolean",
+      "default": true,
+      "description": "Improve the prompt before generation. Required when thinking mode is enabled."
+     },
+     "enable_thinking": {
+      "type": "boolean",
+      "default": true,
+      "description": "Use model reasoning to improve image quality. Requires prompt enhancement."
+     },
+     "negative_prompt": {
+      "type": "string",
+      "description": "Content, styles, or artifacts to avoid in the output."
+     },
+     "prompt_extend_mode": {
+      "enum": [
+       "direct",
+       "agent"
+      ],
+      "type": "string",
+      "default": "direct",
+      "description": "Direct enhancement is available for every request; agent enhancement is text-to-image only."
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/qwen-image-3/text-to-image"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/qwen-image-3/text-to-image",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.640",
+     "usd": "0.040",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/wan-3.0-prime/image-to-video",
+   "title": "Wan 3.0 Prime Image to Video",
+   "description": "Generate videos from a starting image with Wan 3.0 Prime.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "wan3_0_prime",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 3.0 Prime Image to Video",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "maximum": 2147483647,
+      "minimum": 0
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration (sec)",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 2,
+      "description": "2-30 seconds."
+     },
+     "image_url": {
+      "type": "string",
+      "title": "First Frame",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1080p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "adaptive"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "adaptive"
+     },
+     "end_image_url": {
+      "type": "string",
+      "title": "Last Frame",
+      "format": "uri"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Sound",
+      "default": true
+     },
+     "enable_thinking": {
+      "type": "boolean",
+      "title": "Deep Thinking",
+      "default": false
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-3-prime/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/wan-3.0-prime/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "22.400",
+     "usd": "1.400",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/wan-3.0-prime/reference-to-video",
+   "title": "Wan 3.0 Prime Reference to Video",
+   "description": "Generate videos guided by reference images with Wan 3.0 Prime.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "wan3_0_prime",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 3.0 Prime Reference to Video",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "maximum": 2147483647,
+      "minimum": 0
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration (sec)",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 2,
+      "description": "2-30 seconds."
+     },
+     "file_url": {
+      "type": "string",
+      "title": "Reference Document",
+      "format": "uri",
+      "description": "One document (docx/xlsx/pptx/pdf/md). Forces deep thinking."
+     },
+     "link_url": {
+      "type": "string",
+      "title": "Reference Web Page",
+      "format": "uri",
+      "description": "One public page. Forces deep thinking. Not combinable with file_url."
+     },
+     "audio_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference Audio",
+      "maxItems": 5,
+      "description": "Up to 5 files, 30s total. WAV or MP3."
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference Images",
+      "maxItems": 10
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1080p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference Videos",
+      "maxItems": 5,
+      "description": "Up to 5 clips, 30s total, each 1-30s."
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "adaptive"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "adaptive"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Sound",
+      "default": true
+     },
+     "enable_thinking": {
+      "type": "boolean",
+      "title": "Deep Thinking",
+      "default": false
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-3-prime/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/wan-3.0-prime/reference-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "22.400",
+     "usd": "1.400",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/wan-3.0-prime/text-to-video",
+   "title": "Wan 3.0 Prime Text to Video",
+   "description": "Generates videos from text or media references with fast processing and clips up to 30 seconds.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "wan3_0_prime",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 3.0 Prime Text to Video",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "maximum": 2147483647,
+      "minimum": 0
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration (sec)",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 2,
+      "description": "2-30 seconds."
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1080p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "adaptive"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "adaptive"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Sound",
+      "default": true
+     },
+     "enable_thinking": {
+      "type": "boolean",
+      "title": "Deep Thinking",
+      "default": false
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-3-prime/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/wan-3.0-prime/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "22.400",
+     "usd": "1.400",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "alibaba/wan-3.0/image-to-video",
+   "title": "Wan 3.0 Image to Video",
+   "description": "Generate videos from a starting image with Wan 3.0.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "wan3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 3.0 Image to Video",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "maximum": 2147483647,
+      "minimum": 0
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration (sec)",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 2,
+      "description": "2-30 seconds."
+     },
+     "image_url": {
+      "type": "string",
+      "title": "First Frame",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1080p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "adaptive"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "adaptive"
+     },
+     "end_image_url": {
+      "type": "string",
+      "title": "Last Frame",
+      "format": "uri"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Sound",
+      "default": true
+     },
+     "enable_thinking": {
+      "type": "boolean",
+      "title": "Deep Thinking",
+      "default": false
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-3/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/wan-3.0/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Priced per generated second by resolution: 480p $0.05, 720p $0.10, or 1080p $0.20. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "alibaba/wan-3.0/reference-to-video",
+   "title": "Wan 3.0 Reference to Video",
+   "description": "Generate videos guided by reference images with Wan 3.0.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "wan3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 3.0 Reference to Video",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "maximum": 2147483647,
+      "minimum": 0
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration (sec)",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 2,
+      "description": "2-30 seconds."
+     },
+     "file_url": {
+      "type": "string",
+      "title": "Reference Document",
+      "format": "uri",
+      "description": "One document (docx/xlsx/pptx/pdf/md). Forces deep thinking."
+     },
+     "link_url": {
+      "type": "string",
+      "title": "Reference Web Page",
+      "format": "uri",
+      "description": "One public page. Forces deep thinking. Not combinable with file_url."
+     },
+     "audio_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference Audio",
+      "maxItems": 5,
+      "description": "Up to 5 files, 30s total. WAV or MP3."
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference Images",
+      "maxItems": 10
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1080p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference Videos",
+      "maxItems": 5,
+      "description": "Up to 5 clips, 30s total, each 1-30s."
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "adaptive"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "adaptive"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Sound",
+      "default": true
+     },
+     "enable_thinking": {
+      "type": "boolean",
+      "title": "Deep Thinking",
+      "default": false
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-3/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/wan-3.0/reference-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Priced per generated second by resolution: 480p $0.05, 720p $0.10, or 1080p $0.20. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "alibaba/wan-3.0/text-to-video",
+   "title": "Wan 3.0 Text to Video",
+   "description": "Generates videos from text or images with native audio and adjustable duration up to 30 seconds.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "wan3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 3.0 Text to Video",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "maximum": 2147483647,
+      "minimum": 0
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration (sec)",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 2,
+      "description": "2-30 seconds."
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1080p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "adaptive"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "adaptive"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Sound",
+      "default": true
+     },
+     "enable_thinking": {
+      "type": "boolean",
+      "title": "Deep Thinking",
+      "default": false
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-3/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/alibaba/wan-3.0/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Priced per generated second by resolution: 480p $0.05, 720p $0.10, or 1080p $0.20. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "bytedance/seedance-2.0/image-to-video",
+   "title": "Seedance 2.0",
+   "description": "Generate videos from text with controls for duration, resolution, aspect ratio, and optional audio. Create polished multi-shot stories for ads, social content, and cinematic scenes",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "seedance_2_0",
+   "input_schema": {
+    "type": "object",
+    "required": [
+     "image_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 4
+     },
+     "image_url": {
+      "type": "string",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p",
+       "4k"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "end_image_url": {
+      "type": "string",
+      "format": "uri"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/seedance-2/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/bytedance/seedance-2.0/image-to-video",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Token-metered pricing. Billable video tokens = ceil(generated video seconds × output width × output height × 24 fps / 1024). Image and audio references do not count as video input. Per 1,000 video tokens: 480p/720p/1080p $0.014, 4K $0.008. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "bytedance/seedance-2.0/reference-to-video",
+   "title": "Seedance 2.0",
+   "description": "Seedance 2.0 Reference to Video generates videos from images or existing videos, allowing customization of duration, resolution, aspect ratio, and audio inputs. It supports image-to-video and video-to-video transformations with optional audio generation.",
+   "operation_type": [
+    "image2video",
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "seedance_2_0",
+   "input_schema": {
+    "if": {
+     "required": [
+      "image_urls"
+     ]
+    },
+    "else": {
+     "required": [
+      "video_urls"
+     ]
+    },
+    "type": "object",
+    "required": [],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 4
+     },
+     "audio_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 3,
+      "minItems": 1
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 9,
+      "minItems": 1
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p",
+       "4k"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 3,
+      "minItems": 1
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "21:9"
+      ],
+      "type": "string",
+      "default": "16:9"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/seedance-2/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/bytedance/seedance-2.0/reference-to-video",
+   "baseline": {
+    "arguments": {},
+    "error": ": 'video_urls' is a required property"
+   }
+  },
+  {
+   "slug": "bytedance/seedance-2.0/text-to-video",
+   "title": "Seedance 2.0",
+   "description": "Creates 4K video from text or media references. Supports up to 15 seconds with optional sound.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "seedance_2_0",
+   "input_schema": {
+    "type": "object",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 4
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p",
+       "4k"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "21:9"
+      ],
+      "type": "string",
+      "default": "16:9"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/seedance-2/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/bytedance/seedance-2.0/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Token-metered pricing. Billable video tokens = ceil(generated video seconds × output width × output height × 24 fps / 1024). Image and audio references do not count as video input. Per 1,000 video tokens: 480p/720p/1080p $0.014, 4K $0.008. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "bytedance/seedance-2.5/image-to-video",
+   "title": "Seedance 2.5",
+   "description": "Seedance 2.5 Image to Video generates videos from a single image URL with optional prompts, customizable duration, resolution, and output format. It supports adding an end image and generating audio to enhance the video output.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "seedance_2_5",
+   "input_schema": {
+    "type": "object",
+    "required": [
+     "image_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 4
+     },
+     "image_url": {
+      "type": "string",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "bitrate_mode": {
+      "enum": [
+       "standard",
+       "high"
+      ],
+      "type": "string",
+      "default": "high"
+     },
+     "end_image_url": {
+      "type": "string",
+      "format": "uri"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/seedance-2-5/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/bytedance/seedance-2.5/image-to-video",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "For 16:9 video without video input, your request costs roughly $0.2056 per second of generated video at 480p, $0.4622 at 720p, and $1.1372 at 1080p. Each 1,000 video tokens costs $0.0214 at 480p or 720p and $0.0234 at 1080p. Billable video tokens = ceil(output height × output width × (input video duration + generated video duration) × 24 / 1024). Image and audio references do not count as video input. Actual pricing depends on output dimensions and billable duration. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "bytedance/seedance-2.5/reference-to-video",
+   "title": "Seedance 2.5",
+   "description": "Seedance 2.5 Reference to Video generates videos from images, videos, or audio inputs with customizable duration, resolution, aspect ratio, and output format. It supports image-to-video and video-to-video transformations, allowing creative control through prompts and audio integration.",
+   "operation_type": [
+    "image2video",
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "seedance_2_5",
+   "input_schema": {
+    "if": {
+     "required": [
+      "image_urls"
+     ]
+    },
+    "else": {
+     "if": {
+      "required": [
+       "video_urls"
+      ]
+     },
+     "else": {
+      "required": [
+       "audio_urls"
+      ]
+     }
+    },
+    "type": "object",
+    "required": [],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 4
+     },
+     "audio_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 10,
+      "minItems": 1
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 30,
+      "minItems": 1
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 10,
+      "minItems": 1
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "21:9"
+      ],
+      "type": "string",
+      "default": "16:9"
+     },
+     "bitrate_mode": {
+      "enum": [
+       "standard",
+       "high"
+      ],
+      "type": "string",
+      "default": "high"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/seedance-2-5/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/bytedance/seedance-2.5/reference-to-video",
+   "baseline": {
+    "arguments": {},
+    "error": ": 'audio_urls' is a required property"
+   }
+  },
+  {
+   "slug": "bytedance/seedance-2.5/text-to-video",
+   "title": "Seedance 2.5",
+   "description": "Generates videos from text, images, video, and audio references, with optional audio generation.\nSupports videos up to 30 seconds with customizable resolution, aspect ratio, and output format.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "seedance_2_0",
+   "input_schema": {
+    "type": "object",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 4
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "21:9"
+      ],
+      "type": "string",
+      "default": "16:9"
+     },
+     "bitrate_mode": {
+      "enum": [
+       "standard",
+       "high"
+      ],
+      "type": "string",
+      "default": "high"
+     },
+     "output_format": {
+      "enum": [
+       "mp4",
+       "mov"
+      ],
+      "type": "string",
+      "default": "mp4"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/seedance-2-5/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/bytedance/seedance-2.5/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "For 16:9 video without video input, your request costs roughly $0.2056 per second of generated video at 480p, $0.4622 at 720p, and $1.1372 at 1080p. Each 1,000 video tokens costs $0.0214 at 480p or 720p and $0.0234 at 1080p. Billable video tokens = ceil(output height × output width × (input video duration + generated video duration) × 24 / 1024). Image and audio references do not count as video input. Actual pricing depends on output dimensions and billable duration. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "bytedance/seedance-2.5/video-edit",
+   "title": "Seedance 2.5",
+   "description": "Generate videos from text, images, video, and audio references, with clips up to 30 seconds.\nAnimate images, edit or extend existing footage, and generate audio alongside your video.",
+   "operation_type": [
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "seedance_2_5",
+   "input_schema": {
+    "type": "object",
+    "required": [
+     "prompt",
+     "video_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "video_url": {
+      "type": "string",
+      "format": "uri"
+     },
+     "audio_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 10,
+      "minItems": 1
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 30,
+      "minItems": 1
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 10,
+      "minItems": 1
+     },
+     "bitrate_mode": {
+      "enum": [
+       "standard",
+       "high"
+      ],
+      "type": "string",
+      "default": "high"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/seedance-2-5/video-edit"
+   ],
+   "console": "https://console.higgsfield.ai/models/bytedance/seedance-2.5/video-edit",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "video_url": "https://cdn.example.com/input/example.mp4"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Video input is required. Each 1,000 video tokens costs $0.01284 at 480p or 720p and $0.01404 at 1080p (0.6× the no-video-input rate). For 16:9 output, this is roughly $0.1234 at 480p, $0.2773 at 720p, and $0.6823 at 1080p per second of combined input and generated video duration. Both input and generated video durations are billable. Billable video tokens = ceil(output height × output width × (input video duration + generated video duration) × 24 / 1024). Image and audio references do not count as video input. Actual pricing depends on output dimensions and billable duration. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "bytedance/seedance-2.5/video-extend",
+   "title": "Seedance 2.5",
+   "description": "Seedance 2.5 Video Extend generates extended video content from an input video URL and text prompt, supporting up to 30 seconds duration and optional audio or image inputs. It outputs videos in 480p or 720p resolution with mp4 or mov format, allowing control over audio generation and multiple media inputs.",
+   "operation_type": [
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "seedance_2_5",
+   "input_schema": {
+    "type": "object",
+    "required": [
+     "prompt",
+     "video_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 4
+     },
+     "video_url": {
+      "type": "string",
+      "format": "uri"
+     },
+     "audio_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 10,
+      "minItems": 1
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 30,
+      "minItems": 1
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 10,
+      "minItems": 1
+     },
+     "bitrate_mode": {
+      "enum": [
+       "standard",
+       "high"
+      ],
+      "type": "string",
+      "default": "high"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/seedance-2-5/video-extend"
+   ],
+   "console": "https://console.higgsfield.ai/models/bytedance/seedance-2.5/video-extend",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "video_url": "https://cdn.example.com/input/example.mp4"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Video input is required. Each 1,000 video tokens costs $0.01284 at 480p or 720p and $0.01404 at 1080p (0.6× the no-video-input rate). For 16:9 output, this is roughly $0.1234 at 480p, $0.2773 at 720p, and $0.6823 at 1080p per second of combined input and generated video duration. Both input and generated video durations are billable. Billable video tokens = ceil(output height × output width × (input video duration + generated video duration) × 24 / 1024). Image and audio references do not count as video input. Actual pricing depends on output dimensions and billable duration. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "higgsfield-ai/soul/standard",
+   "title": "Soul Standard",
+   "description": "Generates fashion and lifestyle photos from text, with style presets for editorial and social content.",
+   "operation_type": [
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "1.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Soul Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "default": null,
+      "maximum": 1000000,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "style_id": {
+      "type": "string",
+      "title": "Soul Style",
+      "format": "uuid",
+      "default": null
+     },
+     "batch_size": {
+      "enum": [
+       1,
+       4
+      ],
+      "type": "integer",
+      "title": "Result images",
+      "default": 1
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "9:16",
+       "16:9",
+       "4:3",
+       "3:4",
+       "1:1",
+       "2:3",
+       "3:2"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "4:3"
+     },
+     "enhance_prompt": {
+      "type": "boolean",
+      "title": "Enhance Prompt",
+      "default": true
+     },
+     "style_strength": {
+      "type": "number",
+      "title": "Style strength",
+      "format": "float",
+      "default": 1,
+      "maximum": 1,
+      "minimum": 0
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/soul-standard/generate"
+   ],
+   "console": "https://console.higgsfield.ai/models/higgsfield-ai/soul/standard",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "1.500",
+     "usd": "0.094",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "higgsfield-ai/soul/v2/image-to-image",
+   "title": "Soul 2",
+   "description": "Generate images from a reference image with Soul 2.",
+   "operation_type": [
+    "image_edit"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Soul V2 Image to Image",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "default": null,
+      "maximum": 1000000,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "style_id": {
+      "type": "string",
+      "title": "Soul Style",
+      "format": "uuid"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Reference image",
+      "format": "uri",
+      "minLength": 1
+     },
+     "batch_size": {
+      "enum": [
+       1,
+       4
+      ],
+      "type": "integer",
+      "title": "Result images",
+      "default": 1
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "9:16",
+       "16:9",
+       "4:3",
+       "3:4",
+       "1:1",
+       "2:3",
+       "3:2"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "4:3"
+     },
+     "enhance_prompt": {
+      "type": "boolean",
+      "title": "Enhance Prompt",
+      "default": true
+     },
+     "custom_reference_id": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "title": "Soul ID",
+      "format": "uuid",
+      "default": null,
+      "description": "ID of a completed Soul ID trained with model_version v2 in your API account. Create one using POST /v1/custom-references."
+     },
+     "custom_reference_strength": {
+      "type": "number",
+      "title": "Soul ID strength",
+      "default": 1.0,
+      "maximum": 1,
+      "minimum": 0,
+      "description": "Strength of the custom reference, from 0 to 1. Used when custom_reference_id is provided."
+     }
+    }
+   },
+   "docs": [],
+   "console": "https://console.higgsfield.ai/models/higgsfield-ai/soul/v2/image-to-image",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.050",
+     "usd": "0.004",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "higgsfield-ai/soul/v2/standard",
+   "title": "Soul 2",
+   "description": "Generates realistic portraits and fashion images, with natural textures and curated editorial styles.",
+   "operation_type": [
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Soul V2 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "default": null,
+      "maximum": 1000000,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "style_id": {
+      "type": "string",
+      "title": "Soul Style",
+      "format": "uuid"
+     },
+     "batch_size": {
+      "enum": [
+       1,
+       4
+      ],
+      "type": "integer",
+      "title": "Result images",
+      "default": 1
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "9:16",
+       "16:9",
+       "4:3",
+       "3:4",
+       "1:1",
+       "2:3",
+       "3:2"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "4:3"
+     },
+     "enhance_prompt": {
+      "type": "boolean",
+      "title": "Enhance Prompt",
+      "default": true
+     },
+     "custom_reference_id": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "title": "Soul ID",
+      "format": "uuid",
+      "default": null,
+      "description": "ID of a completed Soul ID trained with model_version v2 in your API account. Create one using POST /v1/custom-references."
+     },
+     "custom_reference_strength": {
+      "type": "number",
+      "title": "Soul ID strength",
+      "default": 1.0,
+      "maximum": 1,
+      "minimum": 0,
+      "description": "Strength of the custom reference, from 0 to 1. Used when custom_reference_id is provided."
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/soul-2/generate"
+   ],
+   "console": "https://console.higgsfield.ai/models/higgsfield-ai/soul/v2/standard",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.050",
+     "usd": "0.004",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "higgsfield/cinema-studio/4.0",
+   "title": "Cinema Studio 4.0",
+   "description": "Generates cinematic videos from text, image, or video references with automatic scene direction.\nSupports videos up to 30 seconds, optional sound, and customizable resolution and aspect ratio.",
+   "operation_type": [
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": true,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "era": {
+      "enum": [
+       "1960s",
+       "1980s",
+       "1990s",
+       "2000s",
+       "2020s"
+      ],
+      "type": "string"
+     },
+     "genre": {
+      "enum": [
+       "epic",
+       "drama",
+       "noir",
+       "comedy",
+       "horror",
+       "action"
+      ],
+      "type": "string"
+     },
+     "light": {
+      "enum": [
+       "silhouette",
+       "practicals",
+       "window",
+       "overhead-fall",
+       "contre-jour",
+       "soft-cross"
+      ],
+      "type": "string"
+     },
+     "pacing": {
+      "enum": [
+       "chaotic",
+       "dynamic",
+       "calm",
+       "single-shot"
+      ],
+      "type": "string"
+     },
+     "prompt": {
+      "type": "string",
+      "pattern": "\\S",
+      "minLength": 1
+     },
+     "duration": {
+      "type": "integer",
+      "default": 5,
+      "maximum": 30,
+      "minimum": 4
+     },
+     "audio_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 10
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 30
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "maxItems": 10
+     },
+     "camera_lens": {
+      "enum": [
+       "clean-sharp",
+       "anamorphic",
+       "vintage-anamorphic",
+       "warm-vintage",
+       "halation-vintage"
+      ],
+      "type": "string"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16",
+       "21:9"
+      ],
+      "type": "string",
+      "default": "16:9"
+     },
+     "camera_model": {
+      "enum": [
+       "modern",
+       "35mm-film",
+       "8mm-film",
+       "dv-camcorder"
+      ],
+      "type": "string"
+     },
+     "color_palette": {
+      "enum": [
+       "static-noon",
+       "twilight-fable",
+       "back-row-kissing-seats",
+       "on-the-other-side-of-the-porthole",
+       "the-emerald-ambush",
+       "highway-standoff",
+       "the-faded-fresco",
+       "oil-ochre",
+       "the-mountain-convent",
+       "ghost-in-the-code",
+       "pink-velvet",
+       "two-days-to-the-horizon",
+       "industrial-fog",
+       "stairs-go-up",
+       "field-post",
+       "home-is-the-next-gas-station",
+       "glossy-flesh",
+       "the-crimson-ballet",
+       "neon-rain-at-midnight",
+       "the-morning-after-rain",
+       "the-iron-borough",
+       "the-ground",
+       "the-investigation",
+       "turquoise-mirage",
+       "a-dream-in-color",
+       "breakfast-on-schedule",
+       "favela-gold",
+       "a-hotel-for-one",
+       "after-dark",
+       "crimson-vigi",
+       "the-neighbors-saw-everything",
+       "the-grey-channel",
+       "mirage-at-noon",
+       "bubblegum-boulevard",
+       "yellow-room",
+       "the-earth-keeps-things-reluctantly",
+       "tropic-fever-dream",
+       "bioluminescent-night",
+       "dont-turn-it-off-im-watching",
+       "the-silk-curtain-falls",
+       "the-butterfly",
+       "playtime",
+       "wallpaper-romance",
+       "overtime",
+       "the-way-home-is-longer",
+       "everyone-speaks-in-whispers",
+       "runaway-summer",
+       "amber-wasteland",
+       "the-circus",
+       "gasoline-sunset"
+      ],
+      "type": "string"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "default": true
+     },
+     "camera_aperture": {
+      "enum": [
+       "f14-wide-open",
+       "f4-moderate",
+       "f11-deep-focus"
+      ],
+      "type": "string"
+     },
+     "camera_movement": {
+      "enum": [
+       "snorricam",
+       "robot-arm",
+       "tilt-up",
+       "rack-focus",
+       "tilt-down",
+       "pov",
+       "pan-left",
+       "crane-up",
+       "pan-right",
+       "crane-down",
+       "side-tracking",
+       "pedestal-up",
+       "pedestal-down",
+       "handheld",
+       "tracking",
+       "drone-orbit",
+       "dolly-zoom",
+       "aerial-pullback",
+       "static-shot",
+       "bullet-time",
+       "whip-pan",
+       "slow-zoom-in",
+       "arc-left",
+       "slow-zoom-out",
+       "arc-right",
+       "truck-right",
+       "dolly-in",
+       "truck-left",
+       "dolly-out",
+       "slider-right",
+       "crush-zoom",
+       "slider-left",
+       "helicopter-shot"
+      ],
+      "type": "string"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/cinema-studio-4/generate"
+   ],
+   "console": "https://console.higgsfield.ai/models/higgsfield/cinema-studio/4.0",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Token-metered pricing. Billable video tokens = ceil((input video seconds + generated video seconds) × output width × output height × 24 fps / 1024). Image and audio references do not count as video input. At 480p or 720p, each 1,000 video tokens cost $0.0214 without video input or $0.01284 with video input (0.6× the standard rate). With video references, both input and generated video durations are billable. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "higgsfield/genjutsu/motion-transfer/v1.0",
+   "title": "Genjutsu",
+   "description": "Transforms existing videos using image references for different characters, locations, and styles,\r\npreserving the original motion, camera movement, and timing throughout the resulting video clip.",
+   "operation_type": [
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "MotionTransferParams",
+    "required": [
+     "video_url",
+     "image_urls"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "default": "",
+      "maxLength": 10000
+     },
+     "video_url": {
+      "type": "string",
+      "title": "Video Url",
+      "format": "uri",
+      "maxLength": 2083,
+      "minLength": 1
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri",
+       "maxLength": 2083,
+       "minLength": 1
+      },
+      "title": "Image Urls",
+      "maxItems": 8,
+      "minItems": 1
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "480p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/genjutsu/motion-transfer"
+   ],
+   "console": "https://console.higgsfield.ai/models/higgsfield/genjutsu/motion-transfer/v1.0",
+   "baseline": {
+    "arguments": {
+     "video_url": "https://cdn.example.com/input/example.mp4",
+     "image_urls": [
+      "https://cdn.example.com/input/example.jpeg"
+     ]
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Per-second pricing. Each second of input video costs $0.318 at 480p, $0.681 at 720p, $1.632 at 1080p. Input duration is rounded up to the nearest whole second. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "higgsfield/genjutsu/object-swap/v1.0",
+   "title": "Genjutsu",
+   "description": "One video. Endless ways to reimagine it.",
+   "operation_type": [
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "ObjectSwapParams",
+    "required": [
+     "video_url",
+     "image_urls"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "default": "",
+      "maxLength": 10000
+     },
+     "video_url": {
+      "type": "string",
+      "title": "Video Url",
+      "format": "uri",
+      "maxLength": 2083,
+      "minLength": 1
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri",
+       "maxLength": 2083,
+       "minLength": 1
+      },
+      "title": "Image Urls",
+      "maxItems": 8,
+      "minItems": 1
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "480p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/genjutsu/object-swap"
+   ],
+   "console": "https://console.higgsfield.ai/models/higgsfield/genjutsu/object-swap/v1.0",
+   "baseline": {
+    "arguments": {
+     "video_url": "https://cdn.example.com/input/example.mp4",
+     "image_urls": [
+      "https://cdn.example.com/input/example.jpeg"
+     ]
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Per-second pricing. Each second of input video costs $0.318 at 480p, $0.681 at 720p, $1.632 at 1080p. Input duration is rounded up to the nearest whole second. Rates shown are before any applicable customer discount."
+    }
+   }
+  },
+  {
+   "slug": "higgsfield/genjutsu/restyle/v1.0",
+   "title": "Genjutsu",
+   "description": "Restyle a video with a selected visual preset while preserving its motion and source audio.",
+   "operation_type": [
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Genjutsu Restyle",
+    "required": [
+     "video_url",
+     "preset_id"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "default": "",
+      "maxLength": 10000
+     },
+     "preset_id": {
+      "type": "string",
+      "title": "Style preset",
+      "format": "uuid"
+     },
+     "video_url": {
+      "type": "string",
+      "title": "Source video",
+      "format": "uri",
+      "minLength": 1,
+      "description": "Source video, 4–30 seconds. Longer videos are trimmed to 30 seconds."
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri",
+       "minLength": 1
+      },
+      "title": "Character images",
+      "default": [],
+      "maxItems": 5,
+      "description": "Optional character references. Leave empty to restyle the source frame."
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/genjutsu/restyle"
+   ],
+   "console": "https://console.higgsfield.ai/models/higgsfield/genjutsu/restyle/v1.0",
+   "baseline": {
+    "arguments": {
+     "video_url": "https://cdn.example.com/input/example.mp4",
+     "preset_id": "estimate"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Roughly costs $0.318 per second at 480p, $0.681 per second at 720p, or $1.632 per second at 1080p."
+    }
+   }
+  },
+  {
+   "slug": "ideogram/v4.0",
+   "title": "Ideogram 4.0",
+   "description": "Generates and edits images with multilingual text for posters, packaging and other graphic layouts.",
+   "operation_type": [
+    "image_edit",
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Ideogram 4.0 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 2048,
+      "minLength": 2,
+      "description": "Write your prompt here"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Input image",
+      "format": "uri"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "1:1",
+       "1:2",
+       "2:1",
+       "2:3",
+       "3:2",
+       "4:5",
+       "5:4",
+       "9:16",
+       "16:9",
+       "5:8",
+       "8:5",
+       "3:4",
+       "4:3",
+       "9:22",
+       "22:9",
+       "9:23",
+       "23:9",
+       "3:8",
+       "8:3",
+       "5:12",
+       "12:5",
+       "1:3",
+       "3:1"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "1:1"
+     },
+     "image_weight": {
+      "type": "integer",
+      "title": "Image weight",
+      "maximum": 100,
+      "minimum": 1,
+      "description": "How strongly the output should preserve the input image."
+     },
+     "rendering_speed": {
+      "enum": [
+       "TURBO",
+       "DEFAULT",
+       "QUALITY"
+      ],
+      "type": "string",
+      "title": "Rendering speed",
+      "default": "DEFAULT"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/ideogram-4/generate"
+   ],
+   "console": "https://console.higgsfield.ai/models/ideogram/v4.0",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.960",
+     "usd": "0.060",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/motion-control/pro",
+   "title": "Kling 2.6",
+   "description": "Kling 2.6 Motion Control (Pro) generates videos by animating a source image using the motion from a provided video. Users can control character orientation and choose to retain the original video's sound for customized video creation.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling2_6_motion_control",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling Motion Control Playground",
+    "required": [
+     "image_url",
+     "video_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "default": "",
+      "description": "Write your prompt here"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "video_url": {
+      "type": "string",
+      "title": "Video URL",
+      "format": "uri"
+     },
+     "keep_original_sound": {
+      "enum": [
+       "yes",
+       "no"
+      ],
+      "type": "string",
+      "title": "Keep original sound",
+      "default": "yes"
+     },
+     "character_orientation": {
+      "enum": [
+       "image",
+       "video"
+      ],
+      "type": "string",
+      "title": "Character orientation",
+      "default": "video",
+      "description": "Generate the orientation of the characters in the video, which can be selected to match the image or the video"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-2-6-motion-control/pro"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/motion-control/pro",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg",
+     "video_url": "https://cdn.example.com/input/example.mp4"
+    },
+    "error": "Internal Server Error"
+   }
+  },
+  {
+   "slug": "kling-video/motion-control/std",
+   "title": "Kling 2.6",
+   "description": "Kling 2.6 Motion Control (Standard) generates videos by animating a source image using motion from a reference video. Users provide an image URL and a video URL, with options to keep the original sound and align character orientation to either the image or video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling2_6_motion_control",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling Motion Control Playground",
+    "required": [
+     "image_url",
+     "video_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "default": "",
+      "description": "Write your prompt here"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "video_url": {
+      "type": "string",
+      "title": "Video URL",
+      "format": "uri"
+     },
+     "keep_original_sound": {
+      "enum": [
+       "yes",
+       "no"
+      ],
+      "type": "string",
+      "title": "Keep original sound",
+      "default": "yes"
+     },
+     "character_orientation": {
+      "enum": [
+       "image",
+       "video"
+      ],
+      "type": "string",
+      "title": "Character orientation",
+      "default": "video",
+      "description": "Generate the orientation of the characters in the video, which can be selected to match the image or the video"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-2-6-motion-control/std"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/motion-control/std",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg",
+     "video_url": "https://cdn.example.com/input/example.mp4"
+    },
+    "error": "Internal Server Error"
+   }
+  },
+  {
+   "slug": "kling-video/o3/first-last-frame",
+   "title": "Kling O3",
+   "description": "Generates and edits videos using image or video references, multi-shot scenes and native sound.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling_o3_flf",
+   "input_schema": {
+    "if": {
+     "properties": {
+      "multi_shots": {
+       "const": true
+      }
+     }
+    },
+    "else": {
+     "required": [
+      "prompt",
+      "first_frame_url"
+     ]
+    },
+    "then": {
+     "required": [
+      "multi_prompt",
+      "first_frame_url"
+     ]
+    },
+    "type": "object",
+    "title": "Kling O3 Playground",
+    "properties": {
+     "mode": {
+      "enum": [
+       "std",
+       "pro",
+       "4k"
+      ],
+      "type": "string",
+      "default": "pro"
+     },
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "default": "off"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string"
+     },
+     "multi_prompt": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "prompt": {
+         "type": "string",
+         "maxLength": 512
+        },
+        "duration": {
+         "type": "integer",
+         "maximum": 15,
+         "minimum": 1
+        }
+       }
+      },
+      "maxItems": 6,
+      "minItems": 1
+     },
+     "last_frame_url": {
+      "type": "string",
+      "title": "Last frame URL",
+      "format": "uri"
+     },
+     "first_frame_url": {
+      "type": "string",
+      "title": "First frame URL",
+      "format": "uri"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-o3/first-last-frame"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/o3/first-last-frame",
+   "baseline": {
+    "arguments": {},
+    "error": ": 'prompt' is a required property"
+   }
+  },
+  {
+   "slug": "kling-video/o3/image-reference",
+   "title": "Kling O3",
+   "description": "Kling O3 Image Reference generates videos from one or multiple images using customizable prompts and settings like duration, aspect ratio, and sound. It supports both single and multi-shot workflows with options for intelligent or customized shot types.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling_o3_image_reference",
+   "input_schema": {
+    "if": {
+     "properties": {
+      "multi_shots": {
+       "const": true
+      }
+     }
+    },
+    "else": {
+     "required": [
+      "prompt"
+     ]
+    },
+    "then": {
+     "required": [
+      "multi_prompt"
+     ]
+    },
+    "type": "object",
+    "title": "Kling Omni Playground",
+    "properties": {
+     "mode": {
+      "enum": [
+       "std",
+       "pro",
+       "4k"
+      ],
+      "type": "string",
+      "default": "std"
+     },
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "default": "off"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "shot_type": {
+      "enum": [
+       "customize",
+       "intelligent"
+      ],
+      "type": "string",
+      "default": "customize"
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      }
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string"
+     },
+     "multi_prompt": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "prompt": {
+         "type": "string",
+         "maxLength": 512
+        },
+        "duration": {
+         "type": "integer",
+         "maximum": 15,
+         "minimum": 0
+        }
+       }
+      },
+      "maxItems": 6,
+      "minItems": 1
+     },
+     "last_frame_url": {
+      "type": "string",
+      "title": "Last frame URL",
+      "format": "uri"
+     },
+     "first_frame_url": {
+      "type": "string",
+      "title": "First frame URL",
+      "format": "uri"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-o3/image-reference"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/o3/image-reference",
+   "baseline": {
+    "arguments": {},
+    "error": ": 'prompt' is a required property"
+   }
+  },
+  {
+   "slug": "kling-video/o3/video-edit",
+   "title": "Kling O3",
+   "description": "Kling O3 Video Edit generates edited videos from a single input video URL and optional images or elements, guided by a text prompt. Users can select modes including standard, professional, or 4K to customize output quality.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling_video_edit",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling O3 Playground",
+    "required": [
+     "prompt",
+     "video_urls"
+    ],
+    "properties": {
+     "mode": {
+      "enum": [
+       "std",
+       "pro",
+       "4k"
+      ],
+      "type": "string",
+      "default": "pro"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 0
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "maxItems": 4,
+      "minItems": 0
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "maxItems": 1,
+      "minItems": 1
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-o3/video-edit"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/o3/video-edit",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "video_urls": [
+      "https://cdn.example.com/input/example.mp4"
+     ]
+    },
+    "error": "Internal Server Error"
+   }
+  },
+  {
+   "slug": "kling-video/o3/video-reference",
+   "title": "Kling O3",
+   "description": "Kling O3 Video Reference generates videos based on a text prompt and a single reference video URL. Users can customize duration, aspect ratio, and optionally include images or elements to influence the output.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling_video_reference",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling O3 Playground",
+    "required": [
+     "prompt",
+     "video_urls"
+    ],
+    "properties": {
+     "mode": {
+      "enum": [
+       "std",
+       "pro"
+      ],
+      "type": "string",
+      "default": "pro"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 10,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 0
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "maxItems": 4,
+      "minItems": 0
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "maxItems": 1,
+      "minItems": 1
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-o3/video-reference"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/o3/video-reference",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "video_urls": [
+      "https://cdn.example.com/input/example.mp4"
+     ]
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "13.440",
+     "usd": "0.840",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/omni/first-last-frame",
+   "title": "Kling Omni",
+   "description": "Generates and edits videos using image or video references and controls for start and end frames.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling_omni_flf",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling Omni Playground",
+    "required": [
+     "prompt",
+     "first_frame_url"
+    ],
+    "properties": {
+     "mode": {
+      "enum": [
+       "std",
+       "pro"
+      ],
+      "type": "string",
+      "default": "pro"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "default": "16:9"
+     },
+     "last_frame_url": {
+      "type": "string",
+      "title": "Last frame URL",
+      "format": "uri"
+     },
+     "first_frame_url": {
+      "type": "string",
+      "title": "First frame URL",
+      "format": "uri"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-omni/first-last-frame"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/omni/first-last-frame",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "first_frame_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.960",
+     "usd": "0.560",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/omni/image-reference",
+   "title": "Kling Omni",
+   "description": "Kling Omni Image Reference generates videos from images and text prompts, allowing customization of duration, aspect ratio, and elements. It supports modes for standard or professional output, making it suitable for creating dynamic video content from static images.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling_omni_image_reference",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling Omni Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "mode": {
+      "enum": [
+       "std",
+       "pro"
+      ],
+      "type": "string",
+      "default": "pro"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 10,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      }
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "default": "16:9"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-omni/image-reference"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/omni/image-reference",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.960",
+     "usd": "0.560",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/omni/video-edit",
+   "title": "Kling Omni",
+   "description": "Kling Omni Video Edit enables video generation from a single input video URL combined with text prompts and optional images or elements. Users can select between standard and pro modes to customize the editing process.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling_video_edit",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling Omni Playground",
+    "required": [
+     "prompt",
+     "video_urls"
+    ],
+    "properties": {
+     "mode": {
+      "enum": [
+       "std",
+       "pro"
+      ],
+      "type": "string",
+      "default": "pro"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 0
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "maxItems": 4,
+      "minItems": 0
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "maxItems": 1,
+      "minItems": 1
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-omni/video-edit"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/omni/video-edit",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "video_urls": [
+      "https://cdn.example.com/input/example.mp4"
+     ]
+    },
+    "error": "Internal Server Error"
+   }
+  },
+  {
+   "slug": "kling-video/omni/video-reference",
+   "title": "Kling Omni",
+   "description": "Kling Omni Video Reference generates videos from a single input video URL combined with a text prompt and optional images or elements. It supports customizable duration and aspect ratios, enabling creative video synthesis based on reference footage.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling_video_reference",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling Omni Playground",
+    "required": [
+     "prompt",
+     "video_urls"
+    ],
+    "properties": {
+     "mode": {
+      "enum": [
+       "std",
+       "pro"
+      ],
+      "type": "string",
+      "default": "pro"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro"
+       ],
+       "type": "string",
+       "default": "pro"
+      },
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 10,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 0
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "maxItems": 4,
+      "minItems": 0
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "maxItems": 1,
+      "minItems": 1
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "default": "16:9"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-omni/video-reference"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/omni/video-reference",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "video_urls": [
+      "https://cdn.example.com/input/example.mp4"
+     ]
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "13.440",
+     "usd": "0.840",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v2.5-turbo/pro/image-to-video",
+   "title": "Kling 2.5 Turbo Pro",
+   "description": "Kling 2.5 Turbo Pro converts a single image into a short video clip using a text prompt to guide the animation style. Users can specify video duration, CFG scale for prompt adherence, and provide negative prompts to refine output.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 2.5 Playground",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative Prompt",
+      "default": ""
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-2-5-turbo/pro-image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v2.5-turbo/pro/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "5.600",
+     "usd": "0.350",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v2.5-turbo/pro/text-to-video",
+   "title": "Kling 2.5 Turbo Pro",
+   "description": "Provides high-end text-to-video output featuring seamless movement, cinematic-quality imagery, and standout prompt fidelity",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 2.5 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative Prompt",
+      "default": ""
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-2-5-turbo/pro-text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v2.5-turbo/pro/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "5.600",
+     "usd": "0.350",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v2.5-turbo/standard/image-to-video",
+   "title": "Kling 2.5 Turbo Standard",
+   "description": "Generates videos from text prompts and images, with fast generation and precise prompt control.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 2.5 Playground",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative Prompt",
+      "default": ""
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-2-5-turbo/standard-image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v2.5-turbo/standard/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "3.360",
+     "usd": "0.210",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v2.6/pro/image-to-video",
+   "title": "Kling 2.6 Pro",
+   "description": "Kling 2.6 Pro Image to Video generates short videos from a single image URL using a text prompt to guide the transformation. Users can customize video duration, aspect ratio, sound inclusion, and CFG scale to control creativity and output style.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling2_6",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 2.6 Playground",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "title": "Generate sound",
+      "default": "on"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "title": "Aspect ratio"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-2-6/pro-image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v2.6/pro/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "11.200",
+     "usd": "0.700",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v2.6/pro/text-to-video",
+   "title": "Kling 2.6 Pro",
+   "description": "Generates videos and sound from text or images, including dialogue, sound effects and ambience.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling2_6",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 2.6 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "title": "Generate sound",
+      "default": "on"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-2-6/pro-text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v2.6/pro/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "11.200",
+     "usd": "0.700",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3.0-turbo/image-to-video",
+   "title": "Kling 3.0 Turbo",
+   "description": "Kling 3.0 Turbo converts a single image into a short video clip using a text prompt to guide the animation. Users can specify the video duration between 3 to 15 seconds and choose between 720p or 1080p resolution for output.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0_turbo",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 3.0 Turbo",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3/turbo-image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3.0-turbo/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.960",
+     "usd": "0.560",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3.0-turbo/text-to-video",
+   "title": "Kling 3.0 Turbo",
+   "description": "Kling 3.0 Turbo generates videos from text prompts, allowing customization of duration (3 to 15 seconds), resolution (720p or 1080p), and aspect ratio (16:9, 9:16, or 1:1). This variant focuses on efficient text-to-video creation with flexible output settings.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0_turbo",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 3.0 Turbo",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3/turbo-text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3.0-turbo/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.960",
+     "usd": "0.560",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3.0/4k/image-to-video",
+   "title": "Kling 3.0 4k",
+   "description": "Kling 3.0 4K converts a single image URL into a video up to 15 seconds long, with optional sound generation and multi-shot or multi-prompt support. Users can customize duration, prompts, and configuration scale to influence the video output.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 3.0 Playground",
+    "required": [
+     "image_url"
+    ],
+    "properties": {
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "title": "Generate sound",
+      "default": "on"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "multi_prompt": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "prompt": {
+         "type": "string",
+         "maxLength": 512
+        },
+        "duration": {
+         "type": "integer",
+         "maximum": 15,
+         "minimum": 1
+        }
+       }
+      },
+      "maxItems": 6,
+      "minItems": 0
+     },
+     "last_image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3/4k-image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3.0/4k/image-to-video",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "33.600",
+     "usd": "2.100",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3.0/4k/text-to-video",
+   "title": "Kling 3.0",
+   "description": "Generates videos from text or images, with optional audio generation and output in 4K resolution.\nSupports multi-shot sequences, start and end frames, and video durations from 3 to 15 seconds.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 3.0 Playground",
+    "properties": {
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "title": "Generate sound",
+      "default": "on"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     },
+     "multi_prompt": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "prompt": {
+         "type": "string",
+         "maxLength": 512
+        },
+        "duration": {
+         "type": "integer",
+         "maximum": 15,
+         "minimum": 1
+        }
+       }
+      },
+      "maxItems": 6,
+      "minItems": 0
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3/4k-text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3.0/4k/text-to-video",
+   "baseline": {
+    "arguments": {},
+    "estimate": {
+     "type": "estimate",
+     "credits": "33.600",
+     "usd": "2.100",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3.0/pro/image-to-video",
+   "title": "Kling 3.0 Pro",
+   "description": "Kling 3.0 Image to Video (Pro) generates videos from a single image URL with optional sound and customizable duration up to 15 seconds. It supports multi-shot sequences with multiple prompts and fine-tuning via CFG scale for creative video outputs.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 3.0 Playground",
+    "required": [
+     "image_url"
+    ],
+    "properties": {
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "title": "Generate sound",
+      "default": "on"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "multi_prompt": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "prompt": {
+         "type": "string",
+         "maxLength": 512
+        },
+        "duration": {
+         "type": "integer",
+         "maximum": 15,
+         "minimum": 1
+        }
+       }
+      },
+      "maxItems": 6,
+      "minItems": 0
+     },
+     "last_image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3/pro-image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3.0/pro/image-to-video",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "13.440",
+     "usd": "0.840",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3.0/pro/text-to-video",
+   "title": "Kling 3.0 Pro",
+   "description": "Kling 3.0 Text to Video (Pro) generates videos from text prompts with customizable duration, aspect ratio, and sound options. It supports multi-shot sequences and fine-tuning via CFG scale for creative video outputs.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 3.0 Playground",
+    "properties": {
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "title": "Generate sound",
+      "default": "on"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     },
+     "multi_prompt": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "prompt": {
+         "type": "string",
+         "maxLength": 512
+        },
+        "duration": {
+         "type": "integer",
+         "maximum": 15,
+         "minimum": 1
+        }
+       }
+      },
+      "maxItems": 6,
+      "minItems": 0
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3/pro-text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3.0/pro/text-to-video",
+   "baseline": {
+    "arguments": {},
+    "estimate": {
+     "type": "estimate",
+     "credits": "13.440",
+     "usd": "0.840",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3.0/std/image-to-video",
+   "title": "Kling 3.0 Standard",
+   "description": "Kling 3.0 Standard converts a single image URL into a video clip with optional sound and customizable duration up to 15 seconds. Users can enhance the output with prompts, multiple shots, and control the CFG scale for creative variation.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 3.0 Playground",
+    "required": [
+     "image_url"
+    ],
+    "properties": {
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "title": "Generate sound",
+      "default": "on"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "multi_prompt": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "prompt": {
+         "type": "string",
+         "maxLength": 512
+        },
+        "duration": {
+         "type": "integer",
+         "maximum": 15,
+         "minimum": 1
+        }
+       }
+      },
+      "maxItems": 6,
+      "minItems": 1
+     },
+     "last_image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3/standard-image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3.0/std/image-to-video",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "10.080",
+     "usd": "0.630",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3.0/std/text-to-video",
+   "title": "Kling 3.0 Standard",
+   "description": "Generates multi-shot videos from text or images, with native audio and durations up to 15 seconds.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling 3.0 Playground",
+    "properties": {
+     "sound": {
+      "enum": [
+       "on",
+       "off"
+      ],
+      "type": "string",
+      "title": "Generate sound",
+      "default": "on"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 3
+     },
+     "elements": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "cfg_scale": {
+      "type": "number",
+      "title": "CFG Scale",
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "multipleOf": 0.01
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     },
+     "multi_prompt": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "prompt": {
+         "type": "string",
+         "maxLength": 512
+        },
+        "duration": {
+         "type": "integer",
+         "maximum": 15,
+         "minimum": 1
+        }
+       }
+      },
+      "maxItems": 6,
+      "minItems": 1
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3/standard-text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3.0/std/text-to-video",
+   "baseline": {
+    "arguments": {},
+    "estimate": {
+     "type": "estimate",
+     "credits": "10.080",
+     "usd": "0.630",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "kling-video/v3/motion-control/pro",
+   "title": "Kling 3.0",
+   "description": "Kling 3.0 Motion Control (Pro) generates videos by animating a source image according to the motion in a provided video. Users can control character orientation and choose to retain the original video's sound for customized motion-driven video creation.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0_motion_control",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling V3 Motion Control Playground",
+    "required": [
+     "image_url",
+     "video_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "default": "",
+      "description": "Write your prompt here"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "video_url": {
+      "type": "string",
+      "title": "Video URL",
+      "format": "uri"
+     },
+     "keep_original_sound": {
+      "enum": [
+       "yes",
+       "no"
+      ],
+      "type": "string",
+      "title": "Keep original sound",
+      "default": "yes"
+     },
+     "character_orientation": {
+      "enum": [
+       "image",
+       "video"
+      ],
+      "type": "string",
+      "title": "Character orientation",
+      "default": "video",
+      "description": "Generate the orientation of the characters in the video, which can be selected to match the image or the video"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3-motion-control/pro"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3/motion-control/pro",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg",
+     "video_url": "https://cdn.example.com/input/example.mp4"
+    },
+    "error": "Internal Server Error"
+   }
+  },
+  {
+   "slug": "kling-video/v3/motion-control/std",
+   "title": "Kling 3.0",
+   "description": "Kling 3.0 Motion Control (Standard) generates videos by animating a source image according to the motion in a provided video. Users can control character orientation and choose to retain the original video's sound for customized video creation.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "kling3_0_motion_control",
+   "input_schema": {
+    "type": "object",
+    "title": "Kling V3 Motion Control Playground",
+    "required": [
+     "image_url",
+     "video_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "default": "",
+      "description": "Write your prompt here"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "video_url": {
+      "type": "string",
+      "title": "Video URL",
+      "format": "uri"
+     },
+     "keep_original_sound": {
+      "enum": [
+       "yes",
+       "no"
+      ],
+      "type": "string",
+      "title": "Keep original sound",
+      "default": "yes"
+     },
+     "character_orientation": {
+      "enum": [
+       "image",
+       "video"
+      ],
+      "type": "string",
+      "title": "Character orientation",
+      "default": "video",
+      "description": "Generate the orientation of the characters in the video, which can be selected to match the image or the video"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/kling-3-motion-control/std"
+   ],
+   "console": "https://console.higgsfield.ai/models/kling-video/v3/motion-control/std",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg",
+     "video_url": "https://cdn.example.com/input/example.mp4"
+    },
+    "error": "Internal Server Error"
+   }
+  },
+  {
+   "slug": "lightricks/ltx-2.5/image-to-video/fast",
+   "title": "LTX-2.5 Fast",
+   "description": "LTX-2.5 Fast Image to Video on Runware with native audio and optional camera movement.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "LTX-2.5 Fast Image to Video Playground",
+    "required": [
+     "prompt",
+     "duration",
+     "image_url"
+    ],
+    "properties": {
+     "fps": {
+      "enum": [
+       24,
+       25,
+       48,
+       50
+      ],
+      "type": "integer",
+      "title": "Frames per second",
+      "default": 25
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 2,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       6,
+       8,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 6
+     },
+     "image_url": {
+      "type": "string",
+      "title": "First frame",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p",
+       "2k",
+       "4k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     },
+     "end_image_url": {
+      "type": "string",
+      "title": "Last frame",
+      "format": "uri"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Generate audio",
+      "default": true
+     },
+     "camera_movement": {
+      "enum": [
+       "dolly_in",
+       "dolly_out",
+       "dolly_left",
+       "dolly_right",
+       "jib_up",
+       "jib_down",
+       "static",
+       "focus_shift"
+      ],
+      "type": "string",
+      "title": "Camera movement"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/ltx-2-5/image-to-video-fast"
+   ],
+   "console": "https://console.higgsfield.ai/models/lightricks/ltx-2.5/image-to-video/fast",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "duration": 6,
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.640",
+     "usd": "0.540",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "lightricks/ltx-2.5/image-to-video/pro",
+   "title": "LTX-2.5 Pro",
+   "description": "LTX-2.5 Pro Image to Video on Runware with native audio and optional camera movement.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "LTX-2.5 Pro Image to Video Playground",
+    "required": [
+     "prompt",
+     "duration",
+     "image_url"
+    ],
+    "properties": {
+     "fps": {
+      "enum": [
+       24,
+       25,
+       50
+      ],
+      "type": "integer",
+      "title": "Frames per second",
+      "default": 25
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 2,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       6,
+       8,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 6
+     },
+     "image_url": {
+      "type": "string",
+      "title": "First frame",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     },
+     "end_image_url": {
+      "type": "string",
+      "title": "Last frame",
+      "format": "uri"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Generate audio",
+      "default": true
+     },
+     "camera_movement": {
+      "enum": [
+       "dolly_in",
+       "dolly_out",
+       "dolly_left",
+       "dolly_right",
+       "jib_up",
+       "jib_down",
+       "static",
+       "focus_shift"
+      ],
+      "type": "string",
+      "title": "Camera movement"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/ltx-2-5/image-to-video-pro"
+   ],
+   "console": "https://console.higgsfield.ai/models/lightricks/ltx-2.5/image-to-video/pro",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "duration": 6,
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "11.520",
+     "usd": "0.720",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "lightricks/ltx-2.5/text-to-video/fast",
+   "title": "LTX-2.5 Fast",
+   "description": "Generates videos from text or images with native audio, camera motion controls and 4K resolution.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "LTX-2.5 Fast Text to Video Playground",
+    "required": [
+     "prompt",
+     "duration"
+    ],
+    "properties": {
+     "fps": {
+      "enum": [
+       24,
+       25,
+       48,
+       50
+      ],
+      "type": "integer",
+      "title": "Frames per second",
+      "default": 25
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 2,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       6,
+       8,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 6
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p",
+       "2k",
+       "4k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Generate audio",
+      "default": true
+     },
+     "camera_movement": {
+      "enum": [
+       "dolly_in",
+       "dolly_out",
+       "dolly_left",
+       "dolly_right",
+       "jib_up",
+       "jib_down",
+       "static",
+       "focus_shift"
+      ],
+      "type": "string",
+      "title": "Camera movement"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/ltx-2-5/text-to-video-fast"
+   ],
+   "console": "https://console.higgsfield.ai/models/lightricks/ltx-2.5/text-to-video/fast",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "duration": 6
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.640",
+     "usd": "0.540",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "lightricks/ltx-2.5/text-to-video/pro",
+   "title": "LTX-2.5 Pro",
+   "description": "Generates videos from text or images with native audio, camera motion controls and 1080p output.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "LTX-2.5 Pro Text to Video Playground",
+    "required": [
+     "prompt",
+     "duration"
+    ],
+    "properties": {
+     "fps": {
+      "enum": [
+       24,
+       25,
+       50
+      ],
+      "type": "integer",
+      "title": "Frames per second",
+      "default": 25
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 2,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       6,
+       8,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 6
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Generate audio",
+      "default": true
+     },
+     "camera_movement": {
+      "enum": [
+       "dolly_in",
+       "dolly_out",
+       "dolly_left",
+       "dolly_right",
+       "jib_up",
+       "jib_down",
+       "static",
+       "focus_shift"
+      ],
+      "type": "string",
+      "title": "Camera movement"
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/ltx-2-5/text-to-video-pro"
+   ],
+   "console": "https://console.higgsfield.ai/models/lightricks/ltx-2.5/text-to-video/pro",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "duration": 6
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "11.520",
+     "usd": "0.720",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "marketing-studio/image",
+   "title": "Marketing Studio Image",
+   "description": "Generates and edits campaign images from text and image inputs, with resolutions from 1K to 4K.\nPreset mode uses a product photo and an optional model reference to guide the resulting image.",
+   "operation_type": [
+    "image_edit",
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_image",
+   "input_schema": {
+    "type": "object",
+    "allOf": [
+     {
+      "if": {
+       "required": [
+        "enhance_prompt"
+       ],
+       "properties": {
+        "enhance_prompt": {
+         "const": true
+        }
+       }
+      },
+      "then": {
+       "required": [
+        "preset_id",
+        "image_urls"
+       ],
+       "properties": {
+        "quality": {
+         "const": "high"
+        },
+        "image_urls": {
+         "maxItems": 2,
+         "minItems": 1
+        }
+       }
+      }
+     }
+    ],
+    "title": "Marketing Studio Image",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "quality": {
+      "enum": [
+       "low",
+       "medium",
+       "high"
+      ],
+      "type": "string",
+      "default": "high"
+     },
+     "preset_id": {
+      "type": "string",
+      "title": "Preset ID",
+      "format": "uuid"
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Image URLs",
+      "maxItems": 16,
+      "minItems": 0
+     },
+     "moderation": {
+      "enum": [
+       "auto",
+       "low"
+      ],
+      "type": "string",
+      "default": "auto"
+     },
+     "resolution": {
+      "enum": [
+       "1k",
+       "2k",
+       "4k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "2k"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "auto",
+       "1:1",
+       "3:2",
+       "2:3",
+       "4:3",
+       "3:4",
+       "16:9",
+       "9:16",
+       "21:9"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "auto"
+     },
+     "enhance_prompt": {
+      "type": "boolean",
+      "title": "Enhance prompt",
+      "default": false
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/marketing-studio-image/generate-and-edit"
+   ],
+   "console": "https://console.higgsfield.ai/models/marketing-studio/image",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "7.016",
+     "usd": "0.439",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "marketing-studio/image/flare",
+   "title": "Marketing Studio Image",
+   "description": "Generate and edit Marketing Studio images with GPT Image 2.5 Flare.",
+   "operation_type": [
+    "image_edit",
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_image",
+   "input_schema": {
+    "type": "object",
+    "allOf": [
+     {
+      "if": {
+       "required": [
+        "enhance_prompt"
+       ],
+       "properties": {
+        "enhance_prompt": {
+         "const": true
+        }
+       }
+      },
+      "then": {
+       "required": [
+        "preset_id",
+        "image_urls"
+       ],
+       "properties": {
+        "image_urls": {
+         "maxItems": 2,
+         "minItems": 1
+        }
+       }
+      }
+     }
+    ],
+    "title": "GPT Image 2.5 Flare",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "quality": {
+      "enum": [
+       "low",
+       "medium",
+       "high",
+       "xhigh",
+       "max"
+      ],
+      "type": "string",
+      "title": "Quality",
+      "default": "high"
+     },
+     "preset_id": {
+      "type": "string",
+      "title": "Preset ID",
+      "format": "uuid"
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Image URLs",
+      "maxItems": 16,
+      "minItems": 0
+     },
+     "moderation": {
+      "enum": [
+       "auto",
+       "low"
+      ],
+      "type": "string",
+      "default": "auto"
+     },
+     "resolution": {
+      "enum": [
+       "1k",
+       "2k",
+       "4k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "2k"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "auto",
+       "1:1",
+       "3:2",
+       "2:3",
+       "4:3",
+       "3:4",
+       "16:9",
+       "9:16",
+       "21:9"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "auto"
+     },
+     "enhance_prompt": {
+      "type": "boolean",
+      "title": "Enhance prompt",
+      "default": false
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/marketing-studio-image/flare"
+   ],
+   "console": "https://console.higgsfield.ai/models/marketing-studio/image/flare",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Per 1M tokens: text input $5, cached text input $1.25, text output $10; image input $8, cached image input $2, image output $30. Quality defaults to high. Final cost uses actual token usage and standard credit rounding. The initial charge is an estimate reconciled on completion."
+    }
+   }
+  },
+  {
+   "slug": "marketing-studio/image/sunburst",
+   "title": "Marketing Studio Image",
+   "description": "Generate and edit Marketing Studio images with GPT Image 2.5 Sunburst.",
+   "operation_type": [
+    "image_edit",
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_image",
+   "input_schema": {
+    "type": "object",
+    "allOf": [
+     {
+      "if": {
+       "required": [
+        "enhance_prompt"
+       ],
+       "properties": {
+        "enhance_prompt": {
+         "const": true
+        }
+       }
+      },
+      "then": {
+       "required": [
+        "preset_id",
+        "image_urls"
+       ],
+       "properties": {
+        "image_urls": {
+         "maxItems": 2,
+         "minItems": 1
+        }
+       }
+      }
+     }
+    ],
+    "title": "GPT Image 2.5 Sunburst",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "quality": {
+      "enum": [
+       "low",
+       "medium",
+       "high",
+       "xhigh",
+       "max"
+      ],
+      "type": "string",
+      "title": "Quality",
+      "default": "high"
+     },
+     "preset_id": {
+      "type": "string",
+      "title": "Preset ID",
+      "format": "uuid"
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Image URLs",
+      "maxItems": 16,
+      "minItems": 0
+     },
+     "moderation": {
+      "enum": [
+       "auto",
+       "low"
+      ],
+      "type": "string",
+      "default": "auto"
+     },
+     "resolution": {
+      "enum": [
+       "1k",
+       "2k",
+       "4k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "2k"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "auto",
+       "1:1",
+       "3:2",
+       "2:3",
+       "4:3",
+       "3:4",
+       "16:9",
+       "9:16",
+       "21:9"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "auto"
+     },
+     "enhance_prompt": {
+      "type": "boolean",
+      "title": "Enhance prompt",
+      "default": false
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/marketing-studio-image/sunburst"
+   ],
+   "console": "https://console.higgsfield.ai/models/marketing-studio/image/sunburst",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "description",
+     "pricing_description": "Per 1M tokens: text input $5, cached text input $1.25, text output $10; image input $8, cached image input $2, image output $30. Quality defaults to high. Final cost uses actual token usage and standard credit rounding. The initial charge is an estimate reconciled on completion."
+    }
+   }
+  },
+  {
+   "slug": "minimax/h3/image-to-video",
+   "title": "MiniMax H3",
+   "description": "MiniMax H3 / Hailuo-03 preview integration using Video Generation V2.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "minimax_h3",
+   "input_schema": {
+    "type": "object",
+    "title": "MiniMax H3 Image to Video Playground",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 5
+     },
+     "image_url": {
+      "type": "string",
+      "title": "First frame URL",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "2K"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "2K"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "auto",
+       "adaptive",
+       "21:9",
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "auto"
+     },
+     "end_image_url": {
+      "type": "string",
+      "title": "Last frame URL",
+      "format": "uri"
+     },
+     "aigc_watermark": {
+      "type": "boolean",
+      "title": "AIGC watermark",
+      "default": false
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/minimax-h3/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/minimax/h3/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "10.400",
+     "usd": "0.650",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "minimax/h3/reference-to-video",
+   "title": "MiniMax H3",
+   "description": "MiniMax H3 generates videos from reference images or videos using Video Generation V2. Users provide prompts, reference media URLs, and optional audio to create videos up to 15 seconds with customizable resolution and aspect ratio.",
+   "operation_type": [
+    "image2video",
+    "video2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "minimax_h3",
+   "input_schema": {
+    "if": {
+     "required": [
+      "image_urls"
+     ]
+    },
+    "else": {
+     "required": [
+      "video_urls"
+     ]
+    },
+    "type": "object",
+    "title": "MiniMax H3 Reference to Video Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 5
+     },
+     "audio_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference audio URLs",
+      "maxItems": 3,
+      "minItems": 0
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference image URLs",
+      "maxItems": 9,
+      "minItems": 1
+     },
+     "resolution": {
+      "enum": [
+       "2K"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "2K"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      },
+      "title": "Reference video URLs",
+      "maxItems": 3,
+      "minItems": 1
+     },
+     "aspect_ratio": {
+      "enum": [
+       "auto",
+       "adaptive",
+       "21:9",
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "auto"
+     },
+     "aigc_watermark": {
+      "type": "boolean",
+      "title": "AIGC watermark",
+      "default": false
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/minimax-h3/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/minimax/h3/reference-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "error": ": 'video_urls' is a required property"
+   }
+  },
+  {
+   "slug": "minimax/h3/text-to-video",
+   "title": "MiniMax H3",
+   "description": "Generates 2K videos up to 15 seconds using text, image, video, and optional audio reference files.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "minimax_h3",
+   "input_schema": {
+    "type": "object",
+    "title": "MiniMax H3 Text to Video Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 5
+     },
+     "resolution": {
+      "enum": [
+       "2K"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "2K"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "auto",
+       "adaptive",
+       "21:9",
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "auto"
+     },
+     "aigc_watermark": {
+      "type": "boolean",
+      "title": "AIGC watermark",
+      "default": false
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/minimax-h3/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/minimax/h3/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "10.400",
+     "usd": "0.650",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "minimax/hailuo-2.3/standard/image-to-video",
+   "title": "MiniMax Hailuo 2.3 Standard",
+   "description": "MiniMax Hailuo 2.3 Standard converts a single image into a short video clip of 6 or 10 seconds based on a text prompt. Users provide an image URL and optional prompt optimization to guide the video generation process.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Minimax Hailuo 2.3 Playground",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       6,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 6
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "prompt_optimizer": {
+      "type": "boolean",
+      "title": "Prompt optimizer",
+      "default": true
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/hailuo-2-3/standard-image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/minimax/hailuo-2.3/standard/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "4.480",
+     "usd": "0.280",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "minimax/hailuo-2.3/standard/text-to-video",
+   "title": "MiniMax Hailuo 2.3 Standard",
+   "description": "Generates short videos from text or images with fluid body motion and natural facial expressions.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "type": "object",
+    "title": "Minimax Hailuo 2.3 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       6,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 6
+     },
+     "prompt_optimizer": {
+      "type": "boolean",
+      "title": "Prompt optimizer",
+      "default": true
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/hailuo-2-3/standard-text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/minimax/hailuo-2.3/standard/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "4.480",
+     "usd": "0.280",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "pixverse/v6/image-to-video",
+   "title": "PixVerse V6",
+   "description": "PixVerse V6 Image to Video on Runware with optional native synchronized audio.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "PixVerse V6 Image to Video Playground",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "maximum": 2147483647,
+      "minimum": 0
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "number",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 1
+     },
+     "image_url": {
+      "type": "string",
+      "title": "First frame",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "360p",
+       "540p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "end_image_url": {
+      "type": "string",
+      "title": "Last frame",
+      "format": "uri"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Generate audio",
+      "default": true
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative prompt",
+      "maxLength": 2048,
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/pixverse-v6/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/pixverse/v6/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "4.080",
+     "usd": "0.255",
+     "discount": {
+      "percentage": "15.00",
+      "credits": "0.720",
+      "usd": "0.045"
+     }
+    }
+   }
+  },
+  {
+   "slug": "pixverse/v6/text-to-video",
+   "title": "PixVerse V6",
+   "description": "Generates videos from text or images with native sound and control over the first and last frames.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "PixVerse V6 Text to Video Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "title": "Seed",
+      "maximum": 2147483647,
+      "minimum": 0
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 5000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "number",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 1
+     },
+     "resolution": {
+      "enum": [
+       "360p",
+       "540p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "4:3",
+       "1:1",
+       "3:4",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "16:9"
+     },
+     "generate_audio": {
+      "type": "boolean",
+      "title": "Generate audio",
+      "default": true
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative prompt",
+      "maxLength": 2048,
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/pixverse-v6/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/pixverse/v6/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "4.080",
+     "usd": "0.255",
+     "discount": {
+      "percentage": "15.00",
+      "credits": "0.720",
+      "usd": "0.045"
+     }
+    }
+   }
+  },
+  {
+   "slug": "recraft/v4.1/pro/text-to-image",
+   "title": "Recraft V4.1 Pro",
+   "description": "Recraft V4.1 Pro generates images from text prompts with customizable resolution, aspect ratio, output format, and color options. Users can specify background and palette colors to tailor the visual style of the output.",
+   "operation_type": [
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "recraft_v4_1",
+   "input_schema": {
+    "type": "object",
+    "title": "Recraft V4.1 Pro Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "colors": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "rgb"
+       ],
+       "properties": {
+        "rgb": {
+         "type": "array",
+         "items": {
+          "type": "integer",
+          "maximum": 255,
+          "minimum": 0
+         },
+         "maxItems": 3,
+         "minItems": 3
+        }
+       }
+      },
+      "title": "Colors"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 10000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "resolution": {
+      "enum": [
+       "2k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "2k"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "1:1",
+       "2:1",
+       "1:2",
+       "3:2",
+       "2:3",
+       "4:3",
+       "3:4",
+       "5:4",
+       "4:5",
+       "6:10",
+       "14:10",
+       "10:14",
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "1:1"
+     },
+     "output_format": {
+      "enum": [
+       "jpg",
+       "png",
+       "webp"
+      ],
+      "type": "string",
+      "title": "Output format",
+      "default": "jpg"
+     },
+     "background_color": {
+      "type": "object",
+      "title": "Background color",
+      "required": [
+       "rgb"
+      ],
+      "properties": {
+       "rgb": {
+        "type": "array",
+        "items": {
+         "type": "integer",
+         "maximum": 255,
+         "minimum": 0
+        },
+        "maxItems": 3,
+        "minItems": 3
+       }
+      }
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/recraft-v4-1-pro/generate"
+   ],
+   "console": "https://console.higgsfield.ai/models/recraft/v4.1/pro/text-to-image",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "3.360",
+     "usd": "0.210",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "recraft/v4.1/text-to-image",
+   "title": "Recraft V4.1",
+   "description": "Generates images and illustrations using custom palettes and background colors to fit your brand.",
+   "operation_type": [
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "recraft_v4_1",
+   "input_schema": {
+    "type": "object",
+    "title": "Recraft V4.1 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "colors": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "rgb"
+       ],
+       "properties": {
+        "rgb": {
+         "type": "array",
+         "items": {
+          "type": "integer",
+          "maximum": 255,
+          "minimum": 0
+         },
+         "maxItems": 3,
+         "minItems": 3
+        }
+       }
+      },
+      "title": "Colors"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 10000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "resolution": {
+      "enum": [
+       "1k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1k"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "1:1",
+       "2:1",
+       "1:2",
+       "3:2",
+       "2:3",
+       "4:3",
+       "3:4",
+       "5:4",
+       "4:5",
+       "6:10",
+       "14:10",
+       "10:14",
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "1:1"
+     },
+     "output_format": {
+      "enum": [
+       "jpg",
+       "png",
+       "webp"
+      ],
+      "type": "string",
+      "title": "Output format",
+      "default": "jpg"
+     },
+     "background_color": {
+      "type": "object",
+      "title": "Background color",
+      "required": [
+       "rgb"
+      ],
+      "properties": {
+       "rgb": {
+        "type": "array",
+        "items": {
+         "type": "integer",
+         "maximum": 255,
+         "minimum": 0
+        },
+        "maxItems": 3,
+        "minItems": 3
+       }
+      }
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/recraft-v4-1/text-to-image"
+   ],
+   "console": "https://console.higgsfield.ai/models/recraft/v4.1/text-to-image",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.560",
+     "usd": "0.035",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "recraft/v4.1/utility/pro/text-to-image",
+   "title": "Recraft V4.1 Utility Pro",
+   "description": "Recraft V4.1 Utility Pro generates images from text prompts with customizable resolution, aspect ratio, output format, and color options. Users can specify background colors and a palette of colors to influence the image creation process.",
+   "operation_type": [
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "recraft_v4_1",
+   "input_schema": {
+    "type": "object",
+    "title": "Recraft V4.1 Utility Pro Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "colors": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "rgb"
+       ],
+       "properties": {
+        "rgb": {
+         "type": "array",
+         "items": {
+          "type": "integer",
+          "maximum": 255,
+          "minimum": 0
+         },
+         "maxItems": 3,
+         "minItems": 3
+        }
+       }
+      },
+      "title": "Colors"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 10000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "resolution": {
+      "enum": [
+       "2k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "2k"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "1:1",
+       "2:1",
+       "1:2",
+       "3:2",
+       "2:3",
+       "4:3",
+       "3:4",
+       "5:4",
+       "4:5",
+       "6:10",
+       "14:10",
+       "10:14",
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "1:1"
+     },
+     "output_format": {
+      "enum": [
+       "jpg",
+       "png",
+       "webp"
+      ],
+      "type": "string",
+      "title": "Output format",
+      "default": "jpg"
+     },
+     "background_color": {
+      "type": "object",
+      "title": "Background color",
+      "required": [
+       "rgb"
+      ],
+      "properties": {
+       "rgb": {
+        "type": "array",
+        "items": {
+         "type": "integer",
+         "maximum": 255,
+         "minimum": 0
+        },
+        "maxItems": 3,
+        "minItems": 3
+       }
+      }
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/recraft-v4-1-utility-pro/text-to-image"
+   ],
+   "console": "https://console.higgsfield.ai/models/recraft/v4.1/utility/pro/text-to-image",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "3.360",
+     "usd": "0.210",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "recraft/v4.1/utility/text-to-image",
+   "title": "Recraft V4.1 Utility",
+   "description": "Recraft V4.1 Utility generates images from text prompts with customizable resolution, aspect ratio, output format, and color options including background and palette colors. This variant focuses on utility features for precise control over image attributes.",
+   "operation_type": [
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "recraft_v4_1",
+   "input_schema": {
+    "type": "object",
+    "title": "Recraft V4.1 Utility Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "colors": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "rgb"
+       ],
+       "properties": {
+        "rgb": {
+         "type": "array",
+         "items": {
+          "type": "integer",
+          "maximum": 255,
+          "minimum": 0
+         },
+         "maxItems": 3,
+         "minItems": 3
+        }
+       }
+      },
+      "title": "Colors"
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "maxLength": 10000,
+      "minLength": 1,
+      "description": "Write your prompt here"
+     },
+     "resolution": {
+      "enum": [
+       "1k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1k"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "1:1",
+       "2:1",
+       "1:2",
+       "3:2",
+       "2:3",
+       "4:3",
+       "3:4",
+       "5:4",
+       "4:5",
+       "6:10",
+       "14:10",
+       "10:14",
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect ratio",
+      "default": "1:1"
+     },
+     "output_format": {
+      "enum": [
+       "jpg",
+       "png",
+       "webp"
+      ],
+      "type": "string",
+      "title": "Output format",
+      "default": "jpg"
+     },
+     "background_color": {
+      "type": "object",
+      "title": "Background color",
+      "required": [
+       "rgb"
+      ],
+      "properties": {
+       "rgb": {
+        "type": "array",
+        "items": {
+         "type": "integer",
+         "maximum": 255,
+         "minimum": 0
+        },
+        "maxItems": 3,
+        "minItems": 3
+       }
+      }
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/recraft-v4-1-utility/text-to-image"
+   ],
+   "console": "https://console.higgsfield.ai/models/recraft/v4.1/utility/text-to-image",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.560",
+     "usd": "0.035",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "soul-id",
+   "title": "Soul ID",
+   "description": "",
+   "operation_type": [
+    "character"
+   ],
+   "output_type": "image",
+   "base_credits": "40.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": null,
+   "input_schema": {
+    "title": "Soul ID"
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/soul-2",
+    "https://docs.higgsfield.ai/docs/models/soul-cinema",
+    "https://docs.higgsfield.ai/docs/models/soul-id",
+    "https://docs.higgsfield.ai/docs/models/soul-standard"
+   ],
+   "console": "https://console.higgsfield.ai/models/soul-id",
+   "baseline": {
+    "arguments": {},
+    "estimate": {
+     "type": "estimate",
+     "credits": "40.000",
+     "usd": "2.500",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "wan/v2.6/image-to-video",
+   "title": "Wan 2.6",
+   "description": "Wan 2.6 - Image to Video. Configured Alibaba route; cloned from wan-26/image-to-video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 2.6 Playground",
+    "required": [
+     "prompt",
+     "image_url"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 10000000,
+      "minimum": -1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10,
+       15
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "audio_url": {
+      "type": "string",
+      "title": "Audio URL",
+      "format": "uri"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "prompt_extend": {
+      "type": "boolean",
+      "default": false
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative prompt",
+      "default": ""
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-2-6/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/wan/v2.6/image-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.000",
+     "usd": "0.500",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "wan/v2.6/reference-to-video",
+   "title": "Wan 2.6",
+   "description": "Wan 2.6 - Reference to Video. Configured Alibaba route; cloned from wan-26/references-to-video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 2.6 Playground",
+    "required": [
+     "prompt",
+     "video_urls"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "720p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "maxItems": 3,
+      "minItems": 1
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1",
+       "4:3",
+       "3:4"
+      ],
+      "type": "string",
+      "default": "16:9"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-2-6/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/wan/v2.6/reference-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate",
+     "video_urls": [
+      "https://cdn.example.com/input/example.mp4"
+     ]
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.000",
+     "usd": "0.500",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "wan/v2.6/text-to-video",
+   "title": "Wan 2.6",
+   "description": "Generates multi-shot videos from text or images with native sound and optional video references.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 2.6 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 10000000,
+      "minimum": -1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "enum": [
+       5,
+       10,
+       15
+      ],
+      "type": "integer",
+      "title": "Duration",
+      "default": 5
+     },
+     "audio_url": {
+      "type": "string",
+      "title": "Audio URL",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "multi_shots": {
+      "type": "boolean",
+      "default": false
+     },
+     "prompt_extend": {
+      "type": "boolean",
+      "default": false
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-2-6/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/wan/v2.6/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.000",
+     "usd": "0.500",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "wan/v2.7/image-to-video",
+   "title": "Wan 2.7",
+   "description": "Wan 2.7 - Image to Video. Configured Alibaba route; cloned from wan-27/image-to-video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 2.6 Playground",
+    "required": [
+     "image_url"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 2
+     },
+     "audio_url": {
+      "type": "string",
+      "title": "Audio URL",
+      "format": "uri"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "end_image_url": {
+      "type": "string",
+      "title": "Image URL",
+      "format": "uri"
+     },
+     "prompt_extend": {
+      "type": "boolean",
+      "default": false
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative prompt",
+      "default": ""
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-2-7/image-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/wan/v2.7/image-to-video",
+   "baseline": {
+    "arguments": {
+     "image_url": "https://cdn.example.com/input/example.jpeg"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.000",
+     "usd": "0.500",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "wan/v2.7/reference-to-video",
+   "title": "Wan 2.7",
+   "description": "Wan 2.7 - Reference to Video. Configured Alibaba route; cloned from wan-27/reference-to-video.",
+   "operation_type": [
+    "image2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "if": {
+     "required": [
+      "image_urls"
+     ],
+     "properties": {
+      "image_urls": {
+       "type": "array",
+       "minItems": 1
+      }
+     }
+    },
+    "else": {
+     "required": [
+      "video_urls"
+     ],
+     "properties": {
+      "video_urls": {
+       "type": "array",
+       "minItems": 1
+      }
+     }
+    },
+    "type": "object",
+    "title": "Wan 2.7 References",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 10,
+      "minimum": 2
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image",
+       "format": "uri"
+      }
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "video_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Video",
+       "format": "uri"
+      }
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "16:9"
+     },
+     "prompt_extend": {
+      "type": "boolean",
+      "default": false
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative prompt",
+      "default": ""
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-2-7/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/wan/v2.7/reference-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "error": ": 'video_urls' is a required property"
+   }
+  },
+  {
+   "slug": "wan/v2.7/text-to-video",
+   "title": "Wan 2.7",
+   "description": "Generates videos from text or images with native audio and consistent characters across scenes.",
+   "operation_type": [
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "generic_video",
+   "input_schema": {
+    "type": "object",
+    "title": "Wan 2.6 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483646,
+      "minimum": 1
+     },
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 2
+     },
+     "audio_url": {
+      "type": "string",
+      "title": "Audio URL",
+      "format": "uri"
+     },
+     "resolution": {
+      "enum": [
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "default": "720p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "16:9",
+       "9:16",
+       "1:1",
+       "4:3",
+       "3:4"
+      ],
+      "type": "string",
+      "title": "Aspect Ratio",
+      "default": "16:9"
+     },
+     "prompt_extend": {
+      "type": "boolean",
+      "default": false
+     },
+     "negative_prompt": {
+      "type": "string",
+      "title": "Negative prompt",
+      "default": ""
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/wan-2-7/text-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/wan/v2.7/text-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "8.000",
+     "usd": "0.500",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "xai/grok-imagine-image-2.0",
+   "title": "Grok Imagine 2.0",
+   "description": "Generates images and makes precise edits while preserving image details and visual consistency.",
+   "operation_type": [
+    "image_edit",
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "grok_image",
+   "input_schema": {
+    "type": "object",
+    "title": "Grok Imagine 2.0 Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "quality": {
+      "enum": [
+       "low",
+       "medium"
+      ],
+      "type": "string",
+      "title": "Quality",
+      "default": "medium"
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image",
+       "format": "uri"
+      },
+      "title": "Input Images",
+      "maxItems": 10,
+      "minItems": 0
+     },
+     "resolution": {
+      "enum": [
+       "1k",
+       "2k"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "1k"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "auto",
+       "1:1",
+       "1:2",
+       "2:1",
+       "3:2",
+       "2:3",
+       "4:3",
+       "3:4",
+       "16:9",
+       "9:16"
+      ],
+      "type": "string",
+      "default": "auto"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/grok-image-2/generate-and-edit"
+   ],
+   "console": "https://console.higgsfield.ai/models/xai/grok-imagine-image-2.0",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.960",
+     "usd": "0.060",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "xai/grok-imagine-video/v1.5/reference-to-video",
+   "title": "Grok Imagine Video 1.5",
+   "description": "Creates videos from text prompts or still images, with 1080p resolution and clips up to 15 seconds.",
+   "operation_type": [
+    "image2video",
+    "text2video"
+   ],
+   "output_type": "video",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "grok_video_v15",
+   "input_schema": {
+    "type": "object",
+    "title": "Grok Imagine Video 1.5 Reference Playground",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt",
+      "description": "Write your prompt here"
+     },
+     "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "default": 5,
+      "maximum": 15,
+      "minimum": 1
+     },
+     "audio_url": {
+      "type": "string",
+      "title": "Reference audio",
+      "format": "uri"
+     },
+     "image_url": {
+      "type": "string",
+      "title": "First-frame image",
+      "format": "uri"
+     },
+     "image_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "title": "Image",
+       "format": "uri"
+      },
+      "title": "Reference images",
+      "maxItems": 7,
+      "minItems": 0
+     },
+     "resolution": {
+      "enum": [
+       "480p",
+       "720p",
+       "1080p"
+      ],
+      "type": "string",
+      "title": "Resolution",
+      "default": "480p"
+     },
+     "aspect_ratio": {
+      "enum": [
+       "auto",
+       "1:1",
+       "16:9",
+       "9:16",
+       "4:3",
+       "3:4",
+       "3:2",
+       "2:3"
+      ],
+      "type": "string",
+      "default": "auto"
+     }
+    }
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/grok-video-1-5/reference-to-video"
+   ],
+   "console": "https://console.higgsfield.ai/models/xai/grok-imagine-video/v1.5/reference-to-video",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "6.400",
+     "usd": "0.400",
+     "discount": null
+    }
+   }
+  },
+  {
+   "slug": "z-image/turbo",
+   "title": "Z-Image Turbo",
+   "description": "Generates images quickly with clear Chinese and English text rendering and PNG output up to 2K.",
+   "operation_type": [
+    "text2image"
+   ],
+   "output_type": "image",
+   "base_credits": "0.0000",
+   "is_workflow": false,
+   "fnf_job_set_type": "text2image",
+   "input_schema": {
+    "type": "object",
+    "title": "Z-Image Turbo",
+    "required": [
+     "prompt"
+    ],
+    "properties": {
+     "seed": {
+      "type": "integer",
+      "maximum": 2147483647,
+      "minimum": 0,
+      "description": "Optional random seed for similar, reproducible results."
+     },
+     "prompt": {
+      "type": "string",
+      "maxLength": 800,
+      "minLength": 1,
+      "description": "Positive prompt describing the desired content, style, and composition."
+     },
+     "resolution": {
+      "enum": [
+       "1k",
+       "2k"
+      ],
+      "type": "string",
+      "default": "1k",
+      "description": "Output resolution tier. Both tiers produce PNG images."
+     },
+     "aspect_ratio": {
+      "enum": [
+       "1:1",
+       "2:3",
+       "3:2",
+       "3:4",
+       "4:3",
+       "7:9",
+       "9:7",
+       "9:16",
+       "16:9",
+       "21:9"
+      ],
+      "type": "string",
+      "default": "1:1",
+      "description": "Output aspect ratio. Exact provider-recommended dimensions are selected automatically."
+     },
+     "prompt_extend": {
+      "type": "boolean",
+      "default": false,
+      "description": "Rewrite and reason over the prompt before generation; this uses the enhanced price tier."
+     }
+    },
+    "additionalProperties": false
+   },
+   "docs": [
+    "https://docs.higgsfield.ai/docs/models/z-image-turbo/generate"
+   ],
+   "console": "https://console.higgsfield.ai/models/z-image/turbo",
+   "baseline": {
+    "arguments": {
+     "prompt": "estimate"
+    },
+    "estimate": {
+     "type": "estimate",
+     "credits": "0.240",
+     "usd": "0.015",
+     "discount": null
+    }
+   }
+  }
+ ]
+}

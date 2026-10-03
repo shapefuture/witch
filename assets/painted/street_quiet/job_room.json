@@ -1,0 +1,46 @@
+{
+  "model": "xai/grok-imagine-image-2.0",
+  "arguments": {
+    "prompt": "The same place from exactly the same camera position, angle and framing: the same layout, the same walls, ground and horizon height. Change only this: the same street some weeks later: the shop's lights are off, a different new shop across the way is busy and bright, fewer lanterns, fallen leaves in drifts. Same painting style. Horizontal 16:9. No people, no witch, no raccoon, no animals, no text, no letters, no black outline or inked edge.",
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "quality": "medium",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/20d55896-b1ce-4941-ac36-63a9461f941b.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.440",
+    "usd": "0.090",
+    "discount": null
+  },
+  "idempotency_key": "c92f9bb9-8cf3-4498-b7f3-2ca9058e71d1",
+  "created_at": "2026-10-02T16:37:20+00:00",
+  "request_id": "3607ae6b-0660-40a1-a176-a9dd01b8f58b",
+  "status_url": "https://platform.higgsfield.ai/requests/3607ae6b-0660-40a1-a176-a9dd01b8f58b/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/3607ae6b-0660-40a1-a176-a9dd01b8f58b/cancel",
+  "status": "completed",
+  "correlation_id": "3cd20d8e82ec42f6b8eb144e15738ce9",
+  "result": {
+    "status": "completed",
+    "request_id": "3607ae6b-0660-40a1-a176-a9dd01b8f58b",
+    "status_url": "https://platform.higgsfield.ai/requests/3607ae6b-0660-40a1-a176-a9dd01b8f58b/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/3607ae6b-0660-40a1-a176-a9dd01b8f58b/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/7c438557-e8c2-49d6-bbdc-09fd62c4b9a3.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T16:37:51+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/7c438557-e8c2-49d6-bbdc-09fd62c4b9a3.png",
+      "path": "image_0.png",
+      "sha256": "0943132b65b7f636929ee67087fa4570244d989f93ab638dd9e796e024995d77",
+      "bytes": 5288774
+    }
+  ]
+}

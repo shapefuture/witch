@@ -1,0 +1,117 @@
+[
+	{
+		"id": "interp.player.sees_poke",
+		"_about": "What the witch makes of her own poke: a record of it, and the naive hypothesis that pressing things over and over will make it a habit.",
+		"event_kind": "PROP_POKED", "holder": "player", "actor": "player", "priority": 0,
+		"perceived": {"actor_id": "$actor", "outcome": "prop_moved"},
+		"knowledge_effects": [
+			{"id": "poked.$subject", "proposition": {"poked": "$subject", "reaction": "$reaction"}, "status": "SUPPORTED"}
+		],
+		"model_effects": [
+			{"type": "ensure", "rule_id": "m.hall.repetition_makes_custom", "subject_id": "hall", "proposition": {"repeating": "makes_it_custom"}, "scope": "hall", "confidence": 0.4, "status": "HYPOTHESIS"}
+		]
+	},
+	{
+		"id": "interp.player.sees_echo",
+		"event_kind": "PROP_ECHOED", "holder": "player", "priority": 0,
+		"perceived": {"actor_id": "$actor", "outcome": "prop_moved"},
+		"knowledge_effects": [
+			{"id": "echo_seen.$subject", "proposition": {"moved_by_itself": "$subject", "reaction": "$reaction"}, "status": "SUPPORTED"}
+		]
+	},
+	{
+		"id": "interp.raccoon.poke_is_play",
+		"event_kind": "PROP_POKED", "holder": "raccoon", "actor": "player", "channels": ["sight"], "min_clarity": 40, "priority": 10,
+		"reads": "play",
+		"perceived": {"actor_id": "$actor", "outcome": "prop_moved", "motive": "play"},
+		"knowledge_effects": [
+			{"id": "saw_witch_play.$subject", "proposition": {"witch": "plays_with", "thing": "$subject"}, "status": "SUPPORTED"}
+		],
+		"relationship_effects": [
+			{"b": "$actor", "tags": ["NOTE"], "payload": {"interpretation": "play"}}
+		]
+	},
+	{
+		"id": "interp.raccoon.echo_is_play",
+		"event_kind": "PROP_ECHOED", "holder": "raccoon", "channels": ["sight"], "min_clarity": 40, "priority": 10,
+		"reads": "play",
+		"perceived": {"actor_id": "$actor", "outcome": "prop_moved"},
+		"knowledge_effects": [
+			{"id": "saw_hall_play.$subject", "proposition": {"hall": "plays_with", "thing": "$subject"}, "status": "SUPPORTED"}
+		]
+	},
+	{
+		"id": "interp.raccoon.heard_something",
+		"_about": "Heard it from the next room: a noise, no more.",
+		"event_kind": ["PROP_POKED", "PROP_ECHOED"], "holder": "raccoon", "channels": ["sound", "overheard"], "priority": 5,
+		"reads": "noise",
+		"knowledge_effects": [
+			{"id": "heard_something_in_the_hall", "proposition": {"heard": "something_move"}, "status": "POSSIBLE"}
+		]
+	},
+	{
+		"id": "interp.raccoon.company",
+		"event_kind": "WALKED", "holder": "raccoon", "actor": "player", "priority": 0,
+		"reads": "company",
+		"relationship_effects": [
+			{"b": "$actor", "tags": ["NOTE"], "payload": {"interpretation": "company"}}
+		],
+		"reactions": [
+			{"op": "FOLLOW", "actor": "$holder", "target": "$actor"}
+		]
+	},
+	{
+		"id": "interp.tomas.poke_is_tampering",
+		"_about": "Braced, he reads a poke as meddling. Nothing breaks, so each time he softens a little.",
+		"event_kind": "PROP_POKED", "holder": "tomas", "actor": "player", "channels": ["sight"], "min_clarity": 40, "priority": 10,
+		"when": {"$in": {"npc.tomas.stance": ["braced", "withdrawn"]}},
+		"reads": "tampering",
+		"perceived": {"actor_id": "$actor", "outcome": "prop_moved", "motive": "mischief"},
+		"knowledge_effects": [
+			{"id": "tomas_saw_tampering", "proposition": {"witch": "meddles"}, "status": "SUPPORTED"}
+		],
+		"model_effects": [
+			{"type": "ensure", "rule_id": "m.tomas.pokes_harmless", "subject_id": "player", "proposition": {"pokes": "harmless"}, "scope": "hall", "confidence": 0.3, "status": "HYPOTHESIS", "delta": 0.12}
+		],
+		"relationship_effects": [
+			{"b": "$actor", "tags": ["NOTE"], "payload": {"interpretation": "tampering"}}
+		]
+	},
+	{
+		"id": "interp.tomas.poke_is_play",
+		"_about": "Once he has watched enough harmless pokes (his own model, not a flag), he reads the same poke as play.",
+		"event_kind": "PROP_POKED", "holder": "tomas", "actor": "player", "channels": ["sight"], "min_clarity": 40, "priority": 20,
+		"requires_models": [{"id": "m.tomas.pokes_harmless", "min_confidence": 0.6}],
+		"reads": "play",
+		"perceived": {"actor_id": "$actor", "outcome": "prop_moved", "motive": "play"},
+		"knowledge_effects": [
+			{"id": "tomas_saw_play", "proposition": {"witch": "plays"}, "status": "SUPPORTED"}
+		],
+		"relationship_effects": [
+			{"b": "$actor", "tags": ["NOTE"], "payload": {"interpretation": "play"}}
+		]
+	},
+	{
+		"id": "interp.tomas.statue_is_revered",
+		"_about": "Whatever he thinks of pokes, the statue is not a toy to him. This is why nobody agrees about it.",
+		"event_kind": ["PROP_POKED", "PROP_ECHOED"], "holder": "tomas", "subject": "statue", "channels": ["sight"], "min_clarity": 40, "priority": 30,
+		"reads": "reverence",
+		"perceived": {"actor_id": "$actor", "outcome": "prop_moved"},
+		"knowledge_effects": [
+			{"id": "tomas_winces_at_statue", "proposition": {"statue": "is_not_for_touching"}, "status": "SUPPORTED"}
+		]
+	},
+	{
+		"id": "interp.tomas.overheard_blames_the_raccoon",
+		"_about": "Heard from the next room, he assumes it was the raccoon. It was not: a misreading the engine's discrepancy service catches.",
+		"event_kind": "PROP_POKED", "holder": "tomas", "channels": ["overheard"], "priority": 10,
+		"reads": "blame",
+		"perceived": {"actor_id": "raccoon", "outcome": "prop_moved"},
+		"knowledge_effects": [
+			{"id": "tomas_blames_the_raccoon", "proposition": {"raccoon": "knocked", "thing": "$subject"}, "status": "POSSIBLE"}
+		],
+		"relationship_effects": [
+			{"b": "raccoon", "tags": ["NOTE"], "payload": {"interpretation": "blame"}}
+		]
+	}
+]

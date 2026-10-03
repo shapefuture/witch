@@ -1,0 +1,23 @@
+{
+ "scale_x": 1.0062527849915086,
+ "scale_y": 1.0076589461693297,
+ "shift_px": [
+  5.534181426043046,
+  1.0439422482988752
+ ],
+ "centre_mae_0_255": 5.138467311859131,
+ "seam_ring_mae_0_255": 4.784502983093262,
+ "core_exact": true,
+ "core_max_abs_diff": 0,
+ "plate_changed_px": 7961,
+ "plate_max_abs_diff": 16,
+ "margin_px": [
+  160,
+  90
+ ],
+ "feather_px": 4,
+ "margin_sharpness_ratio": 0.3430625767434673,
+ "seam_step_ratio": 0.8105036616325378,
+ "accepted": true,
+ "reasons": []
+}

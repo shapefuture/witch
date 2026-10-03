@@ -222,3 +222,26 @@ func test_saving_and_loading_from_the_pause_menu_roundtrips_the_game() -> void:
 	game._on_load()
 	eq(game.runtime.engine.event_store.head_hash(), head, "loading restored the saved moment")
 	DirAccess.remove_absolute(SaveGame.path_for(GameRoot.SLOT))
+
+func _kinds(value: Variant, out: Dictionary) -> void:
+	if value is Dictionary:
+		if (value as Dictionary).has("presentation") and value["presentation"] is Array:
+			for entry: Variant in value["presentation"]:
+				if entry is Dictionary and entry.has("kind"):
+					out[str(entry["kind"])] = true
+		for child: Variant in (value as Dictionary).values():
+			_kinds(child, out)
+	elif value is Array:
+		for child: Variant in value:
+			_kinds(child, out)
+
+func test_every_presentation_kind_in_the_catalog_has_a_handler() -> void:
+	var game := await _boot()
+	var kinds := {}
+	for dir_path in ["res://data/mirror", "res://data/mirror/actions"]:
+		for file in DirAccess.get_files_at(dir_path):
+			if file.ends_with(".json"):
+				_kinds(JSON.parse_string(FileAccess.get_file_as_string(dir_path.path_join(file))), kinds)
+	ok(kinds.has("room_variant"), "the room ages somewhere in the content")
+	for kind: String in kinds:
+		ok(game.presentation.handlers.has(kind), "'%s' has a handler" % kind)

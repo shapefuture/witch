@@ -1,0 +1,49 @@
+{
+  "model": "alibaba/qwen-image-3/edit",
+  "arguments": {
+    "prompt": "Remove these objects. First: the cluster of cylindrical rolled paper scrolls with spiral ends piled on the top-left shelf in the very top-left corner of the picture. Second: the large pale key-shaped loop (a ring on a short stem, like an ankh) standing on the right bookshelf near the right edge, upper right. Third: the pale grey faceted stone boulders lying on the floor in the bottom right corner, right of the dark shelf base. Where each was, continue the dark wooden shelf, the bookshelf and the floor behind it. Keep everything else exactly the same: same camera, composition, low-poly faceted papercraft style, colors and lighting.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/e2807de9-1206-4cc1-886b-b139a76c02c9.png"
+    ],
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "seed": 7,
+    "negative_prompt": "scroll, ring, loop, ankh, rock, boulder, stone, text, letters, blurry, photorealistic, smooth",
+    "prompt_extend": false,
+    "enable_thinking": false
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.200",
+    "usd": "0.075",
+    "discount": null
+  },
+  "idempotency_key": "83dc2721-0136-490e-bfa9-633e19e435d2",
+  "created_at": "2026-10-02T00:21:42+00:00",
+  "request_id": "c6682123-a8f9-4e9e-ab2a-d2db6674b32e",
+  "status_url": "https://platform.higgsfield.ai/requests/c6682123-a8f9-4e9e-ab2a-d2db6674b32e/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/c6682123-a8f9-4e9e-ab2a-d2db6674b32e/cancel",
+  "status": "completed",
+  "correlation_id": "7d08de61cc6442e197aafcc56bc26716",
+  "result": {
+    "status": "completed",
+    "request_id": "c6682123-a8f9-4e9e-ab2a-d2db6674b32e",
+    "status_url": "https://platform.higgsfield.ai/requests/c6682123-a8f9-4e9e-ab2a-d2db6674b32e/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/c6682123-a8f9-4e9e-ab2a-d2db6674b32e/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/160a9e9e-b8c5-422a-87d4-decc2acdb4c1.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T00:22:23+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/160a9e9e-b8c5-422a-87d4-decc2acdb4c1.png",
+      "path": "image_0.png",
+      "sha256": "534e39dde1e4086aee6d9809681ce4bde29aa5c77fb3ee7993d594b7ac88bc6f",
+      "bytes": 2243746
+    }
+  ]
+}

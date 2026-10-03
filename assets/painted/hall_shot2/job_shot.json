@@ -1,0 +1,46 @@
+{
+  "model": "xai/grok-imagine-image-2.0",
+  "arguments": {
+    "prompt": "The same library hall, but the camera has walked about three metres forward and turned slightly to the right, so the hooded stone statue holding scrolls, standing in the shaft of warm light from the ceiling hole, now fills the centre right of the frame at about twice its size, with the tall shelves on either side. Keep exactly the same painting style: faceted low-poly papercraft, olive, ochre and purple colours, the same warm dusty light, shelves with scrolls and boxes, stone walls. Keep the same eye height and the horizon (where the floor meets the far wall) at the same height in the frame, about two thirds down. No people, no witch, no raccoon, no text.",
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "quality": "medium",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/fbf4719e-ea13-407d-ac10-9943d0c5d6f8.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.440",
+    "usd": "0.090",
+    "discount": null
+  },
+  "idempotency_key": "9c08912b-56ab-4426-934b-d3bdbc8d4460",
+  "created_at": "2026-10-02T00:41:35+00:00",
+  "request_id": "19911c15-a41a-4364-8072-063b399dec7e",
+  "status_url": "https://platform.higgsfield.ai/requests/19911c15-a41a-4364-8072-063b399dec7e/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/19911c15-a41a-4364-8072-063b399dec7e/cancel",
+  "status": "completed",
+  "correlation_id": "7c69e3ec06df4880b1e53c8bf47ac92b",
+  "result": {
+    "status": "completed",
+    "request_id": "19911c15-a41a-4364-8072-063b399dec7e",
+    "status_url": "https://platform.higgsfield.ai/requests/19911c15-a41a-4364-8072-063b399dec7e/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/19911c15-a41a-4364-8072-063b399dec7e/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/6c194873-2975-46a2-beea-d236ae815f89.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T00:42:16+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/6c194873-2975-46a2-beea-d236ae815f89.png",
+      "path": "image_0.png",
+      "sha256": "5b6691313a6fcaa4e21d067cb6bac00bfc4e2fade55e9d99e78796f54d7ecf15",
+      "bytes": 5794952
+    }
+  ]
+}

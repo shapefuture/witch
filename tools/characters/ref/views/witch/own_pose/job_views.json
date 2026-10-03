@@ -1,0 +1,47 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "resolution": "2k",
+    "quality": "medium",
+    "aspect_ratio": "3:2",
+    "prompt": "A character model sheet for 3D modelling: the SAME character shown six times on one flat chroma-key green (#00FF00), perfectly even background. The FIRST reference image is a LAYOUT GUIDE, not a picture to copy: a flat chroma-key green (#00FF00), perfectly even canvas of six framed cells, each with a label, a dashed head line near the top, a dashed foot line near the bottom, a dotted centre line and a symbol for the way the character faces. Draw one view of the character in each cell, the whole character from head to foot, centred on the centre line, the head just under the head line and the feet on the foot line, so that all six are the same size. Use the guide for placement only: the frames, lines, labels and symbols stay out of the picture, and the background stays flat chroma-key green (#00FF00), perfectly even and empty. Top row, left to right: front view, facing the viewer; three-quarter front view, turned 45 degrees to face toward the right edge of the picture; right side view in profile, facing the right edge of the picture. Bottom row, left to right: back view, facing directly away from the viewer; three-quarter back view, turned away 45 degrees toward the left edge of the picture; left side view in profile, facing the left edge of the picture. The character is the one in the SECOND reference image: keep its design, proportions, colours and rendering style exactly, and invent the sides it does not show in the same style. All six views show one and the same character in the same pose, with the same face, hair, clothes, colours and rendering style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour fall on the character, with no cast shadows, no floor and no ground, and a clear gap of background around every figure.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/aaedb002-efcd-4b43-b30d-e26b6546066c.png",
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/e4ad0b72-7fa7-4da2-9e46-639c36f6fda6.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.609",
+    "usd": "0.101",
+    "discount": null
+  },
+  "idempotency_key": "5f2bd7c9-91b2-41d2-8a37-140b0ea9c483",
+  "created_at": "2026-10-02T21:29:44+00:00",
+  "request_id": "a092f4eb-b7c4-4a74-976b-10aa08e2932e",
+  "status_url": "https://platform.higgsfield.ai/requests/a092f4eb-b7c4-4a74-976b-10aa08e2932e/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/a092f4eb-b7c4-4a74-976b-10aa08e2932e/cancel",
+  "status": "completed",
+  "correlation_id": "fdb19ac21db749dc874f9161663c6f97",
+  "result": {
+    "status": "completed",
+    "request_id": "a092f4eb-b7c4-4a74-976b-10aa08e2932e",
+    "status_url": "https://platform.higgsfield.ai/requests/a092f4eb-b7c4-4a74-976b-10aa08e2932e/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/a092f4eb-b7c4-4a74-976b-10aa08e2932e/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/42e239c7-fa06-4ac6-87ed-f5ca75dabaf2.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T21:30:25+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/42e239c7-fa06-4ac6-87ed-f5ca75dabaf2.png",
+      "path": "image_0.png",
+      "sha256": "126fb98f2a8748cb953b5950ab00aaa548489b76558decc94a39202352236255",
+      "bytes": 3392680
+    }
+  ]
+}

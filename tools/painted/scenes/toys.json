@@ -1,0 +1,29 @@
+{
+  "_about": "What a marked object of a layout does when poked (docs/art/scenes.md, Toys). A layout element with \"toy\": \"<type>\" becomes a toy of that type; \"toy_at\" gives the object's own box when the element is bigger than the object. kind: cutout = the object is taken out of the picture by an edit and lifted onto a card that moves; hotspot = nothing is taken away, the painting itself ripples, shakes or flashes. noun: how the edit's prompt names it. pivot: the point a cutout turns about (base = bottom centre, top = a hook it hangs from, centre). press: the answers to successive pokes, words of PaintedProp.VOCABULARY and sounds of assets/painted/sfx. A cutout that does not come off in the edit is a hotspot with the same answers. No line of text here: a text key would have to be in data/text/ru.json.",
+  "types": {
+    "lantern": {"kind": "cutout", "noun": "hanging lantern", "pivot": "top",
+                "press": [{"do": "swing", "sound": "creak"}, {"do": "pulse", "sound": "chime"}, {"do": "rattle", "sound": "rattle"}]},
+    "sundial": {"kind": "cutout", "noun": "sundial on its stone base", "pivot": "base",
+                "press": [{"do": "wobble", "sound": "creak"}, {"do": "spin", "sound": "whoosh"}, {"do": "squash", "sound": "thunk"}]},
+    "wheelbarrow": {"kind": "cutout", "noun": "wooden wheelbarrow", "pivot": "base",
+                    "press": [{"do": "rattle", "sound": "rattle"}, {"do": "hop", "sound": "boing"}, {"do": "tilt_fall", "sound": "thunk"}]},
+    "watering_can": {"kind": "cutout", "noun": "watering can", "pivot": "base",
+                     "press": [{"do": "wobble", "sound": "thunk"}, {"do": "tilt_fall", "sound": "thunk"}, {"do": "hop", "sound": "boing"}]},
+    "bell": {"kind": "cutout", "noun": "small bell", "pivot": "top",
+             "press": [{"do": "swing", "sound": "chime"}, {"do": "shiver", "sound": "chime"}, {"do": "swing", "sound": "tick"}]},
+    "teapot": {"kind": "cutout", "noun": "teapot", "pivot": "base",
+               "press": [{"do": "wobble", "sound": "rattle"}, {"do": "hop", "sound": "boing"}, {"do": "shiver", "sound": "rattle"}]},
+    "bag": {"kind": "cutout", "noun": "hanging bag", "pivot": "top",
+            "press": [{"do": "swing", "sound": "creak"}, {"do": "bob", "sound": "boing"}, {"do": "swing", "sound": "tick"}]},
+    "creature": {"kind": "cutout", "noun": "small animal", "pivot": "base",
+                 "press": [{"do": "peek", "sound": "blip"}, {"do": "hop", "sound": "boing"}, {"do": "blink", "sound": "blip"}]},
+    "crate": {"kind": "cutout", "noun": "wooden crate", "pivot": "base",
+              "press": [{"do": "rattle", "sound": "thunk"}, {"do": "hop", "sound": "thunk"}, {"do": "tilt_fall", "sound": "thunk"}]},
+    "bench": {"kind": "hotspot", "press": [{"do": "pulse", "sound": "thunk"}, {"do": "ripple", "sound": "sparkle"}, {"do": "flash", "sound": "chime"}]},
+    "tree": {"kind": "hotspot", "press": [{"do": "rattle", "sound": "rattle"}, {"do": "ripple", "sound": "whoosh"}, {"do": "flash", "sound": "sparkle"}]},
+    "window": {"kind": "hotspot", "press": [{"do": "flash", "sound": "sparkle"}, {"do": "blink", "sound": "chime"}, {"do": "pulse", "sound": "blip"}]},
+    "gate": {"kind": "hotspot", "press": [{"do": "rattle", "sound": "creak"}, {"do": "ripple", "sound": "creak"}, {"do": "pulse", "sound": "thunk"}]},
+    "plants": {"kind": "hotspot", "press": [{"do": "ripple", "sound": "whoosh"}, {"do": "rattle", "sound": "rattle"}, {"do": "flash", "sound": "sparkle"}]},
+    "thing": {"kind": "hotspot", "press": [{"do": "pulse", "sound": "blip"}, {"do": "ripple", "sound": "sparkle"}, {"do": "flash", "sound": "chime"}]}
+  }
+}

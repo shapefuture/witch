@@ -18,9 +18,9 @@ func _initialize() -> void:
 	var failures: Array[String] = []
 	for name in stats.keys():
 		var s: Dictionary = stats[name]
-		# 360 internal rows whatever the window shape; the width expands from 480 (4:3) with the aspect.
-		if s["height"] != 360 or s["width"] < 480:
-			failures.append("%s: expected the 360-row internal resolution (>= 480 wide), got %dx%d" % [name, s["width"], s["height"]])
+		# 540 internal rows whatever the window shape; the width expands from 720 (4:3) with the aspect.
+		if s["height"] != 540 or s["width"] < 720:
+			failures.append("%s: expected the 540-row internal resolution (>= 720 wide), got %dx%d" % [name, s["width"], s["height"]])
 		if s["distinct_colors"] < 40:
 			failures.append("%s: only %d distinct colours (blank or broken render?)" % [name, s["distinct_colors"]])
 		if s["lit_fraction"] < 0.25:
@@ -47,6 +47,8 @@ func _stats(image: Image) -> Dictionary:
 	var sum := 0.0
 	var sum_sq := 0.0
 	var text_pixels := 0
+	# UI is laid out in the pixels of a 360-row picture (Diegetic.UI_ROWS)
+	var ui := float(height) / 360.0
 	for y in range(height):
 		for x in range(width):
 			var c := image.get_pixel(x, y)
@@ -57,7 +59,7 @@ func _stats(image: Image) -> Dictionary:
 			if luma > 0.12:
 				lit += 1
 			# Subtitle strip: light glyph pixels (narration is drawn blue-grey, luma about 0.8) inside the panel.
-			if y >= 186 and y < 232 and x >= 10 and x < 310 and luma > 0.7:
+			if y >= 186.0 * ui and y < 232.0 * ui and x >= 10.0 * ui and x < 310.0 * ui and luma > 0.7:
 				text_pixels += 1
 	var count := float(width * height)
 	var mean := sum / count

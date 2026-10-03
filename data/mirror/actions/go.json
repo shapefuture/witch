@@ -257,6 +257,10 @@
 						"kind": "leave_frame",
 						"actor": "player",
 						"via": "path_out"
+					},
+					{
+						"kind": "room_variant",
+						"variant": "dusk"
 					}
 				]
 			}

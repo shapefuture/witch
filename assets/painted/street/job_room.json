@@ -1,0 +1,46 @@
+{
+  "model": "xai/grok-imagine-image-2.0",
+  "arguments": {
+    "prompt": "The main street of a small hillside town at dusk, cobbled and uneven: crooked three-storey houses with lit windows and blank sign boards, a shop with a round window on the left, hanging lanterns, bare autumn trees, a stone bridge or a gate at the far end, a few chimneys smoking. An outdoor street or lane of a small town seen from the middle of the way, looking along it: houses leaning in on both sides, a wide clear stretch of ground in the foreground to walk on, the sky and a bend or a far gate at the end. Palette: Natural world first, strange colour second: autumnal melancholy, moss green, dusky blue, plum shadows, warm lamplight in windows.. Painting style: faceted low-poly papercraft, mottled dry matte colour, visible facets, slightly crooked broken-PS1 geometry, a dark foreground frame, NO black outline or inked edge. The reference picture shows the painting style only: draw the new place described, not the reference's room. Horizontal 16:9. Eye height low, the horizon about 60 percent of the way down the frame, and a large clear area of ground, unobstructed, in the foreground to walk on. No people, no witch, no raccoon, no animals, no text, no letters.",
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "quality": "medium",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/88f7c3cf-8a70-4e9e-b33c-b4c182a4380d.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.440",
+    "usd": "0.090",
+    "discount": null
+  },
+  "idempotency_key": "04eae774-6929-452f-b254-ef18c4c833d5",
+  "created_at": "2026-10-02T16:36:15+00:00",
+  "request_id": "21bc8c3d-57ec-4106-893c-e2c475a2aa7b",
+  "status_url": "https://platform.higgsfield.ai/requests/21bc8c3d-57ec-4106-893c-e2c475a2aa7b/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/21bc8c3d-57ec-4106-893c-e2c475a2aa7b/cancel",
+  "status": "completed",
+  "correlation_id": "7f997e31afae4327b9d0acd0cbf68ed4",
+  "result": {
+    "status": "completed",
+    "request_id": "21bc8c3d-57ec-4106-893c-e2c475a2aa7b",
+    "status_url": "https://platform.higgsfield.ai/requests/21bc8c3d-57ec-4106-893c-e2c475a2aa7b/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/21bc8c3d-57ec-4106-893c-e2c475a2aa7b/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/4de786b0-c37f-4c3d-95b5-1d8dc0cbb398.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-02T16:36:56+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/4de786b0-c37f-4c3d-95b5-1d8dc0cbb398.png",
+      "path": "image_0.png",
+      "sha256": "5207a355af1c27b71761f9857812e68c5443b60d2af720f044f942da4f2b403f",
+      "bytes": 5924503
+    }
+  ]
+}
