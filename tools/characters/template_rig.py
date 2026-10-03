@@ -129,7 +129,7 @@ def neutral_base():
     return {**witch.arm_pose(1, (.12, -1, .05), (.10, -1, .2)), **witch.arm_pose(-1, (-.12, -1, .05), (-.10, -1, .2))}
 
 
-def rig(views, shape, out, faces=9000, size=256, log=print):
+def rig(views, shape, out, faces=9000, size=256, log=print, parts=()):
     import image2rig as ir
     from PIL import Image
     P, F = ir.load_mesh(shape)
@@ -145,10 +145,10 @@ def rig(views, shape, out, faces=9000, size=256, log=print):
     bones, seg = skeleton(lm)
     vmap, idx, uv, picture, covered = atlas(low_P, low_F, np.asarray(dense_P), np.asarray(col), size)
     Pn = (low_P * KIT_H)[vmap]
-    return _finish(out, bones, lm, seg, Pn, idx, uv, Image.fromarray(picture), size, covered, stats, log)
+    return _finish(out, bones, lm, seg, Pn, idx, uv, Image.fromarray(picture), size, covered, stats, log, parts)
 
 
-def _finish(out, bones, lm, seg, Pn, idx, uv, picture, size, covered, stats, log):
+def _finish(out, bones, lm, seg, Pn, idx, uv, picture, size, covered, stats, log, parts=()):
     """Skin the vertices `Pn` (kit units), unroll the triangles `idx` into the corner arrays and write the rigged .glb with the witch kit's clips."""
     import witch
     import witch_glb
@@ -160,11 +160,30 @@ def _finish(out, bones, lm, seg, Pn, idx, uv, picture, size, covered, stats, log
     arr = {"P": Pn[tri], "N": np.repeat(n, 3, axis=0), "UV": uv[tri], "J": J[tri], "W": W[tri]}
     model = types.SimpleNamespace(B=bones, names=list(bones), ix={k: i for i, k in enumerate(bones)})
     clips = witch.clip_set(model, base=neutral_base)
-    count = witch_glb.export(str(out), model, arr, picture, clips, GAME_H / KIT_H, mesh_name="Figure", generator="template_rig.py", extras={"landmarks": lm})
-    log("%s: %d triangles, one %d px atlas (%s), %d clips%s" % (
-        out, count, size, "%.0f%% of its texels covered" % (100 * covered) if covered is not None else "its own", len(clips),
+    extra = [prop_part(bones, spec) for spec in parts]
+    count = witch_glb.export(str(out), model, arr, picture, clips, GAME_H / KIT_H, mesh_name="Figure", generator="template_rig.py", extras={"landmarks": lm},
+                             extra_prims=extra)
+    log("%s: %d triangles, %d surface%s, one %d px atlas for the body (%s), %d clips%s" % (
+        out, count, 1 + len(extra), "s" if extra else "", size, "%.0f%% of its texels covered" % (100 * covered) if covered is not None else "its own", len(clips),
         ", silhouette iou %s" % {k: v["silhouette_iou"] for k, v in stats.items() if isinstance(v, dict)} if stats else ""))
     return model, arr, np.asarray(picture), clips
+
+
+def prop_part(bones, spec):
+    """A static prop (prop_bake.py output) carried rigidly by a bone: `spec` = (prop .glb, bone, (dx, dy, dz) in metres at game scale). The prop's foot-centre
+    (y = 0, centred) is set on the bone's rest head plus the offset; it becomes the character's second surface with its own small atlas."""
+    path, bone, offset = spec
+    P, F, UV, picture = read_textured(path)
+    k = KIT_H / GAME_H
+    Pk = (P * k + bones[bone][1] + np.asarray(offset, float) * k)[F].reshape(-1, 3)
+    T = Pk.reshape(-1, 3, 3)
+    n = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0])
+    n = n / np.maximum(np.linalg.norm(n, axis=1, keepdims=True), 1e-12)
+    J = np.zeros((len(Pk), 4), int)
+    J[:, 0] = list(bones).index(bone)
+    W = np.zeros((len(Pk), 4))
+    W[:, 0] = 1.0
+    return {"P": Pk, "N": np.repeat(n, 3, axis=0), "UV": UV[F].reshape(-1, 2), "J": J, "W": W}, picture
 
 
 def read_textured(path):
@@ -189,14 +208,14 @@ def read_textured(path):
     return np.vstack(P), np.vstack(F), np.vstack(UV), picture
 
 
-def rig_textured(views, textured, out, log=print):
+def rig_textured(views, textured, out, log=print, parts=()):
     """The same skeleton and skin on a mesh that already has its UVs and picture (a paid texture job baked down to 9,000 triangles): nothing is repainted."""
     P, F, UV, picture = read_textured(textured)
     lo, hi = P.min(0), P.max(0)
     P = (P - np.array([(lo[0] + hi[0]) / 2, lo[1], (lo[2] + hi[2]) / 2])) / (hi[1] - lo[1])
     lm = landmarks(Path(views) / "front.png")
     bones, seg = skeleton(lm)
-    return _finish(out, bones, lm, seg, P * KIT_H, F, UV, picture, picture.width, None, None, log)
+    return _finish(out, bones, lm, seg, P * KIT_H, F, UV, picture, picture.width, None, None, log, parts)
 
 
 def main(argv=None):
@@ -206,12 +225,18 @@ def main(argv=None):
     ap.add_argument("out")
     ap.add_argument("--faces", type=int, default=9000)
     ap.add_argument("--size", type=int, default=256)
+    ap.add_argument("--hold", action="append", default=[], metavar="PROP.glb:BONE:DX,DY,DZ",
+                    help="carry a static prop (prop_bake.py) on a bone, offset in metres from the bone's rest position; e.g. jug.glb:hand.L:0,-0.2,0 (repeatable; the game allows two surfaces)")
     ap.add_argument("--textured", action="store_true", help="SHAPE is a textured .glb (lowpoly_bake.py output): keep its UVs and picture, only add the skeleton and skin")
     a = ap.parse_args(argv)
+    parts = []
+    for h in a.hold:
+        path, bone, off = h.rsplit(":", 2)
+        parts.append((path, bone, [float(v) for v in off.split(",")]))
     if a.textured:
-        rig_textured(a.views, a.shape, a.out)
+        rig_textured(a.views, a.shape, a.out, parts=parts)
     else:
-        rig(a.views, a.shape, a.out, a.faces, a.size)
+        rig(a.views, a.shape, a.out, a.faces, a.size, parts=parts)
     return 0
 
 

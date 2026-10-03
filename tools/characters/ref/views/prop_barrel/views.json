@@ -1,0 +1,79 @@
+{
+  "sheet": "/home/user/witch/build/views/prop_barrel/sheet.png",
+  "sheet_size": [
+    2048,
+    1360
+  ],
+  "background": [
+    7,
+    249,
+    14
+  ],
+  "size": 1024,
+  "fill": 0.84,
+  "problems": [],
+  "views": {
+    "front": {
+      "box": [
+        150,
+        52,
+        562,
+        595
+      ],
+      "height": 543,
+      "width": 412
+    },
+    "front34": {
+      "box": [
+        823,
+        53,
+        1238,
+        598
+      ],
+      "height": 545,
+      "width": 415
+    },
+    "right": {
+      "box": [
+        1498,
+        77,
+        1900,
+        589
+      ],
+      "height": 512,
+      "width": 402
+    },
+    "back": {
+      "box": [
+        141,
+        731,
+        551,
+        1280
+      ],
+      "height": 549,
+      "width": 410
+    },
+    "back34": {
+      "box": [
+        805,
+        721,
+        1223,
+        1272
+      ],
+      "height": 551,
+      "width": 418
+    },
+    "left": {
+      "box": [
+        1501,
+        750,
+        1907,
+        1258
+      ],
+      "height": 508,
+      "width": 406
+    }
+  },
+  "cost_usd": 0.103,
+  "prompt": "An object model sheet for 3D modelling: the SAME object shown six times on one flat chroma-key green (#00FF00), perfectly even background. The FIRST reference image is a LAYOUT GUIDE, not a picture to copy: a flat chroma-key green (#00FF00), perfectly even canvas of six framed cells, each with a label, a dashed top line near the top, a dashed base line near the bottom, a dotted centre line and a symbol for the way the object faces. Draw one view of the object in each cell, the whole object from top to bottom, centred on the centre line, the top just under the top line and the base on the base line, so that all six are the same size. Use the guide for placement only: the frames, lines, labels and symbols stay out of the picture, and the background stays flat chroma-key green (#00FF00), perfectly even and empty. Top row, left to right: front view, facing the viewer; three-quarter front view, the whole body clearly turned a full 45 degrees, half way between the front view and the side view, so that her near shoulder is well in front of the far one, facing toward the lower right of the picture; right side view in profile, facing the right edge of the picture. Bottom row, left to right: back view, facing directly away from the viewer; three-quarter back view, the whole body clearly turned a full 45 degrees, half way between the back view and the side view, facing away and toward the left edge of the picture; left side view in profile, facing the left edge of the picture. The object: a small wooden barrel with three iron hoops and a flat lid, planks in warm brown with darker grain, faceted low-poly look. No green anywhere. All six views show one and the same object with the same shape, parts, colours and rendering style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour fall on the object, with no cast shadows, no floor and no ground, and a clear gap of background around every figure. The SECOND reference image shows only the RENDERING STYLE to match: soft faceted low-poly modelling, painted surfaces, a muted palette with purple accents, gentle even lighting. Take its style and nothing else: do not copy its characters or objects."
+}

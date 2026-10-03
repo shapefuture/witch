@@ -3,6 +3,7 @@
 
     python hunyuan_cpu.py setup  DIR                      # once: the source (a Hugging Face Space) and the weights (about 6 GB) into DIR
     python hunyuan_cpu.py run    DIR VIEWS OUT.glb        # VIEWS = a folder with front.png, left.png, back.png (multiview.py's views/)
+    python hunyuan_cpu.py batch  DIR OUT_DIR NAME=VIEWS ...   # one model load, one mesh per NAME (OUT_DIR/NAME.glb): the load is 100 s, a mesh 200 s
 
 Run it with the Python of a virtualenv made for it (docs/art/cpu_pipeline.md): the checkpoint's DINOv2 key names only load under transformers 4.x, which wants
 huggingface-hub below 1.0, which gradio_client (image2rig.py) refuses. Needed there: torch (cpu), torchvision, transformers==4.51.3, huggingface-hub<1.0, diffusers,
@@ -89,7 +90,26 @@ def main(argv=None):
     r.add_argument("--seed", type=int, default=1234)
     r.add_argument("--fp32", action="store_true", help="no int8 (about 2.5 x slower)")
     r.add_argument("--no-flash", action="store_true", help="the plain volume decoder (about 5 minutes more)")
+    b = sub.add_parser("batch")
+    b.add_argument("dir")
+    b.add_argument("out_dir")
+    b.add_argument("jobs", nargs="+", help="NAME=VIEWS_FOLDER")
+    b.add_argument("--steps", type=int, default=3)
+    b.add_argument("--octree", type=int, default=128)
+    b.add_argument("--seed", type=int, default=1234)
     a = ap.parse_args(argv)
+    if a.cmd == "batch":
+        t0 = time.time()
+        pipe = load(a.dir)
+        print("loaded in %.0f s" % (time.time() - t0), flush=True)
+        for job in a.jobs:
+            name, _, views = job.partition("=")
+            mesh = shape(pipe, views, a.steps, a.octree, a.seed)
+            dest = Path(a.out_dir) / (name + ".glb")
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            mesh.export(dest)
+            print("%s written, %.0f s since the start" % (dest, time.time() - t0), flush=True)
+        return 0
     if a.cmd == "setup":
         setup(a.dir)
         return 0

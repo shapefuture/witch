@@ -149,6 +149,29 @@ def test_a_textured_mesh_keeps_its_uvs_and_picture_and_the_previewer_shows_the_a
         shutil.rmtree(tmp)
 
 
+def test_a_prop_comes_out_of_a_shape_and_its_views_as_a_small_static_textured_glb():
+    import prop_bake as pb
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        views = _views(tmp / "v")
+        P, F = sh.hull(views, faces=20000, size=64)
+        ir.write_glb(str(tmp / "shape.glb"), P, F)
+        count = pb.bake(views, tmp / "shape.glb", tmp / "prop.glb", faces=600, size=64, height=0.5, log=lambda *a: None)
+        st = ir.glb_inspect(tmp / "prop.glb")
+        assert st["ok"] and count == st["triangles"] <= 600 and not st["joints"] and st["surfaces"] == 1, st
+        assert st["textures"] == [(64, 64)], st["textures"]
+        assert abs(st["size"][1] - 0.5) < 0.02, st["size"]
+        _, _, uv, picture = tr.read_textured(tmp / "prop.glb")
+        assert uv.min() >= 0 and uv.max() <= 1.0001 and picture.size == (64, 64)
+        # carried on a hand bone, it is the character's second surface with its own atlas
+        tr.rig(views, tmp / "shape.glb", tmp / "holds.glb", faces=2500, size=64, log=lambda *a: None, parts=[(str(tmp / "prop.glb"), "hand.L", [0, -0.1, 0])])
+        h = ir.glb_inspect(tmp / "holds.glb")
+        assert h["ok"] and h["surfaces"] == 2 and h["triangles"] > count and len(h["textures"]) == 2, h
+        assert h["joints"] == ir.glb_inspect(tmp / "prop.glb")["joints"] + 21 or h["joints"] == 21, h
+    finally:
+        shutil.rmtree(tmp)
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

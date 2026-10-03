@@ -1,0 +1,47 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "resolution": "2k",
+    "quality": "medium",
+    "aspect_ratio": "3:2",
+    "prompt": "A character model sheet for 3D modelling: the SAME character shown six times on one flat chroma-key green (#00FF00), perfectly even background. The FIRST reference image is a LAYOUT GUIDE, not a picture to copy: a flat chroma-key green (#00FF00), perfectly even canvas of six framed cells, each with a label, a dashed head line near the top, a dashed foot line near the bottom, a dotted centre line and a symbol for the way the character faces. Draw one view of the character in each cell, the whole character from head to foot, centred on the centre line, the head just under the head line and the feet on the foot line, so that all six are the same size. Use the guide for placement only: the frames, lines, labels and symbols stay out of the picture, and the background stays flat chroma-key green (#00FF00), perfectly even and empty. A dashed line across each cell at shoulder height marks where the outstretched arms go, hands included, inside the cell. Top row, left to right: front view, facing the viewer; three-quarter front view, the whole body clearly turned a full 45 degrees, half way between the front view and the side view, so that her near shoulder is well in front of the far one, facing toward the lower right of the picture; right side view in profile, facing the right edge of the picture. Bottom row, left to right: back view, facing directly away from the viewer; three-quarter back view, the whole body clearly turned a full 45 degrees, half way between the back view and the side view, facing away and toward the left edge of the picture; left side view in profile, facing the left edge of the picture. The character: Vera, the town's apothecary, a calm woman of about forty with a tired kind face and round wire spectacles: a long moss-green apron-dress to the ground over a cream blouse with wide sleeves, a plum-purple shawl across her shoulders, a rust-red headscarf knotted at the back of her head, a thick brown braid hanging forward over one shoulder, and a leather bandolier across her chest holding small glass bottles and bundles of dried herbs. Faceted low-poly papercraft look like the cast in the style reference. Pose, the same in every view: a T-pose for rigging. She stands upright and straight, the head facing forward, the arms stretched out horizontally to both sides at shoulder height with the hands open, palms down and EMPTY, the legs straight; anything she held is left out of the picture. The long skirt reaches all the way to the ground and covers the legs completely: the figure stands on its hem like a bell, and no legs, feet, shoes or boots are visible in any view. All six views show one and the same character in the same pose, with the same face, hair, clothes, colours and rendering style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour fall on the character, with no cast shadows, no floor and no ground, and a clear gap of background around every figure. The SECOND reference image shows only the RENDERING STYLE to match: soft faceted low-poly modelling, painted surfaces, a muted palette with purple accents, gentle even lighting. Take its style and nothing else: do not copy its characters or objects.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/77242950-2388-449b-906e-fc5d0f48e579.png",
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/0f30830e-3a41-424f-8656-921f5fc5d920.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.722",
+    "usd": "0.108",
+    "discount": null
+  },
+  "idempotency_key": "f1330181-b830-4441-b275-4327a89f16c6",
+  "created_at": "2026-10-03T03:53:49+00:00",
+  "request_id": "b4811e5c-3e43-4f4d-9545-0105191f06c0",
+  "status_url": "https://platform.higgsfield.ai/requests/b4811e5c-3e43-4f4d-9545-0105191f06c0/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/b4811e5c-3e43-4f4d-9545-0105191f06c0/cancel",
+  "status": "completed",
+  "correlation_id": "70fe23cc5d2e4fada09c779600bf6d9d",
+  "result": {
+    "status": "completed",
+    "request_id": "b4811e5c-3e43-4f4d-9545-0105191f06c0",
+    "status_url": "https://platform.higgsfield.ai/requests/b4811e5c-3e43-4f4d-9545-0105191f06c0/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/b4811e5c-3e43-4f4d-9545-0105191f06c0/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/e5a1ff01-c7d5-4425-a0e6-0e9ea798d94a.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-03T03:54:29+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/e5a1ff01-c7d5-4425-a0e6-0e9ea798d94a.png",
+      "path": "image_0.png",
+      "sha256": "2b93ac19a568f1ebdbeb860c7bc640b07d1e570bcddd31bb1d00ddc60f212f01",
+      "bytes": 2562479
+    }
+  ]
+}

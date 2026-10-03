@@ -1,0 +1,47 @@
+{
+  "model": "marketing-studio/image",
+  "arguments": {
+    "resolution": "2k",
+    "quality": "medium",
+    "aspect_ratio": "3:2",
+    "prompt": "An object model sheet for 3D modelling: the SAME object shown six times on one flat chroma-key green (#00FF00), perfectly even background. The FIRST reference image is a LAYOUT GUIDE, not a picture to copy: a flat chroma-key green (#00FF00), perfectly even canvas of six framed cells, each with a label, a dashed top line near the top, a dashed base line near the bottom, a dotted centre line and a symbol for the way the object faces. Draw one view of the object in each cell, the whole object from top to bottom, centred on the centre line, the top just under the top line and the base on the base line, so that all six are the same size. Use the guide for placement only: the frames, lines, labels and symbols stay out of the picture, and the background stays flat chroma-key green (#00FF00), perfectly even and empty. Top row, left to right: front view, facing the viewer; three-quarter front view, the whole body clearly turned a full 45 degrees, half way between the front view and the side view, so that her near shoulder is well in front of the far one, facing toward the lower right of the picture; right side view in profile, facing the right edge of the picture. Bottom row, left to right: back view, facing directly away from the viewer; three-quarter back view, the whole body clearly turned a full 45 degrees, half way between the back view and the side view, facing away and toward the left edge of the picture; left side view in profile, facing the left edge of the picture. The object: a squat black iron witch's cauldron with a six-sided hexagonal rim, two ring handles, riveted bands, a dark empty opening, a worn bluish-grey metal, three short stubby feet. No green anywhere. All six views show one and the same object with the same shape, parts, colours and rendering style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour fall on the object, with no cast shadows, no floor and no ground, and a clear gap of background around every figure. The SECOND reference image shows only the RENDERING STYLE to match: soft faceted low-poly modelling, painted surfaces, a muted palette with purple accents, gentle even lighting. Take its style and nothing else: do not copy its characters or objects.",
+    "image_urls": [
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/95a9f906-9027-478d-9e88-f768f35123fa.png",
+      "https://d3snorpfx4xhv8.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/695c4b45-acd0-498b-a76d-668696919146.png"
+    ]
+  },
+  "estimate": {
+    "type": "estimate",
+    "credits": "1.646",
+    "usd": "0.103",
+    "discount": null
+  },
+  "idempotency_key": "59aad8fb-081f-497d-ba2b-f6ef42166e65",
+  "created_at": "2026-10-03T03:54:53+00:00",
+  "request_id": "bbfb418e-b987-45b9-ad25-9b5b8c8f8f50",
+  "status_url": "https://platform.higgsfield.ai/requests/bbfb418e-b987-45b9-ad25-9b5b8c8f8f50/status",
+  "cancel_url": "https://platform.higgsfield.ai/requests/bbfb418e-b987-45b9-ad25-9b5b8c8f8f50/cancel",
+  "status": "completed",
+  "correlation_id": "f4cbeeb9b8f447db86344ac0ed7abbf4",
+  "result": {
+    "status": "completed",
+    "request_id": "bbfb418e-b987-45b9-ad25-9b5b8c8f8f50",
+    "status_url": "https://platform.higgsfield.ai/requests/bbfb418e-b987-45b9-ad25-9b5b8c8f8f50/status",
+    "cancel_url": "https://platform.higgsfield.ai/requests/bbfb418e-b987-45b9-ad25-9b5b8c8f8f50/cancel",
+    "images": [
+      {
+        "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/6a790e01-b418-4ea5-b0a6-e08e12128e79.png"
+      }
+    ]
+  },
+  "finished_at": "2026-10-03T03:55:35+00:00",
+  "files": [
+    {
+      "kind": "image",
+      "url": "https://d3u0tzju9qaucj.cloudfront.net/27039611-f453-4819-9c97-3fd4def8d833/6a790e01-b418-4ea5-b0a6-e08e12128e79.png",
+      "path": "image_0.png",
+      "sha256": "d035e43b1faf97351d964328562c15cce578d92f0816ac03ee9217dd4e05e850",
+      "bytes": 2425615
+    }
+  ]
+}

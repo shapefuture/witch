@@ -116,7 +116,8 @@ def pose_arrays(model, arr, rots, trans=None):
 
 
 # ---- writer -------------------------------------------------------------------------------------------
-def export(path, model, arr, atlas_img, clips, scale, mesh_name='Witch', generator='witch.py', extras=None):
+def export(path, model, arr, atlas_img, clips, scale, mesh_name='Witch', generator='witch.py', extras=None, extra_prims=()):
+    """`extra_prims`: [(arrays, picture)], one more surface each (a prop carried on a bone): the game allows two."""
     blob = bytearray()
     views, accs = [], []
 
@@ -159,19 +160,22 @@ def export(path, model, arr, atlas_img, clips, scale, mesh_name='Witch', generat
         ibm[i] = m.flatten('F')
     skin = {'joints': list(range(nb)), 'skeleton': 0, 'inverseBindMatrices': acc(ibm, 5126, 'MAT4'), 'name': mesh_name + 'Skin'}
 
-    P = (arr['P'] * scale).astype(np.float32)
-    attrs = {'POSITION': acc(P, 5126, 'VEC3', True, 34962),
-             'NORMAL': acc(arr['N'].astype(np.float32), 5126, 'VEC3', False, 34962),
-             'TEXCOORD_0': acc(arr['UV'].astype(np.float32), 5126, 'VEC2', False, 34962),
-             'JOINTS_0': acc(arr['J'].astype(np.uint8), 5121, 'VEC4', False, 34962),
-             'WEIGHTS_0': acc(arr['W'].astype(np.float32), 5126, 'VEC4', False, 34962)}
-    if 'C' in arr:
-        attrs['COLOR_0'] = acc(arr['C'].astype(np.float32), 5126, 'VEC4', False, 34962)
-    prim = {'attributes': attrs, 'material': 0, 'mode': 4}
+    def make_prim(a, material):
+        attrs = {'POSITION': acc((a['P'] * scale).astype(np.float32), 5126, 'VEC3', True, 34962),
+                 'NORMAL': acc(a['N'].astype(np.float32), 5126, 'VEC3', False, 34962),
+                 'TEXCOORD_0': acc(a['UV'].astype(np.float32), 5126, 'VEC2', False, 34962),
+                 'JOINTS_0': acc(a['J'].astype(np.uint8), 5121, 'VEC4', False, 34962),
+                 'WEIGHTS_0': acc(a['W'].astype(np.float32), 5126, 'VEC4', False, 34962)}
+        if 'C' in a:
+            attrs['COLOR_0'] = acc(a['C'].astype(np.float32), 5126, 'VEC4', False, 34962)
+        return {'attributes': attrs, 'material': material, 'mode': 4}
 
-    png = io.BytesIO()
-    atlas_img.save(png, 'PNG', optimize=True)
-    img_view = view(png.getvalue())
+    prims, img_views = [], []
+    for k, (a_, im_) in enumerate([(arr, atlas_img)] + list(extra_prims)):       # the body's atlas first, then a surface (and an atlas) per extra part
+        prims.append(make_prim(a_, k))
+        png = io.BytesIO()
+        im_.save(png, 'PNG', optimize=True)
+        img_views.append(view(png.getvalue()))
 
     anims = []
     for clip in clips:
@@ -199,13 +203,13 @@ def export(path, model, arr, atlas_img, clips, scale, mesh_name='Witch', generat
     g = {'asset': {'version': '2.0', 'generator': generator, 'extras': extras or {}},
          'scene': 0, 'scenes': [{'name': mesh_name, 'nodes': [0, nb]}],
          'nodes': nodes, 'skins': [skin],
-         'meshes': [{'name': mesh_name, 'primitives': [prim]}],
-         'materials': [{'name': mesh_name.lower() + '_atlas',
-                        'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}, 'baseColorFactor': [1, 1, 1, 1],
-                                                 'metallicFactor': 0, 'roughnessFactor': 1}}],
-         'textures': [{'sampler': 0, 'source': 0}],
+         'meshes': [{'name': mesh_name, 'primitives': prims}],
+         'materials': [{'name': mesh_name.lower() + ('_atlas' if k == 0 else '_part%d_atlas' % k),
+                        'pbrMetallicRoughness': {'baseColorTexture': {'index': k}, 'baseColorFactor': [1, 1, 1, 1],
+                                                 'metallicFactor': 0, 'roughnessFactor': 1}} for k in range(len(prims))],
+         'textures': [{'sampler': 0, 'source': k} for k in range(len(prims))],
          'samplers': [{'magFilter': 9728, 'minFilter': 9728, 'wrapS': 33071, 'wrapT': 33071}],
-         'images': [{'bufferView': img_view, 'mimeType': 'image/png', 'name': mesh_name.lower() + '_atlas'}],
+         'images': [{'bufferView': v, 'mimeType': 'image/png', 'name': mesh_name.lower() + ('_atlas' if k == 0 else '_atlas%d' % k)} for k, v in enumerate(img_views)],
          'animations': anims,
          'buffers': [{'byteLength': 0}], 'bufferViews': views, 'accessors': accs}
     while len(blob) % 4:
@@ -217,7 +221,7 @@ def export(path, model, arr, atlas_img, clips, scale, mesh_name='Witch', generat
         f.write(struct.pack('<III', 0x46546C67, 2, 28 + len(js) + len(blob)))
         f.write(struct.pack('<II', len(js), 0x4E4F534A) + js)
         f.write(struct.pack('<II', len(blob), 0x004E4942) + bytes(blob))
-    return len(P) // 3
+    return (len(arr['P']) + sum(len(a['P']) for a, _ in extra_prims)) // 3
 
 
 def read_glb(path):

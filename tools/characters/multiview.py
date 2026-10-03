@@ -146,8 +146,20 @@ SHOULDERS = ("A dashed line across each cell at shoulder height marks where the 
 GRID = ("A grid of three columns by two rows of equal cells. ")
 
 
-def compose(subject, ref=True, use_guide=True, look="", key=DEFAULT_KEY, pose=DEFAULT_POSE, legless=False):
-    """`subject`: the character in words (with a reference it adds to the picture). Returns the prompt."""
+STYLE = ("The %s reference image shows only the RENDERING STYLE to match: soft faceted low-poly modelling, painted surfaces, a muted palette with purple accents, "
+         "gentle even lighting. Take its style and nothing else: do not copy its characters or objects. ")
+ORDINAL = {2: "SECOND", 3: "THIRD", 4: "FOURTH"}
+OBJECT_WORDS = (("A character model sheet", "An object model sheet"), ("the SAME character", "the SAME object"), ("the whole character", "the whole object"),
+                ("one and the same character", "one and the same object"), ("the character", "the object"), ("The character", "The object"),
+                ("head line", "top line"), ("foot line", "base line"), ("from head to foot", "from top to bottom"), ("the head just under the top line and the feet on the base line",
+                 "the top just under the top line and the base on the base line"), ("same face, hair, clothes, colours", "same shape, parts, colours"))
+
+
+def compose(subject, ref=True, use_guide=True, look="", key=DEFAULT_KEY, pose=DEFAULT_POSE, legless=False, kind="character", style_n=0):
+    """`subject`: the character (or object) in words (with a reference it adds to the picture). `kind` "object": a prop, no pose, "object" words.
+    `style_n`: the position (2, 3, ...) of a style-only reference image among the references, or 0 for none. Returns the prompt."""
+    if kind == "object":
+        pose, legless = "keep", False
     bg = KEYS[key][1]
     rows = ["Top row, left to right: " + "; ".join(v[2] for v in VIEWS[:3]) + ". ",
             "Bottom row, left to right: " + "; ".join(v[2] for v in VIEWS[3:]) + ". "]
@@ -155,12 +167,17 @@ def compose(subject, ref=True, use_guide=True, look="", key=DEFAULT_KEY, pose=DE
            "the sides it does not show in the same style. " % ("SECOND" if use_guide else "")) if ref else ""
     if subject.strip():
         who += "The character: %s. " % subject.strip().rstrip(".")
-    return ("A character model sheet for 3D modelling: the SAME character shown six times on one %s background. " % bg
-            + (NOTE.format(bg=bg) + (SHOULDERS if pose == "t" else "") if use_guide else GRID) + "".join(rows) + who + POSES[pose] + (LEGLESS if legless else "")
-            + "All six views show one and the same character in the same pose, with the same face, hair, clothes, colours and rendering "
-            "style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour "
-            "fall on the character, with no cast shadows, no floor and no ground, and a clear gap of background around every figure. "
-            + look.strip()).strip()
+    prompt = ("A character model sheet for 3D modelling: the SAME character shown six times on one %s background. " % bg
+              + (NOTE.format(bg=bg) + (SHOULDERS if pose == "t" else "") if use_guide else GRID) + "".join(rows) + who + POSES[pose] + (LEGLESS if legless else "")
+              + "All six views show one and the same character in the same pose, with the same face, hair, clothes, colours and rendering "
+              "style, at the same scale like an orthographic turntable, in flat even neutral-white lighting that lets no light of the background colour "
+              "fall on the character, with no cast shadows, no floor and no ground, and a clear gap of background around every figure. "
+              + (STYLE % ORDINAL[style_n] if style_n else "") + look.strip()).strip()
+    if kind == "object":
+        for a, b in OBJECT_WORDS:
+            prompt = prompt.replace(a, b)
+        prompt = prompt.replace("in the same pose, ", "").replace("one and the same object in the same pose", "one and the same object")
+    return prompt
 
 
 def run_hf(model, args, refs, max_usd, out_dir):
@@ -349,7 +366,8 @@ def crop(sheet_path, out_dir, size=1024, cols=COLS, rows=ROWS, key=None):
 
 
 # ---- the whole thing -----------------------------------------------------------------------------------------------------
-def make(name, ref=None, text="", model=DEFAULT_MODEL, use_guide=True, look="", out=None, max_usd=0.35, size=1024, key=DEFAULT_KEY, pose=DEFAULT_POSE, legless=False):
+def make(name, ref=None, text="", model=DEFAULT_MODEL, use_guide=True, look="", out=None, max_usd=0.35, size=1024, key=DEFAULT_KEY, pose=DEFAULT_POSE, legless=False,
+         style=None, kind="character"):
     out = Path(out or ROOT / "build/views" / name)
     out.mkdir(parents=True, exist_ok=True)
     gen = MODELS[model]
@@ -359,7 +377,9 @@ def make(name, ref=None, text="", model=DEFAULT_MODEL, use_guide=True, look="", 
         refs.append(out / "guide.png")
     if ref:
         refs.append(Path(ref))
-    prompt = compose(text, ref=bool(ref), use_guide=use_guide, look=look, key=key, pose=pose, legless=legless)
+    if style:
+        refs.append(Path(style))
+    prompt = compose(text, ref=bool(ref), use_guide=use_guide, look=look, key=key, pose=pose, legless=legless, kind=kind, style_n=len(refs) if style else 0)
     args = dict(gen["args"], prompt=prompt)
     job = run_hf(gen["edit"] if refs else gen["text"], args, refs, max_usd, out)
     (out / "sheet.png").write_bytes((job / "image_0.png").read_bytes())
@@ -387,6 +407,8 @@ def main(argv=None):
     m.add_argument("--pose", choices=sorted(POSES), default=DEFAULT_POSE, help="keep the reference's pose, or ask for a T-pose / A-pose for rigging")
     m.add_argument("--no-legs", action="store_true", help="a long skirt or robe to the ground: no legs, feet or shoes drawn (nothing to rig below the hem)")
     m.add_argument("--no-guide", action="store_true", help="describe the grid in words only (to compare)")
+    m.add_argument("--style", help="a picture whose RENDERING STYLE to match (sent as an extra reference; its characters and objects are not to be copied)")
+    m.add_argument("--kind", choices=("character", "object"), default="character", help="object: a prop (no pose, 'object' wording; --pose and --no-legs are ignored)")
     m.add_argument("--look", default="", help="more style words appended to the prompt")
     m.add_argument("--out")
     m.add_argument("--size", type=int, default=1024)
@@ -405,7 +427,7 @@ def main(argv=None):
     if a.cmd == "make":
         if not a.ref and not a.text:
             sys.exit("give --ref or --text")
-        report = make(a.name, a.ref, a.text, a.model, not a.no_guide, a.look, a.out, a.max_usd, a.size, a.key, a.pose, a.no_legs)
+        report = make(a.name, a.ref, a.text, a.model, not a.no_guide, a.look, a.out, a.max_usd, a.size, a.key, a.pose, a.no_legs, a.style, a.kind)
     else:
         report = crop(a.sheet, a.out, a.size, key=a.key)
     print("%d views -> %s" % (len(report["views"]), a.out or ROOT / "build/views" / a.name))

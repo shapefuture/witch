@@ -201,6 +201,16 @@ def test_make_sends_the_guide_first_then_the_character_and_crops_the_result():
     assert (tmp / "t" / "views" / "front.png").exists() and (tmp / "t" / "job_views.json").exists()
 
 
+def test_an_object_sheet_has_no_character_words_no_pose_and_a_style_reference_in_its_place():
+    p = mv.compose("a copper cauldron with a hex rim", ref=False, kind="object", pose="t", legless=True, style_n=2)
+    stripped = p.replace("do not copy its characters or objects", "")
+    for word in ("character", "head line", "foot line", "T-pose", "legs", "skirt", " she "):
+        assert word not in stripped.lower() if word.islower() else word not in stripped, word
+    assert "The SECOND reference image shows only the RENDERING STYLE" in p and "a copper cauldron with a hex rim" in p
+    assert "THIRD reference image shows only the RENDERING STYLE" in mv.compose("x", ref=True, kind="character", style_n=3)
+    assert "RENDERING STYLE" not in mv.compose("x", ref=True)
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):
