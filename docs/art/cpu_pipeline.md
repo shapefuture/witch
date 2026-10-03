@@ -8,11 +8,13 @@ offline tests `test_template_rig.py`, `test_image2rig.py`, `test_multiview.py`).
 
 The witch's own T-pose views (`multiview.py make witch --pose t --no-legs`, USD 0.10) went through, with **no GPU, no paid call after the sheet, no neural network after the shape**:
 
-`Hunyuan3D-2mv-turbo on the CPU` (shape) → `image2rig.py paint` (colour from the views) → `template_rig.py` (decimate to 9,000, atlas, skeleton, skin) → a game `.glb` that plays the game's own `idle`, `walk`,
-`talk`, `cast` on the fixed skeleton. Frames: `docs/art/cpu_rig/poses_hunyuan_shape.png` (rest T-pose, then idle, walk, talk, cast; the hull version is `poses_silhouette_hull.png` beside it). The face, the hair curls and the robe survive; the arms drop at the shoulders; nothing
-crosses the body. 9,000 triangles, one surface, one 256 px atlas, 21 bones (the witch kit's, by name). **Loaded and checked in Godot 4.6.3** (the Linux binary from the engine's GitHub release; a copy of the file as `assets/characters/witch_cpu.glb`, since removed): through `CharacterModels.instantiate` it is 1.300 m tall, feet at 0.000, **1 surface, 8,998 triangles**, its material is the PSX actor shader sampling a 256 px atlas, it has the four clips and keeps the witch's bone names (28 assertions, the shipped rules of `tests/render/test_character_models.gd`). The runner's orphan-node check fails when a suite runs alone (the shipped `test_character_models` fails it the same way, 104 nodes): that is `queue_free` being deferred, not the file. The writer is the kit's own `witch_glb.export`.
+`Hunyuan3D-2mv-turbo on the CPU` (shape) -> `image2rig.py paint` (colour from the views) -> `template_rig.py` (decimate to 9,000, atlas, skeleton, skin) -> a game `.glb` that plays the game's own `idle`, `walk`,
+`talk`, `cast` on the fixed skeleton, 9,000 triangles, one surface, one 256 px atlas, 21 bones (the witch kit's, by name). Flat-previewer frames: `docs/art/cpu_rig/poses_hunyuan_shape.png` (rest T-pose, then idle, walk, talk, cast).
+**Loaded and checked in Godot 4.6.3** (the Linux binary from the engine's GitHub release; a copy as `assets/characters/witch_cpu.glb`, since removed): through `CharacterModels.instantiate` it is 1.300 m tall, feet at 0.000, 1 surface, 8,998 triangles, the PSX actor shader on a
+256 px atlas, the four clips and the witch's bone names; the full headless gate passed with it present. **How good is it? Judged in the game's own renderer it is placeholder grade, and clearly worse than the hand-built `witch.glb`**: the face is recognisable in a studio render but
+the curls, the palette and the skirt's flare are lost, which is what the game frame shows at 100 px. The evidence, the measurements and the verdict are in `docs/art/cpu_route_evaluation.md`; read that before trusting the flat-previewer frames above.
 
-And the zero-network floor under it: `silhouette_hull.py` carves the shape from the four silhouettes in **10 s on one core**, same rig on top. It is a blockout, not a character (see "What the cheap shape cannot do").
+And the zero-network floor under it: `silhouette_hull.py` carves the shape from the four silhouettes in **10 s on one core**, same rig on top. It is a blockout, not a character (see "What the cheap shape cannot do"). Whole-route verdict: `docs/art/cpu_route_evaluation.md`.
 
 ## Measured on this box
 

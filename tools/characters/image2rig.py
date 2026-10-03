@@ -889,7 +889,8 @@ def np_array(a):
 
 def preview(path, dest, size=480):
     """Four orthographic views (0, 90, 180, 270 degrees round the up axis) of the first mesh, painter's algorithm, flat key light, the base colour
-    texture sampled at each face's centre (grey without one). A judgement aid, not the game's renderer."""
+    texture sampled per pixel (grey without one; before this it was sampled once per triangle, which erased a face or a decal drawn in the atlas and
+    made a hand-textured 6k-triangle model look worse than it is). A judgement aid, not the game's renderer: use tools/characters/capture_candidate.gd."""
     import numpy as np
     from PIL import Image, ImageDraw
     gltf, binary = load_glb(path)
@@ -908,7 +909,7 @@ def preview(path, dest, size=480):
             else:
                 vcols.append(None)
             tc = prim["attributes"].get("TEXCOORD_0")
-            uvs.append(accessor(gltf, binary, tc)[idx].mean(axis=1) if tc is not None else np.full((len(idx), 2), np.nan))
+            uvs.append(accessor(gltf, binary, tc)[idx] if tc is not None else np.full((len(idx), 3, 2), np.nan))      # per corner: the texture is sampled per pixel
             mat = (gltf.get("materials") or [{}])[prim.get("material", 0)] if gltf.get("materials") else {}
             colours.append(np.tile(np.array(mat.get("pbrMetallicRoughness", {}).get("baseColorFactor", [0.7, 0.7, 0.7, 1])[:3]), (len(idx), 1)))
     T, UV, C = np.concatenate(tris), np.concatenate(uvs), np.concatenate(colours)
@@ -921,12 +922,15 @@ def preview(path, dest, size=480):
         tex = np.asarray(Image.open(__import__("io").BytesIO(binary[bv.get("byteOffset", 0):bv.get("byteOffset", 0) + bv["byteLength"]])).convert("RGB"))
     except (KeyError, IndexError, TypeError):
         pass
-    if tex is not None and not np.isnan(UV).all():
-        u = (np.nan_to_num(UV[:, 0]) % 1.0 * (tex.shape[1] - 1)).astype(int)
-        v = (np.nan_to_num(UV[:, 1]) % 1.0 * (tex.shape[0] - 1)).astype(int)
+    textured = tex is not None and not np.isnan(UV).all()
+    if textured:
+        UVm = UV.mean(axis=1)
+        u = (np.nan_to_num(UVm[:, 0]) % 1.0 * (tex.shape[1] - 1)).astype(int)
+        v = (np.nan_to_num(UVm[:, 1]) % 1.0 * (tex.shape[0] - 1)).astype(int)
         C = tex[v, u] / 255.0
-    if vcols and all(v is not None for v in vcols):
-        C = np.concatenate(vcols)                                               # vertex colours (COLOR_0, linear in the file)
+    vcol = np.concatenate(vcols) if vcols and all(v is not None for v in vcols) else None      # COLOR_0 (linear in the file)
+    if vcol is not None:
+        C = C * vcol if textured else vcol                                      # glTF multiplies the texture by the vertex colour
     lo, hi = T.reshape(-1, 3).min(0), T.reshape(-1, 3).max(0)
     centre, span = (lo + hi) / 2, float((hi - lo).max())
     sheet = Image.new("RGB", (size * 4, size), (30, 30, 34))
@@ -939,12 +943,40 @@ def preview(path, dest, size=480):
         facing = n[:, 2] > 0
         shade = 0.35 + 0.65 * np.clip(n @ np.array([-0.3, 0.5, 0.8]), 0, 1)
         order = np.argsort(P[:, :, 2].mean(axis=1))
-        im = Image.new("RGB", (size, size), (30, 30, 34))
-        d = ImageDraw.Draw(im)
         px = (P[..., :2] * np.array([1, -1]) / span * size * 0.92 + size / 2)
-        for i in order:
-            if facing[i]:
-                d.polygon([tuple(q) for q in px[i]], fill=tuple((np.clip(C[i] * shade[i], 0, 1) * 255).astype(int)))
+        if textured:                                                            # the atlas per pixel, painter's order: what the game's shader does, without its lighting
+            canvas = np.empty((size, size, 3), np.uint8)
+            canvas[:] = (30, 30, 34)
+            tw, th = tex.shape[1] - 1, tex.shape[0] - 1
+            for i in order:
+                if not facing[i]:
+                    continue
+                q = px[i]
+                x0, y0 = np.maximum(np.floor(q.min(axis=0)).astype(int), 0)
+                x1, y1 = np.minimum(np.ceil(q.max(axis=0)).astype(int), size - 1)
+                den = (q[1, 1] - q[2, 1]) * (q[0, 0] - q[2, 0]) + (q[2, 0] - q[1, 0]) * (q[0, 1] - q[2, 1])
+                if x1 < x0 or y1 < y0 or abs(den) < 1e-9:
+                    continue
+                gx, gy = np.meshgrid(np.arange(x0, x1 + 1), np.arange(y0, y1 + 1))
+                l0 = ((q[1, 1] - q[2, 1]) * (gx + .5 - q[2, 0]) + (q[2, 0] - q[1, 0]) * (gy + .5 - q[2, 1])) / den
+                l1 = ((q[2, 1] - q[0, 1]) * (gx + .5 - q[2, 0]) + (q[0, 0] - q[2, 0]) * (gy + .5 - q[2, 1])) / den
+                inside = (l0 >= -.01) & (l1 >= -.01) & (1 - l0 - l1 >= -.01)
+                if not inside.any():
+                    continue
+                l2 = 1 - l0 - l1
+                uu = (l0 * UV[i, 0, 0] + l1 * UV[i, 1, 0] + l2 * UV[i, 2, 0]) % 1.0
+                vv = (l0 * UV[i, 0, 1] + l1 * UV[i, 1, 1] + l2 * UV[i, 2, 1]) % 1.0
+                col = tex[(vv * th).astype(int), (uu * tw).astype(int)] / 255.0 * shade[i]
+                if vcol is not None:
+                    col = col * vcol[i]
+                canvas[gy[inside], gx[inside]] = (np.clip(col[inside], 0, 1) * 255).astype(np.uint8)
+            im = Image.fromarray(canvas)
+        else:
+            im = Image.new("RGB", (size, size), (30, 30, 34))
+            d = ImageDraw.Draw(im)
+            for i in order:
+                if facing[i]:
+                    d.polygon([tuple(q) for q in px[i]], fill=tuple((np.clip(C[i] * shade[i], 0, 1) * 255).astype(int)))
         sheet.paste(im, (k * size, 0))
     Path(dest).parent.mkdir(parents=True, exist_ok=True)
     sheet.save(dest)

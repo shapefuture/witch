@@ -126,6 +126,29 @@ def test_a_rigged_game_glb_comes_out_of_a_shape_and_its_views():
         shutil.rmtree(tmp)
 
 
+def test_a_textured_mesh_keeps_its_uvs_and_picture_and_the_previewer_shows_the_atlas_per_pixel():
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        views = _views(tmp / "v")
+        P, F = sh.hull(views, faces=20000, size=64)
+        ir.write_glb(str(tmp / "shape.glb"), P, F)
+        tr.rig(views, tmp / "shape.glb", tmp / "rigged.glb", faces=2500, size=64, log=lambda *a: None)
+        P1, F1, UV1, picture = tr.read_textured(tmp / "rigged.glb")
+        assert len(F1) <= 2500 and UV1.shape == (len(P1), 2) and picture.size == (64, 64)
+        tr.rig_textured(views, tmp / "rigged.glb", tmp / "again.glb", log=lambda *a: None)
+        a, b = ir.glb_inspect(tmp / "rigged.glb"), ir.glb_inspect(tmp / "again.glb")
+        assert b["ok"] and b["joints"] == a["joints"] and b["triangles"] == a["triangles"], (a, b)
+        P2, F2, UV2, picture2 = tr.read_textured(tmp / "again.glb")
+        assert np.allclose(UV1[F1].reshape(-1, 2).mean(0), UV2[F2].reshape(-1, 2).mean(0), atol=1e-4) and picture2.size == picture.size
+        # the previewer samples the atlas per pixel: the front view's red must show in the first tile (it used to be one sample per triangle)
+        ir.preview(tmp / "rigged.glb", tmp / "prev.png", size=160)
+        tile = np.asarray(Image.open(tmp / "prev.png").convert("RGB").crop((0, 0, 160, 160))).astype(int)
+        red = (tile[..., 0] > 120) & (tile[..., 0] > tile[..., 2] + 30)
+        assert red.sum() > 200, "the atlas colour is drawn (%d red pixels)" % red.sum()
+    finally:
+        shutil.rmtree(tmp)
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

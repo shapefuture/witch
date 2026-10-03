@@ -131,8 +131,6 @@ def neutral_base():
 
 def rig(views, shape, out, faces=9000, size=256, log=print):
     import image2rig as ir
-    import witch
-    import witch_glb
     from PIL import Image
     P, F = ir.load_mesh(shape)
     P = np.asarray(P, float)
@@ -147,6 +145,13 @@ def rig(views, shape, out, faces=9000, size=256, log=print):
     bones, seg = skeleton(lm)
     vmap, idx, uv, picture, covered = atlas(low_P, low_F, np.asarray(dense_P), np.asarray(col), size)
     Pn = (low_P * KIT_H)[vmap]
+    return _finish(out, bones, lm, seg, Pn, idx, uv, Image.fromarray(picture), size, covered, stats, log)
+
+
+def _finish(out, bones, lm, seg, Pn, idx, uv, picture, size, covered, stats, log):
+    """Skin the vertices `Pn` (kit units), unroll the triangles `idx` into the corner arrays and write the rigged .glb with the witch kit's clips."""
+    import witch
+    import witch_glb
     J, W = skin_weights(Pn, bones, seg)
     tri = idx.reshape(-1)
     T = Pn[tri].reshape(-1, 3, 3)
@@ -155,11 +160,43 @@ def rig(views, shape, out, faces=9000, size=256, log=print):
     arr = {"P": Pn[tri], "N": np.repeat(n, 3, axis=0), "UV": uv[tri], "J": J[tri], "W": W[tri]}
     model = types.SimpleNamespace(B=bones, names=list(bones), ix={k: i for i, k in enumerate(bones)})
     clips = witch.clip_set(model, base=neutral_base)
-    count = witch_glb.export(str(out), model, arr, Image.fromarray(picture), clips, GAME_H / KIT_H, mesh_name="Figure", generator="template_rig.py",
-                             extras={"landmarks": lm})
-    log("%s: %d triangles, one %d px atlas (%.0f%% of its texels covered), %d clips, silhouette iou %s" % (
-        out, count, size, 100 * covered, len(clips), {k: v["silhouette_iou"] for k, v in stats.items() if isinstance(v, dict)}))
-    return model, arr, picture, clips
+    count = witch_glb.export(str(out), model, arr, picture, clips, GAME_H / KIT_H, mesh_name="Figure", generator="template_rig.py", extras={"landmarks": lm})
+    log("%s: %d triangles, one %d px atlas (%s), %d clips%s" % (
+        out, count, size, "%.0f%% of its texels covered" % (100 * covered) if covered is not None else "its own", len(clips),
+        ", silhouette iou %s" % {k: v["silhouette_iou"] for k, v in stats.items() if isinstance(v, dict)} if stats else ""))
+    return model, arr, np.asarray(picture), clips
+
+
+def read_textured(path):
+    """(positions in world space, triangles, uv, atlas picture) of a textured .glb with one picture (what lowpoly_bake.py writes)."""
+    import io
+    import image2rig as ir
+    from PIL import Image
+    gltf, binary = ir.load_glb(path)
+    world = ir.mesh_world(gltf)
+    P, F, UV, base = [], [], [], 0
+    for mi, m in enumerate(gltf["meshes"]):
+        W = world.get(mi, np.eye(4))
+        for prim in m["primitives"]:
+            pos = ir.accessor(gltf, binary, prim["attributes"]["POSITION"]) @ W[:3, :3].T + W[:3, 3]
+            idx = ir.accessor(gltf, binary, prim["indices"]).reshape(-1) if "indices" in prim else np.arange(len(pos))
+            P.append(pos)
+            UV.append(ir.accessor(gltf, binary, prim["attributes"]["TEXCOORD_0"]))
+            F.append(idx.reshape(-1, 3) + base)
+            base += len(pos)
+    bv = gltf["bufferViews"][gltf["images"][0]["bufferView"]]
+    picture = Image.open(io.BytesIO(binary[bv.get("byteOffset", 0):bv.get("byteOffset", 0) + bv["byteLength"]])).convert("RGB")
+    return np.vstack(P), np.vstack(F), np.vstack(UV), picture
+
+
+def rig_textured(views, textured, out, log=print):
+    """The same skeleton and skin on a mesh that already has its UVs and picture (a paid texture job baked down to 9,000 triangles): nothing is repainted."""
+    P, F, UV, picture = read_textured(textured)
+    lo, hi = P.min(0), P.max(0)
+    P = (P - np.array([(lo[0] + hi[0]) / 2, lo[1], (lo[2] + hi[2]) / 2])) / (hi[1] - lo[1])
+    lm = landmarks(Path(views) / "front.png")
+    bones, seg = skeleton(lm)
+    return _finish(out, bones, lm, seg, P * KIT_H, F, UV, picture, picture.width, None, None, log)
 
 
 def main(argv=None):
@@ -169,8 +206,12 @@ def main(argv=None):
     ap.add_argument("out")
     ap.add_argument("--faces", type=int, default=9000)
     ap.add_argument("--size", type=int, default=256)
+    ap.add_argument("--textured", action="store_true", help="SHAPE is a textured .glb (lowpoly_bake.py output): keep its UVs and picture, only add the skeleton and skin")
     a = ap.parse_args(argv)
-    rig(a.views, a.shape, a.out, a.faces, a.size)
+    if a.textured:
+        rig_textured(a.views, a.shape, a.out)
+    else:
+        rig(a.views, a.shape, a.out, a.faces, a.size)
     return 0
 
 
