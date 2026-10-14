@@ -1,0 +1,33 @@
+[
+	{
+		"id": "look_c",
+		"action_type": "LOOK",
+		"valid_targets": [
+			"bell"
+		],
+		"preconditions": {},
+		"response_contracts": [
+			{
+				"id": "look_c.rare",
+				"observed": {
+					"outcome": "done"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"key": "line.look_c_rare"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "rare_fact",
+						"status": "SUPPORTED",
+						"proposition": {
+							"fixture": "rare_fact"
+						}
+					}
+				]
+			}
+		]
+	}
+]

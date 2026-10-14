@@ -67,7 +67,9 @@ func _register(catalog: Dictionary, definition: Dictionary) -> bool:
     if catalog_is_locked:
         return false
     var id := str(definition.get("id", ""))
-    if id.is_empty():
+    # A second definition under the same id would silently replace the first, dropping content
+    # without an error. Refuse it instead; the loader reports it as a registration failure.
+    if id.is_empty() or catalog.has(id):
         return false
     catalog[id] = definition.duplicate(true)
     catalog_revision += 1
@@ -104,6 +106,8 @@ func register_causal_hypothesis_resource(resource: Resource) -> bool:
     return _register(causal_hypothesis_definitions, resource.to_definition())
 
 func register_action(definition: Dictionary) -> bool:
+    if not MirrorShape.action_error(definition).is_empty():
+        return false
     return _register(action_definitions, definition)
 
 func register_encounter(definition: Dictionary) -> bool:
@@ -1638,8 +1642,10 @@ func restore_from_save(data: Dictionary) -> bool:
     initial_npc_state = data["initial_npc_state"].duplicate(true)
     action_memory = data["action_memory"].duplicate(true)
     catalog_revision = int(saved_catalog.get("revision", catalog_revision))
-    catalog_fingerprint = saved_fingerprint if not saved_fingerprint.is_empty() else current_catalog_fingerprint
     catalog_is_locked = bool(saved_catalog.get("locked", event_store.size() > 0))
+    # An unlocked engine (no events yet) has no fingerprint to bind to; giving it one here made a
+    # reloaded empty engine differ from the one that was saved.
+    catalog_fingerprint = saved_fingerprint if not saved_fingerprint.is_empty() else (current_catalog_fingerprint if catalog_is_locked else "")
     if catalog_is_locked:
         _catalog_stamp = _catalog().hash()
     return true
@@ -1730,7 +1736,10 @@ func rebuild_projections_from_event_log(verify_chain: bool = true) -> Dictionary
                 action_memory["storylet_count:" + storylet_id] = int(action_memory.get("storylet_count:" + storylet_id, 0)) + 1
                 var storylet_once := str(event.payload.get("once_key", ""))
                 if not storylet_once.is_empty(): action_memory[storylet_once] = event.event_id
-    action_memory["__event_count"] = event_store.size()
+    # Written by every commit, so only a log with events has one. An empty log must rebuild to the
+    # same memory as a fresh engine (no key), or a save that never committed would not reload.
+    if event_store.size() > 0:
+        action_memory["__event_count"] = event_store.size()
     catalog_is_locked = event_store.size() > 0
     if catalog_fingerprint.is_empty() and catalog_is_locked:
         catalog_fingerprint = compute_catalog_fingerprint()

@@ -1,0 +1,15 @@
+{
+	"world": {
+		"machine": {
+			"state": "jammed"
+		},
+		"clearing": {
+			"departed": false
+		}
+	},
+	"npc_state": {
+		"tomas": {
+			"stance": "braced"
+		}
+	}
+}

@@ -40,6 +40,16 @@ func test_load_rejects_tampered_event() -> void:
 	var e2 := MirrorFixtures.engine()
 	var res := e2.load_json(JSON.stringify(data))
 	ok(not res.get("ok", true), "tampered event must be rejected")
+	eq(res.get("error", ""), "checksum_mismatch", "an edit that was not re-sealed is caught by the checksum")
+	eq(e2.event_store.size(), 0, "rejected load leaves the engine untouched")
+
+func test_a_re_sealed_tampered_event_is_caught_by_the_event_chain() -> void:
+	var e := _rich_engine()
+	var data: Dictionary = JSON.parse_string(e.save_json())
+	data["event_store"]["events"][1]["payload"]["observed"] = {"outcome": "tampered"}
+	var e2 := MirrorFixtures.engine()
+	var res := e2.load_json(JSON.stringify(MirrorPersistence.seal(data)))
+	ok(not res.get("ok", true), "a tampered event stays rejected even when its checksum is recomputed")
 	eq(e2.event_store.size(), 0, "rejected load leaves the engine untouched")
 
 func test_load_rejects_catalog_mismatch() -> void:
@@ -62,7 +72,7 @@ func test_load_rejects_malformed_sections_without_script_errors() -> void:
 		var bad := good.duplicate(true)
 		bad[section] = "corrupt"
 		var target := MirrorFixtures.engine()
-		ok(not target.load_json(JSON.stringify(bad)).get("ok", true), "corrupt %s rejected" % section)
+		ok(not target.load_json(JSON.stringify(MirrorPersistence.seal(bad))).get("ok", true), "corrupt %s rejected" % section)
 		eq(target.event_store.size(), 0, "corrupt %s leaves engine empty" % section)
 
 func test_load_rejects_malformed_event_entries_without_script_errors() -> void:
@@ -72,7 +82,7 @@ func test_load_rejects_malformed_event_entries_without_script_errors() -> void:
 		var bad := good.duplicate(true)
 		bad["event_store"]["events"][0][field] = "corrupt"
 		var target := MirrorFixtures.engine()
-		ok(not target.load_json(JSON.stringify(bad)).get("ok", true), "event field %s corrupt rejected" % field)
+		ok(not target.load_json(JSON.stringify(MirrorPersistence.seal(bad))).get("ok", true), "event field %s corrupt rejected" % field)
 
 func test_replay_all_reproduces_live_projection() -> void:
 	var e := _rich_engine()
