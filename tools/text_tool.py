@@ -24,7 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TABLE = ROOT / "data" / "text" / "ru.json"
-GROUP_ORDER = ["ui", "opt", "obj", "speaker", "line", "dlg", "toy"]
+GROUP_ORDER = ["ui", "menu", "opt", "obj", "speaker", "line", "dlg", "toy"]
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
 KEY = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$")
 
