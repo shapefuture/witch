@@ -43,6 +43,34 @@ itself: see "Fixed and variable" below. Nothing is locked.
 - **Variable, scene by scene:** the exact palette within the jewel range; the time of day and the light; the motifs;
   how dense the world is.
 
+## Second prompt: the PS1 technical look (added 2026-10-14)
+
+The user added a second prompt: a PS1-era fantasy look with a restricted palette, affine warping, vertex jitter,
+dithering and screen effects. Most of its technical elements are already in the renderer (`render/psx/`). Each row is a
+candidate, not a decision. Rows marked conflict are decided in SC6 and SC7.
+
+| element (second prompt) | in the repo now | status |
+|---|---|---|
+| Vertex snapping (vertex jitter) | `psx_globals.gd` (snap grid, precision multiplier), `psx_set.gdshader`, `plate_projection.gdshaderinc` | R7 candidate; built |
+| Affine texture mapping, texture swimming, UV stretch | `psx_set.gdshader` divides by w (affine); nearest filtering | R7 candidate; built |
+| Per-vertex wobble on characters ("GTE jitter") | `psx_materials.gd`, `actor()` wobble 0.004 | R7 candidate; built |
+| Dithering and quantised gradients (32 levels per channel) | `psx_screen.gdshader` (5-bit ordered dither), `pp_band-dither.gdshader`, `psxdither.png` | R8 candidate; built |
+| Restricted late-1990s palette with jewel accents | `palette.gd` (mundane colours; magic colours kept apart) | R9 candidate; the base is SC7 |
+| Flat or minimally interpolated facets, hard planar transitions | characters are flat-faceted (`docs/art/characters_*.md`) | R10 candidate |
+| Low-resolution, chunky, heavily pixelated textures | character atlases at 256 px at most; plates are painted at full detail | R11 candidate; texture budget still to choose |
+| Distant elements as blocky silhouettes and pixel clusters | not built; plates are painted | R11 candidate |
+| Broad low-resolution light pools, hard shadows | `StageLight` (`render/psx/stage_light.gd`) | R12 candidate |
+| Gentle CRT bloom | screen pass `glow_amount` 0.4 | conflict: SC6 |
+| Vignette (not in the second prompt; the master prompt bans it) | screen pass `vignette` 0.5 | conflict: SC6 |
+| Faint scanlines | not in the repo | new; SC6 |
+| Subtle chromatic separation | not in the repo | new; SC6 |
+| Low-resolution upscaling, slight softness | the render is 540 rows (`psx_globals.gd`) | conflict: SC6 |
+| Dark nights, deep blue shadows, glowing accents | the master prompt says golden-hour day | conflict with day: time of day is variable per scene (SF), so both are allowed |
+| Muted base (navy, violet, dark teal, olive, ochre, faded gold, dusty pink, cream) with jewel accents | not decided | conflict with "never desaturated": SC7 |
+| Avoid: PBR, smooth subdivision, clean vector edges, realistic skin or fabric, physical reflections, cinematic bokeh, HD | consistent with the master prompt's avoid list | adopted as an avoid list |
+
+Whether the screen pass is active in the game build is not checked here.
+
 ## Rules, restated against the master prompt
 
 | id | rule | source | status |
@@ -53,6 +81,12 @@ itself: see "Fixed and variable" below. Nothing is locked.
 | R4 | Motifs are the prompt's own (wedge mark, bell, envelope, pigeon, absurd doors). The witch's moon and star stay on her costume. | `ps1p`; `03` | candidate |
 | R5 | Subtle dithering is allowed. The dusk gradient of `02` is a sample only. | `ps1p`; `02` | candidate |
 | R6 | Characters are readable at about 100 px. | `03`; repo tests | candidate |
+| R7 | Vertex snapping, affine mapping and a small per-vertex wobble on characters are the look's geometry. | second prompt; `render/psx/` | candidate; built |
+| R8 | Ordered dither and quantised gradients; no smooth gradients on surfaces. | second prompt; `psx_screen.gdshader` | candidate; built |
+| R9 | A restricted palette per world, with magic colours kept apart (`palette.gd`). | second prompt | candidate; the base is SC7 |
+| R10 | Flat or minimally interpolated facets and hard planar transitions; no smooth subdivision. | second prompt; characters docs | candidate |
+| R11 | Textures are low-resolution and chunky; distant things are blocky silhouettes. The texture budget is still to choose. | second prompt | candidate; budget open |
+| R12 | Light sits in broad low-resolution pools with hard-edged shadows. | second prompt; `stage_light.gd` | candidate |
 
 Measured on the hall sample (`01`, `tools/visual_gauntlet/metrics.py`): median luma 0.155, 99th percentile 0.636, mean
 saturation 0.585. These describe the demo scene, not the style.
@@ -67,6 +101,13 @@ saturation 0.585. These describe the demo scene, not the style.
 - **SC5. Characters: crude toys or clean faceted?** The prompt says characters are carved wooden toys and not polished
   indie 3D. The sheet (`03`), the character bar, is clean faceted low-poly. The environments follow the prompt. The
   characters follow the sheet unless decided otherwise. This decides the character work (E4, REQ-24, REQ-26).
+- **SC6. Screen effects and render resolution.** The screen pass already has a bloom (`glow_amount` 0.4) and a vignette
+  (0.5). The master prompt bans both vignette and bloom. The second prompt wants a gentle CRT bloom, faint scanlines,
+  subtle chromatic separation and low-resolution upscaling. Decide each: bloom, vignette, scanlines, chromatic
+  separation (yes or no for each), and the render resolution (540 rows today).
+- **SC7. Palette base.** The master prompt wants saturated jewel tones, never gray and never desaturated. The second
+  prompt wants a muted base (navy, violet, dark teal, olive, ochre, faded gold, dusty pink, cream) with saturated
+  accents. Decide the base: saturated, muted, or muted with jewel accents.
 - **The hall sample (`01`).** Papercraft and olive, which the prompt excludes ("NOT papercraft"). The user says it is a
   demo scene. Whether it stays is the HALL decision, deferred to DESIGN-FREEZE.
 

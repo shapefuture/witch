@@ -57,7 +57,7 @@ closes with evidence and the integrated gate passes.
 | REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK, SC5); the sheet is now supplied |
 | REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | 2 commits unmerged, tools and docs only, flag off (decision X10) |
 | REQ-26 | Concept sheet in the repo as the judging bar for characters | characters docs | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_characters.png` |
-| REQ-27 | Style locked: the master prompt look is the anchor; SF (fixed or variable) and SC5 (characters) decided; rules R1 to R6 restated and accepted | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | SC1 and SC3 settled; anchor found; SF and SC5 open |
+| REQ-27 | Style locked: the master prompt look is the anchor; SF, SC5, SC6 and SC7 decided; rules R1 to R12 restated and accepted | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | SC1 and SC3 settled; anchor and second prompt added; SF, SC5, SC6, SC7 open |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
 | REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | mobile-first design written; N1 to N3 taken as guesses, to confirm |
 
@@ -98,6 +98,8 @@ New decisions from the references and the navigation study (see section 13 for t
 | HALL | Is the archive hall in the final game? | **Deferred to DESIGN-FREEZE** (user): it is a demo scene and may or may not remain. No new hall art until then. Holds G1, G3, G4 | decide now |
 | SF | Style: which parts are fixed, which vary | **Open** (user): the look is anchored to the master prompt (`ps1p`), but the user says it is less fixed. My reading is in `docs/art/STYLE_BIBLE.md`: fixed = crude 3D, stage camera, diegetic UI, jewel family; variable = palette within the jewel range, light, motifs, density | correct the reading |
 | SC5 | Style: characters crude toys, or clean faceted like the sheet (`03`)? | **Open** (user): the prompt calls characters carved toys; the sheet is clean faceted. Decides E4 and REQ-24 | decide |
+| SC6 | Style: screen effects and render resolution | **Open** (user): the screen pass already has bloom and vignette; the master prompt bans both; the second prompt wants CRT bloom, scanlines, chromatic separation, low-resolution upscaling. Decide each | decide each effect |
+| SC7 | Style: palette base | **Open** (user): saturated jewel (master prompt) or muted with jewel accents (second prompt) | decide |
 
 ## 4. How the work runs
 

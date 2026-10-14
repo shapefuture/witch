@@ -6,7 +6,7 @@ wait behind three gates:
 
 - **DESIGN-FREEZE**: the questions below are answered, or deliberately deferred.
 - **STYLE-LOCK**: the look is fixed as in `STYLE_BIBLE.md`, anchored to the master prompt (`ps1p`). SC1 is confirmed and SC3
-  decided; SF (fixed or variable) and SC5 (characters) are answered, and the rules are accepted.
+  decided; SF, SC5, SC6 (screen effects) and SC7 (palette base) are answered, and rules R1 to R12 are accepted.
 - **HALL**: the archive hall is a demo scene that may or may not stay in the final game, decided at DESIGN-FREEZE. The grade and geometry work waits on it.
 
 Work that is allowed now: the references, the style bible, the navigation design, the test and gate housekeeping, and
@@ -56,5 +56,5 @@ Audio: none yet.
 
 - **DESIGN-FREEZE** when DQ1 to DQ5 and NQ-a to NQ-g are answered or explicitly deferred (DQ6 and DQ7 are done), the
   room list is written, and the cast list is fixed.
-- **STYLE-LOCK** when SC1 is confirmed, SC3 is decided, SF and SC5 are answered, and R1 to R6 are restated and accepted in `STYLE_BIBLE.md`.
+- **STYLE-LOCK** when SC1 is confirmed, SC3 is decided, SF, SC5, SC6 and SC7 are answered, and R1 to R12 are restated and accepted in `STYLE_BIBLE.md`.
 - **HALL** decided at DESIGN-FREEZE, with the other design questions.
