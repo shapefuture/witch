@@ -82,7 +82,34 @@ Limits, stated plainly:
 - A requirement on another holder is treated as satisfiable (or as not excluding).
 - Route counting is structural (the response need not be reachable), so it can overstate redundancy.
 
-## 3. StringName keys (spike)
+## 3. Fuzz and property tests (H4)
+
+`tests/mirror/test_engine_fuzz.gd`, seeded, about 13 s with the gate's startup. Three checks:
+- 210 catalog mutations (15 kinds) written through the real loader. A refused catalog adopts no
+  events; an accepted one plays random actions, keeps the chain intact, and its save reloads to the
+  identical state.
+- 300 byte-level edits to a saved game (replace, insert, delete, swap, truncate, duplicate). Each is
+  refused with the engine unchanged, or accepted only when it changes nothing that matters.
+- Random play (48 steps): rejected requests change nothing, and a reloaded engine decides the next
+  action and commits to the same chain head as the engine that saved.
+
+The fuzz found these, all fixed in the engine:
+- A save of an engine with no events did not reload: replay wrote `action_memory.__event_count = 0`
+  for an empty log, while a fresh engine has no such key. Replay now writes it only with events.
+- A restored engine with no events was given the current catalog fingerprint although its saved
+  catalog was unlocked, so its state differed from the one saved. The fingerprint is now bound
+  only when the saved catalog is locked.
+- Registering a second definition under an existing id silently replaced the first. Registration
+  now refuses it, so the loader reports it.
+- A malformed action (a number for `valid_targets`, a string for `response_contracts`, and similar)
+  crashed in `resolve_action`. `MirrorShape.action_error` refuses these shapes at registration.
+
+Not fixed here, outside this branch's write set: `game/mirror/mirror_catalog.gd` iterates
+`response_contracts` before registration (`_normalize_action`). A string there raises a SCRIPT ERROR
+in the loader (the fuzz reproduced it, then left the kind out of the catalog list). The fix is a
+type guard on that loop. The engine refuses the same shape at registration and is tested for it.
+
+## 4. StringName keys (spike)
 
 No change needed. Godot 4.6.3 treats `&"a"` and `"a"` as one Dictionary key, and
 `MirrorHash.canonical_json`, `sha256` and the builtin `Dictionary.hash()` give the same result for
@@ -90,7 +117,7 @@ both forms (`tests/mirror/test_engine_stringname.gd`). Every StringName in the e
 `@export` id that `to_definition()` converts with `str()` before the engine stores it. No golden is
 affected.
 
-## 4. Note for docs/PROVENANCE.md (not edited here)
+## 5. Note for docs/PROVENANCE.md (not edited here)
 
 > Hardening (branch wc/H): saves carry a checksum (engine format 7, envelope version 2) and a
 > 64 MiB limit, and are written atomically with a `.bak`. Content checks for reachability, goals,
