@@ -140,8 +140,8 @@ New decisions from the references and the navigation study (see section 13 for t
 | G Art | `tools/blender/**`, `assets/archive/**`, `tools/visual_gauntlet/**`, `docs/visual-gauntlet/**`, `tools/grade_plates.py` (new) | `docs/visual-gauntlet/bar/**`, `docs/art/STYLE_BIBLE.md` | section 6 |
 | I Integrator | `game/main/game_root.gd`, `data/text/ru.json`, `tests/golden/**`, `project.godot`, `export_presets.cfg`, `CLAUDE.md`, `docs/ARCHITECTURE.md`, `.github/` (merge) | all | only the coordinator writes here |
 
-**Running now:** P (pre-production) and, once the user says go, A and H. **Held:** B, C, D, E, F and I behind
-DESIGN-FREEZE; G1, G3, G4 and E4 behind STYLE-LOCK (section 13).
+**Running now (non-narrative, the user's instruction of 2026-10-14):** P, A, H, LIVE (room slot D3 and the live hall coordinator B1 to B3), E4 (witch and raccoon fixes; a crude-pass trial for Tomas only) and F1 (the main menu scene).
+**Gated by a narrative choice (DESIGN-FREEZE):** C, D1, D2, D4, E1, E2, E3, F2, I1 and P7. **Gated by HALL and STYLE-LOCK:** G1, G3, G4 (STYLE-LOCK is met, so HALL alone holds them).
 
 **Batch order once the gates open.** Batch 1: A, H, B, G1 and D3 (the slot contract, which touches no shared file).
 C's units start with B. D1 waits for H2 (validators). Batch 2: C1–C4 once B1 lands; D2 and D4 once D1 and D3 land; E1–E3
@@ -259,10 +259,9 @@ commit after each change to the tracker.
 ## 13. Pre-production gates
 
 - **DESIGN-FREEZE** (decision, the user). Met when DQ1 to DQ7 and NQ-a to NQ-g in `docs/design/PREPRODUCTION.md` are answered
-  or explicitly deferred, the room list is written, and the cast list is fixed. It holds B, C, D, E, F and I.
+  or explicitly deferred, the room list is written, and the cast list is fixed. It holds only the narrative items: C, D1, D2, D4, E1, E2, E3, F2, I1 and P7.
   It depends on N1 to N3 being decided.
 - **STYLE-LOCK** (decision, the user). **Met 2026-10-14.** SF is confirmed, SC1, SC3, SC5, SC6 and SC7 are decided, and rules R1 to R12 are accepted. It no longer holds G1, G3 or G4 (those wait on HALL) or E4 (which waits on DESIGN-FREEZE).
 - **HALL** (decision, the user). The archive hall is a demo scene and may or may not stay. Decided at DESIGN-FREEZE. It holds G1, G3 and G4 as well.
-- Work that is allowed now: P (references, style, navigation, questions), A (gate and housekeeping, including A1,
-  which turns the gate green) and H (engine hardening). The user said not to build the game; these are not game
-  content. A1 is ready when you say go.
+- Work that runs now (non-narrative): P, A (gate and housekeeping, including A1), H (engine hardening), LIVE, E4 and F1.
+  A1 no longer waits for a go. Narrative items wait for the design freeze, as the user asked on 2026-10-14.
