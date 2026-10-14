@@ -15,7 +15,7 @@ signal continue_requested
 signal settings_requested
 
 # The slot the game saves to (pause_menu_ui.gd, game_root.gd). The menu tests pin all three together.
-const SAVE_SLOT := 1
+const SAVE_SLOT := SaveGame.DEFAULT_SLOT
 # One UI row is one dp on a 360-dp-tall screen, and a taller screen makes it bigger, so 52 rows clear
 # the 48 dp a finger needs (NAVIGATION.md section 5).
 const ROW_HEIGHT := 52.0

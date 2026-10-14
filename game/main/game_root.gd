@@ -19,7 +19,7 @@ extends Node
 #   --variant name [--fade s]   show the room in a plate variant ("dusk"), or crossfade to it over s seconds
 #   --cam x,y,z,tx,ty,tz[,fov] put the camera there, looking at t (capture aid: inspect the set)
 
-const SLOT := 1
+const SLOT := SaveGame.DEFAULT_SLOT
 
 # Injected by tests; otherwise the `Mirror` autoload is used.
 var runtime: MirrorRuntime

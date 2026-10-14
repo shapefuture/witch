@@ -9,7 +9,7 @@ signal load_requested
 signal save_requested
 signal quit_requested
 
-const SLOT := 1
+const SLOT := SaveGame.DEFAULT_SLOT
 
 var camera: Camera3D:
 	set(value):

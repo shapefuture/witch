@@ -6,6 +6,8 @@ extends RefCounted
 # copy made before the replace, so a failed write never leaves the slot without a complete save.
 
 const DIR := "user://saves"
+# The slot the game saves to and loads from. game_root.gd, pause_menu_ui.gd and main_menu.gd read it from here.
+const DEFAULT_SLOT := 1
 
 static func path_for(slot: int) -> String:
 	return "%s/slot_%d.json" % [DIR, slot]

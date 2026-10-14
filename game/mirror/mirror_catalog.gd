@@ -72,7 +72,11 @@ static func _normalize_action(definition: Dictionary, errors: Array, warnings: A
 		definition["action_type"] = _enum(MirrorDomain.ActionType, definition["action_type"], errors, id)
 	_normalize_requirements(definition, errors, id)
 	var repeatable := str(definition.get("once_key", "")).is_empty()
-	for response in definition.get("response_contracts", []):
+	var contracts: Variant = definition.get("response_contracts", [])
+	if typeof(contracts) != TYPE_ARRAY:
+		errors.append("%s: response_contracts must be a list" % id)
+		contracts = []
+	for response in contracts:
 		var where := "%s/%s" % [id, response.get("id", "?")]
 		_normalize_requirements(response, errors, where)
 		_normalize_effects(response, errors, where)
