@@ -57,7 +57,7 @@ closes with evidence and the integrated gate passes.
 | REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK). SC5 decided: the witch and the raccoon follow the sheet; the others are crude |
 | REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | 2 commits unmerged, tools and docs only, flag off (decision X10) |
 | REQ-26 | Concept sheet in the repo as the judging bar for characters | characters docs | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_characters.png` |
-| REQ-27 | Style locked: the master prompt look is the anchor; SC1, SC3, SC5, SC6, SC7 decided; SF open; rules R1 to R12 need acceptance | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | SF and rule acceptance remain |
+| REQ-27 | Style locked: the master prompt look is the anchor; SC1, SC3, SC5, SC6, SC7 decided; rules R1 to R12 accepted 2026-10-14; SF open | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | SF remains |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
 | REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | mobile-first design written; N1 to N3 taken as guesses, to confirm |
 

@@ -3,7 +3,7 @@
 Status: **draft, revised 2026-10-14** (second revision). The look is anchored to the **master prompt** of the game draft
 (v3.0), in its positive-only form `ps1p`. The user chose it as the best result of the look runs (run r6, see
 `docs/art/model_comparison.md` and `docs/art/scenes.md`). The user says the style is still less fixed than the prompt
-itself: see "Fixed and variable" below. Decided so far: SC1, SC3, SC5, SC6 and SC7. Open: SF (fixed or variable) and the rules' acceptance.
+itself: see "Fixed and variable" below. Decided so far: SC1, SC3, SC5, SC6 and SC7. Rules R1 to R12 accepted by the user on 2026-10-14. Open: SF (fixed or variable).
 
 ## Where the master prompt lives
 
@@ -75,18 +75,18 @@ Whether the screen pass is active in the game build is not checked here.
 
 | id | rule | source | status |
 |---|---|---|---|
-| R1 | Palette family is jewel-toned (the `ps1p` palette), not olive. The olive hall palette is not the base. | `ps1p`; user, 2026-10-14 | candidate; the user to confirm, since the earlier R1 is replaced |
-| R2 | Light is golden-hour warmth with long blunt shadows; no bloom, no lens flare. | `ps1p` | candidate |
-| R3 | Rendering is faceted crude 3D built from primitives, with dry matte textures. | `ps1p`; SC3 | decided with SC3 (3D, not pixel) |
-| R4 | Motifs are the prompt's own (wedge mark, bell, envelope, pigeon, absurd doors). The witch's moon and star stay on her costume. | `ps1p`; `03` | candidate |
-| R5 | Subtle dithering is allowed. The dusk gradient of `02` is a sample only. | `ps1p`; `02` | candidate |
-| R6 | Characters are readable at about 100 px. | `03`; repo tests | candidate |
-| R7 | Vertex snapping, affine mapping and a small per-vertex wobble on characters are the look's geometry. | second prompt; `render/psx/` | candidate; built |
-| R8 | Ordered dither and quantised gradients; no smooth gradients on surfaces. | second prompt; `psx_screen.gdshader` | candidate; built |
-| R9 | A restricted palette per world, with magic colours kept apart (`palette.gd`). | second prompt | candidate; the base is saturated jewel (SC7) |
-| R10 | Flat or minimally interpolated facets and hard planar transitions; no smooth subdivision. | second prompt; characters docs | candidate |
-| R11 | Textures are low-resolution and chunky; distant things are blocky silhouettes. The texture budget is still to choose. | second prompt | candidate; budget open |
-| R12 | Light sits in broad low-resolution pools with hard-edged shadows. | second prompt; `stage_light.gd` | candidate |
+| R1 | Palette family is jewel-toned (the `ps1p` palette), not olive. The olive hall palette is not the base. | `ps1p`; user, 2026-10-14 | accepted 2026-10-14 (user) |
+| R2 | Light is golden-hour warmth with long blunt shadows; no bloom, no lens flare. | `ps1p` | accepted 2026-10-14 (user) |
+| R3 | Rendering is faceted crude 3D built from primitives, with dry matte textures. | `ps1p`; SC3 | accepted 2026-10-14 (user) |
+| R4 | Motifs are the prompt's own (wedge mark, bell, envelope, pigeon, absurd doors). The witch's moon and star stay on her costume. | `ps1p`; `03` | accepted 2026-10-14 (user) |
+| R5 | Subtle dithering is allowed. The dusk gradient of `02` is a sample only. | `ps1p`; `02` | accepted 2026-10-14 (user) |
+| R6 | Characters are readable at about 100 px. | `03`; repo tests | accepted 2026-10-14 (user) |
+| R7 | Vertex snapping, affine mapping and a small per-vertex wobble on characters are the look's geometry. | second prompt; `render/psx/` | accepted 2026-10-14 (user) |
+| R8 | Ordered dither and quantised gradients; no smooth gradients on surfaces. | second prompt; `psx_screen.gdshader` | accepted 2026-10-14 (user) |
+| R9 | A restricted palette per world, with magic colours kept apart (`palette.gd`). | second prompt | accepted 2026-10-14 (user) |
+| R10 | Flat or minimally interpolated facets and hard planar transitions; no smooth subdivision. | second prompt; characters docs | accepted 2026-10-14 (user) |
+| R11 | Textures are low-resolution and chunky; distant things are blocky silhouettes. The texture budget is still to choose. | second prompt | accepted 2026-10-14 (user) |
+| R12 | Light sits in broad low-resolution pools with hard-edged shadows. | second prompt; `stage_light.gd` | accepted 2026-10-14 (user) |
 
 Measured on the hall sample (`01`, `tools/visual_gauntlet/metrics.py`): median luma 0.155, 99th percentile 0.636, mean
 saturation 0.585. These describe the demo scene, not the style.
