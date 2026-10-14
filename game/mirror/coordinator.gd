@@ -2,8 +2,9 @@ class_name LiveHallCoordinator
 extends Node
 
 # Connects a live room to Mirror's Minds layer. It attaches PropEvents to any room that implements the room slot
-# (game/world/room_slot.gd), under the room's own Mirror id. It decides nothing: a poke is committed by PropEvents
-# through Mirror.minds.perceive, and what Mirror answers comes back as reactions and lines.
+# (game/world/room_slot.gd), under the room's own Mirror id, and connects the presenter so Mirror's reactions reach
+# the room. It decides nothing: a poke is committed by PropEvents through Mirror.minds.perceive, and what Mirror
+# answers comes back as reactions and lines.
 #
 #   var live := LiveHallCoordinator.new()
 #   live.runtime = Mirror
@@ -27,6 +28,7 @@ func attach(room: Object) -> PropEvents:
 		"place": str(room.call("mirror_room_id")), "run_clock": run_clock, "seconds_per_tick": seconds_per_tick,
 	})
 	add_child(bridge)
+	bridge.play_prop_reactions_on_room()
 	return bridge
 
 func detach() -> void:
