@@ -5,8 +5,7 @@ phase collects what the build needs once they are final. Gameplay code, new room
 wait behind three gates:
 
 - **DESIGN-FREEZE**: the questions below are answered, or deliberately deferred.
-- **STYLE-LOCK**: the look is fixed as in `STYLE_BIBLE.md`, anchored to the master prompt (`ps1p`). SC1 is confirmed and SC3
-  decided; SF, SC5, SC6 (screen effects) and SC7 (palette base) are answered, and rules R1 to R12 are accepted.
+- **STYLE-LOCK**: met 2026-10-14. The look is fixed as in `STYLE_BIBLE.md` (anchored to the master prompt, `ps1p`): SF, SC1, SC3, SC5, SC6 and SC7 are settled, and rules R1 to R12 are accepted.
 - **HALL**: the archive hall is a demo scene that may or may not stay in the final game, decided at DESIGN-FREEZE. The grade and geometry work waits on it.
 
 Work that is allowed now: the references, the style bible, the navigation design, the test and gate housekeeping, and
@@ -56,5 +55,5 @@ Audio: none yet.
 
 - **DESIGN-FREEZE** when DQ1 to DQ5 and NQ-a to NQ-g are answered or explicitly deferred (DQ6 and DQ7 are done), the
   room list is written, and the cast list is fixed.
-- **STYLE-LOCK** when SC1 is confirmed, SC3 is decided, SF, SC5, SC6 and SC7 are answered, and R1 to R12 are restated and accepted in `STYLE_BIBLE.md`.
+- **STYLE-LOCK** met 2026-10-14 (SF, SC1, SC3, SC5, SC6, SC7 settled; R1 to R12 accepted).
 - **HALL** decided at DESIGN-FREEZE, with the other design questions.

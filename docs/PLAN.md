@@ -57,7 +57,7 @@ closes with evidence and the integrated gate passes.
 | REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK). SC5 decided: the witch and the raccoon follow the sheet; the others are crude |
 | REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | 2 commits unmerged, tools and docs only, flag off (decision X10) |
 | REQ-26 | Concept sheet in the repo as the judging bar for characters | characters docs | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_characters.png` |
-| REQ-27 | Style locked: the master prompt look is the anchor; SC1, SC3, SC5, SC6, SC7 decided; rules R1 to R12 accepted 2026-10-14; SF open | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | SF remains |
+| REQ-27 | Style locked: the master prompt look is the anchor; SF, SC1, SC3, SC5, SC6, SC7 decided; rules R1 to R12 accepted | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | **met 2026-10-14** |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
 | REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | mobile-first design written; N1 to N3 taken as guesses, to confirm |
 
@@ -261,7 +261,7 @@ commit after each change to the tracker.
 - **DESIGN-FREEZE** (decision, the user). Met when DQ1 to DQ7 and NQ-a to NQ-g in `docs/design/PREPRODUCTION.md` are answered
   or explicitly deferred, the room list is written, and the cast list is fixed. It holds B, C, D, E, F and I.
   It depends on N1 to N3 being decided.
-- **STYLE-LOCK** (decision, the user). Met when SC1 is confirmed (done), SC3 is decided (done), SF and SC5 are answered, and the rules R1 to R6 are restated and accepted in `docs/art/STYLE_BIBLE.md`. It holds G1, G3, G4 and E4.
+- **STYLE-LOCK** (decision, the user). **Met 2026-10-14.** SF is confirmed, SC1, SC3, SC5, SC6 and SC7 are decided, and rules R1 to R12 are accepted. It no longer holds G1, G3 or G4 (those wait on HALL) or E4 (which waits on DESIGN-FREEZE).
 - **HALL** (decision, the user). The archive hall is a demo scene and may or may not stay. Decided at DESIGN-FREEZE. It holds G1, G3 and G4 as well.
 - Work that is allowed now: P (references, style, navigation, questions), A (gate and housekeeping, including A1,
   which turns the gate green) and H (engine hardening). The user said not to build the game; these are not game

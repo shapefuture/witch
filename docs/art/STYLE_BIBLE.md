@@ -3,7 +3,7 @@
 Status: **draft, revised 2026-10-14** (second revision). The look is anchored to the **master prompt** of the game draft
 (v3.0), in its positive-only form `ps1p`. The user chose it as the best result of the look runs (run r6, see
 `docs/art/model_comparison.md` and `docs/art/scenes.md`). The user says the style is still less fixed than the prompt
-itself: see "Fixed and variable" below. Decided so far: SC1, SC3, SC5, SC6 and SC7. Rules R1 to R12 accepted by the user on 2026-10-14. Open: SF (fixed or variable).
+itself: see "Fixed and variable" below. STYLE LOCKED 2026-10-14: the fixed and variable split (SF) is confirmed, rules R1 to R12 are accepted, and SC1, SC3, SC5, SC6 and SC7 are decided.
 
 ## Where the master prompt lives
 
@@ -36,7 +36,7 @@ itself: see "Fixed and variable" below. Decided so far: SC1, SC3, SC5, SC6 and S
   toon outlines, cute modern 3D, voxels, papercraft, horror mood, gold magic glow, arrows, glowing markers, question-mark
   icons, clue glows.
 
-## Fixed and variable (my reading; the user to correct)
+## Fixed and variable (confirmed by the user 2026-10-14)
 
 - **Fixed:** the rendering family (crude faceted 3D, not pixel, not papercraft); the fixed stage camera; diegetic
   interface only; no vignette, frame or HUD; the jewel-toned family, not olive.
