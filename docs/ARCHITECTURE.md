@@ -37,15 +37,15 @@ and present committed results; `Mirror` (the `MirrorRuntime` autoload) is the on
 | `addons/mirror_engine/` | Epistemic-social runtime: event log, knowledge, models, evidence, relationships, predictions, operators, storylets, planner, persistence. Vendored; see `PROVENANCE.md`. |
 | `addons/dialogue_manager/` | Language/runtime layer for `.dialogue` files (unmodified, v3.10.4). |
 | `autoload/` | `Localization` (loads the one text table), `SettingsState` (volume), `SceneManager` (fade transitions). `Mirror` (`game/mirror/mirror_runtime.gd`) and `DialogueManager` are also autoloads. |
-| `game/mirror/` | `MirrorRuntime` facade, `MirrorCatalog` (loads `data/mirror`), `ActionQueue`, `EventLogView`. `minds/`: the Minds layer (`MirrorMinds`: witnesses, per-holder interpretation, deferred consequences, folklore, the four-laws linter; see `MINDS.md`). `PropEvents`: the painted-room adapter. |
+| `game/mirror/` | `MirrorRuntime` facade, `MirrorCatalog` (loads `data/mirror`), `ActionQueue`, `EventLogView`. `minds/`: the Minds layer (`MirrorMinds`: witnesses, per-holder interpretation, deferred consequences, folklore, the four-laws linter; see `MINDS.md`). Its state (`MindsState`) is derived from the Mirror event log (applied as events commit, rebuilt from the log after a load or rollback); it is not saved separately (the save envelope wraps the engine's save and holds no Minds data). `PropEvents`: the painted-room adapter. |
 | `game/interaction/` | `PlayerIntent`, `PointerTracker`, `IntentInput`, `InteractionProbe`, `InteractionResolver`, `InteractionOption/Context`, `InteractionFlow`. |
 | `game/npc/` | `Expectation` (the hidden variable), `ResponsePolicy`, `NPC` (poses). |
 | `game/dialogue/` | `DialogueBridge` (runs conversations, records choices), `MirrorDialogueContext` (the read-only window `.dialogue` sees). |
-| `game/world/` | `Room`, `Interactable`, `GridNavigator`, `Placeholders` (the characters, and the spec of the machine's named parts), `MachineView`. `game/world/archive/`: `ArchiveHall` (the first room: gameplay anchors, interactables), `PlateSet`/`PlateStage` (the pre-rendered plates on the proxy: `docs/art/compositor.md`), `ArchiveProps` (the live machine and bell), `HallAtmosphere` (dust). |
+| `game/world/` | `Room`, `Interactable`, `GridNavigator`, `Placeholders` (the characters, and the spec of the machine's named parts), `MachineView`. `game/world/archive/`: `ArchiveHall` (the first room: gameplay anchors, interactables), `PlateSet`/`PlateStage` (the pre-rendered plates on the proxy: `docs/art/compositor.md`), `ArchiveProps` (the live machine and bell), `HallAtmosphere` (dust). `RoomSlot` (`room_slot.gd`) is the contract every room provides: the `walked` and `prop_pressed` signals, walkability, occlusion, anchors, stage actors, reaction requests, cut shots and the Mirror room id. `ArchiveHall` and `PaintedRoom` (`game/world/painted/`) both implement it. `game/main/game_root.gd` is the only file under `game/`, outside a room's own folder, that names a concrete room. |
 | `game/player/` | `Witch` (movement), `WitchAnimation`. |
 | `game/camera/` | `DioramaCamera` (pose + roll, cuts, capture lock), `CameraDirector` (pure `compute_pose`, cuts vs the eased spell shot, the `stay` contract). |
 | `game/presentation/` | `PresentationDirector`, `MagicPresentation`, `PSXActorPresenter`, `FocusOutline`. |
-| `game/ui/` | Diegetic 3D UI: `Diegetic` (screen-to-world placement), `SlabMesh`, `SpeechBubble`, `PlaqueStack`; controllers `SubtitleUI`, `InteractionPresenter`, `PauseMenuUI`, `SettingsMenuUI` keep their old APIs; `UIKit` (font), fonts. |
+| `game/ui/` | Diegetic 3D UI: `Diegetic` (screen-to-world placement), `SlabMesh`, `SpeechBubble`, `PlaqueStack`; controllers `SubtitleUI`, `InteractionPresenter`, `PauseMenuUI`, `SettingsMenuUI` keep their old APIs; `MainMenuUI` (`main_menu.gd`, the title screen: built, not yet routed to by `game_root.gd`); `UIKit` (font), fonts. |
 | `game/save/` | `SaveCodec`, `SaveGame`. |
 | `game/debug/` | `SimulationRunner`, `MirrorInspector`. |
 | `game/main/` | `GameRoot` (composition root + command-line hooks) and `main.tscn`. |
@@ -99,6 +99,7 @@ affordance); all six verbs; the model-betrayal loop and its recovery; save/load;
 inspector and Explain Why; deterministic simulation; render regression; PSX + magic break.
 
 Not built (deliberately, per the plan): the raccoon tele-somatic signal (only its silhouette and
-`RaccoonLink` anchor exist), Vera / Elian / Ilya, the town-wide causal graph, LimboAI,
-zeldaremake-inspired world composition, a world compiler from `PlaceDef` resources, mobile
-profile tuning, the full ending, and a main menu.
+`RaccoonLink` anchor exist), Vera / Elian / Ilya, the town-wide causal graph, LimboAI (deferred by decision X1
+in `PLAN.md`: the Minds layer and Mirror decide NPC behaviour, and `NPC` only shows poses), zeldaremake-inspired
+world composition, a world compiler from `PlaceDef` resources, mobile profile tuning, the full ending, and wiring
+the main menu into the boot path (the menu itself is built, in `game/ui/main_menu.gd`).

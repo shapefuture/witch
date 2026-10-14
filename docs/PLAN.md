@@ -40,7 +40,7 @@ closes with evidence and the integrated gate passes.
 | REQ-07 | World compiler from place resources | CLAUDE.md | not built. Held |
 | REQ-08 | LimboAI | CLAUDE.md | decision X1 (default: defer) |
 | REQ-09 | On-device mobile profiling | CLAUDE.md | headless probe only; needs a phone |
-| REQ-10 | Main menu (diegetic, pointer only) | CLAUDE.md | not built; game boots into the hall. Held |
+| REQ-10 | Main menu (diegetic, pointer only) | CLAUDE.md | built in `game/ui/main_menu.gd` (with `plaque_stack.gd`); not wired to boot: `game_root.gd` still boots into the hall. Held |
 | REQ-11 | Full ending (`go_path_out` → ending → credits → menu) | CLAUDE.md, DESIGN_INVARIANTS | only the path-out action exists. Held; depends on D4 |
 | REQ-12 | Shadow, shadow_lady and witch_antler placed in a room | CLAUDE.md | built as GLBs, not placed. Held |
 | REQ-13 | Vera, Elian and Ilya | CLAUDE.md | Vera: generated design in `docs/art`; Elian and Ilya: none. Held; NQ-b |
@@ -55,7 +55,7 @@ closes with evidence and the integrated gate passes.
 | REQ-22 | Engine hardening (saves, validators, test depth, bench) | draft mirror-engine upload | open (H) |
 | REQ-23 | Stale docs corrected to match code | audit | pending (section 9; open, A3) |
 | REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK). SC5 decided: the witch and the raccoon follow the sheet; the others are crude |
-| REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | 2 commits unmerged, tools and docs only, flag off (decision X10) |
+| REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | merged (X10); in the branch history |
 | REQ-26 | Concept sheet in the repo as the judging bar for characters | characters docs | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_characters.png` |
 | REQ-27 | Style locked: the master prompt look is the anchor; SF, SC1, SC3, SC5, SC6, SC7 decided; rules R1 to R12 accepted | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | **met 2026-10-14** |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
@@ -80,7 +80,7 @@ nothing. A decision whose default proceeds **does not block work**. Gating decis
 | X7 | First happening in the live hall | **poke a prop**, with echo, regard and name as the three hall rules | another verb | open; held by DESIGN-FREEZE |
 | X8 | Raccoon eyes | **keep open** (deliberate deviation from the sheet, per the characters doc) | closed arcs as drawn | open |
 | X9 | Painted room | **room 2**, reached by a GO edge from the hall | cut it | open; held by DESIGN-FREEZE |
-| X10 | Upbeat branch (REQ-25) | **merge** (tools and docs only, flag off) | drop | open |
+| X10 | Upbeat branch (REQ-25) | **merge** (tools and docs only, flag off) | drop | done |
 | X11 | Persistence of beads state (section 10) | — | — | **answered**: JSONL export committed with the plan (commit `9c9e9fe`) |
 | X12 | Full `full-plan-delivery` bundle | **not installed**: practices only, from the references | install the bundle (writes AGENTS.md, Claude hooks, a Python package) | open |
 
@@ -159,8 +159,6 @@ room.
 ## 6. Revised stream G (art)
 
 The Blender bake is needed only for the geometry, so the work splits. The whole stream waits for HALL and STYLE-LOCK: the grade is a style decision, and the geometry follows the style. The hall is a demo scene that may or may not survive into the final game, so no more hall art is spent before DESIGN-FREEZE.
-grade is a style decision, and the geometry follows the style.
-
 - **G1: grade pass, no bake.** Darken and olive-grade the existing plates with a 2D colour script
   (`tools/grade_plates.py`), re-import, and capture the standard frames (`tools/visual_gauntlet/capture.sh`).
   Measure against `BAR.md`. The bar is now in the repo: re-measured on 2026-10-14 from
@@ -263,7 +261,7 @@ commit after each change to the tracker.
 - **DESIGN-FREEZE** (decision, the user). Met when DQ1 to DQ7 and NQ-a to NQ-g in `docs/design/PREPRODUCTION.md` are answered
   or explicitly deferred, the room list is written, and the cast list is fixed. It holds only the narrative items: C, D1, D2, D4, E1, E2, E3, F2, I1 and P7.
   It depends on N1 to N3 being decided.
-- **STYLE-LOCK** (decision, the user). **Met 2026-10-14.** SF is confirmed, SC1, SC3, SC5, SC6 and SC7 are decided, and rules R1 to R12 are accepted. It no longer holds G1, G3 or G4 (those wait on HALL) or E4 (which waits on DESIGN-FREEZE).
+- **STYLE-LOCK** (decision, the user). **Met 2026-10-14.** SF is confirmed, SC1, SC3, SC5, SC6 and SC7 are decided, and rules R1 to R12 are accepted. It no longer holds G1, G3 or G4 (those wait on HALL) or E4 (which runs now; section 5).
 - **HALL** (decision, the user). The archive hall is a demo scene and may or may not stay. Decided at DESIGN-FREEZE. It holds G1, G3 and G4 as well.
-- Work that runs now (non-narrative): P, A (gate and housekeeping, including A1), H (engine hardening), LIVE, E4 and F1.
+- Work that runs now (non-narrative): P, A (gate and housekeeping, including A1), H (engine hardening), LIVE, E4 (the witch and raccoon fixes, and the crude-pass trial for Tomas, whose judgement waits for the user) and F1. The narrative-dependent cast (Vera, Elian, Ilya and the placements in room 2) waits for DESIGN-FREEZE.
   A1 no longer waits for a go. Narrative items wait for the design freeze, as the user asked on 2026-10-14.

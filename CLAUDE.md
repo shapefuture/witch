@@ -101,8 +101,9 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 - The witch, Tomas and the raccoon are real models; the primitives in `game/world/placeholders.gd` remain only as a
   fallback when a GLB is missing. The shadow, the second (antler) witch and the unhooded woman are built but not yet
   placed in a scene.
-- The reference image the user supplied is NOT in the repo (it reached the session inline; I did not commit
-  someone's artwork without being asked). Put it at `docs/visual-gauntlet/bar/reference_hall.png` and
+- The reference images are committed, at the user's request: `docs/art/references/` (01 to 05, 11, 12; its README
+  says what each one sets; 11 and 12 are third-party captures, for personal reference only) and
+  `docs/visual-gauntlet/bar/` (`reference_hall.png`, the hall; `reference_characters.png`, the witch and raccoon sheet).
   `blind_ab.py` + `metrics.py` compare against the real thing; `visual-gauntlet/BAR.md` holds the numbers
   measured from it (low key: median luma 0.16, 99th percentile 0.63, saturation 0.58). Judge frames against
   the image, never a description: three rounds were wasted on a description that was wrong.
@@ -115,4 +116,6 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 ## Not built yet (by design)
 
 Raccoon tele-somatic signal (as a perception channel of the Minds layer), Vera/Elian/Ilya, the painted room playing `PropEvents` reactions (`PaintedRoom` already emits `walked`; the hall coordinator is built, its wiring into `game_root.gd` is not), the town graph, LimboAI, a world compiler from
-place resources, on-device mobile profiling, a main menu, the full ending, the shadow/antler witch in a scene.
+place resources, on-device mobile profiling, the main menu's wiring into the boot path (`game/ui/main_menu.gd`
+and `game/ui/plaque_stack.gd` are built; `game_root.gd` does not route to the menu yet), the full ending, the
+shadow/antler witch in a scene.
