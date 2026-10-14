@@ -80,5 +80,7 @@ multi-language support.
 
 ## Placeholders
 
-Every model in the diorama is a primitive built in `game/world/placeholders.gd`. Key character
-models are to be supplied; see `docs/ARCHITECTURE.md` (Replacing placeholders).
+The witch, Tomas and the raccoon are real skinned models in `assets/characters/`, loaded by
+`game/world/character_models.gd`. The hall's set and props are GLBs in `assets/archive/`.
+`game/world/placeholders.gd` still builds primitive stand-ins, used only when a character's GLB is
+missing; see `docs/ARCHITECTURE.md` (Replacing placeholders).

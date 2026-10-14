@@ -82,8 +82,10 @@ verbs on the same objects mean something new. The first room's whole causal stor
 
 ## Replacing placeholders
 
-Every model is a primitive from `game/world/placeholders.gd` whose named parts (`Body`, `Head`,
-`Hat`, `ArmR`/`Wand`, `BigGear`, ...) are what animation code drives. To drop in a real model:
+The witch, Tomas and the raccoon are real skinned models (`assets/characters/`, loaded by
+`game/world/character_models.gd`). The primitives in `game/world/placeholders.gd` are only the fallback
+when a GLB is missing; their named parts (`Body`, `Head`, `Hat`, `ArmR`/`Wand`, `BigGear`, ...) are what
+the fallback animation drives. To drop in a real model:
 build or import a `Node3D` exposing those names, call `Witch.set_visual()` / `NPC.set_visual()`,
 and run `PSXActorPresenter.apply(root)` to give any imported surface the PSX actor look. Missing
 parts are skipped, not errors.

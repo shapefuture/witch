@@ -15,7 +15,8 @@ A gothic hall of tall shelves, an eye on the wall, a hooded statue and a single 
 light on a spiral floor. A man named Tomas is arguing quietly with a brass machine. Look, ask,
 show, wait, step in, or try the strange thing. Every route is valid and every wrong one is
 recoverable; what changes is what you understand about helping. The hall is hand-built and
-light-baked (`docs/ART_PIPELINE.md`); the characters are placeholders for now.
+light-baked (`docs/ART_PIPELINE.md`); the witch, Tomas and the raccoon are real skinned models
+(`assets/characters/`).
 
 ## Run
 
