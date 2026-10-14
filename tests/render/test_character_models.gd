@@ -88,6 +88,10 @@ func test_the_painted_characters_keep_their_bone_names() -> void:
 # A character added later (hand-built or from tools/characters/template_rig.py) is gated the day it ships: every
 # assets/characters/*.glb that MODELS does not list yet must meet the rules that do not depend on who it is.
 func test_a_character_added_later_meets_the_same_rules() -> void:
+	# Asserted first: once every shipped model is listed in MODELS, the loop below has nothing to check and
+	# the test would pass without a single assertion. The listed models must exist for it to mean anything.
+	for id in MODELS:
+		ok(FileAccess.file_exists("res://assets/characters/%s.glb" % id), "%s.glb is in assets/characters" % id)
 	for file in DirAccess.get_files_at("res://assets/characters"):
 		if not file.ends_with(".glb") or MODELS.has(file.get_basename()):
 			continue
