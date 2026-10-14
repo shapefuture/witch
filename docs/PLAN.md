@@ -84,6 +84,8 @@ nothing. A decision whose default proceeds **does not block work**. Gating decis
 | X11 | Persistence of beads state (section 10) | — | — | **answered**: JSONL export committed with the plan (commit `9c9e9fe`) |
 | X12 | Full `full-plan-delivery` bundle | **not installed**: practices only, from the references | install the bundle (writes AGENTS.md, Claude hooks, a Python package) | open |
 
+Confirmed by the user 2026-10-14: DQ2 (the six verbs stay hidden); N1 to N3 (touch and mouse, no movement keys, a walk cancelled at a cut, a cut waits for the subtitle); SC2 (the witch's hair is русый); X1 (defer LimboAI); X2 (keep Vera's design); X3 (Elian and Ilya as placeholder canon); X6 (re-bake); X7 (poke a prop); X8 (raccoon eyes open); X9 (painted room as room 2); X10 (upbeat merged); X12 (no delivery bundle). R13: crude comes from technical limits, not from deliberate ugliness.
+
 New decisions from the references and the navigation study (see section 13 for the gates). On 2026-10-14 the user asked for educated guesses; those are marked as guesses and can be changed:
 
 | ID | Question | Default | Alternative |

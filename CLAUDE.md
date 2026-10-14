@@ -90,8 +90,7 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 
 ## Input
 
-`pause` (Esc) and `debug_overlay` (F3: Mirror inspector; Tab changes page). Gameplay is pointer
-only: tap/click the ground to walk, an object to get its options. No WASD.
+`pause` (Esc) and `debug_overlay` (F3: Mirror inspector; Tab changes page). Gameplay is touch and mouse: tap or click the ground to walk, an object to get its options, a line to advance. No movement keys (no WASD). Keyboard accelerators are allowed for advancing text (Space, Enter) and pausing (Esc).
 
 ## Known caveats
 
@@ -115,5 +114,5 @@ only: tap/click the ground to walk, an object to get its options. No WASD.
 
 ## Not built yet (by design)
 
-Raccoon tele-somatic signal (as a perception channel of the Minds layer), Vera/Elian/Ilya, `PaintedRoom` emitting `walked` and playing `PropEvents` reactions (coordinator wiring), the town graph, LimboAI, a world compiler from
+Raccoon tele-somatic signal (as a perception channel of the Minds layer), Vera/Elian/Ilya, the painted room playing `PropEvents` reactions (`PaintedRoom` already emits `walked`; the hall coordinator is built, its wiring into `game_root.gd` is not), the town graph, LimboAI, a world compiler from
 place resources, on-device mobile profiling, a main menu, the full ending, the shadow/antler witch in a scene.

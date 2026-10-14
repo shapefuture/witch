@@ -87,6 +87,7 @@ Whether the screen pass is active in the game build is not checked here.
 | R10 | Flat or minimally interpolated facets and hard planar transitions; no smooth subdivision. | second prompt; characters docs | accepted 2026-10-14 (user) |
 | R11 | Textures are low-resolution and chunky; distant things are blocky silhouettes. The texture budget is still to choose. | second prompt | accepted 2026-10-14 (user) |
 | R12 | Light sits in broad low-resolution pools with hard-edged shadows. | second prompt; `stage_light.gd` | accepted 2026-10-14 (user) |
+| R13 | Crude comes from technical limits, not from deliberate ugliness: polygon count, texture resolution and texture placement, as in early PS1 games. No intentional distortion of models. | user, 2026-10-14 | accepted 2026-10-14 (user) |
 
 Measured on the hall sample (`01`, `tools/visual_gauntlet/metrics.py`): median luma 0.155, 99th percentile 0.636, mean
 saturation 0.585. These describe the demo scene, not the style.
@@ -95,7 +96,8 @@ saturation 0.585. These describe the demo scene, not the style.
 
 - **SC1. The interface.** Confirmed 2026-10-14: diegetic only, with paper-strip choices, a subtitle box with an arrow,
   and one satchel. This matches the prompt's own UI rule. See `docs/design/NAVIGATION.md`.
-- **SC2. Which witch. Interim: orange (`03`).** The user prefers blonde (`04`); the final choice is made at DESIGN-FREEZE.
+- **SC2. The witch's hair. Decided 2026-10-14: русый** (light ash-blond, as in `04`), not the orange of `03`. The rest of
+  the sheet's witch stands. The witch's texture changes to match (follow-up task in the tracker).
 - **SC3. Rendering family. Decided: 3D, not pixel art.**
 - **SC4. Setting. Not canon.** Decided by NQ-g, not by the references.
 - **SC5. Characters. Decided 2026-10-14:** crude, as in the PS1 character references (`11`, `12`), for every character

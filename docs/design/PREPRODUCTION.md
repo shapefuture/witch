@@ -11,20 +11,20 @@ wait behind three gates:
 Work that is allowed now: the references, the style bible, the navigation design, the test and gate housekeeping, and
 the engine hardening (infrastructure, not game content).
 
-Answered so far (2026-10-14): DQ6 and DQ7 below.
+Answered or confirmed so far (2026-10-14): DQ2, DQ6, DQ7 (N1 to N3 confirmed), SC2 (the witch's hair is русый), and the guesses X1, X2, X3, X6, X7, X8, X9 and X12.
 
 ## Design questions
 
 - **DQ1.** The witch's goal in the first thirty minutes.
 - **DQ2.** The verbs. The six verbs (LOOK, ASK, SHOW, WAIT, GO, CAST) stay internal, and the player never sees them
-  (`docs/DESIGN_INVARIANTS.md`). Options are shown as sentences. Confirm.
+  (`docs/DESIGN_INVARIANTS.md`). Options are shown as sentences. **Answered 2026-10-14: the six verbs stay hidden.**
 - **DQ3.** The rooms: how many, and which. None of the reference settings is canon (SC4). The archive hall is built
   but may not stay (HALL).
 - **DQ4.** The ending: the path out (`go_path_out`), what it says, and whether there is more than one ending.
 - **DQ5.** Session length. A rough target in minutes.
 - **DQ6. Answered 2026-10-14:** mobile first, desktop second. The budgets follow the phone.
 - **DQ7. Answered 2026-10-14 (guess N1):** touch and mouse are primary. No tank controls and no movement keys.
-  Keyboard adds accelerators only (advance, pause). To confirm, because it rewords the pointer-only rule.
+  Keyboard adds accelerators only (advance, pause). **Confirmed 2026-10-14.** CLAUDE.md now says touch and mouse, no movement keys.
 
 ## Narrative questions
 
@@ -53,7 +53,7 @@ Audio: none yet.
 
 ## Freeze criteria
 
-- **DESIGN-FREEZE** when DQ1 to DQ5 and NQ-a to NQ-g are answered or explicitly deferred (DQ6 and DQ7 are done), the
+- **DESIGN-FREEZE** when DQ1 to DQ5 and NQ-a to NQ-g are answered or explicitly deferred (DQ2, DQ6 and DQ7 are done), the
   room list is written, and the cast list is fixed.
 - **STYLE-LOCK** met 2026-10-14 (SF, SC1, SC3, SC5, SC6, SC7 settled; R1 to R12 accepted).
 - **HALL** decided at DESIGN-FREEZE, with the other design questions.
