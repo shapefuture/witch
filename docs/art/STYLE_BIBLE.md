@@ -46,9 +46,8 @@ These describe that sample scene, not the style.
 
 ## Open question for the hall
 
-The archive hall is the built scene, and `CLAUDE.md` calls it the first scene and says not to invent another. The
-user says the olive hall may not be in the final game. Decision **HALL** (in `docs/PLAN.md`) decides whether the grade
-and geometry work (G1, G3, G4) continues. Until then, that work is held.
+The archive hall is a demo scene (user, 2026-10-14). It may or may not remain in the final game. That is decided at
+DESIGN-FREEZE, not now. Until then, no new hall art is made: the grade and geometry work (G1, G3, G4) is held.
 
 ## Not decided here
 

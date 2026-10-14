@@ -95,7 +95,7 @@ New decisions from the references and the navigation study (see section 13 for t
 | SC2 | Which witch | **Interim: orange (03)** for work now; preference is blonde (04), decided at DESIGN-FREEZE | blonde now |
 | SC3 | Rendering family | **Decided 2026-10-14: 3D, not pixel art** | — |
 | SC4 | Setting | **Not canon** (user, 2026-10-14). Decided by NQ-g, not by the references | — |
-| HALL | Is the archive hall in the final game? | **Open** (user): the olive hall is one sample scene and may not be in the game. Holds the grade and geometry work (G1, G3, G4). CLAUDE.md's art rule (the hall is the first scene) conflicts | keep the hall as the first room |
+| HALL | Is the archive hall in the final game? | **Deferred to DESIGN-FREEZE** (user): it is a demo scene and may or may not remain. No new hall art until then. Holds G1, G3, G4 | decide now |
 
 ## 4. How the work runs
 
@@ -152,7 +152,7 @@ room.
 
 ## 6. Revised stream G (art)
 
-The Blender bake is needed only for the geometry, so the work splits. The whole stream waits for HALL and STYLE-LOCK: the grade is a style decision, and the geometry follows the style. If the archive hall is not in the final game, G is dropped rather than finished.
+The Blender bake is needed only for the geometry, so the work splits. The whole stream waits for HALL and STYLE-LOCK: the grade is a style decision, and the geometry follows the style. The hall is a demo scene that may or may not survive into the final game, so no more hall art is spent before DESIGN-FREEZE.
 grade is a style decision, and the geometry follows the style.
 
 - **G1: grade pass, no bake.** Darken and olive-grade the existing plates with a 2D colour script
@@ -258,7 +258,7 @@ commit after each change to the tracker.
   or explicitly deferred, the room list is written, and the cast list is fixed. It holds B, C, D, E, F and I.
   It depends on N1 to N3 being decided.
 - **STYLE-LOCK** (decision, the user). Met when SC1 is confirmed, SC2 and SC3 are settled, and R1 to R6 in `docs/art/STYLE_BIBLE.md` are accepted. It holds G1, G3, G4 and E4.
-- **HALL** (decision, the user). Met when the user says whether the archive hall is in the final game. It holds G1, G3 and G4 as well.
+- **HALL** (decision, the user). The archive hall is a demo scene and may or may not stay. Decided at DESIGN-FREEZE. It holds G1, G3 and G4 as well.
 - Work that is allowed now: P (references, style, navigation, questions), A (gate and housekeeping, including A1,
   which turns the gate green) and H (engine hardening). The user said not to build the game; these are not game
   content. A1 is ready when you say go.

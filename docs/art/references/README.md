@@ -6,7 +6,7 @@ at. They do not decide scenes, characters or story. The game itself is not being
 
 | file | what it shows | role | conflict to decide |
 |---|---|---|---|
-| `01_archive_hall_still.png` | faceted olive-and-purple library hall, one shaft of light, pixel-stepped eye glyph, hooded faceless statue, purple globe | **a sample scene**; the olive palette is not the base, and this is the hall bar only if the hall stays (HALL). Copied to `docs/visual-gauntlet/bar/reference_hall.png` | none |
+| `01_archive_hall_still.png` | faceted olive-and-purple library hall, one shaft of light, pixel-stepped eye glyph, hooded faceless statue, purple globe | **a demo scene**; the olive palette is not the base, and this is the hall bar only if the hall stays (HALL, decided at DESIGN-FREEZE). Copied to `docs/visual-gauntlet/bar/reference_hall.png` | none |
 | `02_river_lake_scene.png` | dusk river, lily-pad trees, spiral mushrooms, a crowned frog, witch and raccoon in a boat; low-poly 3D with a dithered look | outdoor palette and dithering | SC1 (numeric HUD counters), SC4 (is this a place in the game?) |
 | `03_concept_sheet_witch_raccoon_shadow_tomas.png` | turnaround sheet: witch, raccoon, shadow, Tomas, front, side and back | **the sheet** for the characters. Copied to `docs/visual-gauntlet/bar/reference_characters.png` | SC2 (which witch) |
 | `04_hotel_beyond_lobby.png` | "Hotel Beyond" lobby: checkerboard floor, moon-faced lift, eye-keys on a rack, bird receptionist, "ROOMS" sign | door and key vocabulary, moon and sun motifs | SC3 (pixel-art illustration), SC4 (a hotel setting) |

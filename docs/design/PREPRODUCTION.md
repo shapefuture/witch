@@ -7,7 +7,7 @@ wait behind three gates:
 - **DESIGN-FREEZE**: the questions below are answered, or deliberately deferred.
 - **STYLE-LOCK**: SC1 (the interface) is confirmed, SC2 and SC3 are settled as in `STYLE_BIBLE.md`, and rules R1 to R6
   are accepted.
-- **HALL**: the user says whether the archive hall stays in the final game. The grade and geometry work depends on it.
+- **HALL**: the archive hall is a demo scene that may or may not stay in the final game, decided at DESIGN-FREEZE. The grade and geometry work waits on it.
 
 Work that is allowed now: the references, the style bible, the navigation design, the test and gate housekeeping, and
 the engine hardening (infrastructure, not game content).
@@ -57,4 +57,4 @@ Audio: none yet.
 - **DESIGN-FREEZE** when DQ1 to DQ5 and NQ-a to NQ-g are answered or explicitly deferred (DQ6 and DQ7 are done), the
   room list is written, and the cast list is fixed.
 - **STYLE-LOCK** when SC1 is confirmed, SC2 and SC3 are settled, and R1 to R6 are accepted in `STYLE_BIBLE.md`.
-- **HALL** when the user says whether the archive hall is in the final game.
+- **HALL** decided at DESIGN-FREEZE, with the other design questions.
