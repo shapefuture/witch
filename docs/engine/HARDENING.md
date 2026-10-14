@@ -8,8 +8,8 @@ was not changed.
 
 Engine save format **7** (was 6). The body carries a `checksum` field: SHA-256 over the body's
 JSON, normalised by one native parse and stringify cycle so that an int and its float round trip
-seal the same. It is native work, not a GDScript walk (a 13.5 MB save at 5,000 events walks in
-seconds; the native path is a fraction of that).
+seal the same. The normalisation is native JSON work; a GDScript walk of the same 15 MB body would
+cost seconds. Measured at 5,500 events: about 0.74 s per checksum (see docs/engine/BENCH.md).
 
 Envelope `witch_save` version **2** (was 1). It seals its own fields and `mirror_checksum` (the
 engine checksum), so the mirror body is hashed once, by the engine.
@@ -122,5 +122,8 @@ affected.
 > Hardening (branch wc/H): saves carry a checksum (engine format 7, envelope version 2) and a
 > 64 MiB limit, and are written atomically with a `.bak`. Content checks for reachability, goals,
 > route redundancy and player-text vocabulary live in `addons/mirror_engine/mirror_progress_validator.gd`.
-> Local patch notes: `mirror_persistence.gd` (checksum, size limit, `seal`/`verify`), and
-> `mirror_validator.gd` (two wrappers). See docs/engine/HARDENING.md.
+> Local patch notes (vendored 1.3.1): `mirror_persistence.gd` (checksum, size limit, `seal`/`verify`);
+> `mirror_engine.gd` (duplicate ids refused in `_register`, `register_action` shape check, replay writes
+> `__event_count` only with events, a restored unlocked engine keeps an empty fingerprint);
+> `mirror_validator.gd` (two wrappers); new `mirror_progress_validator.gd` and `mirror_shape.gd`.
+> See docs/engine/HARDENING.md.
