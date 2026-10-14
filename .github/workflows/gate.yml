@@ -1,0 +1,42 @@
+# NOT EXECUTED on GitHub yet. The YAML was parsed locally, but no runner has run it. The first run on a push
+# or pull request is the real check: the release asset name, the apt package names and the Xvfb/Mesa render
+# stage are all unverified on a GitHub runner.
+#
+# The gate is tests/run_tests.sh: import, the suite (grades on error markers and on the TESTS PASSED line) and
+# the render regression (skipped with a RENDER SKIPPED line when xvfb-run is missing, so Xvfb must be installed).
+name: gate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      GODOT_TAG: "4.6.3-stable"
+      GODOT_BIN: "Godot_v4.6.3-stable_linux.x86_64"
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install Xvfb and Mesa for the render stage
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            xvfb libgl1 libgl1-mesa-dri libegl1 libxcursor1 libxinerama1 libxrandr2 libxi6 libxkbcommon0 unzip
+
+      - name: Install Godot 4.6.3 (official Linux x86_64 build)
+        run: |
+          mkdir -p "$HOME/godot"
+          curl -fsSL -o "$HOME/godot/godot.zip" \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_BIN}.zip"
+          unzip -o "$HOME/godot/godot.zip" -d "$HOME/godot"
+          chmod +x "$HOME/godot/${GODOT_BIN}"
+
+      - name: Run the gate
+        run: GODOT="$HOME/godot/${GODOT_BIN}" ./tests/run_tests.sh
