@@ -37,3 +37,20 @@ The same skeleton, clips and palette as the current Tomas. It has fewer rings an
 - Saturated colour blocks per garment, within SC7.
 - Proportions and shape unchanged (R13 holds).
 - Judged against references 11 and 12, not the concept sheet.
+
+## Second trial (built 2026-10-14)
+
+`tools/characters/tomas_crude2.py` writes `assets/characters/trial/tomas_crude2.glb`, which the game does not load.
+Preview: `docs/art/crude_trial/tomas_crude2.png` (four rows: concept sheet, current, trial 1, trial 2).
+
+- **Size:** 3,404 triangles (the shipped model has 4,466), 2 surfaces, 21 bones, 4 clips, height 1.547 m.
+- **Density:** head, hair, hands and the wrench at the shipped density; the belt and torso at 0.6; the arms at 0.7;
+  the legs at 0.5.
+- **Face:** the sheet's own 64 px crop, with contrast raised 1.45 and a light unsharp mask. The brows, eyes and mouth
+  read, and the frown survives.
+- **Palette:** saturated colour blocks within SC7: violet vest, lemon-gold shirt, moss-green trousers, burnt-orange
+  boots, mustard pouches. The shipped values are unchanged in `tomas.py`.
+
+Still unlike the references: the hair is still a helmet, the silhouette is unchanged (R13), and the trousers read a
+little bright. The face is smoother than reference 11's blurred textures, on purpose, so the expression stays readable.
+The judgement is against references 11 and 12.
