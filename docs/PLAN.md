@@ -54,10 +54,10 @@ closes with evidence and the integrated gate passes.
 | REQ-21 | Continuous gate (CI) | none in repo | no `.github/`. Open (A4) |
 | REQ-22 | Engine hardening (saves, validators, test depth, bench) | draft mirror-engine upload | open (H) |
 | REQ-23 | Stale docs corrected to match code | audit | pending (section 9; open, A3) |
-| REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK); the sheet is now supplied |
+| REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK, SC5); the sheet is now supplied |
 | REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | 2 commits unmerged, tools and docs only, flag off (decision X10) |
 | REQ-26 | Concept sheet in the repo as the judging bar for characters | characters docs | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_characters.png` |
-| REQ-27 | Style locked: SC1 confirmed, SC2 and SC3 settled, SC4 not canon; rules R1 to R6 accepted | `docs/art/STYLE_BIBLE.md` | SC1 and SC3 settled; R1 to R6 still need the user's acceptance |
+| REQ-27 | Style locked: the master prompt look is the anchor; SF (fixed or variable) and SC5 (characters) decided; rules R1 to R6 restated and accepted | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | SC1 and SC3 settled; anchor found; SF and SC5 open |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
 | REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | mobile-first design written; N1 to N3 taken as guesses, to confirm |
 
@@ -96,6 +96,8 @@ New decisions from the references and the navigation study (see section 13 for t
 | SC3 | Rendering family | **Decided 2026-10-14: 3D, not pixel art** | — |
 | SC4 | Setting | **Not canon** (user, 2026-10-14). Decided by NQ-g, not by the references | — |
 | HALL | Is the archive hall in the final game? | **Deferred to DESIGN-FREEZE** (user): it is a demo scene and may or may not remain. No new hall art until then. Holds G1, G3, G4 | decide now |
+| SF | Style: which parts are fixed, which vary | **Open** (user): the look is anchored to the master prompt (`ps1p`), but the user says it is less fixed. My reading is in `docs/art/STYLE_BIBLE.md`: fixed = crude 3D, stage camera, diegetic UI, jewel family; variable = palette within the jewel range, light, motifs, density | correct the reading |
+| SC5 | Style: characters crude toys, or clean faceted like the sheet (`03`)? | **Open** (user): the prompt calls characters carved toys; the sheet is clean faceted. Decides E4 and REQ-24 | decide |
 
 ## 4. How the work runs
 
@@ -257,7 +259,7 @@ commit after each change to the tracker.
 - **DESIGN-FREEZE** (decision, the user). Met when DQ1 to DQ7 and NQ-a to NQ-g in `docs/design/PREPRODUCTION.md` are answered
   or explicitly deferred, the room list is written, and the cast list is fixed. It holds B, C, D, E, F and I.
   It depends on N1 to N3 being decided.
-- **STYLE-LOCK** (decision, the user). Met when SC1 is confirmed, SC2 and SC3 are settled, and R1 to R6 in `docs/art/STYLE_BIBLE.md` are accepted. It holds G1, G3, G4 and E4.
+- **STYLE-LOCK** (decision, the user). Met when SC1 is confirmed (done), SC3 is decided (done), SF and SC5 are answered, and the rules R1 to R6 are restated and accepted in `docs/art/STYLE_BIBLE.md`. It holds G1, G3, G4 and E4.
 - **HALL** (decision, the user). The archive hall is a demo scene and may or may not stay. Decided at DESIGN-FREEZE. It holds G1, G3 and G4 as well.
 - Work that is allowed now: P (references, style, navigation, questions), A (gate and housekeeping, including A1,
   which turns the gate green) and H (engine hardening). The user said not to build the game; these are not game
