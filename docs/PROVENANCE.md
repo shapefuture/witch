@@ -31,10 +31,9 @@ open PRs, so it was deliberately not done).
 YAKO's NPC class mixed interaction, dialogue progression, shader installation, lighting and
 facing in one object; those concerns are now separate.
 
-**Stale, pending removal:** `Scenes/` still holds four small old scripts (`player.gd`,
-`dialogue_ui.gd`, `pause_menu_ui.gd`, `settings_menu_ui.gd`) and the old player scene. A final
-`git rm -r Scenes` was declined by the sandbox's permission classifier, so the directory is
-quarantined with a `Scenes/.gdignore` (Godot ignores it). Delete it with `git rm -r Scenes`.
+**Removed:** the quarantined `Scenes/` directory (four old scripts, `player.gd`, `dialogue_ui.gd`,
+`pause_menu_ui.gd`, `settings_menu_ui.gd`, and the old player scene). Nothing in the game loaded it;
+it stayed in the tree behind a `Scenes/.gdignore` until it was deleted with `git rm -r Scenes`.
 
 ## Mirror Engine 1.3.1
 
