@@ -29,8 +29,8 @@ byte-identical in the atlas. Then re-import (`godot --headless --path . --import
 
 |  | v1 `witch.glb` | v2 `witch_antler.glb` |
 |---|---|---|
-| triangles (budget 9,000) | **8,016** | **7,234** |
-| bones | 21 | 23 (adds `charm.L/R`) |
+| triangles (budget 9,000) | **6,164** | **7,234** |
+| bones | 22 (adds `hat_tip`) | 23 (adds `charm.L/R`) |
 | surfaces / materials | 1 / 1 | 1 / 1 |
 | atlas (nearest, clamped, 5-bit) | 256 x 256 (face 176 x 184 + 45 swatches) | 512 x 512 (face + 22 painted tiles + swatches) |
 | height | hood top 1.30 m | hood top 1.30 m, antlers 1.32 m |
@@ -143,5 +143,5 @@ proportions, which match this concept. New geometry:
 - The skirt and cape are rigid: the walk moves the legs under a stiff cone. The camera never
   sees the legs on v1, but v2's boots step under the hem.
 - The atlas is display-referred sRGB (the glTF convention). The game's `psx_lit_actor` samples
-  `source_color`, and the GLBs are not wired into `Placeholders.witch()` yet: that needs the
-  named handles (`Body`, `Hat`, `ArmR/Wand`, `RaccoonLink`), which is game code.
+  `source_color`. `witch.gd` loads the GLB through `CharacterModels`; `Placeholders.witch()` is only the
+  fallback when the file is missing.
