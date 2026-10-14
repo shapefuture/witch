@@ -1,41 +1,55 @@
-# Style bible (draft, from the references)
+# Style bible (draft)
 
-Status: **draft**. Built from the five references in `docs/art/references/`. Nothing here is final.
-Each rule names the reference that supports it. Anything marked SC-n is a conflict that needs a decision
-before the style is locked (decision STYLE-LOCK in `docs/design/PREPRODUCTION.md`).
+Status: **draft, revised 2026-10-14** after the user's notes. Built from the five style references in
+`docs/art/references/`. Nothing here is locked. The user says the olive palette is one sample scene, which may not be
+in the final game, so no palette is the base.
+
+Each rule names the reference behind it. "Candidate" means a rule that is only a candidate; "decided" means settled.
 
 ## Already settled by the repo (not by the references)
 
-- Rooms are pre-rendered plates over a low-poly proxy, so actors are occluded correctly. Characters are
-  real skinned 3D models. Shading is PSX-style (`CLAUDE.md`, art rules).
+- Rooms are pre-rendered plates over a low-poly proxy, so actors are occluded correctly. Characters are real skinned
+  3D models. Shading is PSX-style (`CLAUDE.md`, art rules).
 - The camera is bolted, and shot changes are cuts.
-- No 2D UI. Speech, options and the pause menu are 3D slabs (`game/ui/`).
-- All player-visible text is Russian, in `data/text/ru.json`.
+- Text is Russian only, in `data/text/ru.json`.
+- No 2D HUD. The interface is diegetic: strips, a satchel, a subtitle box (SC1, `docs/design/NAVIGATION.md`).
 
-## Rules drafted from the references
+## Decided
 
-| id | rule | source |
-|---|---|---|
-| R1 | Base palette is olive, khaki and sepia with purple accents (orbs, carpet, hats, cloaks). Measured in the hall: mean saturation 0.585, 45% olive-gold pixels. | 01 (measured with `tools/visual_gauntlet/metrics.py`), 02, 03 |
-| R2 | Low key with one warm source. Median luma 0.155, 99th percentile 0.636, and under 1% of pixels above 0.75: the light is felt, not blown out. | 01 (measured), 05 (lantern) |
-| R3 | Surfaces are faceted low-poly, with soft gradients across the larger facets (facet gradient 0.85 measured in 01). | 01, 03 |
-| R4 | Motifs: crescent moon and star for the witch's world; the eye glyph for the archive; keys with eyes as a recurring object. | 01, 03, 04, 05 |
-| R5 | Outdoor scenes use a dusk gradient (purple above, orange at the horizon) and ordered dithering on water. | 02 |
-| R6 | Characters are readable at about 100 px: the witch's hood, the raccoon's hat and the cloak's silhouette carry identity. | 03 (the sheet's own camera distance, from `docs/art/characters_*.md`) |
+- **SC3. Rendering family: 3D, not pixel art (decided 2026-10-14).** The pixel-art look of 04 and 05 is out.
+  A dither texture effect (as in 02) stays open, as long as the scene still reads as 3D.
 
-## Conflicts (decide before STYLE-LOCK)
+## Rules (candidates, not locked)
 
-- **SC1. HUD counters in 02.** The river scene has two numeric overlays, "U/0" top right and "I0" bottom right.
-  This conflicts with the no-2D-UI rule. Options: keep the rule and drop the counters; or change the rule
-  and allow diegetic counters on the boat or the frame.
-- **SC2. Which witch.** 03 has orange curls, flowers and a bird on her wrist. 05 has gold braids, a gown and a
-  pink star wand. 04 is blonde. 02 has brown-gold hair in a boat. One canonical design is needed; the
-  characters docs (`docs/art/characters_witch.md`) build on 03.
-- **SC3. Rendering family.** 01, 02 and 03 are 3D with faceting or dithering. 04 and 05 are pixel-art
-  illustrations with a visible pixel grid. The repo's architecture (3D plates, 3D actors) follows 01 to 03.
-  Choosing 04 or 05 as the look would change the architecture, not just the palette.
-- **SC4. Setting.** 01 is the archive hall. 04 is a hotel lobby. 02 is a river with a crowned frog. 05 is
-  ruins at night. Which of these are places in the game is a narrative question (`PREPRODUCTION.md`).
+| id | rule | source | status |
+|---|---|---|---|
+| R1 | Palette is not locked. The olive and purple of 01 is one sample scene, not the base. | 01 | candidate; sample only |
+| R2 | A single warm key light is a candidate for any scene (01's shaft of light, 05's lantern). | 01, 05 | candidate |
+| R3 | Surfaces are faceted low-poly 3D, with soft gradients across the larger facets. | 01, 03 | decided with SC3 |
+| R4 | Motifs for the witch's world: crescent moon and star (03, 04, 05). Keys with eyes and the eye glyph are not motifs. | 03, 04, 05 | candidate |
+| R5 | Outdoor scenes may use a dusk gradient (purple above, orange at the horizon) and dither on water. | 02 | candidate; sample only |
+| R6 | Characters are readable at about 100 px: the witch's hood, the raccoon's hat and the cloak's silhouette carry identity. | 03; repo tests | candidate |
+
+Measured on 01 (`tools/visual_gauntlet/metrics.py`): median luma 0.155, 99th percentile 0.636, mean saturation 0.585.
+These describe that sample scene, not the style.
+
+## Conflicts
+
+- **SC1. The interface (river counters in 02, and the other references).** Recommendation, awaiting the user's
+  confirmation: no numeric counters and no sidebar. Choices are paper strips (06); the subtitle is a dark box with an
+  advance arrow (09); one satchel opens as a letter cabinet for knowledge, inventory and objectives. Declined: the
+  bubble bar (08), the sidebar (10), the card tray (07). Full reasoning in `docs/design/NAVIGATION.md` section 3, with
+  the screenshots in `docs/design/ui_references/`.
+- **SC2. Which witch. Interim: orange (03).** The sheet's witch is used for work now. The user prefers blonde, as in
+  04, and the final choice is made at DESIGN-FREEZE. The gold-braided gown (05) is a style reference only.
+- **SC4. Setting. Not canon.** The user says none of the settings in the references is canon: the archive hall (01),
+  the hotel (04), the river (02) and the ruins (05). The narrative decides this (NQ-g).
+
+## Open question for the hall
+
+The archive hall is the built scene, and `CLAUDE.md` calls it the first scene and says not to invent another. The
+user says the olive hall may not be in the final game. Decision **HALL** (in `docs/PLAN.md`) decides whether the grade
+and geometry work (G1, G3, G4) continues. Until then, that work is held.
 
 ## Not decided here
 

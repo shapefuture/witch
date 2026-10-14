@@ -9,7 +9,7 @@ being built yet. The build streams are held behind two gates (section 13). The w
 references, the style and navigation studies, the design and narrative questions, and the gate and engine
 housekeeping.
 
-Baseline: branch `claude/loving-brown-whtlm0`, at `9c9e9fe` (the plan commit on top of `243230b`, main). The gate is red at
+Baseline: branch `claude/loving-brown-whtlm0`, at `e10c817` (the pre-production commit, on `9c9e9fe`, the plan commit, on `243230b`, main). The gate is red at
 baseline: one vacuous test (REQ-20).
 
 Tracker: beads root epic `witch-29y`. Run `bd ready` for the next unblocked work. The tracker is exported to
@@ -45,8 +45,8 @@ closes with evidence and the integrated gate passes.
 | REQ-12 | Shadow, shadow_lady and witch_antler placed in a room | CLAUDE.md | built as GLBs, not placed. Held |
 | REQ-13 | Vera, Elian and Ilya | CLAUDE.md | Vera: generated design in `docs/art`; Elian and Ilya: none. Held; NQ-b |
 | REQ-14 | Painted room runs as room 2 with PropEvents reactions | CLAUDE.md | `walked` is emitted; the room is not in the game. Held |
-| REQ-15 | Round 9: grade pass on the hall plates | `docs/visual-gauntlet/rounds.json` | not started. Held (STYLE-LOCK) |
-| REQ-16 | Round 9: wider nave, vault, nested arches, lit stair | same | not started. Held (STYLE-LOCK, decision X6) |
+| REQ-15 | Round 9: grade pass on the hall plates | `docs/visual-gauntlet/rounds.json` | not started. Held (HALL, STYLE-LOCK) |
+| REQ-16 | Round 9: wider nave, vault, nested arches, lit stair | same | not started. Held (HALL, STYLE-LOCK, decision X6) |
 | REQ-17 | Reference hall image in the repo | CLAUDE.md, BAR.md | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_hall.png`; metrics reproduce BAR.md |
 | REQ-18 | `pixel.ttf` licence recorded | CLAUDE.md | **deferred by the user** ("ignore for now"); blocks shipping only |
 | REQ-19 | Delete the quarantined `Scenes/` | CLAUDE.md | pending (housekeeping, open) |
@@ -57,9 +57,9 @@ closes with evidence and the integrated gate passes.
 | REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK); the sheet is now supplied |
 | REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | 2 commits unmerged, tools and docs only, flag off (decision X10) |
 | REQ-26 | Concept sheet in the repo as the judging bar for characters | characters docs | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_characters.png` |
-| REQ-27 | Style locked: conflicts SC1 to SC4 decided, rules R1 to R6 accepted | `docs/art/STYLE_BIBLE.md` | draft written; STYLE-LOCK decision |
+| REQ-27 | Style locked: SC1 confirmed, SC2 and SC3 settled, SC4 not canon; rules R1 to R6 accepted | `docs/art/STYLE_BIBLE.md` | SC3 decided; SC1 recommended; STYLE-LOCK waits on SC1 |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
-| REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | study written; decisions N1 to N3 |
+| REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | mobile-first design written; N1 to N3 taken as guesses, to confirm |
 
 Explicit exclusions (none chosen yet): a generative AI runtime (the spec forbids it in the shipped core); Popochiu
 (the draft lists it as unexercised; we don't use it).
@@ -84,17 +84,18 @@ nothing. A decision whose default proceeds **does not block work**. Gating decis
 | X11 | Persistence of beads state (section 10) | — | — | **answered**: JSONL export committed with the plan (commit `9c9e9fe`) |
 | X12 | Full `full-plan-delivery` bundle | **not installed**: practices only, from the references | install the bundle (writes AGENTS.md, Claude hooks, a Python package) | open |
 
-New decisions from the references and the navigation study (see section 13 for the gates):
+New decisions from the references and the navigation study (see section 13 for the gates). On 2026-10-14 the user asked for educated guesses; those are marked as guesses and can be changed:
 
 | ID | Question | Default | Alternative |
 |---|---|---|---|
-| N1 | Input mode | **pointer only** (per CLAUDE.md) | add a keyboard or gamepad tank mode for desktop and accessibility |
-| N2 | A room cut during a walk | **the walk is cancelled**; the player taps again in the new view | finish the walk in the new camera |
-| N3 | A room cut during a Minds reaction | **the cut waits** until the subtitle has finished | cut at once |
-| SC1 | HUD counters in the river reference (02) | **keep the no-2D-UI rule**; drop the counters | allow diegetic counters, and change the rule |
-| SC2 | Which witch | **the sheet's witch** (03): orange curls, flowers, bird | the gold-braided gown (05), or another |
-| SC3 | Rendering family | **faceted 3D** (01 to 03), matching the architecture | pixel-art illustration (04, 05), which changes the architecture |
-| SC4 | Setting | open (narrative question NQ-g) | — |
+| N1 | Input mode | **Guess (2026-10-14): touch and mouse are primary; no tank controls; no movement keys.** Keyboard adds accelerators only (advance, pause). To confirm: this rewords the CLAUDE.md "pointer only" rule | tank controls or movement keys on desktop |
+| N2 | A room cut during a walk | **Guess: the walk is cancelled**; a tap in the new view starts a new walk | finish the walk in the new camera |
+| N3 | A room cut during a Minds reaction | **Guess: the cut waits** until the subtitle box clears; a tap advances faster | cut at once |
+| SC1 | Interface: counters in 02, or the references | **Recommended, awaiting confirmation**: no counters or sidebar; choices as paper strips (06); subtitle box with advance arrow (09); one satchel that opens as a letter cabinet for knowledge, inventory and objectives. Declined: bubble bar (08), sidebar (10), card tray (07) | keep counters, or a sidebar as in 10 |
+| SC2 | Which witch | **Interim: orange (03)** for work now; preference is blonde (04), decided at DESIGN-FREEZE | blonde now |
+| SC3 | Rendering family | **Decided 2026-10-14: 3D, not pixel art** | — |
+| SC4 | Setting | **Not canon** (user, 2026-10-14). Decided by NQ-g, not by the references | — |
+| HALL | Is the archive hall in the final game? | **Open** (user): the olive hall is one sample scene and may not be in the game. Holds the grade and geometry work (G1, G3, G4). CLAUDE.md's art rule (the hall is the first scene) conflicts | keep the hall as the first room |
 
 ## 4. How the work runs
 
@@ -151,7 +152,7 @@ room.
 
 ## 6. Revised stream G (art)
 
-The Blender bake is needed only for the geometry, so the work splits. The whole stream waits for STYLE-LOCK: the
+The Blender bake is needed only for the geometry, so the work splits. The whole stream waits for HALL and STYLE-LOCK: the grade is a style decision, and the geometry follows the style. If the archive hall is not in the final game, G is dropped rather than finished.
 grade is a style decision, and the geometry follows the style.
 
 - **G1: grade pass, no bake.** Darken and olive-grade the existing plates with a 2D colour script
@@ -186,8 +187,11 @@ grade is a style decision, and the geometry follows the style.
   swappable slot (P13); complexity that must pay rent (P11), which is why LimboAI is deferred and the engine split
   is deferred. Not adopted: the starter schema and YAML manifests, which the spec itself calls a starter, not a
   validator.
-- **The user's style references** (`docs/art/references/`, five images). They set the look, not the design: the hall
-  (01) is the bar; the sheet (03) sets the characters; 02, 04 and 05 raise conflicts SC1 to SC4 (`docs/art/STYLE_BIBLE.md`).
+- **The user's style references** (`docs/art/references/`, five images). They set the look, not the design. 01 is one sample
+  scene, so the hall is a bar only if the hall stays (HALL). The sheet (03) sets the characters. 02, 04 and 05 raise the conflicts
+  SC1 to SC4 (`docs/art/STYLE_BIBLE.md`).
+- **The interface references** (`docs/design/ui_references/`, 06 to 10) drive SC1 and the navigation rules
+  (`docs/design/NAVIGATION.md`). Several are commercial screenshots: keep them in a private repo, and remove them before any public release.
 - **Alone in the Dark** (1992, not 1982; Infogrames; Frédérick Raynal). Fixed cameras over pre-rendered backdrops,
   camera changes at room and corridor boundaries, and tank controls. We match the camera and the cuts, and we
   differ on input (pointer only). The decisions N1 to N3 come from that difference (`docs/design/NAVIGATION.md`).
@@ -230,9 +234,10 @@ commit after each change to the tracker.
   route (X6).
 - Shadow, shadow_lady and witch_antler are placed in room 2, and Vera with them. Their locations are not designed.
   This is a guess, not a decision.
-- The witch is the sheet's witch (SC2 default). The gown in reference 05 is treated as a style reference, not the design.
+- The witch is the sheet's orange witch for now (SC2 interim). Blonde (04) is the user's preference, decided at DESIGN-FREEZE. The gown in reference 05 is a style reference, not the design.
+- Navigation is touch and mouse first, with no tank controls (N1). A walk is cancelled at a cut (N2). A cut waits for the subtitle (N3). The satchel is the one diegetic menu (SC1). All are guesses, to confirm.
 - The river (02) and the hotel (04) are not assumed to be places in the game (SC4 and NQ-g).
-- The 2D counters in 02 are treated as a style idea that conflicts with the rule, not as a request (SC1 default).
+- The 2D counters in 02 are not adopted (SC1 recommendation: no counters). The interface references (06 to 10) are read as interaction references, not as a design.
 
 ## 12. Risks
 
@@ -240,8 +245,7 @@ commit after each change to the tracker.
   per candidate, not once per worker.
 - Save format changes (H1, D) make older saves fail to load. Acceptable before release, and it is stated here so it
   is not discovered later.
-- Style conflict SC3 is architectural. If the pixel-art references (04, 05) become the look, the 3D plate pipeline
-  changes, and the plan must be revisited before any build.
+- SC3 is decided (3D), so the pixel references do not change the plate pipeline. The archive hall may leave the game (HALL): B and G work on it would then be rework, so decide before spending on it.
 - The five references add about 7 MB of PNG to the repo. Acceptable for a personal project; re-encode if it grows.
 - Hashes and goldens move with H (checksum, possibly StringName) and D (fingerprint). The integrator regenerates
   once, not per stream.
@@ -253,8 +257,8 @@ commit after each change to the tracker.
 - **DESIGN-FREEZE** (decision, the user). Met when DQ1 to DQ7 and NQ-a to NQ-g in `docs/design/PREPRODUCTION.md` are answered
   or explicitly deferred, the room list is written, and the cast list is fixed. It holds B, C, D, E, F and I.
   It depends on N1 to N3 being decided.
-- **STYLE-LOCK** (decision, the user). Met when SC1 to SC4 are decided and R1 to R6 in `docs/art/STYLE_BIBLE.md` are
-  accepted. It holds G1, G3, G4 and E4.
+- **STYLE-LOCK** (decision, the user). Met when SC1 is confirmed, SC2 and SC3 are settled, and R1 to R6 in `docs/art/STYLE_BIBLE.md` are accepted. It holds G1, G3, G4 and E4.
+- **HALL** (decision, the user). Met when the user says whether the archive hall is in the final game. It holds G1, G3 and G4 as well.
 - Work that is allowed now: P (references, style, navigation, questions), A (gate and housekeeping, including A1,
   which turns the gate green) and H (engine hardening). The user said not to build the game; these are not game
   content. A1 is ready when you say go.
