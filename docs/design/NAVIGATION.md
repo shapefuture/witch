@@ -33,7 +33,7 @@ produce the same intent (`CLAUDE.md` invariant), so the design below holds for b
 | Taps the satchel | Opens the letter cabinet: items, what the witch knows of each custom, objectives | One object in the lower corner |
 | A new item arrives | A card slides out of the satchel and rests in the corner until tapped | Replaces a sidebar notice |
 
-## 3. The interface (SC1 recommendation)
+## 3. The interface (SC1, confirmed 2026-10-14)
 
 - **No counters, bars or sidebars.** The no-2D-UI rule stays. The numeric overlays in `02_river_lake_scene.png` (U/0,
   I0) are not adopted.

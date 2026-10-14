@@ -57,7 +57,7 @@ closes with evidence and the integrated gate passes.
 | REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK); the sheet is now supplied |
 | REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | 2 commits unmerged, tools and docs only, flag off (decision X10) |
 | REQ-26 | Concept sheet in the repo as the judging bar for characters | characters docs | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_characters.png` |
-| REQ-27 | Style locked: SC1 confirmed, SC2 and SC3 settled, SC4 not canon; rules R1 to R6 accepted | `docs/art/STYLE_BIBLE.md` | SC3 decided; SC1 recommended; STYLE-LOCK waits on SC1 |
+| REQ-27 | Style locked: SC1 confirmed, SC2 and SC3 settled, SC4 not canon; rules R1 to R6 accepted | `docs/art/STYLE_BIBLE.md` | SC1 and SC3 settled; R1 to R6 still need the user's acceptance |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
 | REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | mobile-first design written; N1 to N3 taken as guesses, to confirm |
 
@@ -91,7 +91,7 @@ New decisions from the references and the navigation study (see section 13 for t
 | N1 | Input mode | **Guess (2026-10-14): touch and mouse are primary; no tank controls; no movement keys.** Keyboard adds accelerators only (advance, pause). To confirm: this rewords the CLAUDE.md "pointer only" rule | tank controls or movement keys on desktop |
 | N2 | A room cut during a walk | **Guess: the walk is cancelled**; a tap in the new view starts a new walk | finish the walk in the new camera |
 | N3 | A room cut during a Minds reaction | **Guess: the cut waits** until the subtitle box clears; a tap advances faster | cut at once |
-| SC1 | Interface: counters in 02, or the references | **Recommended, awaiting confirmation**: no counters or sidebar; choices as paper strips (06); subtitle box with advance arrow (09); one satchel that opens as a letter cabinet for knowledge, inventory and objectives. Declined: bubble bar (08), sidebar (10), card tray (07) | keep counters, or a sidebar as in 10 |
+| SC1 | Interface: counters in 02, or the references | **Confirmed by the user 2026-10-14**: no counters or sidebar; choices as paper strips (06); subtitle box with advance arrow (09); one satchel that opens as a letter cabinet for knowledge, inventory and objectives. Declined: bubble bar (08), sidebar (10), card tray (07) | keep counters, or a sidebar as in 10 |
 | SC2 | Which witch | **Interim: orange (03)** for work now; preference is blonde (04), decided at DESIGN-FREEZE | blonde now |
 | SC3 | Rendering family | **Decided 2026-10-14: 3D, not pixel art** | — |
 | SC4 | Setting | **Not canon** (user, 2026-10-14). Decided by NQ-g, not by the references | — |

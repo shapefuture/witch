@@ -12,4 +12,4 @@ commercial games. They are kept for the user's personal project only: remove the
 | `09_subtitle_box_advance_arrow.webp` | a character portrait beside a dark translucent text box with a small down-pointing advance arrow | a clear advance affordance on the box | **adopt**: the subtitle box |
 | `10_objectives_sidebar_new_item.webp` | a dark full-height sidebar with OBJECTIVES and INVENTORY tabs; a NEW ITEM notice with an item card and its description; controller prompts | a notice when an item is new, and an item card with its description | **adopt the idea**: a card slides from the satchel into the scene; **decline** the sidebar |
 
-The recommendation for SC1 is in `docs/design/NAVIGATION.md` section 3. It is awaiting the user's confirmation.
+The SC1 interface in `docs/design/NAVIGATION.md` section 3 is confirmed by the user (2026-10-14).

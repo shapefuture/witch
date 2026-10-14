@@ -35,8 +35,7 @@ These describe that sample scene, not the style.
 
 ## Conflicts
 
-- **SC1. The interface (river counters in 02, and the other references).** Recommendation, awaiting the user's
-  confirmation: no numeric counters and no sidebar. Choices are paper strips (06); the subtitle is a dark box with an
+- **SC1. The interface (river counters in 02, and the other references).** Confirmed by the user on 2026-10-14: no numeric counters and no sidebar. Choices are paper strips (06); the subtitle is a dark box with an
   advance arrow (09); one satchel opens as a letter cabinet for knowledge, inventory and objectives. Declined: the
   bubble bar (08), the sidebar (10), the card tray (07). Full reasoning in `docs/design/NAVIGATION.md` section 3, with
   the screenshots in `docs/design/ui_references/`.
