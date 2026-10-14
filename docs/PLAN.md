@@ -137,7 +137,7 @@ New decisions from the references and the navigation study (see section 13 for t
 | B Live coordinator | `game/world/archive/**` (not `game_root.gd`), `game/mirror/prop_events.gd`, `game/mirror/coordinator.gd` (new), `tests/mirror/test_live_hall*` (new) | `game/mirror/minds/**` | hall rules: echo, regard, name |
 | C Minds gaps | `game/mirror/minds/**`, `data/mirror/minds/**`, `game/ui/knowledge_*` (new), the RaccoonLink anchor in `game/world/placeholders.gd`, `tests/mirror/test_minds_*` | B's coordinator | four-laws linter must pass |
 | D World | `game/world/town/**` (new), `data/world/**` (new), `game/world/room_slot*` (new), `game/world/painted/**`, `data/mirror/actions/go.json`, `data/mirror/world.json` | H's validators | D is the only writer of catalog files; it changes the fingerprint |
-| E Cast | `game/npc/**`, `tools/characters/**`, `assets/characters/**`, `data/text/ru.E.json` | D's room anchors | E4 (budgets test) waits for A1 |
+| E Cast | `game/npc/**`, `tools/characters/**`, `assets/characters/**`, `data/text/ru.E.json` | D's room anchors | E4 (budgets test) runs now (A1 is done) |
 | F Shell | `game/ui/main_menu*` (new), `game/main/ending*` (new), `data/text/ru.F.json` | D's GO edge, C3's diegetic base (read-only) | |
 | G Art | `tools/blender/**`, `assets/archive/**`, `tools/visual_gauntlet/**`, `docs/visual-gauntlet/**`, `tools/grade_plates.py` (new) | `docs/visual-gauntlet/bar/**`, `docs/art/STYLE_BIBLE.md` | section 6 |
 | I Integrator | `game/main/game_root.gd`, `data/text/ru.json`, `tests/golden/**`, `project.godot`, `export_presets.cfg`, `CLAUDE.md`, `docs/ARCHITECTURE.md`, `.github/` (merge) | all | only the coordinator writes here |
@@ -145,7 +145,7 @@ New decisions from the references and the navigation study (see section 13 for t
 **Running now (non-narrative, the user's instruction of 2026-10-14):** P, A, H, LIVE (room slot D3 and the live hall coordinator B1 to B3), E4 (witch and raccoon fixes; a crude-pass trial for Tomas only) and F1 (the main menu scene).
 **Gated by a narrative choice (DESIGN-FREEZE):** C, D1, D2, D4, E1, E2, E3, F2, I1 and P7. **Gated by HALL and STYLE-LOCK:** G1, G3, G4 (STYLE-LOCK is met, so HALL alone holds them).
 
-**Batch order once the gates open.** Batch 1: A, H, B, G1 and D3 (the slot contract, which touches no shared file).
+**Batch order once the gates open.** Batch 1: A, H, B and D3 (the slot contract, which touches no shared file). G1 waits for HALL (section 6).
 C's units start with B. D1 waits for H2 (validators). Batch 2: C1–C4 once B1 lands; D2 and D4 once D1 and D3 land; E1–E3
 after D4; F1 now, F2 after D4. Batch 3: G3 and G4 after the decision X6 default is confirmed.
 
@@ -191,7 +191,7 @@ The Blender bake is needed only for the geometry, so the work splits. The whole 
   swappable slot (P13); complexity that must pay rent (P11), which is why LimboAI is deferred and the engine split
   is deferred. Not adopted: the starter schema and YAML manifests, which the spec itself calls a starter, not a
   validator.
-- **The user's style references** (`docs/art/references/`, five images). They set the look, not the design. 01 is one sample
+- **The user's style references** (`docs/art/references/`, seven images: 01 to 05, 11 and 12). They set the look, not the design. 01 is one sample
   scene, so the hall is a bar only if the hall stays (HALL). The sheet (03) sets the characters. 02, 04 and 05 raise the conflicts
   SC1 to SC4 (`docs/art/STYLE_BIBLE.md`).
 - **The interface references** (`docs/design/ui_references/`, 06 to 10) drive SC1 and the navigation rules
@@ -250,7 +250,7 @@ commit after each change to the tracker.
 - Save format changes (H1, D) make older saves fail to load. Acceptable before release, and it is stated here so it
   is not discovered later.
 - SC3 is decided (3D), so the pixel references do not change the plate pipeline. The archive hall may leave the game (HALL): B and G work on it would then be rework, so decide before spending on it.
-- The five references add about 7 MB of PNG to the repo. Acceptable for a personal project; re-encode if it grows.
+- The seven references add about 8 MB of PNG to the repo. Acceptable for a personal project; re-encode if it grows.
 - Hashes and goldens move with H (checksum, possibly StringName) and D (fingerprint). The integrator regenerates
   once, not per stream.
 - The unverified GitHub CI (A4) is shown as unverified until it has run on GitHub.
