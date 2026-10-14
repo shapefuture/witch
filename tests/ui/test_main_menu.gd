@@ -88,6 +88,9 @@ func test_the_scene_builds_headless_and_offers_three_choices() -> void:
 	menu.close()
 	ok(not menu.is_open() and menu.option_ids().is_empty(), "closing clears the stage")
 
+func test_the_disabled_continue_says_there_is_no_save() -> void:
+	ok(tr("menu.continue_empty") != "menu.continue_empty", "the empty-save cue is in ru.json")
+
 func test_continue_is_dimmed_and_inert_without_a_save() -> void:
 	var stage := await _stage()
 	var menu := _menu(stage, false)

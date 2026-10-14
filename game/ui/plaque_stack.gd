@@ -8,7 +8,7 @@ extends Node3D
 
 signal chosen(index: int)
 
-const ROW_HEIGHT := 38.0   # render pixels; about 7-9 mm on a phone held in landscape (a fingertip)
+const ROW_HEIGHT := 52.0   # render pixels; clears the 48 dp target for every tappable row (docs/design/NAVIGATION.md section 5)
 const GAP := 10.0
 const TITLE_HEIGHT := 22.0  # the title is a small brass tag, visibly not a button
 const TITLE_GAP := 12.0

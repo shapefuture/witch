@@ -63,6 +63,11 @@ func open() -> void:
 	_scale = Diegetic.ui_scale(real_size)
 	var ui := Diegetic.ui_size(real_size)
 	var rows := _rows()
+	var has_save: bool = save_probe.call()
+	if not has_save:
+		for row in rows:
+			if row["id"] == "continue":
+				row["text"] = tr("menu.continue_empty")
 	var font := UIKit.font()
 	var widest := MIN_WIDTH
 	for row in rows:
@@ -73,7 +78,6 @@ func open() -> void:
 	var origin := Vector2((ui.x - widest) * 0.5, (ui.y - stack_h) * 0.5)
 	origin.x = clampf(origin.x, safe.position.x, maxf(safe.position.x, safe.end.x - widest))
 	origin.y = clampf(origin.y, safe.position.y, maxf(safe.position.y, safe.end.y - stack_h))
-	var has_save: bool = save_probe.call()
 	_stage = Node3D.new()
 	add_child(_stage)
 	for i in range(rows.size()):
