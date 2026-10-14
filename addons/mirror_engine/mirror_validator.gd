@@ -44,6 +44,14 @@ func _read_json(path: String) -> Variant:
         return null
     return JSON.parse_string(file.get_as_text())
 
+# Whole-graph checks (reachability, route redundancy, progress, text lint). Not part of
+# validate_engine(): they explore the content, so they run in the gate, not on every new game.
+func validate_progress(engine: MirrorEngine, options: Dictionary = {}) -> Dictionary:
+    return MirrorProgressValidator.check(engine, options)
+
+func validate_player_text(engine: MirrorEngine, texts: Dictionary) -> Dictionary:
+    return MirrorProgressValidator.lint_text(engine, texts)
+
 func validate_engine(engine: MirrorEngine) -> Dictionary:
     var report := engine.validate_catalog()
     for action_id in engine.action_definitions.keys():
