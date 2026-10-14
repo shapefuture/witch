@@ -11,6 +11,8 @@ at. They do not decide scenes, characters or story. The game itself is not being
 | `03_concept_sheet_witch_raccoon_shadow_tomas.png` | turnaround sheet: witch, raccoon, shadow, Tomas, front, side and back | **the sheet** for the characters. Copied to `docs/visual-gauntlet/bar/reference_characters.png` | SC2 (which witch) |
 | `04_hotel_beyond_lobby.png` | "Hotel Beyond" lobby: checkerboard floor, moon-faced lift, eye-keys on a rack, bird receptionist, "ROOMS" sign | door and key vocabulary, moon and sun motifs | SC3 (pixel-art illustration), SC4 (a hotel setting) |
 | `05_witch_ruins_gown.png` | witch in a purple and navy gown, gold braids, star wand, ivy ruins at night | night palette, gown motifs | SC2 (her hair and gown differ from 03), SC3 |
+| `11_ps1_crude_characters_quiz.png` | PS1-era Harry Potter character portraits in a quiz graphic: crude low-poly faces and bodies | the crude-character bar for SC5, for every character except the witch and the raccoon | none (a third-party capture, personal reference only) |
+| `12_ps1_crude_character_sheet.png` | a grid of PS1-era character models: blocky, faceted, toy-like bodies and faces | the crude-character bar for SC5 | none (a third-party capture, personal reference only) |
 
 Conflicts are listed in `docs/art/STYLE_BIBLE.md` with their decision ids. Nothing here is implemented.
 

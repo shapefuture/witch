@@ -54,10 +54,10 @@ closes with evidence and the integrated gate passes.
 | REQ-21 | Continuous gate (CI) | none in repo | no `.github/`. Open (A4) |
 | REQ-22 | Engine hardening (saves, validators, test depth, bench) | draft mirror-engine upload | open (H) |
 | REQ-23 | Stale docs corrected to match code | audit | pending (section 9; open, A3) |
-| REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK, SC5); the sheet is now supplied |
+| REQ-24 | Character "still off" items | `docs/art/characters_*.md` | pending. Held (STYLE-LOCK). SC5 decided: the witch and the raccoon follow the sheet; the others are crude |
 | REQ-25 | `claude/upbeat-fermi-trp4xm` merged or dropped | git | 2 commits unmerged, tools and docs only, flag off (decision X10) |
 | REQ-26 | Concept sheet in the repo as the judging bar for characters | characters docs | **supplied 2026-10-14**: `docs/visual-gauntlet/bar/reference_characters.png` |
-| REQ-27 | Style locked: the master prompt look is the anchor; SF, SC5, SC6 and SC7 decided; rules R1 to R12 restated and accepted | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | SC1 and SC3 settled; anchor and second prompt added; SF, SC5, SC6, SC7 open |
+| REQ-27 | Style locked: the master prompt look is the anchor; SC1, SC3, SC5, SC6, SC7 decided; SF open; rules R1 to R12 need acceptance | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | SF and rule acceptance remain |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
 | REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | mobile-first design written; N1 to N3 taken as guesses, to confirm |
 
@@ -97,9 +97,9 @@ New decisions from the references and the navigation study (see section 13 for t
 | SC4 | Setting | **Not canon** (user, 2026-10-14). Decided by NQ-g, not by the references | — |
 | HALL | Is the archive hall in the final game? | **Deferred to DESIGN-FREEZE** (user): it is a demo scene and may or may not remain. No new hall art until then. Holds G1, G3, G4 | decide now |
 | SF | Style: which parts are fixed, which vary | **Open** (user): the look is anchored to the master prompt (`ps1p`), but the user says it is less fixed. My reading is in `docs/art/STYLE_BIBLE.md`: fixed = crude 3D, stage camera, diegetic UI, jewel family; variable = palette within the jewel range, light, motifs, density | correct the reading |
-| SC5 | Style: characters crude toys, or clean faceted like the sheet (`03`)? | **Open** (user): the prompt calls characters carved toys; the sheet is clean faceted. Decides E4 and REQ-24 | decide |
-| SC6 | Style: screen effects and render resolution | **Open** (user): the screen pass already has bloom and vignette; the master prompt bans both; the second prompt wants CRT bloom, scanlines, chromatic separation, low-resolution upscaling. Decide each | decide each effect |
-| SC7 | Style: palette base | **Open** (user): saturated jewel (master prompt) or muted with jewel accents (second prompt) | decide |
+| SC5 | Style: characters | **Decided 2026-10-14 (user):** crude, as in the PS1 references (11, 12), except the witch and the raccoon, which keep the sheet (03) | — |
+| SC6 | Style: screen effects | **Decided 2026-10-14 (user):** all effects on (CRT bloom, vignette, scanlines, chromatic separation), overriding the master prompt's ban; resolution unchanged (540 rows) | — |
+| SC7 | Style: palette base | **Decided 2026-10-14 (user):** saturated jewel tones (the master prompt's palette) | — |
 
 ## 4. How the work runs
 
