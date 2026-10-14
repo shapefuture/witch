@@ -127,7 +127,7 @@ func _spawn(id: String) -> Node3D:
 		(Engine.get_main_loop() as SceneTree).root.add_child(visual)
 	return visual
 
-# The witch is the one of the user's new references (docs/art/characters_painted.md): a purple star hood, golden-orange
+# The witch is the one of the user's new references (docs/art/characters_painted.md): a purple star hood, ash-blond
 # hair whose spiral curls stick out to both sides, a flared star skirt, pink flowers, the wand and the bird. The camera
 # sees her from behind at about 100 px, so the width and the palette are the checks that matter.
 func test_the_witch_has_the_new_references_proportions_and_palette() -> void:
@@ -154,19 +154,19 @@ func test_the_witch_has_the_new_references_proportions_and_palette() -> void:
 		var image := texture.get_image()
 		if image.is_compressed():
 			image.decompress()
-		var orange := 0
+		var blond := 0
 		var purple := 0
 		var pink := 0
 		for y in image.get_height():
 			for x in image.get_width():
 				var c := image.get_pixel(x, y)
-				if c.r > 0.8 and c.g > 0.45 and c.g < 0.85 and c.b < 0.4:
-					orange += 1
+				if c.r > 0.6 and c.r < 0.98 and c.g > 0.5 and c.g < 0.9 and c.b > 0.3 and c.b < 0.56 and c.r > c.g and c.g > c.b and c.r - c.b > 0.2 and c.r - c.b < 0.5:
+					blond += 1
 				elif c.b > 0.5 and c.r > 0.3 and c.r < 0.7 and c.g < 0.4:
 					purple += 1
 				elif c.r > 0.85 and c.g > 0.3 and c.g < 0.6 and c.b > 0.5:
 					pink += 1
-		ok(orange > 100, "the atlas holds golden-orange hair (%d texels)" % orange)
+		ok(blond > 1000, "the atlas holds ash-blond hair (%d texels; a band that also takes some skin, so a sanity check)" % blond)
 		ok(purple > 1000, "the atlas holds the purple cloak and skirt (%d texels)" % purple)
 		ok(pink > 8, "the atlas holds the pink flowers (%d texels)" % pink)
 	var skeleton := visual.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
