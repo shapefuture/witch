@@ -98,8 +98,8 @@ def build_trial2(cx):
 
 def face_texture(src_png, px=64):
     """The sheet's face at px texels, read like the references' faces: the darkest 6% of the central face (brows,
-    eyes, mouth line) becomes one feature colour, not thickened; the skin is posterised to 8 levels per channel.
-    Quantised to 5 bits per channel. Returns the PNG bytes (embedded as is) and the image (for the preview)."""
+    eyes, mouth line) becomes one feature colour, not thickened; the skin keeps its own colour (no per-channel
+    posterising: that shifted the hue). Quantised to 5 bits per channel. Returns the PNG bytes (embedded as is) and the image (for the preview)."""
     img = Image.open(src_png).convert('RGB').resize((px, px), Image.BOX)
     arr = np.asarray(img).astype(float) / 255
     luma = arr @ np.array([.2126, .7152, .0722])
@@ -108,7 +108,7 @@ def face_texture(src_png, px=64):
     centre[lo:hi, lo:hi] = True
     cut = np.percentile(luma[centre], FEATURE_PERCENTILE)
     feature = (luma <= cut) & centre
-    out = np.round(arr * 7) / 7
+    out = arr.copy()
     out[feature] = FEATURE_COLOUR
     out = np.round(np.round(out * 31) / 31 * 255).astype(np.uint8)
     buf = io.BytesIO()

@@ -61,3 +61,8 @@ The first 64 px face was a soft photo crop, so the brows and mouth blurred. The 
 sheet's own darkest 6% of the central face, in one feature colour, and posterises the skin to 8 levels per channel
 (the references' few-tone faces). A thicker feature (a one-texel dilation) read as a moustache under the nose, so it is
 not used. The eyes are still smaller than in references 11 and 12.
+
+### Face colour, third pass
+
+The posterising step quantised each colour channel separately to 8 levels, which shifted the skin's hue into odd tints.
+The skin now keeps its own colour; only the feature mask and the 5-bit quantisation remain.
