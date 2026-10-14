@@ -55,7 +55,7 @@ COL = {
     'boot': (.26, .16, .12),
 }
 FAMILIES = {          # name: (base colour, relative spread): four tones per flat-coloured material, like paper folds
-    'hair': ((.94, .60, .27), .17), 'purple': ((.44, .25, .62), .12), 'sleeve': ((.40, .23, .58), .12),
+    'hair': ((.80, .69, .48), .20), 'purple': ((.44, .25, .62), .12), 'sleeve': ((.40, .23, .58), .12),
     'cuff': ((.47, .28, .63), .08), 'vest': ((.38, .27, .22), .12), 'pocket': ((.29, .20, .16), .12),
     'cloak': ((.39, .22, .55), .12),
 }
