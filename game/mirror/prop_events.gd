@@ -1,28 +1,31 @@
 class_name PropEvents
 extends Node
 
-# The thin bridge between a painted room and Mirror's Minds layer. The room knows what was TAPPED and where
-# people stand; Mirror knows what that MEANS: who saw it, what each of them made of it, and what the world
-# does about it later. This script carries the first to the second and brings the answer back as reactions.
+# The thin bridge between a room and Mirror's Minds layer. The room knows what was TAPPED and where people stand;
+# Mirror knows what that MEANS: who saw it, what each of them made of it, and what the world does about it later.
+# This script carries the first to the second and brings the answer back as reactions.
 #
 #   room.prop_pressed(prop_id, reaction[, world_position])   ->  a PROP_POKED happening by the witch
 #   room.walked(pixel, world)                                 ->  a WALKED happening (throttled)
 #   Mirror.minds.consequence_fired                            ->  reactions of things that fell due
 #
 # It holds no game truth. It reads perception data off the scene (who is on stage, how far each one is from
-# the thing touched) and passes it as hints; it never decides who noticed. The room is only touched through
-# its signals, so a stub with the same signals stands in for it in tests (tests/mirror/test_prop_events.gd).
+# the thing touched) and passes it as hints; it never decides who noticed. The room is only touched through its
+# signals (game/world/room_slot.gd), so a stub with the same signals stands in for it in tests
+# (tests/mirror/test_prop_events.gd).
 #
 # What comes back, per happening:
 #   reaction_requested(reaction)       one per reaction, in order. {op, ...}: PROP_REACT {target, reaction},
 #                                      LOOK_AT {actor, target}, FOLLOW, APPROACH {actor, target}, COMMENT {actor, key}
 #   presentation_ready(entries, result)  existing presentation kinds (a COMMENT is a `line`), for PresentationDirector
+#   reaction_presented(reaction, presented)  a PROP_REACT that reached the room, and whether the room could show it
 # Time: one Mirror tick per `seconds_per_tick` of real time while the node is in the tree and `run_clock` is on,
 # which is what lets "the hall answers late" happen without a WAIT action. Call pass_time() to do it by hand.
 
 signal reaction_requested(reaction: Dictionary)
 signal presentation_ready(entries: Array, result: Dictionary)
 signal happened(result: Dictionary)
+signal reaction_presented(reaction: Dictionary, presented: bool)
 
 # Mirror holder ids for the scene's actor ids (the painted room calls the witch "witch").
 var actor_map: Dictionary = {"witch": "player"}
@@ -39,7 +42,7 @@ var _clock := 0.0
 var _last_walk := Vector3(INF, INF, INF)
 var _watched_minds: MirrorMinds
 
-# Wires `scene` (anything with the painted room's signals) to `mirror`. Add the result to the tree to run the clock.
+# Wires `scene` (anything with the room's signals) to `mirror`. Add the result to the tree to run the clock.
 static func attach(scene: Object, mirror: MirrorRuntime, options: Dictionary = {}) -> PropEvents:
 	var bridge := PropEvents.new()
 	bridge.name = "PropEvents"
@@ -121,14 +124,14 @@ func _process(delta: float) -> void:
 # does not know is simply absent, and Mirror's defaults apply.
 func hints(at: Vector3 = Vector3.INF) -> Dictionary:
 	var out: Dictionary = {}
-	var stage: Variant = room.get("actors") if room != null else null
-	if stage is Dictionary and not (stage as Dictionary).is_empty():
+	var stage: Dictionary = _stage_actors()
+	if not stage.is_empty():
 		var present: Array = []
 		var distance: Dictionary = {}
-		for scene_id in (stage as Dictionary).keys():
+		for scene_id in stage.keys():
 			var holder := str(actor_map.get(scene_id, scene_id))
 			present.append(holder)
-			var node: Variant = (stage as Dictionary)[scene_id]
+			var node: Variant = stage[scene_id]
 			if at.is_finite() and node is Node3D and holder != "player":
 				distance[holder] = snappedf((node as Node3D).position.distance_to(at), 0.01)
 		present.sort()
@@ -138,6 +141,20 @@ func hints(at: Vector3 = Vector3.INF) -> Dictionary:
 	if not attention.is_empty():
 		out["attention"] = attention.duplicate()
 	return out
+
+# Who is on stage, {scene id: Node3D}. A room that implements the slot says so; any other room's `actors` is read.
+func _stage_actors() -> Dictionary:
+	if room == null:
+		return {}
+	if room.has_method("stage_actors"):
+		var stage: Variant = room.call("stage_actors")
+		if stage is Dictionary:
+			return stage as Dictionary
+		return {}
+	var legacy: Variant = room.get("actors")
+	if legacy is Dictionary:
+		return legacy as Dictionary
+	return {}
 
 # ---- what comes back ---------------------------------------------------------------------------------------
 
@@ -163,18 +180,30 @@ func _deliver(result: Dictionary) -> void:
 	if not lines.is_empty():
 		presentation_ready.emit(lines, result)
 
-# Optional convenience: plays PROP_REACT on the painted room's props. Duck-typed on purpose (the room has a
-# `props` array of things with `prop_id` and `play(reaction)`); if that shape changes this simply does nothing.
+# Optional convenience: plays PROP_REACT on the room (see _present_prop_reaction). The coordinator connects it
+# when it attaches a live room, so Mirror's reactions reach the room without anyone else wiring them.
 func play_prop_reactions_on_room() -> void:
 	if not reaction_requested.is_connected(_play_prop_reaction):
 		reaction_requested.connect(_play_prop_reaction)
 
 func _play_prop_reaction(reaction: Dictionary) -> void:
-	if str(reaction.get("op", "")) != "PROP_REACT" or room == null:
+	if str(reaction.get("op", "")) != "PROP_REACT":
 		return
+	var presented := _present_prop_reaction(str(reaction.get("target", "")), str(reaction.get("reaction", "wobble")))
+	reaction_presented.emit(reaction, presented)
+
+# A room that implements the slot answers request_reaction(). Any other room is duck-typed on purpose: its `props`
+# array of things with `prop_id` and `play(reaction)`. False when the room has no such thing to move.
+func _present_prop_reaction(target: String, move: String) -> bool:
+	if room == null:
+		return false
+	if room.has_method("request_reaction"):
+		return bool(room.call("request_reaction", target, move))
 	var props: Variant = room.get("props")
 	if not props is Array:
-		return
-	for prop in props:
-		if prop != null and str(prop.get("prop_id")) == str(reaction.get("target", "")) and prop.has_method("play"):
-			prop.play(str(reaction.get("reaction", "wobble")))
+		return false
+	for prop: Variant in props:
+		if prop != null and str(prop.get("prop_id")) == target and prop.has_method("play"):
+			prop.play(move)
+			return true
+	return false
