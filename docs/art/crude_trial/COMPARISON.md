@@ -54,3 +54,10 @@ Preview: `docs/art/crude_trial/tomas_crude2.png` (four rows: concept sheet, curr
 Still unlike the references: the hair is still a helmet, the silhouette is unchanged (R13), and the trousers read a
 little bright. The face is smoother than reference 11's blurred textures, on purpose, so the expression stays readable.
 The judgement is against references 11 and 12.
+
+### Face, second pass
+
+The first 64 px face was a soft photo crop, so the brows and mouth blurred. The face now takes the features from the
+sheet's own darkest 6% of the central face, in one feature colour, and posterises the skin to 8 levels per channel
+(the references' few-tone faces). A thicker feature (a one-texel dilation) read as a moustache under the nose, so it is
+not used. The eyes are still smaller than in references 11 and 12.

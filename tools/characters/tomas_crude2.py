@@ -31,6 +31,9 @@ import tomas_preview as tp  # noqa: E402
 PART_DETAIL = {'legs': .5, 'torso': .6, 'belt': .6, 'arms': .7, 'head': 1.0, 'hair': 1.0, 'wrench': 1.0}
 # the hands keep full density inside the arms (build_hand is called from build_arms)
 HAND_DETAIL = 1.0
+# the face's features: the darkest FEATURE_PERCENTILE of the central face, in one colour (a bold read at 64 px)
+FEATURE_PERCENTILE = 6
+FEATURE_COLOUR = (.34, .19, .13)
 # saturated colour blocks, all within SC7 (jewel tones and the earthy anchors); the shipped values are in tomas.PALETTE
 TRIAL2_PALETTE = {
     'skin': (.86, .56, .42), 'skin_d': (.70, .42, .32), 'neck': (.78, .48, .36),
@@ -94,15 +97,23 @@ def build_trial2(cx):
 
 
 def face_texture(src_png, px=64):
-    """The sheet's own face crop at px texels, contrast raised so the features read, quantised to 5 bits per channel."""
+    """The sheet's face at px texels, read like the references' faces: the darkest 6% of the central face (brows,
+    eyes, mouth line) becomes one feature colour, not thickened; the skin is posterised to 8 levels per channel.
+    Quantised to 5 bits per channel. Returns the PNG bytes (embedded as is) and the image (for the preview)."""
     img = Image.open(src_png).convert('RGB').resize((px, px), Image.BOX)
-    img = ImageEnhance.Contrast(img).enhance(1.45)
-    img = img.filter(ImageFilter.UnsharpMask(radius=1, percent=140, threshold=0))
-    a = np.asarray(img).astype(float) / 255
-    a = np.round(np.round(a * 31) / 31 * 255).astype(np.uint8)
+    arr = np.asarray(img).astype(float) / 255
+    luma = arr @ np.array([.2126, .7152, .0722])
+    centre = np.zeros((px, px), bool)
+    lo, hi = px // 5, px - px // 5
+    centre[lo:hi, lo:hi] = True
+    cut = np.percentile(luma[centre], FEATURE_PERCENTILE)
+    feature = (luma <= cut) & centre
+    out = np.round(arr * 7) / 7
+    out[feature] = FEATURE_COLOUR
+    out = np.round(np.round(out * 31) / 31 * 255).astype(np.uint8)
     buf = io.BytesIO()
-    Image.fromarray(a).save(buf, 'PNG')
-    return buf.getvalue(), Image.fromarray(a)
+    Image.fromarray(out).save(buf, 'PNG')
+    return buf.getvalue(), Image.fromarray(out)
 
 
 def preview(path, cx, rows):
