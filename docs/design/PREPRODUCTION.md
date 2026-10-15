@@ -13,6 +13,9 @@ the engine hardening (infrastructure, not game content).
 
 Answered or confirmed so far (2026-10-14): DQ2, DQ6, DQ7 (N1 to N3 confirmed), SC2 (the witch's hair is русый), and the guesses X1, X2, X3, X6, X7, X8, X9 and X12.
 
+Design lens for the questions below: `ALIVENESS.md` (what makes the world feel alive, read against what is built;
+source: `references/alive_experiences_skill.md`).
+
 ## Design questions
 
 - **DQ1.** The witch's goal in the first thirty minutes.
