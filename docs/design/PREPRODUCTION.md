@@ -14,7 +14,7 @@ the engine hardening (infrastructure, not game content).
 Answered or confirmed so far (2026-10-14): DQ2, DQ6, DQ7 (N1 to N3 confirmed), SC2 (the witch's hair is русый), and the guesses X1, X2, X3, X6, X7, X8, X9 and X12.
 
 Design lens for the questions below: `ALIVENESS.md` (what makes the world feel alive, read against what is built;
-source: `references/alive_experiences_skill.md`).
+source: `references/alive_experiences_skill.md`), and `ROOM_OF_US_REVIEW.md` (what transfers from the Room of Us feature list).
 
 ## Design questions
 
