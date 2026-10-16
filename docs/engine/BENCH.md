@@ -83,12 +83,64 @@ Building 5,000 events took 30 to 35 s on this engine.
 - The draft's soak was not run; only its bench was asked for.
 - The soak does not shrink a failing run to a minimal reproduction (the draft's ddmin). The seed and step
   are printed, which is enough to reproduce.
-- The engine's bench has no pass or fail budgets: a budget needs a decision on the target machine.
+- The engine's bench has no pass or fail budgets; the gate's budget is the latency test below.
 - No optimisation of the snapshot or the save format was made; see findings 1 and 3.
+
+## Latency budget (witch-29y.12.13)
+
+`tests/mirror/test_engine_latency.gd` fails the gate when a tap is too slow at the log size of a long
+play session. It times the path a tap takes: `MirrorRuntime.submit` (the class behind the `Mirror`
+autoload), the action queue, `resolve_action`, the `committed` signal, until the queue finishes with the
+committed result. No presenter is attached, so presentation is not timed.
+
+**Log size: 3,000 events.** Evidence:
+- The simulations commit about 2.6 events per authored action (`patient_with_bell`: 8 steps, 21 events);
+  the soak (3 seeds of 400 steps) about 2.0 (90 to 120 commits, 211 to 229 events).
+- A player commits about one consequential action every 15 s (tap an object, pick an option, read the
+  lines): 4 a minute, about 10 events.
+- The Mirror clock (`PropEvents.seconds_per_tick = 1.0`) commits one `TimeAdvanced` event per second
+  while the hall coordinator is attached: 60 a minute. The coordinator is not wired into `game_root.gd`
+  yet, but this is the design, and it is most of the log.
+- About 70 events a minute. Session length is open (DQ5 in `docs/design/PREPRODUCTION.md`); a long mobile
+  session is taken as 45 minutes, about 3,150 events, rounded to 3,000. The test builds its log with the
+  same mix: 15 clock ticks per authored action. A save carries its log, so a game resumed across sessions
+  keeps growing; the curve below shows where the budget runs out.
+
+**Budget: p95 at most 16 ms in the gate.** The target is 50 ms per ordinary interaction on a phone. This
+container (Intel Xeon, 2.1 GHz base, 4 cores) runs single-threaded GDScript about three times faster than a
+mid-range phone's big core, so the gate budget is 50 ms / 3, rounded down to 16 ms. The assertion is on
+the 95th percentile of 100 committed taps after 10 warm-up taps; the median is printed too.
+
+Measured in the gate's test (three runs, same container, load average about 3 from other jobs): 3,252
+events at the end, built in 5.2 to 5.8 s; **p50 5.8 to 6.0 ms, p95 9.8 to 10.5 ms**, max 13.6 to 17.2 ms.
+The test passes with about 35% headroom.
+
+`tools/bench.gd` now prints the same measurement at several log sizes (`tap_curve_*`, default
+1,000 to 5,000 events). One run (the timed taps of each row stay in the log, so each row is about 230
+events past its target):
+
+| Events | Session mix p50 / p95 | Actions only p50 / p95 |
+| --- | --- | --- |
+| about 1,230 | 4.9 / 9.4 ms | 9.7 / 14.4 ms |
+| about 2,230 | 6.4 / 10.4 ms | 13.5 / 18.8 ms |
+| about 3,230 | 8.4 / 14.8 ms | 17.3 / 22.3 ms |
+| about 4,230 | 9.8 / 16.0 ms | 25.7 / 35.2 ms |
+| about 5,230 | 11.4 / 18.0 ms | 28.1 / 38.0 ms |
+
+What this says:
+- Cost grows roughly linearly with the log on both mixes; the session mix grows more slowly because clock
+  events add little to the projection that `_snapshot()` copies (models, action memory, relationships).
+- With the clock as designed, the gate budget is reached at about 4,200 events, an hour of play. A log of
+  authored actions alone crosses it at about 2,000 events. Both point at the same fix as finding 1 above
+  (incremental snapshots or copy-on-write), and a clock that commits only when something falls due would
+  shrink the log by six sevenths.
+- The bench's curve row at about 3,230 events (14.8 ms) is slower than the test (about 10 ms) because the
+  bench's log also holds the earlier rows' timed taps (more authored actions).
 
 ## Reproduce
 
 ```sh
-godot --headless --path . --script res://tools/bench.gd -- 5000 200
+godot --headless --path . --script res://tools/bench.gd -- 5000 200 1000,2000,3000,4000,5000
+./tests/run_tests.sh test_engine_latency
 godot --headless --path . --script res://tools/soak.gd -- 6 400 25
 ```
