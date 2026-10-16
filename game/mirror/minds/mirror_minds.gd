@@ -69,7 +69,6 @@ func advance_time(delta: int, reason: String = "wait") -> Dictionary:
 	var result := engine.advance_time(delta, "player", reason)
 	if not result.get("ok", false):
 		return result
-	_pump()
 	result["fired"] = _fired_log.slice(maxi(0, _fired_log.size() - (_fired_total - before)))
 	return result
 

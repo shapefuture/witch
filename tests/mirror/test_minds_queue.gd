@@ -140,6 +140,41 @@ func test_the_queue_is_bounded_and_so_is_a_chain_of_consequences() -> void:
 	eq(full.minds.pending().size(), 8, "the queue holds at most max_pending entries")
 	eq(dropped, 4, "the rest were dropped, each one recorded")
 
+func _fired_ids(results: Array) -> Array:
+	var out: Array = []
+	for result in results:
+		out.append("%s@%d" % [",".join(PackedStringArray(result["fired"])), int(result["time"])])
+	return out
+
+func test_more_due_than_one_pump_may_fire_spill_over_in_order_and_none_is_lost() -> void:
+	var data := MindsFixtures.raw()
+	data["limits"]["max_fired_per_pump"] = 2
+	var rule := MindsFixtures.echo_rule(5, "stack")
+	rule["variants"].append({
+		"id": "t.bell_second", "domain": "physical", "form": "direct", "source": "bell",
+		"relation": {"id": "answers_later", "polarity": "+", "bindings": {"q": "bell", "a": "door"}},
+		"trigger": {"event_kind": "KNOCK", "subject": "bell"},
+		"transformation": {"schedule": [{"delay": 2, "event": {"kind": "ECHO", "actor": "world", "subject": "door", "data": {"reaction": "$reaction", "answers": "$subject"}}}]},
+		"evidence": {"holders": ["player"], "at": "consequence"},
+	})
+	data["rules"] = [rule]
+	var rig := MindsFixtures.rig(data)
+	rig.minds.perceive(MindsFixtures.knock("door"))
+	rig.minds.perceive(MindsFixtures.knock("door"))
+	rig.minds.perceive(MindsFixtures.knock("bell"))
+	rig.minds.perceive(MindsFixtures.knock("door"))
+	var ids: Array = []
+	for entry in rig.minds.pending():
+		ids.append(str(entry["id"]))
+	eq(ids.size(), 4, "four consequences scheduled, all due by t=10")
+	var first: Array = rig.minds.advance_time(10)["fired"]
+	eq(_fired_ids(first), ["c3@2", "c1@5"], "one pump fires exactly max_fired_per_pump, earliest due first")
+	eq(rig.minds.pending().size(), 2, "the rest stay pending, overdue")
+	var second: Array = rig.minds.advance_time(1)["fired"]
+	eq(_fired_ids(second), ["c2@5", "c4@5"], "the next pump fires the overdue rest, in id order, at their own due time")
+	eq(rig.minds.pending().size(), 0, "the queue is empty")
+	eq(rig.minds.advance_time(1)["fired"].size(), 0, "and nothing fires twice")
+
 # ---- persistence ---------------------------------------------------------------------------------------
 
 func test_the_queue_survives_save_and_load_and_the_run_continues_identically() -> void:
