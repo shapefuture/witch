@@ -17,6 +17,8 @@ var runtime: MirrorRuntime
 var run_clock := true
 var seconds_per_tick := 1.0
 var bridge: PropEvents
+# Presents the LOOK_AT reactions (rule.hall.regard) as head turns on the room's characters.
+var gaze: LookAtPresenter
 
 # Returns the bridge, or null when there is no runtime or the room does not implement the slot (a refusal leaves
 # whatever was attached before in place).
@@ -29,9 +31,17 @@ func attach(room: Object) -> PropEvents:
 	})
 	add_child(bridge)
 	bridge.play_prop_reactions_on_room()
+	gaze = LookAtPresenter.attach(bridge)
+	add_child(gaze)
 	return bridge
 
 func detach() -> void:
+	if gaze != null:
+		gaze.detach()
+		if gaze.get_parent() == self:
+			remove_child(gaze)
+		gaze.free()
+		gaze = null
 	if bridge == null:
 		return
 	bridge.detach()
