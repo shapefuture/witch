@@ -35,6 +35,7 @@ var director: CameraDirector
 var input: IntentInput
 var probe: InteractionProbe
 var flow: InteractionFlow
+var live: LiveHallCoordinator
 var subtitles: SubtitleUI
 var surface: InteractionPresenter
 var pause_menu: PauseMenuUI
@@ -163,6 +164,15 @@ func _build() -> void:
 	flow.runtime = runtime
 	flow.surface = surface
 	add_child(flow)
+	# The hall is a live room (X13): its props are happenings committed through the Minds layer, its characters turn
+	# to what moved (LOOK_AT), and Mirror's clock runs while the game does. The room's lines come back through _present.
+	live = LiveHallCoordinator.new()
+	live.name = "LiveHall"
+	live.runtime = runtime
+	add_child(live)
+	var bridge := live.attach(room)
+	if bridge != null:
+		bridge.presentation_ready.connect(_present)
 
 	input.intent_emitted.connect(flow.handle)
 	surface.option_chosen.connect(flow.choose_option)
