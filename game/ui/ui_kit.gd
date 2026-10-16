@@ -12,7 +12,15 @@ const ACCENT := Color(1.0, 0.62, 0.18)
 const PANEL_BG := Color(0.03, 0.03, 0.07, 0.86)
 const PANEL_BORDER := Color(0.55, 0.55, 0.65, 1.0)
 
+# The player's text size (SettingsState.text_scale, an accessibility setting). Diegetic text is drawn and
+# measured at text_size() UI pixels; slab heights that are tap targets do not shrink with it.
+const TEXT_SCALES: Array[float] = [1.0, 1.25, 1.5]
+
+static var text_scale := 1.0
 static var _font: Font
+
+static func text_size() -> int:
+	return roundi(FONT_SIZE * text_scale)
 
 static func font() -> Font:
 	if _font == null:

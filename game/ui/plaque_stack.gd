@@ -64,10 +64,10 @@ func open(title: String, labels: Array[String], anchor_px: Vector2, centered: bo
 	var font := UIKit.font()
 	var widest := MIN_WIDTH
 	for text in labels + [title]:
-		widest = maxf(widest, ceilf(font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.FONT_SIZE).x) + PAD * 2.0 + 6.0)
+		widest = maxf(widest, ceilf(font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.text_size()).x) + PAD * 2.0 + 6.0)
 	var rows := labels.size()
-	var title_w := ceilf(font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.FONT_SIZE).x) + 18.0
-	var stack_h := rows * ROW_HEIGHT + maxi(rows - 1, 0) * GAP + (TITLE_HEIGHT + TITLE_GAP if not title.is_empty() else 0.0)
+	var title_w := ceilf(font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.text_size()).x) + 18.0
+	var stack_h := rows * ROW_HEIGHT + maxi(rows - 1, 0) * GAP + (_title_height() + TITLE_GAP if not title.is_empty() else 0.0)
 	var safe := Diegetic.safe_rect(viewport_size)
 	var origin := Vector2.ZERO
 	if centered:
@@ -82,11 +82,11 @@ func open(title: String, labels: Array[String], anchor_px: Vector2, centered: bo
 		add_child(_dim)
 	var y := origin.y
 	if not title.is_empty():
-		_title_rect = Rect2(origin.x, y, title_w, TITLE_HEIGHT)
+		_title_rect = Rect2(origin.x, y, title_w, _title_height())
 		var made := _make_plaque(_title_rect, title, "brass", Color(1, 1, 1), INK, Color(0.36, 0.26, 0.10), 20)
 		_title_node = made["node"]
 		_title_label = made["label"]
-		y += TITLE_HEIGHT + TITLE_GAP
+		y += _title_height() + TITLE_GAP
 	for i in range(labels.size()):
 		var rect := Rect2(origin.x, y, widest, ROW_HEIGHT)
 		var quiet := dim_last and i == labels.size() - 1
@@ -164,7 +164,7 @@ func _make_plaque(rect: Rect2, text: String, tile: String, tint: Color, ink: Col
 	var fill_material := Diegetic.slab_material(tint, tile, priority + 2)
 	node.add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.inset(outline, 2.0)), fill_material, 0.0))
 	var label := Diegetic.label(text, ink, priority + 3, _scale)
-	label.position = Vector3(PAD, -(rect.size.y - UIKit.FONT_SIZE) * 0.5 + 1.0, 0.2)
+	label.position = Vector3(PAD, -(rect.size.y - UIKit.text_size()) * 0.5 + 1.0, 0.2)
 	node.add_child(label)
 	add_child(node)
 	return {"node": node, "material": fill_material, "label": label}
@@ -187,6 +187,10 @@ func _place_all() -> void:
 		if item["index"] == _pulse_index:
 			grow *= 1.0 + 0.1 * sin(clampf(_pulse / 0.14, 0.0, 1.0) * PI) - 0.06 * clampf(_pulse / 0.14, 0.0, 1.0)
 		(item["node"] as Node3D).global_transform = Diegetic.transform_for(camera, viewport_size, rect.position, grow, rect.size * Vector2(0.5, -0.5), upright)
+
+# The brass title tag grows with the player's text size; the tappable rows keep ROW_HEIGHT.
+func _title_height() -> float:
+	return TITLE_HEIGHT + UIKit.text_size() - UIKit.FONT_SIZE
 
 # Each plaque pops in a beat after the one above it.
 func _pop(row: int) -> float:
