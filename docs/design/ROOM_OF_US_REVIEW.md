@@ -79,3 +79,52 @@ design answers.
 Their closing line fits us exactly: make the intelligence invisible enough that the room feels alive, and keep the
 evidence reachable enough that its discoveries can be trusted. For us, the Minds layer is the invisible
 intelligence, and the notebook with openable evidence is how its discoveries become trustworthy.
+
+## The code: `shapefuture/room_engine` (reviewed 2026-10-16, commit 15d9159)
+
+The implementation is a zero-dependency Node compiler (Telegram JSON to a sealed, content-addressed "cartridge"),
+a canvas room, a 41-check behavioural gauntlet, and optional embedding enrichment. Read, not run. What it adds
+beyond the feature list above:
+
+### Take
+
+1. **A theater audit of our own tests. Now.** Its QA report names "theater": checks that pass without testing the
+   behaviour (source-grep checks, a smoke test that exercised nothing, a cap the fixtures never exceeded so a
+   critical bug hid behind it). We have found two of these ourselves this week: the character test that asserted
+   nothing, and the hair test whose "orange" predicate matched the skirt's gold stars. A fresh agent should sweep
+   the 51 suites for assertions that can pass vacuously, fixtures that never reach a cap or limit, and checks that
+   read source instead of behaviour.
+2. **Negative tests for emergence. Now (small).** Its hard rule: shared meaning needs evidence from *both* voices,
+   and a corpus with two speakers but no overlap must yield zero emergence candidates. Our counterpart is
+   `rule.hall.name` (one mind repeating changes nothing) and the statue custom that stalls forever. Make the
+   negative explicit across the Minds data: for every convention, a sim in which only one mind reads it, which
+   must leave the convention unformed. Cheap, and it guards the property that makes customs mean something.
+3. **Discovery classes with a diversity rule. Now, as data and a linter.** It types every discovery (humour,
+   curiosity, relationship, contradiction, evolution, memory, lore, emergence, echo, ...) and selects
+   round-robin by class so the shown set is never ten of one kind. For us: a `class` field on authored
+   hypotheses and reveals, a per-room report of which classes exist (meaning density, `ALIVENESS.md` section 5),
+   and a pacing rule for the notebook so it surfaces a mix.
+4. **Echoes as rhymes across distance. Later, authored.** Its "echo" is two moments far apart (five or more
+   days) that share meaning but almost no words. Our hall echo is the same move made later in the same room. A
+   deterministic version fits Mirror: authored motif tags on events; when the player meets a motif again in a
+   different room and form, the notebook notes the rhyme. Retroactive meaning without any runtime AI.
+5. **Recover the valid prefix, and say so. Engine, check first.** Its compiler salvages complete records from a
+   truncated export, marks the result `truncated`, and refuses under `--strict`. Our event log is hash-linked, so
+   the longest valid prefix is well defined. If a damaged save and its `.bak` both fail today, loading that prefix
+   with a visible "recovered" state is better than losing the game. Check `docs/engine/HARDENING.md` for what H1
+   already does before building it.
+6. **The tool for the tone study.** The compiler already reads this exact export format (Telegram Desktop JSON,
+   Russian stemming, a background-word model, episodes by cohesion, humour and recurring-phrase candidates). For
+   the private tone reference (option c), run it in the scratchpad on the archive and read its candidates; its
+   output never enters this repository.
+
+### Already ours
+
+Content addressing and fail-closed loading (the catalog fingerprint binds saves), byte-identical recompiles (the
+world compiler's REQ-07 acceptance), behavioural gauntlet and honest "not executed" labels (the gate, the CI note
+before its first run), a knowledge-gated door (invariant 10).
+
+### Not taking
+
+GCF sidecars and sharded boot (our catalog is small), the embedding providers (no runtime AI, and the tone study
+can run the compiler as is), the service worker and PWA, and the canvas room.
