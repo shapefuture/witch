@@ -60,6 +60,13 @@ closes with evidence and the integrated gate passes.
 | REQ-27 | Style locked: the master prompt look is the anchor; SF, SC1, SC3, SC5, SC6, SC7 decided; rules R1 to R12 accepted | `docs/art/STYLE_BIBLE.md`, `tools/painted/scenes/styles.json` | **met 2026-10-14** |
 | REQ-28 | Design and narrative frozen: questions answered or deferred | `docs/design/PREPRODUCTION.md` | question lists written; DESIGN-FREEZE decision |
 | REQ-29 | Navigation rules decided: input mode, cut and walk, cut during a reaction | `docs/design/NAVIGATION.md` | mobile-first design written; N1 to N3 taken as guesses, to confirm |
+| REQ-30 | The world feels alive: minds' readings visible (gaze, traceable late answers, notebook), every tap answers, waiting reveals routines | `docs/design/ALIVENESS.md` | analysed 2026-10-16; stream L |
+| REQ-31 | Knowledge shown honestly: beliefs labelled seen / told / guessed, notebook entries open their evidence, layered reveals | `docs/design/ROOM_OF_US_REVIEW.md` | analysed 2026-10-16; stream L |
+| REQ-32 | Tests test behaviour: no assertion that can pass vacuously, fixtures that reach every cap, negative tests for emergence | `docs/design/ROOM_OF_US_REVIEW.md` (room_engine) | two theater tests found and fixed 2026-10-14/15; audit pending (L) |
+| REQ-33 | Accessibility: text size, reduced effects, no meaning carried only by animation or sound | `ROOM_OF_US_REVIEW.md` item 9 | settings hold volume only |
+| REQ-34 | Latency budget: tap to committed response within budget as the log grows | `ROOM_OF_US_REVIEW.md` item 10, `docs/engine/BENCH.md` | cost grows with the log; no budget test |
+| REQ-35 | Tone: the humour and warmth rules of `TONE_GUIDE.md`, as convention clocks, no-concession disputes, warmth after the laugh | `docs/design/TONE_GUIDE.md`, `TONE_MAPPING.md` | adopted as a guess 2026-10-16 (X14) |
+| REQ-36 | Offline embedding tools for authors (NIM), never in the shipped game | `tools/embeddings/` | built 2026-10-16 |
 
 Explicit exclusions (none chosen yet): a generative AI runtime (the spec forbids it in the shipped core); Popochiu
 (the draft lists it as unexercised; we don't use it).
@@ -83,6 +90,14 @@ nothing. A decision whose default proceeds **does not block work**. Gating decis
 | X10 | Upbeat branch (REQ-25) | **merge** (tools and docs only, flag off) | drop | done |
 | X11 | Persistence of beads state (section 10) | — | — | **answered**: JSONL export committed with the plan (commit `9c9e9fe`) |
 | X12 | Full `full-plan-delivery` bundle | **not installed**: practices only, from the references | install the bundle (writes AGENTS.md, Claude hooks, a Python package) | open |
+| X13 | Hall as testbed (2026-10-16) | **guess: yes**: the live coordinator and the aliveness work run in the hall now; whether the hall ships stays a freeze question | wait for HALL | guess, to confirm |
+| X14 | Tone (NQ-f) | **guess: `docs/design/TONE_GUIDE.md`** (patterns from the user's private archive; no quotes) | another tone | guess, to confirm |
+| X15 | The pair | **guess: the witch and the raccoon are the two voices** (witch offers, raccoon answers and crowns; roles rotate) | another pairing | guess, to confirm (NQ-c) |
+| X16 | The Oracle | **guess: the hooded statue holds the straight-man slot** in the hall | none | guess, to confirm |
+| X17 | Witch's brows | **guess: repaint them in the face tile to match the ash-blond hair** | keep orange | guess, to confirm |
+| X18 | Embeddings | **offline tools only** (`tools/embeddings/`, NIM key in `NVIDIA_NIM_KEY`) | runtime use (excluded by the no-runtime-AI rule) | decided by the rule |
+| X19 | Customs as content | **after the freeze**: the tone guide's customs become Minds conventions | now | guess, to confirm |
+| X20 | Non-narrative aliveness, review and tone tasks | **proceed now** (stream L) | wait | guess (the user asked for the plan executed) |
 
 Confirmed by the user 2026-10-14: DQ2 (the six verbs stay hidden); N1 to N3 (touch and mouse, no movement keys, a walk cancelled at a cut, a cut waits for the subtitle); SC2 (the witch's hair is русый); X1 (defer LimboAI); X2 (keep Vera's design); X3 (Elian and Ilya as placeholder canon); X6 (re-bake); X7 (poke a prop); X8 (raccoon eyes open); X9 (painted room as room 2); echoes move the prop once the hall has it (the default, confirmed 2026-10-14); X10 (upbeat merged); X12 (no delivery bundle). R13: crude comes from technical limits, not from deliberate ugliness.
 
@@ -265,3 +280,23 @@ commit after each change to the tracker.
 - **HALL** (decision, the user). The archive hall is a demo scene and may or may not stay. Decided at DESIGN-FREEZE. It holds G1, G3 and G4 as well.
 - Work that runs now (non-narrative): P, A (gate and housekeeping, including A1), H (engine hardening), LIVE, E4 (the witch and raccoon fixes, and the crude-pass trial for Tomas, whose judgement waits for the user) and F1. The narrative-dependent cast (Vera, Elian, Ilya and the placements in room 2) waits for DESIGN-FREEZE.
   A1 no longer waits for a go. Narrative items wait for the design freeze, as the user asked on 2026-10-14.
+## 14. Stream L: aliveness, honesty, tone (added 2026-10-16)
+
+Sources: `docs/design/ALIVENESS.md`, `ROOM_OF_US_REVIEW.md` (feature list and the `room_engine` code),
+`TONE_GUIDE.md` and `TONE_MAPPING.md`. Non-narrative work runs now (X20); content waits for DESIGN-FREEZE.
+Tasks live in beads under the stream-L epic.
+
+| Unit | Write set |
+|---|---|
+| L-look (gaze from `regard`) | `game/presentation/look_at*` (new), the hook in `game/world/character_models.gd` |
+| L-cue (traceable late answers) | `game/presentation/consequence_cue*` (new), `game/mirror/coordinator.gd` |
+| L-note (notebook, evidence, classes) | `game/ui/notebook*` (new), `game/mirror/` read-only views, `data/text/ru.L.json` |
+| L-lint (aliveness linter, metrics, classes) | `tools/aliveness*` (new), `tests/mirror/test_aliveness*` (new) |
+| L-clock (convention clocks, routines) | `game/mirror/minds/**`, `data/mirror/minds/**`, `tests/mirror/test_minds_*` |
+| L-neg (negative emergence sims) | `data/sim/neg_*` (new), `tests/mirror/test_minds_negative*` (new) |
+| L-a11y (text size, reduced effects) | `game/ui/settings_menu_ui.gd`, `autoload/settings_state.gd`, `render/psx/**` (switches only), `data/text/ru.L.json` |
+| L-perf (latency budget) | `tools/bench.gd`, `tests/mirror/test_engine_latency*` (new) |
+| L-save (valid-prefix recovery) | `game/save/**`, `addons/mirror_engine/**` (log load only), `tests/save/**` |
+| L-audit (theater audit) | report only: `docs/qa/THEATER_AUDIT.md`; fixes go to the integrator |
+| L-brows | `tools/characters/ref/witch_face.png`, `assets/characters/witch.glb` |
+| L-live (coordinator in the hall, X13) | integrator: `game/main/game_root.gd` |

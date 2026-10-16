@@ -29,3 +29,6 @@ build/
 .beads-credential-key
 .beads/proxieddb/
 *.gate.lock*
+
+# Offline embedding cache (tools/embeddings)
+.cache/

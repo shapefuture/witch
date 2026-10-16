@@ -34,11 +34,13 @@ source: `references/alive_experiences_skill.md`), and `ROOM_OF_US_REVIEW.md` (wh
 - **NQ-a.** The premise: why the witch is in the archive, and what she wants there.
 - **NQ-b.** Tomas, Vera, Elian and Ilya: who they are and what they know. Vera's current design is invented in
   `docs/art/new_character_and_props.md`; Elian and Ilya have no design. Decisions X2 and X3 in `PLAN.md`.
-- **NQ-c.** The raccoon's role. The repo plans a tele-somatic perception channel (`CLAUDE.md`); its meaning depends on
+- **NQ-c.** The raccoon's role. **Guess 2026-10-16 (X15):** the raccoon is the witch's partner voice, the one that
+  answers, crowns and remembers a bit, and its body shows other minds' feelings (`TONE_MAPPING.md`). The repo plans a tele-somatic perception channel (`CLAUDE.md`); its meaning depends on
   the story.
 - **NQ-d.** The shadow: who she is and what she knows.
 - **NQ-e.** The antler witch (`witch_antler.glb`). Is she a second form of the witch, or another person?
-- **NQ-f.** Tone. Light and strange, grim, or something else. Examples would help.
+- **NQ-f.** Tone. Light and strange, grim, or something else. Examples would help. **Guess 2026-10-16 (X14):**
+  `TONE_GUIDE.md`, mapped onto the systems in `TONE_MAPPING.md`.
 - **NQ-g.** The order of places. None of the settings in the references is canon (SC4).
 
 ## Asset needs (derived after the answers)
