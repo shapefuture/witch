@@ -430,8 +430,13 @@ func _on_load() -> void:
 	if result.get("ok", false):
 		room.apply_mirror_state(runtime.engine)
 		_sync_departure()
-		pause_menu.say(tr("ui.loaded"))
-		pause_menu.close()
+		if result.has("recovered"):
+			# A recovered game says so and stays open: the count is the notice.
+			var recovered: Dictionary = result["recovered"]
+			pause_menu.say(tr("ui.save_recovered") % [int(recovered["kept"]), int(recovered["of"])])
+		else:
+			pause_menu.say(tr("ui.loaded"))
+			pause_menu.close()
 	elif result.get("error", "") == "no_save":
 		pause_menu.say(tr("ui.no_save"))
 	else:

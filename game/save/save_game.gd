@@ -46,7 +46,7 @@ static func save(engine: MirrorEngine, slot: int, meta: Dictionary = {}) -> Erro
 
 # Loads into an engine that already has the catalog registered. Atomic: a rejected save leaves
 # the engine exactly as it was (MirrorPersistence.load_json restores its own pre-load snapshot).
-static func load_into(engine: MirrorEngine, slot: int) -> Dictionary:
+static func load_into(engine: MirrorEngine, slot: int, strict: bool = false) -> Dictionary:
 	if not exists(slot):
 		return {"ok": false, "error": "no_save"}
 	var file := FileAccess.open(path_for(slot), FileAccess.READ)
@@ -58,7 +58,29 @@ static func load_into(engine: MirrorEngine, slot: int) -> Dictionary:
 		return {"ok": false, "error": "oversized"}
 	var text := file.get_as_text()
 	file.close()
-	return load_text(engine, text)
+	var result := load_text(engine, text)
+	if result.get("ok", false) or strict:
+		return result
+	# Damaged, and not strict: recover the longest run of the event log that still verifies, and say so. The .bak is
+	# never loaded whole (no silent rollback); its log is tried only when the slot gives nothing at all.
+	var recovered := MirrorPersistence.recover_events(engine, text)
+	if recovered.get("ok", false):
+		recovered["source"] = "slot"
+	elif FileAccess.file_exists(backup_path_for(slot)):
+		recovered = _recover_backup(engine, slot)
+	if not recovered.get("ok", false):
+		return result
+	return {"ok": true, "recovered": recovered, "meta": {}, "legacy": false}
+
+static func _recover_backup(engine: MirrorEngine, slot: int) -> Dictionary:
+	var file := FileAccess.open(backup_path_for(slot), FileAccess.READ)
+	if file == null or file.get_length() > MirrorPersistence.max_save_bytes:
+		return {"ok": false, "error": "unreadable"}
+	var text := file.get_as_text()
+	file.close()
+	var recovered := MirrorPersistence.recover_events(engine, text)
+	recovered["source"] = "backup"
+	return recovered
 
 static func load_text(engine: MirrorEngine, text: String) -> Dictionary:
 	var decoded := SaveCodec.decode(text)
