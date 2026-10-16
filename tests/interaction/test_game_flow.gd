@@ -150,10 +150,32 @@ func test_input_is_ignored_while_an_action_is_presenting() -> void:
 	await _open_surface(game, "tomas")
 	_choose(game, "show_tomas_wand")
 	ok(await _until(func() -> bool: return game.subtitles.is_active()), "dialogue is on screen, waiting for the player")
+	ok(await _until(func() -> bool: return not game.witch.is_walking()), "she is standing still before the click")
+	ok(not game.input.enabled, "input is switched off while presenting")
+	ok(game.runtime.is_busy(), "the action is still presenting")
 	var before := game.runtime.engine.event_store.size()
-	_click(game, _screen_point(game, "machine"))
-	await _tree().physics_frame
-	ok(not game.surface.is_open(), "no new surface while presenting")
+	var at := _screen_point(game, "machine")
+	var down := InputEventMouseButton.new()
+	down.button_index = MOUSE_BUTTON_LEFT
+	down.pressed = true
+	down.position = at
+	game.input.handle_event(down)
+	var up := InputEventMouseButton.new()
+	up.button_index = MOUSE_BUTTON_LEFT
+	up.pressed = false
+	up.position = at
+	ok(game.input.handle_event(up) == null, "a click while presenting yields no intent")
+	# The flow's own busy guard, reached through the same signal the input emits.
+	game.input.intent_emitted.emit(PlayerIntent.inspect("machine"))
+	game.input.intent_emitted.emit(PlayerIntent.move_to(game.room.get_interactable("machine").approach_point))
+	eq(game.flow.focused_target, "", "nothing was focused")
+	for i in 30:
+		await _tree().physics_frame
+		ok(not game.witch.is_walking(), "she does not set off (frame %d)" % i)
+		if game.witch.is_walking():
+			break
+	ok(not await _until(func() -> bool: return game.surface.is_open(), 300), "no new surface while presenting")
+	eq(game.flow.focused_target, "", "still nothing focused")
 	eq(game.runtime.engine.event_store.size(), before, "nothing else committed")
 	game.subtitles.auto_advance_delay = 0.0
 	game.subtitles.advance()

@@ -37,6 +37,7 @@ func test_mid_commit_failure_rolls_everything_back() -> void:
 	var head := e.event_store.head_hash()
 	var size := e.event_store.size()
 	var before := MirrorHash.canonical_json(e.projection_snapshot())
+	var tx := "tx_two_%d" % e.event_store.next_sequence()
 	var r := e.resolve_action(MirrorFixtures.act("two", "", T.CUSTOM))
 	ok(not r["ok"], "conflicting evidence identity fails the transaction")
 	eq(r["error"], "evidence_conflict", "error code")
@@ -44,8 +45,21 @@ func test_mid_commit_failure_rolls_everything_back() -> void:
 	eq(e.event_store.head_hash(), head, "chain head restored")
 	eq(MirrorHash.canonical_json(e.projection_snapshot()), before, "every projection restored")
 	ok(e.event_store.verify_chain()["ok"], "chain still verifies after rollback")
-	ok(e.event_store.get_by_id("tx_two_4:action") == null, "rolled back events are not indexed")
-	eq(e.event_store.get_transaction("tx_two_4").size(), 0, "rolled back transaction is not indexed")
+	ok(e.event_store.get_by_id(tx + ":action") == null, "rolled back action event is not indexed")
+	ok(e.event_store.get_by_id(tx + ":response") == null, "rolled back response event is not indexed")
+	eq(e.event_store.get_transaction(tx).size(), 0, "rolled back transaction is not indexed")
+	eq(e.event_store._by_id.size(), size, "the id index holds exactly the committed events")
+	var stray: Array = []
+	for event_id in e.event_store._by_id:
+		if str(event_id).begins_with(tx):
+			stray.append(event_id)
+	var indexed := 0
+	for tx_id in e.event_store._by_transaction:
+		if str(tx_id) == tx:
+			stray.append(tx_id)
+		indexed += (e.event_store._by_transaction[tx_id] as Array).size()
+	eq(stray, [], "no index entry anywhere names the rolled back transaction")
+	eq(indexed, size, "the transaction index holds exactly the committed events")
 	ok(not e.knowledge.has("claim_two"), "rolled back knowledge effect is gone")
 	var again := e.resolve_action(MirrorFixtures.act("one", "", T.CUSTOM))
 	ok(again["ok"] or again["error"] == "evidence_conflict", "engine remains usable after a rollback")
