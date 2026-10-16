@@ -63,3 +63,18 @@ after the design freeze. Each needs an origin (event kinds), a reading two minds
 | X18 | Embeddings are offline tools only (NIM, `tools/embeddings/`), never in the shipped game | the no-runtime-AI rule |
 | X19 | The tone guide's customs become Minds content after the freeze | content waits for the narrative; the engine rules above do not |
 | X20 | The non-narrative tasks from `ALIVENESS.md`, `ROOM_OF_US_REVIEW.md` and this page proceed now | the user asked for the plan executed |
+
+## 6. Built (stream L, 2026-10-16)
+
+| Rule | Status | Where |
+|---|---|---|
+| 1. Convention clocks | built: cadence (sprint, bell; guessed values), dormancy, one revival | `game/mirror/minds/convention_book.gd`, `data/mirror/minds/minds.json` clocks, `tests/mirror/test_minds_clocks.gd` |
+| 2. Never explain a callback on revival | built for the engine: the revived change carries only its id and kind, and writes no new claim; the origin is kept, not re-announced. The presentation of a dormant custom's return is content | `tests/mirror/test_minds_clocks.gd` |
+| 3. No verbal concession | linter over every string of the authored catalog (`ToneLint`); a dispute ends in a shared beat, by content rule | `game/mirror/minds/tone_lint.gd`, `tests/mirror/test_tone.gd` |
+| 4. Warmth after the laugh | the beat order and its checker (`ReactionBeats`); live dialogue does not use it yet (no reaction beats are authored) | `game/presentation/reaction_beats.gd`, `tests/presentation/test_reaction_beats.gd` |
+| 5. Goof, never roast | an author rule: every teasing line needs a visible play frame. No teasing lines are authored yet, so nothing can be checked | (author review, at content time) |
+| 6. Mode, not topic | an author rule, to feed the aliveness linter; the linter's "answers" rule already requires a response per tappable; the playful and serious readings are content | `game/mirror/aliveness_lint.gd` |
+
+Customs (the fifteen in section 13 of TONE_GUIDE) and the voices (the raccoon answers, the statue is the Oracle) are
+content and wait for DESIGN-FREEZE (X19); the engine above is ready for them.
+

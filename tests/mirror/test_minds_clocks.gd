@@ -65,6 +65,11 @@ func test_a_faded_custom_comes_back_once_at_a_matching_reading_and_its_origin_is
 	var results := [rig.minds.perceive(MindsFixtures.knock("door"))]
 	var changes := _changes(results)
 	ok("revived" in changes, "a matching reading brings it back")
+	var revival: Dictionary = {}
+	for change in results[0]["convention_changes"]:
+		if change["change"] == "revived":
+			revival = change
+	eq(revival.keys().size(), 2, "the revival carries only its id and its kind: no text, so nothing explains it (TONE 4.2)")
 	ok(not ("adopted" in changes), "and says nothing that explains it: no adoption is announced again")
 	ok(rig.minds.is_convention_active(CONVENTION), "in force again")
 	eq(rig.minds.convention_state(CONVENTION)["origin_events"], origins_before, "its origin events are kept, not re-announced")

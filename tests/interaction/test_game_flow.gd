@@ -13,6 +13,7 @@ func _boot() -> GameRoot:
 	game.runtime = track(MirrorRuntime.new())
 	game.auto_advance = 0.0
 	game.magic_time_scale = 0.01
+	game.run_clock = false   # the live hall keeps Mirror time only in play; a test's chain must not depend on wall time
 	_tree().root.add_child(game)
 	track(game)
 	for i in 3:
@@ -111,7 +112,7 @@ func test_a_tap_that_misses_but_lands_near_an_object_still_selects_it() -> void:
 func test_clicking_empty_ground_walks_there_and_closes_the_surface() -> void:
 	var game := await _boot()
 	await _until(func() -> bool: return game.input.enabled)
-	await _open_surface(game, "tomas")
+	ok(await _open_surface(game, "tomas"), "the surface opened")
 	# any floor spot the option plaques are not hanging over (a tap on a plaque chooses it instead)
 	var ground := Vector3.ZERO
 	var size := game.get_viewport().get_visible_rect().size
@@ -128,6 +129,7 @@ func test_clicking_empty_ground_walks_there_and_closes_the_surface() -> void:
 			if ground == Vector3.ZERO and clear and ArchiveHall.stage_allows(candidate.x, candidate.z) and not game.camera.is_position_behind(candidate) and Rect2(Vector2.ZERO, size).grow(-10).has_point(at) and game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
 				ground = candidate
 	ok(ground != Vector3.ZERO, "found floor the plaques do not cover")
+	ok(game.surface.is_open(), "the surface is open before the click")
 	_click(game, game.camera.unproject_position(ground))
 	ok(not game.surface.is_open(), "surface closed")
 	ok(await _until(func() -> bool: return not game.witch.is_walking()), "she arrived")
@@ -213,6 +215,7 @@ func test_a_loaded_game_in_which_the_witch_has_left_has_no_witch() -> void:
 	GameFixtures.do(played, "go_path_out", "path_out")
 	var text := SaveCodec.encode(played.engine)
 	var game := GameRoot.new()
+	game.run_clock = false
 	game.runtime = track(MirrorRuntime.new())
 	game.runtime.setup()
 	ok(SaveGame.load_text(game.runtime.engine, text)["ok"], "save loads")

@@ -27,6 +27,8 @@ var args: Dictionary = {}
 # Headless tests and capture aids: advance subtitles by themselves, and shorten magic.
 var auto_advance := -1.0
 var magic_time_scale := 1.0
+# Mirror's clock in the live hall. Off in headless tests, so a run's event chain does not depend on how long it took.
+var run_clock := true
 
 var room: ArchiveHall
 var witch: Witch
@@ -35,6 +37,7 @@ var director: CameraDirector
 var input: IntentInput
 var probe: InteractionProbe
 var flow: InteractionFlow
+var live: LiveHallCoordinator
 var subtitles: SubtitleUI
 var surface: InteractionPresenter
 var pause_menu: PauseMenuUI
@@ -163,6 +166,16 @@ func _build() -> void:
 	flow.runtime = runtime
 	flow.surface = surface
 	add_child(flow)
+	# The hall is a live room (X13): its props are happenings committed through the Minds layer, its characters turn
+	# to what moved (LOOK_AT), and Mirror's clock runs while the game does. The room's lines come back through _present.
+	live = LiveHallCoordinator.new()
+	live.name = "LiveHall"
+	live.runtime = runtime
+	live.run_clock = run_clock
+	add_child(live)
+	var bridge := live.attach(room)
+	if bridge != null:
+		bridge.presentation_ready.connect(_present)
 
 	input.intent_emitted.connect(flow.handle)
 	surface.option_chosen.connect(flow.choose_option)
