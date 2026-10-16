@@ -354,7 +354,7 @@ func _commit_event(event: Dictionary, origin: Dictionary) -> Dictionary:
 			patch.merge(effects["npc_state"][npc_id], true)
 			world_effects["npc_state"][npc_id] = patch
 		for spec in transformation.get("schedule", []):
-			_schedule(spec, vars, {"rule": str(hit["rule"]), "variant": str(hit["variant_id"])}, at, depth, plan, observers, witness_ids, str(event["place"]), limits)
+			_schedule(spec, vars, {"rule": str(hit["rule"]), "variant": str(hit["variant_id"]), "from": event_id}, at, depth, plan, observers, witness_ids, str(event["place"]), limits)
 		var evidence: Dictionary = variant.get("evidence", {})
 		var has_schedule := not (transformation.get("schedule", []) as Array).is_empty()
 		if str(evidence.get("at", "consequence" if has_schedule else "trigger")) == "trigger":
@@ -424,7 +424,15 @@ func _result(committed: Dictionary, payload: Dictionary, event_id: String) -> Di
 		"reactions": payload["reactions"], "presentation": presentation,
 		"scheduled": scheduled_ids, "cancelled": payload["cancelled"], "dropped": payload["dropped"],
 		"convention_changes": payload["convention_changes"], "fired": payload.get("fired", []),
+		"cue": _cue(payload.get("origin", {})),
 	}
+
+# The cue a consequence carries when it falls due: the event that set it going, so whoever presents it can point back
+# to the cause (ALIVENESS rule 5). Empty for an event that is not a consequence.
+static func _cue(origin: Dictionary) -> Dictionary:
+	if not origin.has("consequence") or str(origin.get("from", "")).is_empty():
+		return {}
+	return {"origin_event": str(origin["from"]), "consequence": str(origin["consequence"]), "rule": str(origin.get("rule", ""))}
 
 # ---- helpers: perception, context, effects ----------------------------------------------------------------
 
@@ -585,7 +593,7 @@ func _schedule(spec: Dictionary, vars: Dictionary, origin_ref: Dictionary, at: i
 		"id": state.queue.next_id(scheduled_now.size()),
 		"due": at + maxi(0, int(spec.get("delay", 0))),
 		"event": entry_event,
-		"origin": {"rule": str(origin_ref["rule"]), "variant": str(origin_ref["variant"]), "depth": depth + 1},
+		"origin": {"rule": str(origin_ref["rule"]), "variant": str(origin_ref["variant"]), "depth": depth + 1, "from": str(origin_ref.get("from", ""))},
 		"slot": slot,
 	}
 	if spec.has("when"):
