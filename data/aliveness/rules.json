@@ -1,0 +1,18 @@
+{
+	"_about": "Settings for AlivenessLint (docs/design/ALIVENESS.md sections 4 and 5). Outside the Mirror catalog and its fingerprint. 'important' names the objects rule 7 applies to. 'known_gaps' is a ratchet: a rule an object does not meet yet is reported as a warning only while it is listed here; every other failure is an error, and a listed gap that now holds is an error too (delete the line, so it can never regress). known_gaps are content questions the design freeze owns: path_out has no edge until the ending (DQ4); tomas and bell have no knowledge-gated option yet (NQ-b, DQ1). metrics are the section 5 ratchet, measured on data/sim on 2026-10-16 (attention return 1.00, no dead taps).",
+	"important": [
+		"tomas",
+		"machine",
+		"bell"
+	],
+	"known_gaps": [
+		"linked:path_out",
+		"gated_rewrite:tomas",
+		"gated_option:bell",
+		"gated_rewrite:bell"
+	],
+	"metrics": {
+		"min_attention_return": 0.9,
+		"max_dead_taps": 0
+	}
+}
