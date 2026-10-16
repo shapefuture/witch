@@ -18,7 +18,7 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__))
 FACE = os.path.join(HERE, 'ref', 'witch_face.png')
 
-TARGET = (0.60, 0.49, 0.32)           # the hair's darker tone (witch_ref.py FAMILIES['hair'])
+TARGET = (0.56, 0.42, 0.32)           # light warm brown: the hair's hue (0.60, 0.49, 0.32) reads olive against pink skin
 BAND = (13, 30)                       # tile rows holding the brows; the eyelid creases start lower and elsewhere
 CORE_HUE = (0.06, 0.16)
 CORE_SAT = 0.45
