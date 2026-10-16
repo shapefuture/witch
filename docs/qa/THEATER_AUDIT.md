@@ -371,3 +371,29 @@ All in `tests/run_tests.sh` unless noted.
 - Whether the indicator lamp's fixed visibility in H3 is visible in the shipped frames. I confirmed the
   lookup fails, not how the lamp looks.
 - The render step's checks other than H1 and H2 on other GPUs or drivers. I ran Mesa under Xvfb only.
+
+## Resolution of the low findings (stream L, Q-low, 2026-10-16)
+
+Each low finding is fixed in its test, or answered here with the reason it stays open. Counted in
+`witch-29y.12.30`.
+
+| Finding | Status | What changed, or why it is open |
+|---|---|---|
+| L1 | fixed | the engine is used after the rollback by a plain action that must resolve |
+| L2 | fixed | the commit's events, response and projection change are compared with the preview's |
+| L3 | fixed | the stamp is compared across two builds, not with itself |
+| L4 | fixed | the padding assertion is deleted |
+| L5 | partly | renamed to what it checks (the cue is in the text table). Open: the menu with no save shows the cue; needs the main menu wired into the boot path, which is not built |
+| L6 | fixed | the second poke must play the second answer |
+| L7 | fixed | the surface is asserted open before the click, and the open is asserted |
+| L8 | fixed | speaking writes no event and changes no state, for every authored title |
+| L9 | fixed | the walk's result is asserted: taken, not recorded |
+| L10 | open | the hair band needs the hair's own UV island from the rig's atlas, or a hue skin cannot reach. Needs the atlas layout from `tools/characters/witch_ref.py`; a follow-up |
+| L11 | fixed | an unindexed surface is counted from its vertices, not as zero triangles |
+| L12 | fixed | the scan covers every project text folder and extension, with an allow-list of five named files (the vendored plugin's translation, three design notes that quote Russian titles, and the text tool) |
+| L13 | fixed | Ana's clarity is read from the reading and is 46 at nine tiles |
+| L14 | fixed | each determinism step must succeed, and the run must write events |
+| L15 | fixed | the import step greps like the suite step; the suite has a 900 s timeout; the leak allow-list is pinned to two resources; a skipped render prints `GATE PASS (render skipped)` |
+| L16 | open | `expect.options` per sim (the options each target must offer at the end) needs a field in the sim scripts and a check in `SimulationRunner`; a follow-up |
+| save_game:36 | fixed | the load's result is asserted before the options are compared |
+| save_game:76 | open | the name says atomic, the body checks only that no temp file is left. Needs a test that a failed rename leaves the slot as it was; a follow-up |

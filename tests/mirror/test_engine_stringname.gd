@@ -25,7 +25,8 @@ func test_engine_catalog_stamp_does_not_depend_on_key_type_after_a_round_trip() 
 	var catalog: Dictionary = engine._catalog()
 	var reloaded: Variant = JSON.parse_string(JSON.stringify(catalog))
 	eq(MirrorHash.sha256(catalog), MirrorHash.sha256(reloaded), "the catalog's fingerprint survives a JSON round trip")
-	eq(catalog.hash(), catalog.hash(), "stamp is stable within a process")
+	var again: MirrorEngine = MirrorCatalog.build_engine()["engine"]
+	eq(again._catalog().hash(), catalog.hash(), "the stamp is stable across two builds in one process")
 
 func test_a_resource_built_definition_hashes_like_a_dictionary_built_one() -> void:
 	# The only StringName surfaces are @export ids on the resource classes; to_definition() must

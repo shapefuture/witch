@@ -71,9 +71,9 @@ func test_clarity_selects_the_reading() -> void:
 	var ana_clarity := -1
 	for reading in near["interpretations"]:
 		if reading["holder"] == "ana":
-			ana_clarity = 1
-	eq(ana_clarity, 1, "Ana is still a witness at the edge of sight")
-	eq(_reads(near)["ana"], "rude", "and still reads it (clarity 46 clears her bar of 40)")
+			ana_clarity = int(reading["clarity"])
+	eq(ana_clarity, 46, "at nine tiles Ana's clarity is 46")
+	eq(_reads(near)["ana"], "rude", "and still reads it (46 clears her bar of 40)")
 	var dim := rig.minds.perceive(MindsFixtures.knock("door", "player", {"distance": {"ana": 9.9}, "attention": {"ana": "busy"}}))
 	eq(_reads(dim)["ana"], "noticed", "half-seen at the edge of sight she only notices: no authored reading is clear enough")
 

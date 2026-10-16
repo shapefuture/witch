@@ -4,9 +4,18 @@ extends TestCase
 # edited by hand or by tool in one file. These tests enforce it; tools/text_tool.py is the
 # same check plus sort / CSV round-tripping.
 
-const SCAN_ROOTS := ["res://game", "res://autoload", "res://render", "res://data", "res://tests"]
-const SCAN_EXTENSIONS := ["gd", "json", "dialogue", "tscn", "gdshader"]
+# Every text file of the project, not only the game's own folders (audit L12): themes, configs, the vendored plugin,
+# the tools and the docs all count. A file that may hold Cyrillic on purpose is named in ALLOWED, deliberately.
+const SCAN_ROOTS := ["res://game", "res://autoload", "res://render", "res://data", "res://tests", "res://addons", "res://tools", "res://docs", "res://assets"]
+const SCAN_EXTENSIONS := ["gd", "json", "dialogue", "tscn", "tres", "cfg", "godot", "gdshader", "md", "py", "po"]
 const TABLE := "res://data/text/ru.json"
+const ALLOWED := [
+	"res://addons/dialogue_manager/l10n/uk.po",
+	"res://docs/PLAN.md",
+	"res://docs/art/STYLE_BIBLE.md",
+	"res://docs/design/PREPRODUCTION.md",
+	"res://tools/text_tool.py",
+]
 
 func _files(dir_path: String, out: Array[String]) -> void:
 	var dir := DirAccess.open(dir_path)
@@ -25,7 +34,7 @@ func test_no_russian_prose_outside_the_text_table() -> void:
 		_files(root, files)
 	var offenders: Array[String] = []
 	for path in files:
-		if path == TABLE:
+		if path == TABLE or path in ALLOWED:
 			continue
 		if cyrillic.search(FileAccess.get_file_as_string(path)) != null:
 			offenders.append(path)

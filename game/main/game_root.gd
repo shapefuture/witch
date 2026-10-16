@@ -27,6 +27,8 @@ var args: Dictionary = {}
 # Headless tests and capture aids: advance subtitles by themselves, and shorten magic.
 var auto_advance := -1.0
 var magic_time_scale := 1.0
+# Mirror's clock in the live hall. Off in headless tests, so a run's event chain does not depend on how long it took.
+var run_clock := true
 
 var room: ArchiveHall
 var witch: Witch
@@ -169,6 +171,7 @@ func _build() -> void:
 	live = LiveHallCoordinator.new()
 	live.name = "LiveHall"
 	live.runtime = runtime
+	live.run_clock = run_clock
 	add_child(live)
 	var bridge := live.attach(room)
 	if bridge != null:

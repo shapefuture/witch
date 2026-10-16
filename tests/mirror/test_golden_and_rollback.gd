@@ -29,6 +29,8 @@ func _conflicting_evidence_engine() -> MirrorEngine:
 				"evidence": [{"id": "shared.evidence", "payload": {"from": id}}],
 			}],
 		})
+	# A third action that touches no shared evidence, so a resolve after the rollback proves the engine still works.
+	e.register_action({"id": "plain", "action_type": T.CUSTOM, "response_contracts": [{"id": "plain.r", "observed": {"outcome": "plain"}, "effects": {}, "knowledge_effects": [], "evidence": []}]})
 	return e
 
 func test_mid_commit_failure_rolls_everything_back() -> void:
@@ -61,8 +63,8 @@ func test_mid_commit_failure_rolls_everything_back() -> void:
 	eq(stray, [], "no index entry anywhere names the rolled back transaction")
 	eq(indexed, size, "the transaction index holds exactly the committed events")
 	ok(not e.knowledge.has("claim_two"), "rolled back knowledge effect is gone")
-	var again := e.resolve_action(MirrorFixtures.act("one", "", T.CUSTOM))
-	ok(again["ok"] or again["error"] == "evidence_conflict", "engine remains usable after a rollback")
+	# A plain action that touches no shared evidence must resolve: usable, not merely not crashing (audit L1).
+	ok(e.resolve_action(MirrorFixtures.act("plain", "", T.CUSTOM))["ok"], "a plain action resolves after the rollback")
 
 func test_rolled_back_engine_continues_with_the_same_chain_as_a_clean_one() -> void:
 	var clean := _conflicting_evidence_engine()
@@ -78,6 +80,7 @@ func test_preview_equals_commit_and_is_repeatable() -> void:
 	var e := MirrorFixtures.rich_engine()
 	var before := MirrorHash.canonical_json(e.projection_snapshot())
 	var head := e.event_store.head_hash()
+	var before_projection := e.projection_snapshot()
 	var p1 := e.preview_action(MirrorFixtures.act("ask_tomas", "tomas", T.ASK))
 	var p2 := e.preview_action(MirrorFixtures.act("ask_tomas", "tomas", T.ASK))
 	ok(p1["ok"] and p2["ok"], "previews resolve")
@@ -86,6 +89,13 @@ func test_preview_equals_commit_and_is_repeatable() -> void:
 	eq(MirrorHash.canonical_json(e.projection_snapshot()), before, "preview leaves the projection alone")
 	var committed := e.resolve_action(MirrorFixtures.act("ask_tomas", "tomas", T.ASK))
 	eq(committed["observed"], p1["observed"], "what preview promised is what commit delivered")
+	# Audit L2: the events, the response and the projection change too, not only what was observed.
+	var committed_types: Array = []
+	for event in committed["events"]:
+		committed_types.append(event.event_type)
+	eq(committed_types, p1["event_types"], "the same events, in the same order")
+	eq(str((committed["response"] as Dictionary).get("id", "")), str((p1["response"] as Dictionary).get("id", "")), "the same response")
+	eq(MirrorHash.canonical_json(e.diff_projections(before_projection, e.projection_snapshot())), MirrorHash.canonical_json(p1["projection_diff"]), "the projection change is the one the preview showed")
 
 func test_audit_detects_tampering_with_a_committed_event() -> void:
 	var e := MirrorFixtures.rich_engine()

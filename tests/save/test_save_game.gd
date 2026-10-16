@@ -33,7 +33,7 @@ func test_loaded_game_offers_the_same_options() -> void:
 	r.save_game(SLOT)
 	var fresh: MirrorRuntime = track(MirrorRuntime.new())
 	fresh.setup()
-	fresh.load_game(SLOT)
+	ok(fresh.load_game(SLOT)["ok"], "the saved game loads before its options are compared")
 	for target in ["tomas", "machine", "bell", "path_out"]:
 		eq(GameFixtures.action_ids(fresh, target), GameFixtures.action_ids(r, target), "same options for %s" % target)
 	_cleanup()

@@ -12,6 +12,7 @@ func _boot() -> GameRoot:
 	game.runtime = track(MirrorRuntime.new())
 	game.auto_advance = 0.0
 	game.magic_time_scale = 0.01
+	game.run_clock = false   # the live hall keeps Mirror time only in play; a test's chain must not depend on wall time
 	_tree().root.add_child(game)
 	track(game)
 	for i in 3:

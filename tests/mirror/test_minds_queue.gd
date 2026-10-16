@@ -179,8 +179,9 @@ func test_more_due_than_one_pump_may_fire_spill_over_in_order_and_none_is_lost()
 
 func test_the_queue_survives_save_and_load_and_the_run_continues_identically() -> void:
 	var live := _rig()
-	live.minds.perceive(MindsFixtures.knock())
-	live.minds.advance_time(1)
+	ok(live.minds.perceive(MindsFixtures.knock())["ok"], "the live run's happening is recorded")
+	ok(live.minds.advance_time(1)["ok"], "and time passes")
+	ok(live.engine.event_store.size() > 0, "the live run wrote events (equal empty logs would prove nothing)")
 	var json := live.engine.save_json()
 	var loaded := _rig()
 	var res := loaded.engine.load_json(json)
