@@ -34,6 +34,18 @@ if [ "${SKIP_RENDER:-0}" != "1" ]; then
 	render_out="$(GODOT="$GODOT" ./tests/render/render_check.sh 2>&1)"
 	echo "$render_out"
 	if echo "$render_out" | grep -q "^RENDER FAILED"; then echo "GATE FAIL: render regression"; fail=1; fi
+	# Positive proof, as for the suite: a render step that printed neither a pass nor a skip did not run.
+	if ! echo "$render_out" | grep -qE "^RENDER (PASSED|SKIPPED)"; then echo "GATE FAIL: no positive proof the render check ran"; fail=1; fi
 fi
 
+# Only a full run is the gate. A golden rewrite compares nothing, and a filtered run skips areas, so
+# neither prints GATE PASS.
+if [ -n "${UPDATE_GOLDEN:-}" ]; then
+	[ "$fail" -eq 0 ] && { echo "GOLDENS UPDATED: review the diff, then run the gate again without UPDATE_GOLDEN (not a gate pass)"; exit 0; }
+	exit 1
+fi
+if [ -n "${1:-}" ]; then
+	[ "$fail" -eq 0 ] && { echo "FILTER PASS: '$1' only (not the gate: run without a filter)"; exit 0; }
+	exit 1
+fi
 if [ "$fail" -eq 0 ]; then echo "GATE PASS"; else exit 1; fi

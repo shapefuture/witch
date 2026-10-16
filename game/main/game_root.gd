@@ -240,6 +240,15 @@ func _capture_then_quit() -> void:
 		await get_tree().process_frame
 	var image := get_viewport().get_texture().get_image()
 	var path := str(args["capture"])
+	# The arrival subtitle's box in the picture's own pixels, for the pixel check (tests/render/analyze_shots.gd).
+	var box: Variant = null
+	if subtitles.is_active() and subtitles.bubble().is_showing():
+		var rect := subtitles.bubble().screen_rect()
+		box = [rect.position.x, rect.position.y, rect.size.x, rect.size.y]
+	var sidecar := FileAccess.open(path.get_basename() + ".subtitle.json", FileAccess.WRITE)
+	if sidecar != null:
+		sidecar.store_string(JSON.stringify({"subtitle": box}))
+		sidecar.close()
 	var error := image.save_png(path)
 	print("CAPTURE %s %s (%s)" % [path, image.get_size(), "ok" if error == OK else "error %d" % error])
 	get_tree().quit(0 if error == OK else 1)
