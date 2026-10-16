@@ -413,6 +413,14 @@ static func _law_four(convention: Dictionary, data: Dictionary, index: Dictionar
 	var decay: Dictionary = convention.get("decay", {})
 	if int(decay.get("every", 0)) <= 0 and not bool(convention.get("permanent", false)):
 		findings.append(_finding(4, "error", id, "never_decays", "a convention nobody feeds must fade: give `decay` {every, amount}, or mark it `permanent` on purpose"))
+	var clocks: Dictionary = data.get("clocks", {})
+	var cadence := str(convention.get("cadence", ""))
+	if not cadence.is_empty() and not (clocks.get("cadences", {}) as Dictionary).has(cadence):
+		findings.append(_finding(4, "error", id, "unknown_cadence", "cadence '%s' is not a cadence in minds.json clocks" % cadence))
+	if not ConventionBook.clock_of(convention, clocks).is_empty() and int(ConventionBook.clock_of(convention, clocks)["dormancy"]) <= 0:
+		findings.append(_finding(4, "error", id, "clock_without_dormancy", "a clocked convention needs a dormancy above zero (Mirror ticks), from its cadence or its own `dormancy`"))
+	if convention.has("revivals") and int(convention["revivals"]) > ConventionBook.MAX_REVIVALS:
+		findings.append(_finding(4, "error", id, "revivals_over_limit", "`revivals` is %d; a custom may come back at most %d time(s), unexplained" % [int(convention["revivals"]), ConventionBook.MAX_REVIVALS]))
 	for operator_id in convention.get("force", {}).get("enables_operators", []):
 		var engine: MirrorEngine = options.get("engine", null)
 		if engine != null and not engine.operator_definitions.has(str(operator_id)):
