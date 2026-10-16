@@ -29,6 +29,8 @@ static func instantiate(id: String) -> Node3D:
 	# vertex wobble (4 mm) would tear them off, and the facet-hash tone would speckle them.
 	PSXActorPresenter.apply(root, 0.0)
 	_calm(root)
+	# The head turn Mirror's regard asks for (game/presentation/look_at_head.gd), layered on the clips.
+	LookAtHead.attach_to(root)
 	play(root, "idle")
 	return root
 
@@ -48,6 +50,10 @@ static func player_of(visual: Node) -> AnimationPlayer:
 		return null
 	var found := visual.find_children("*", "AnimationPlayer", true, false)
 	return found[0] as AnimationPlayer if not found.is_empty() else null
+
+# The character's head look-at, or null (a placeholder has no skeleton).
+static func gaze_of(visual: Node) -> LookAtHead:
+	return LookAtHead.of(visual)
 
 static func has_clip(visual: Node, clip: String) -> bool:
 	var player := player_of(visual)
