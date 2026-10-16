@@ -13,6 +13,11 @@ func _initialize() -> void:
 	_run()
 
 func _run() -> void:
+	# In --script mode the root window enters the tree only on the first frame, so until then every
+	# node under root (the autoloads, and anything a test adds to root) counts as an orphan. A filtered
+	# run whose tests never await a frame used to end with a false leak; the full suite hid the same
+	# inflated baseline the other way round (it then measured below it). Start inside the tree, from zero.
+	await process_frame
 	var orphan_baseline := int(Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT))
 	var filter := ""
 	for arg in OS.get_cmdline_user_args():
@@ -51,6 +56,8 @@ func _run() -> void:
 		total_assertions += suite.assertions
 		failures.append_array(suite.failures)
 	TestCase.free_tracked()
+	# Let queue_free() calls made by the last tests complete before counting.
+	await process_frame
 	# Dialogue Manager's autoload keeps parsed dialogue resources alive until the process ends,
 	# which Godot reports as leaked resources at exit. Release it explicitly so a clean run
 	# is a silent run (the release gate treats any engine ERROR line as a failure).
