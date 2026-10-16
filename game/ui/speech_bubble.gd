@@ -42,12 +42,12 @@ func present(speaker: String, text: String, anchor_world: Vector3, narration: bo
 	_scale = Diegetic.ui_scale(real_size)
 	var viewport_size := Diegetic.ui_size(real_size)
 	var font := UIKit.font()
-	var wrap := minf(MAX_WIDTH, viewport_size.x * 0.58) - PAD * 2.0
+	var wrap := minf(MAX_WIDTH * UIKit.text_scale, viewport_size.x * 0.58) - PAD * 2.0
 	# Lines are broken HERE, once, so the typewriter reveals characters without the text reflowing.
 	var paragraph := TextParagraph.new()
 	paragraph.width = wrap
 	paragraph.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND
-	paragraph.add_string(text, font, UIKit.FONT_SIZE)
+	paragraph.add_string(text, font, UIKit.text_size())
 	var lines := PackedStringArray()
 	for i in range(paragraph.get_line_count()):
 		var span := paragraph.get_line_range(i)
@@ -91,11 +91,12 @@ func present(speaker: String, text: String, anchor_world: Vector3, narration: bo
 			add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.dot(at, radius + 1.0)), Diegetic.slab_material(border, "", 11), -0.1))
 			add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.dot(at, radius)), Diegetic.slab_material(tint, "scroll", 12), 0.0))
 	if not speaker.is_empty():
-		var tab_w := ceilf(font.get_string_size(speaker, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.FONT_SIZE).x) + 8.0
-		var tab := PackedVector2Array([Vector2(5, 0), Vector2(5, 11), Vector2(9, 13), Vector2(5 + tab_w - 4, 13), Vector2(5 + tab_w, 11), Vector2(5 + tab_w, 0)])
+		var tab_w := ceilf(font.get_string_size(speaker, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.text_size()).x) + 8.0
+		var lift := float(UIKit.text_size() - UIKit.FONT_SIZE)   # the tab grows with the player's text size
+		var tab := PackedVector2Array([Vector2(5, 0), Vector2(5, 11 + lift), Vector2(9, 13 + lift), Vector2(5 + tab_w - 4, 13 + lift), Vector2(5 + tab_w, 11 + lift), Vector2(5 + tab_w, 0)])
 		add_child(Diegetic.mesh_instance(SlabMesh.fill(tab), Diegetic.slab_material(BRASS, "brass", 11), -0.05))
 		var name_label := Diegetic.label(speaker, INK, 13, _scale)
-		name_label.position = Vector3(9, 11, 0.2)
+		name_label.position = Vector3(9, 11 + lift, 0.2)
 		add_child(name_label)
 	_label = Diegetic.label(_wrapped, ink, 13, _scale)
 	_label.position = Vector3(PAD, -PAD, 0.2)

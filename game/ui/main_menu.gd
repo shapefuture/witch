@@ -72,7 +72,7 @@ func open() -> void:
 	var widest := MIN_WIDTH
 	for row in rows:
 		var text: String = row["text"]
-		widest = maxf(widest, ceilf(font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.FONT_SIZE).x) + PAD * 2.0 + 6.0)
+		widest = maxf(widest, ceilf(font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UIKit.text_size()).x) + PAD * 2.0 + 6.0)
 	var stack_h := rows.size() * ROW_HEIGHT + (rows.size() - 1) * GAP
 	var safe := Diegetic.safe_rect(ui)
 	var origin := Vector2((ui.x - widest) * 0.5, (ui.y - stack_h) * 0.5)
@@ -191,7 +191,7 @@ func _make_plaque(rect: Rect2, text: String, enabled: bool, index: int) -> Node3
 	node.add_child(Diegetic.mesh_instance(SlabMesh.fill(outline), Diegetic.slab_material(WOOD_BORDER, "wood_dark", priority + 1), -0.1))
 	node.add_child(Diegetic.mesh_instance(SlabMesh.fill(SlabMesh.inset(outline, 2.0)), Diegetic.slab_material(tint, "wood", priority + 2), 0.0))
 	var label := Diegetic.label(text, ink, priority + 3, _scale)
-	label.position = Vector3(PAD, -(rect.size.y - UIKit.FONT_SIZE) * 0.5 + 1.0, 0.2)
+	label.position = Vector3(PAD, -(rect.size.y - UIKit.text_size()) * 0.5 + 1.0, 0.2)
 	node.add_child(label)
 	_stage.add_child(node)
 	return node

@@ -23,6 +23,22 @@ static var _precision := MUNDANE_PRECISION
 static var _lens := 0.0
 static var _time := 0.0
 static var _grid := Vector2(240, 180)
+static var _reduced := false
+
+# Reduced effects (an accessibility setting, SettingsState.reduced_effects; off by default, STYLE_BIBLE SC6)
+# for players sensitive to motion or flicker: actors stop snapping to the coarse lattice (the PS1 jitter),
+# the spell's fisheye swing stays flat, and the materials drop their wobble, glow, vignette and grain
+# (PSXMaterials). Nothing is deleted: switching it off restores every authored value.
+const REDUCED_GRID_SCALE := 8.0
+
+static func set_reduced_effects(on: bool) -> void:
+	_reduced = on
+	RenderingServer.global_shader_parameter_set(&"snap_grid", pushed_snap_grid())
+	RenderingServer.global_shader_parameter_set(&"lens_warp", pushed_lens())
+	PSXMaterials.refresh_effects()
+
+static func reduced_effects() -> bool:
+	return _reduced
 
 static func set_magic(amount: float) -> void:
 	_magic = clampf(amount, 0.0, 1.0)
@@ -43,10 +59,14 @@ const SNAP_ROWS := 360.0
 
 static func set_render_size(size: Vector2) -> void:
 	_grid = Vector2(size.x / maxf(size.y, 1.0) * SNAP_ROWS, SNAP_ROWS) * 0.5
-	RenderingServer.global_shader_parameter_set(&"snap_grid", _grid)
+	RenderingServer.global_shader_parameter_set(&"snap_grid", pushed_snap_grid())
 
 static func snap_grid() -> Vector2:
 	return _grid
+
+# What the renderer is given: the lattice, or one far finer than the render's pixels when effects are reduced.
+static func pushed_snap_grid() -> Vector2:
+	return _grid * (REDUCED_GRID_SCALE if _reduced else 1.0)
 
 static func set_time(seconds: float) -> void:
 	_time = seconds
@@ -57,10 +77,13 @@ static func time() -> float:
 
 static func set_lens(amount: float) -> void:
 	_lens = clampf(amount, 0.0, 1.0)
-	RenderingServer.global_shader_parameter_set(&"lens_warp", _lens)
+	RenderingServer.global_shader_parameter_set(&"lens_warp", pushed_lens())
 
 static func lens() -> float:
 	return _lens
+
+static func pushed_lens() -> float:
+	return 0.0 if _reduced else _lens
 
 static func set_fog(color: Color, density: float) -> void:
 	RenderingServer.global_shader_parameter_set(&"fog_color", color)

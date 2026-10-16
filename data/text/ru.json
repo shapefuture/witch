@@ -1,6 +1,9 @@
 {
 	"_about": "THE single home of every player-visible string (menus, option labels, narration, NPC dialogue, speaker names). Keys are referenced by data/mirror/*.json, data/conversations/*.dialogue and code via tr(). Prose never appears anywhere else, so rewording here never changes the Mirror catalog fingerprint or invalidates a save. Edit by hand, or use tools/text_tool.py (check / sort / export-csv / import-csv).",
 	"ui.back": "Назад",
+	"ui.effects": "Эффекты",
+	"ui.effects_full": "полные",
+	"ui.effects_reduced": "мягкие",
 	"ui.load": "Загрузить",
 	"ui.load_failed": "Не удалось загрузить это сохранение.",
 	"ui.loaded": "Загружено.",
@@ -12,6 +15,8 @@
 	"ui.save": "Сохранить",
 	"ui.saved": "Сохранено.",
 	"ui.settings": "Настройки",
+	"ui.sound": "Звук",
+	"ui.text_size": "Размер текста",
 	"ui.volume": "Громкость",
 	"ui.volume_down": "Тише",
 	"ui.volume_up": "Громче",
