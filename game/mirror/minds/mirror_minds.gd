@@ -70,8 +70,24 @@ func advance_time(delta: int, reason: String = "wait") -> Dictionary:
 	if not result.get("ok", false):
 		return result
 	_pump()
+	_run_routines()
 	result["fired"] = _fired_log.slice(maxi(0, _fired_log.size() - (_fired_total - before)))
 	return result
+
+# Ambient routines (the data's `routines`): each happens once per `every` ticks of the Mirror clock. When time has
+# passed several occurrences, the routine happens once, at the latest, and says which occurrence it is (`n`), so a
+# long wait writes one event, never a burst. WAIT is what lets a quiet room show its routines.
+func _run_routines() -> void:
+	if not _ensure_seeded().get("ok", false):
+		return
+	var now := engine.get_time()
+	for routine in data.get("routines", []):
+		var every := int(routine.get("every", 0))
+		var routine_id := str(routine["id"])
+		var n: int = floori(float(now) / float(every)) if every > 0 else 0
+		if n <= 0 or n <= int(state.routines.get(routine_id, 0)):
+			continue
+		_commit_event(_normalize(routine["event"]), {"routine": routine_id, "n": n})
 
 # Somebody comes or goes. Presence is Mirror's truth (it decides who can witness), recorded as an event.
 func set_presence(holder: String, place: String) -> Dictionary:
@@ -304,7 +320,7 @@ func _commit_event(event: Dictionary, origin: Dictionary) -> Dictionary:
 			readings.append({"holder": holder, "reads": str(reading["reads"]), "subject": str(event["subject"]), "kind": kind})
 
 	# Folklore first: what this event's readings did to the conventions, so a variant can react to a change.
-	var evaluation := ConventionBook.evaluate(data.get("conventions", []), state.conventions, data.get("communities", {}), readings, event_id, kind, at, tags, limits)
+	var evaluation := ConventionBook.evaluate(data.get("conventions", []), state.conventions, data.get("communities", {}), readings, event_id, kind, at, tags, limits, data.get("clocks", {}))
 	var reads_by_holder: Dictionary = {}
 	for reading in interpretations:
 		reads_by_holder[str(reading["holder"])] = str(reading["reads"])

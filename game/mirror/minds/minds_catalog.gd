@@ -27,6 +27,8 @@ const DEFAULTS := {
 	"holders": {},
 	"communities": {},
 	"initial_beliefs": [],
+	"clocks": {"cadences": {}},
+	"routines": [],
 }
 
 # Returns {"data": Dictionary, "errors": Array, "warnings": Array}.
@@ -68,6 +70,11 @@ static func build(raw: Dictionary, errors: Array = []) -> Dictionary:
 			elif variant_ids.has(variant_id):
 				errors.append("duplicate variant id %s" % variant_id)
 			variant_ids[variant_id] = true
+	for routine in data["routines"]:
+		if str(routine.get("id", "")).is_empty() or int(routine.get("every", 0)) <= 0 or not (routine.get("event", null) is Dictionary):
+			errors.append("routine %s needs an id, every above zero and an event" % routine.get("id", "?"))
+		elif not data["event_kinds"].has(str(routine["event"].get("kind", ""))):
+			errors.append("routine %s names event kind %s, which minds.json does not define" % [routine["id"], routine["event"].get("kind", "")])
 	return {"data": data, "errors": errors, "warnings": warnings}
 
 static func empty() -> Dictionary:
