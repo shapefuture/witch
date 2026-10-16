@@ -76,6 +76,83 @@ static func load_json(engine:MirrorEngine,text:String)->Dictionary:
         engine._restore_snapshot(before);return {"ok":false,"error":"projection_mismatch"}
     return {"ok":true,"schema_version":migrated["data"]["schema_version"],"legacy":integrity["legacy"]}
 
+# Save recovery (local patch): a damaged file (cut short, or an event altered in place) yields the longest run of its
+# event log that still verifies, and the engine's projections are rebuilt from exactly that run. Nothing else in the
+# file is trusted: knowledge, models and the rest are derived again from the log. A failed recovery leaves the engine
+# as it was. Returns {ok, kept, of, reason}; reason is why the run stops ("" when every event verifies).
+static func recover_events(engine: MirrorEngine, text: String) -> Dictionary:
+    var raw := event_objects(text)
+    var checked := MirrorEventStore.valid_prefix(raw)
+    var events: Array = checked["events"]
+    if events.is_empty():
+        return {"ok": false, "kept": 0, "of": raw.size(), "reason": str(checked["error"])}
+    var rows: Array = []
+    for event in events:
+        rows.append(event.to_dict())
+    var max_events := engine.event_store.max_events
+    var before := engine._snapshot(true)
+    var store := MirrorEventStore.new(max_events)
+    var head: String = events[events.size() - 1].hash
+    if not store.restore_from_dict({"max_events": max_events, "head_hash": head, "next_sequence": events.size() + 1, "events": rows}):
+        return {"ok": false, "kept": 0, "of": raw.size(), "reason": "prefix_rejected"}
+    engine.event_store = store
+    var replay := engine.rebuild_projections_from_event_log(false)
+    if not replay.get("ok", false):
+        engine._restore_snapshot(before)
+        return {"ok": false, "kept": 0, "of": raw.size(), "reason": "replay_rejected"}
+    return {"ok": true, "kept": events.size(), "of": raw.size(), "reason": str(checked["error"])}
+
+# The event objects of a save's event log, read one at a time, so a file cut short still yields the events before
+# the cut. Stops at the first object that is incomplete or does not parse. Nothing is trusted here: the caller verifies.
+static func event_objects(text: String) -> Array:
+    var out: Array = []
+    var store_at := text.find("\"event_store\"")
+    var at := text.find("\"events\"", maxi(store_at, 0))
+    if at < 0:
+        return out
+    var i := text.find("[", at)
+    if i < 0:
+        return out
+    i += 1
+    while i < text.length():
+        var c := text[i]
+        if c == "]":
+            break
+        if c != "{":
+            i += 1
+            continue
+        var end := _object_end(text, i)
+        if end < 0:
+            break
+        var parsed: Variant = JSON.parse_string(text.substr(i, end - i + 1))
+        if not parsed is Dictionary:
+            break
+        out.append(parsed)
+        i = end + 1
+    return out
+
+static func _object_end(text: String, start: int) -> int:
+    var depth := 0
+    var in_string := false
+    var i := start
+    while i < text.length():
+        var c := text[i]
+        if in_string:
+            if c == "\\":
+                i += 1
+            elif c == "\"":
+                in_string = false
+        elif c == "\"":
+            in_string = true
+        elif c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+            if depth == 0:
+                return i
+        i += 1
+    return -1
+
 static func migrate(data:Dictionary)->Dictionary:
     var out:=data.duplicate(true);var version:=int(out.get("schema_version",1))
     if version>SAVE_VERSION:return {"ok":false,"error":"future_schema","version":version}

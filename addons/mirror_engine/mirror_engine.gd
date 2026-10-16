@@ -1596,7 +1596,7 @@ func restore_from_save(data: Dictionary) -> bool:
         for field in SAVE_SHAPES[section].keys():
             if data[section].has(field) and typeof(data[section][field]) != int(SAVE_SHAPES[section][field]):
                 return false
-    var candidate_store := MirrorEventStore.new(int(data["event_store"].get("max_events", 100000)))
+    var candidate_store := MirrorEventStore.new(int(data["event_store"].get("max_events", MirrorEventStore.DEFAULT_MAX_EVENTS)))
     # restore_from_dict() already checks sequence, prev_hash, every event hash, the head hash
     # and uniqueness, so a second verify_chain() here only re-hashed the whole log again.
     if not candidate_store.restore_from_dict(data["event_store"]):

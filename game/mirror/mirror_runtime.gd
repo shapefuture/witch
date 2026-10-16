@@ -137,8 +137,8 @@ func describe_log(last: int = 0) -> Array[String]:
 func save_game(slot: int, meta: Dictionary = {}) -> Error:
 	return SaveGame.save(engine, slot, meta)
 
-func load_game(slot: int) -> Dictionary:
-	var result := SaveGame.load_into(engine, slot)
+func load_game(slot: int, strict: bool = false) -> Dictionary:
+	var result := SaveGame.load_into(engine, slot, strict)
 	if result.get("ok", false):
 		game_loaded.emit(result.get("meta", {}))
 	return result

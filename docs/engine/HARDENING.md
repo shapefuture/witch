@@ -20,13 +20,26 @@ before the checksum passes. A rejected load restores the pre-load snapshot as be
 Limits:
 - `MirrorPersistence.max_save_bytes` = 64 MiB. Checked on the file length before the file is read,
   and on the text before it is parsed. A save over the limit is refused at write time too
-  (`ERR_INVALID_DATA`), so no unloadable file is written. At ~2.7 KB per event this is about 20,000
-  events; the event store itself caps at 100,000. Question for the coordinator: is 64 MiB the
-  right ceiling for the game?
+  (`ERR_INVALID_DATA`), so no unloadable file is written. About 3.5 KB per event (measured on
+  `data/sim/hall_rules.json`, the envelope included), so the save limit is reached near 19,000 events.
+  The event store's own cap is `MirrorEventStore.DEFAULT_MAX_EVENTS` = 16,000 (was 100,000, which let
+  a long game store events it could not save). 16,000 events is about 56 MB and about four hours at
+  the REQ-34 rate. `tests/save/test_save_recovery.gd` checks the two caps against each other.
+  Question for the coordinator: is 64 MiB the right ceiling for the game? If it rises, the event cap
+  rises with it; if the game must run longer than four hours, the answer is a snapshot-and-trim of old
+  events, not a bigger file.
 
 Atomic write: write `slot_N.json.tmp`, read it back and compare, copy the current slot to
 `slot_N.json.bak`, rename the temp over the slot. A failed step leaves the slot as it was.
 The `.bak` is not used automatically on load (no silent rollback); restoring it is a manual copy.
+
+Recovery (`SaveGame.load_into`, `MirrorPersistence.recover_events`): a damaged slot (cut short, or an
+event altered in place) does not fail the load. The longest run of its event log that still verifies
+loads instead: the events are checked one by one (shape, unique id, sequence, previous hash, recomputed
+hash), and the engine's projections are rebuilt from exactly that run. The result carries `recovered`
+{kept, of, reason, source}, and the game says how much came back. Strict mode (`load_game(slot, true)`)
+refuses instead. When the slot yields nothing at all, the `.bak`'s log is tried the same way; the `.bak`
+is never loaded whole.
 
 What the checksum does not do: it is unkeyed. A forger can recompute it. A re-sealed forgery is
 refused by the event chain and the projection replay (pinned by a test). A save declared as legacy
