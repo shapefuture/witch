@@ -52,3 +52,22 @@ static func source_event(engine: MirrorEngine, entry: Dictionary) -> Dictionary:
 		"actor": event.actor_id, "subject": str(event.payload.get("subject", "")),
 		"kind": str(event.payload.get("kind", "")),
 	}
+
+# Rhyme notes (room_engine's echo, ROOM_OF_US item 4): the same motif, authored on two entries, recurring in another
+# room and in another form. `motifs` is data/aliveness/motifs.json's list: {claim, tag, room, form}. A note names the
+# two claims; it is never applied to the world, only shown.
+static func rhymes(entries: Array, motifs: Array) -> Array:
+	var known: Array = []
+	for entry in entries:
+		known.append(str(entry["claim"]))
+	var out: Array = []
+	for i in motifs.size():
+		for j in range(i + 1, motifs.size()):
+			var a: Dictionary = motifs[i]
+			var b: Dictionary = motifs[j]
+			if str(a["tag"]) != str(b["tag"]) or str(a["room"]) == str(b["room"]) or str(a["form"]) == str(b["form"]):
+				continue
+			if str(a["claim"]) in known and str(b["claim"]) in known:
+				out.append({"motif": str(a["tag"]), "claims": [str(a["claim"]), str(b["claim"])],
+					"rooms": [str(a["room"]), str(b["room"])], "forms": [str(a["form"]), str(b["form"])]})
+	return out

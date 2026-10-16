@@ -51,3 +51,18 @@ func test_the_notebook_interleaves_discovery_classes_so_neighbours_differ() -> v
 		if ordered[i]["discovery_class"] == ordered[i - 1]["discovery_class"]:
 			neighbours_differ = false
 	ok(neighbours_differ, "two classes in turn: no two neighbours share a class")
+
+func test_a_motif_that_recurs_in_another_room_and_form_is_noted_as_a_rhyme() -> void:
+	var entries := [{"claim": "c.bell"}, {"claim": "c.machine"}, {"claim": "c.globe"}, {"claim": "c.hidden"}]
+	var motifs := [
+		{"claim": "c.bell", "tag": "chime", "room": "hall", "form": "sound"},
+		{"claim": "c.machine", "tag": "chime", "room": "den", "form": "light"},
+		{"claim": "c.globe", "tag": "chime", "room": "den", "form": "sound"},
+		{"claim": "c.hidden", "tag": "chime", "room": "attic", "form": "object"},
+		{"claim": "c.bell", "tag": "stillness", "room": "hall", "form": "object"},
+	]
+	var notes := NotebookView.rhymes(entries.slice(0, 3), motifs)
+	eq(notes.size(), 1, "one rhyme: bell and machine share a tag, a room and a form apart; globe shares the room, so it is not one")
+	eq(notes[0]["claims"], ["c.bell", "c.machine"], "the note names the two claims")
+	eq(notes[0]["motif"], "chime", "and the motif")
+	eq(NotebookView.rhymes(entries.slice(0, 1), motifs).size(), 0, "a claim the notebook does not show makes no rhyme")
