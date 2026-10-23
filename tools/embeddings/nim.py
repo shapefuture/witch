@@ -11,6 +11,7 @@ suggesting motif rhymes to an author, the private tone study). Nothing here ship
 
 The key is read from the environment variable NVIDIA_NIM_KEY and is never printed, logged or written. Results
 are cached under .cache/embeddings/ (git-ignored), keyed by model, input type and text, so a rerun costs nothing.
+rerank(question, passages) reorders a short candidate list (nvidia/nemotron-3.5-rerank-8b); logits compare only within one question.
 EMBED_MOCK=1 returns deterministic hash vectors with no network, for tests of the plumbing.
 """
 import hashlib
@@ -61,24 +62,53 @@ def _mock(texts):
     return out
 
 
-def _request(texts, input_type):
+RERANK_URL = 'https://ai.api.nvidia.com/v1/retrieval/nvidia/nemotron-3.5-rerank-8b/reranking'
+RERANK_MODEL = 'nvidia/nemotron-3.5-rerank-8b'
+# Rate limits and transient server errors are retried with growing waits; any other status fails at once.
+RETRY_CODES = (429, 500, 502, 503, 504)
+
+
+def _post(url, body):
     key = os.environ.get('NVIDIA_NIM_KEY')
     if not key:
         raise RuntimeError('NVIDIA_NIM_KEY is not set (or set EMBED_MOCK=1 for an offline run)')
-    body = json.dumps({'model': MODEL, 'input': texts, 'input_type': input_type,
-                       'encoding_format': 'float'}).encode('utf-8')
-    req = urllib.request.Request(URL, data=body, method='POST', headers={
-        'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
+    data = json.dumps(body).encode('utf-8')
     for attempt in range(4):
+        req = urllib.request.Request(url, data=data, method='POST', headers={
+            'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
         try:
-            resp = json.load(urllib.request.urlopen(req, timeout=120))
-            return [d['embedding'] for d in sorted(resp['data'], key=lambda d: d['index'])]
+            return json.load(urllib.request.urlopen(req, timeout=120))
         except urllib.error.HTTPError as e:
-            if e.code == 429 and attempt < 3:
+            if e.code in RETRY_CODES and attempt < 3:
                 time.sleep(5 * (attempt + 1))
                 continue
             raise RuntimeError('NIM HTTP %d' % e.code) from None   # never echo the request: it holds the key
+        except urllib.error.URLError:
+            if attempt < 3:
+                time.sleep(5 * (attempt + 1))
+                continue
+            raise RuntimeError('NIM unreachable after retries') from None
     raise RuntimeError('NIM: retries exhausted')
+
+
+def _request(texts, input_type):
+    resp = _post(URL, {'model': MODEL, 'input': texts, 'input_type': input_type, 'encoding_format': 'float'})
+    return [d['embedding'] for d in sorted(resp['data'], key=lambda d: d['index'])]
+
+
+def rerank(question, passages):
+    """Relevance logit of each passage for the question, in the order given (higher is better).
+
+    Only for reordering a short candidate list from embed(), never for searching a corpus. A logit is comparable
+    within one question, not across questions.
+    """
+    if os.environ.get('EMBED_MOCK') == '1':
+        return np.asarray([np.random.default_rng(int.from_bytes(hashlib.sha256(
+            (question + '\0' + p).encode('utf-8')).digest()[:8], 'little')).standard_normal() for p in passages])
+    resp = _post(RERANK_URL, {'model': RERANK_MODEL, 'query': {'text': question},
+                              'passages': [{'text': p} for p in passages]})
+    logit = {r['index']: r['logit'] for r in resp['rankings']}
+    return np.asarray([logit[i] for i in range(len(passages))], dtype=np.float64)
 
 
 def embed(texts, input_type):

@@ -29,7 +29,7 @@ GODOT=... tools/visual_gauntlet/capture.sh out_dir                      # the st
 python tools/higgsfield/hf.py run <model-path> --args-file job.json --max-usd 1   # see tools/higgsfield/README.md
 python tools/higgsfield/hf.py catalog        # refresh tools/higgsfield/catalog/CATALOG.md (models, inputs, prices, docs)
 # offline embeddings for authors (NVIDIA NIM, key in NVIDIA_NIM_KEY; never used by the game; cache in .cache/)
-python3 tools/embeddings/text_neighbours.py dupes|rhymes|query "..."   # near-duplicate lines, motif rhymes, search
+python3 tools/embeddings/text_neighbours.py dupes|rhymes|query "..." [--rerank N]   # near-duplicate lines, motif rhymes, search (--rerank reorders the top N with nemotron-3.5-rerank-8b)
 ```
 `.env.local` (git-ignored) holds `HF_KEY=key-id:key-secret`. Never print it, commit it or copy it into another file.
 Run the gate before committing. **Godot exits 0 even when GDScript fails to compile**: never trust an

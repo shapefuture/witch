@@ -22,7 +22,7 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from nim import REPO, embed  # noqa: E402
+from nim import REPO, embed, rerank  # noqa: E402
 
 TEXT = os.path.join(REPO, 'data', 'text', 'ru.json')
 
@@ -63,13 +63,23 @@ def main(argv=None):
     q = sub.add_parser('query')
     q.add_argument('text')
     q.add_argument('-k', type=int, default=5)
+    q.add_argument('--rerank', type=int, default=0, metavar='N',
+                   help='reorder the top N embedding candidates with the reranker (0: off)')
     a = ap.parse_args(argv)
 
     items = lines()
     vectors = embed([v for _, v in items], 'passage')
     if a.cmd == 'query':
         scores = (embed([a.text], 'query') @ vectors.T)[0]
-        for i in np.argsort(-scores)[:a.k]:
+        order = np.argsort(-scores)
+        if a.rerank > 0:
+            cand = order[:a.rerank]
+            logits = rerank(a.text, [items[i][1] for i in cand])
+            for j in np.argsort(-logits)[:a.k]:
+                i = cand[j]
+                print('%7.2f  cos %.3f  %s' % (logits[j], scores[i], items[i][0]))
+            return 0
+        for i in order[:a.k]:
             print('%.3f  %s' % (scores[i], items[i][0]))
         return 0
     if a.cmd == 'dupes':
