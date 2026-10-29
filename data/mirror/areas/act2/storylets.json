@@ -1,0 +1,42 @@
+[
+	{
+		"id": "act2_morning",
+		"priority": 1,
+		"once_key": "act2_morning",
+		"preconditions": {
+			"story.act": "act2",
+			"witch.place": "shop"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "narrator",
+				"key": "line.act2.morning.1"
+			}
+		]
+	},
+	{
+		"id": "act2_attic_dust",
+		"priority": 1,
+		"once_key": "act2_attic_dust",
+		"preconditions": {
+			"story.act": "act2",
+			"witch.place": "attic"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "narrator",
+				"key": "line.act2.attic_dust.1"
+			}
+		]
+	}
+]

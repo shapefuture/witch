@@ -1,0 +1,29 @@
+{
+	"_about": "Workcell B, act II: the town's new state (docs/design/GAME_SPEC.md section 6). Owned by act2.",
+	"world": {
+		"act2_vera_oven": {
+			"state": "arguing"
+		},
+		"act2_vera_sign": {
+			"state": "swinging"
+		},
+		"act2_lamp": {
+			"state": "unlit"
+		},
+		"act2_clock": {
+			"state": "backwards"
+		},
+		"act2_candle": {
+			"state": "shelf"
+		},
+		"act2_spoon": {
+			"state": "hidden"
+		},
+		"act2_raccoon_commission": {
+			"state": "open"
+		},
+		"act2_shadow_coin": {
+			"left": false
+		}
+	}
+}
