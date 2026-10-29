@@ -1,5 +1,5 @@
 class_name ArchiveHall
-extends Room
+extends PlaceRoom
 
 # THE ARCHIVE HALL: the first complete causal room. One witch, one man, one brass machine, one
 # bell on its wooden mount, one crooked bookcase tower with a raccoon on a shelf, one pointed
@@ -53,9 +53,7 @@ const STANCES := {
 static var atmosphere_enabled := true
 static var _walkable_cache := PackedVector2Array()
 
-# The room slot (game/world/room_slot.gd): what the rest of the game asks of this room.
-signal walked(pixel: Vector2, world_position: Vector3)
-signal prop_pressed(prop_id: String, reaction: String, world_position: Vector3)
+# The room slot (game/world/room_slot.gd) signals are declared by PlaceRoom.
 # A live prop answers a poke with one short hop, whatever its move is called (Mirror names the moves).
 const HOP_HEIGHT := 0.12
 const HOP_SECONDS := 0.5
@@ -358,6 +356,14 @@ func stage_actors() -> Dictionary:
 	if raccoon != null:
 		out["raccoon"] = raccoon
 	return out
+
+func npc_node(id: String) -> Node3D:
+	match id:
+		"tomas":
+			return tomas
+		"raccoon":
+			return raccoon
+	return super.npc_node(id)
 
 func request_reaction(target_id: String, _reaction: String) -> bool:
 	var prop := _live_prop(target_id)

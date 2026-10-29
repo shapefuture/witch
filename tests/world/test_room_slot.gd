@@ -15,7 +15,9 @@ func _hall() -> ArchiveHall:
 	return _in_tree(ArchiveHall.new()) as ArchiveHall
 
 func _painted() -> PaintedRoom:
-	return _in_tree((load("res://game/world/painted/painted_room.tscn") as PackedScene).instantiate()) as PaintedRoom
+	var room := (load("res://game/world/painted/painted_room.tscn") as PackedScene).instantiate() as PaintedRoom
+	room.room_id = "clearing"   # the place it stands for; the room factory sets this from the place file
+	return _in_tree(room) as PaintedRoom
 
 func _arg_count(room: Object, signal_name: String) -> int:
 	for entry: Dictionary in room.get_signal_list():
