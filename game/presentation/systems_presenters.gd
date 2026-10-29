@@ -13,6 +13,13 @@ static func register(director: PresentationDirector, host: Node) -> void:
 	notebook.runtime_provider = func() -> MirrorRuntime: return runtime_of(host)
 	host.add_child(notebook)
 	director.register("notebook", notebook.play_entry)
+	var sight := SightPresenter.new()
+	sight.name = "SightPresenter"
+	sight.host = host
+	sight.runtime_provider = func() -> MirrorRuntime: return runtime_of(host)
+	sight.room_provider = func() -> Object: return host.get("room") as Object
+	host.add_child(sight)
+	director.register("sight", sight.play_entry)
 
 # The Mirror runtime the host holds, or the Mirror autoload when the host holds none.
 static func runtime_of(host: Node) -> MirrorRuntime:

@@ -1,0 +1,3 @@
+[
+	{"id": "e.raccoon_look_witch", "npc": "raccoon", "when": {"witch.place": "shop"}, "ghost": "look_at:witch", "source": "npc", "note": "note.fixture.look_witch"}
+]

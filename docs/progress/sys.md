@@ -15,7 +15,11 @@ any test runs (class names are registered by it).
 2. Notebook slab and the witch's systems actions (done): NotebookSlab (game/ui/notebook_slab.gd) shows one page a
    kind, turns by tap, closes by its plaque; NotebookPresenter plays the `notebook` step and waits for the close;
    data/mirror/areas/systems/actions.json has the witch's two options (notebook; sight, not in the postgame).
-3. Expectation-Sight (sight step, ghosts, render/psx/ghost_*): pending.
+3. Expectation-Sight (done): ExpectationSight (game/presentation/expectation_sight.gd) loads data/expectations, checks
+   entries, decides who is in the room and which entries show (MirrorConditions over runtime.context_snapshot()), and
+   gives each ghost its pose; SightPresenter copies the actor's meshes onto the same skeleton, plays each move, and
+   removes the copies. Ghost copies carry the chuika_ghost metadata. render/psx/ghost_silhouette.gdshader is the look.
+   Writes nothing to Mirror (tested by event count and world/npc state).
 4. flash (the telesomatic vignette, render/psx/flash_*): pending.
 5. Magic modes (violet, verdigris, gold) and effect fizzle: pending.
 6. docs/engine/SYSTEMS.md, final gate: pending.

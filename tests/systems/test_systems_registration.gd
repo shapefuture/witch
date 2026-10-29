@@ -8,9 +8,9 @@ func test_the_systems_kinds_have_handlers_after_the_seam_is_registered() -> void
 	var host := Node.new()
 	track(host)
 	SystemsPresenters.register(director, host)
-	for kind in ["notebook"]:
+	for kind in ["notebook", "sight"]:
 		ok(director.handlers.has(kind), "%s has a handler" % kind)
-	eq(host.get_child_count(), 1, "the systems presenters are hung on the host, not kept loose")
+	eq(host.get_child_count(), 2, "the systems presenters are hung on the host, not kept loose")
 
 func test_an_unknown_kind_is_still_reported_not_silently_skipped() -> void:
 	var director := PresentationDirector.new()
