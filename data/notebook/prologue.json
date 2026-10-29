@@ -1,0 +1,20 @@
+{
+	"_about": "The prologue's notebook entries (docs/design/GAME_SPEC.md section 4). Each claim the witch should see gets its kind (seen, heard, shown, inferred, predicted, altered, untestable) and a note line in her voice. Owned by workcell A.",
+	"prologue_kettle_still": {"kind": "seen", "text": "note.prologue.kettle_still"},
+	"prologue_kettle_boiled": {"kind": "heard", "text": "note.prologue.kettle_boiled"},
+	"prologue_kettle_rule": {"kind": "inferred", "text": "note.prologue.kettle_rule"},
+	"prologue_kettle_thunder": {"kind": "altered", "text": "note.prologue.kettle_thunder"},
+	"prologue_sight_used": {"kind": "seen", "text": "note.prologue.sight"},
+	"prologue_father_drawing": {"kind": "seen", "text": "note.prologue.drawing"},
+	"prologue_drawing_older": {"kind": "heard", "text": "note.prologue.drawing_older"},
+	"prologue_board_three": {"kind": "seen", "text": "note.prologue.board"},
+	"prologue_lilies_tidy": {"kind": "seen", "text": "note.prologue.lilies"},
+	"prologue_garden_two_tastes": {"kind": "inferred", "text": "note.prologue.two_tastes"},
+	"prologue_sunflowers": {"kind": "seen", "text": "note.prologue.sunflowers"},
+	"prologue_bench_crooked": {"kind": "seen", "text": "note.prologue.bench"},
+	"prologue_knot": {"kind": "seen", "text": "note.prologue.knot"},
+	"prologue_fog_mentioned": {"kind": "heard", "text": "note.prologue.fog_mentioned"},
+	"prologue_oven_cold": {"kind": "seen", "text": "note.prologue.oven_cold"},
+	"prologue_oven_lit": {"kind": "altered", "text": "note.prologue.oven_lit"},
+	"prologue_lamp_lit": {"kind": "altered", "text": "note.prologue.lamp"}
+}
