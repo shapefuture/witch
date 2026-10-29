@@ -1,0 +1,40 @@
+{
+	"name": "Act I, the proving and fine route: the garden blooms for him at night, she turns to the shelves, and he still goes",
+	"scope": "game",
+	"after": "res://data/sim/prologue_main.json",
+	"steps": [
+		{"action": "core_go_door_shop_garden", "target": "door_shop_garden"},
+		{"action": "act1_prove_bloom", "target": "prologue_lilies"},
+		{"action": "act1_look_miron", "target": "miron"},
+		{"action": "core_go_door_garden_shop", "target": "door_garden_shop"},
+		{"action": "act1_end_day", "target": "act1_bed"},
+		{"action": "core_go_door_shop_garden", "target": "door_shop_garden"},
+		{"action": "act1_fine_chore", "target": "miron"},
+		{"action": "act1_look_miron", "target": "miron"},
+		{"action": "act1_ask_mill", "target": "miron"},
+		{"action": "core_go_door_garden_shop", "target": "door_garden_shop"},
+		{"action": "act1_end_day", "target": "act1_bed"},
+		{"action": "act1_window_sit", "target": "window_seat"},
+		{"action": "act1_window_look", "target": "miron"},
+		{"action": "act1_window_turn_away", "target": "miron"},
+		{"action": "core_go_window_back", "target": "window_back"},
+		{"action": "act1_end_day", "target": "act1_bed"},
+		{"action": "core_go_door_shop_street", "target": "door_shop_street"},
+		{"action": "act1_marsh_road", "target": "act1_marsh_road"},
+		{"action": "act1_fog_call", "target": "act1_fog"},
+		{"action": "act1_marsh_back", "target": "act1_marsh_back"},
+		{"action": "core_go_door_street_shop", "target": "door_street_shop"},
+		{"action": "act1_end_day", "target": "act1_bed"},
+		{"action": "act1_look_hook", "target": "act1_hook"},
+		{"action": "act1_think_replaced", "target": "witch"},
+		{"action": "act1_end_day", "target": "act1_bed"}
+	],
+	"expect": {
+		"state": {"story.act": "act2", "magic.state": "failing", "npc.miron.place": "fog"},
+		"knows": [
+			"act1_bloom_admired", "act1_chore_turned", "act1_fogdew", "act1_not_at_mill", "act1_said_mill",
+			"act1_miron_left", "act1_fog_is_quiet", "act1_key_on_hook", "act1_replaced"
+		],
+		"operators": ["op.prologue_unwatched"]
+	}
+}
