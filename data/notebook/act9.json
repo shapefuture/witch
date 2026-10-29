@@ -1,0 +1,12 @@
+{
+	"act9_fog_dew": {"kind": "seen", "text": "note.act9.fog_dew"},
+	"act9_shadow_knot": {"kind": "seen", "text": "note.act9.shadow_knot"},
+	"act9_jars_in_tune": {"kind": "heard", "text": "note.act9.jars_in_tune"},
+	"act9_clocks_stopped": {"kind": "seen", "text": "note.act9.clocks_stopped"},
+	"act9_bell_rang": {"kind": "heard", "text": "note.act9.bell_rang"},
+	"act9_shadow_at_door": {"kind": "seen", "text": "note.act9.shadow_at_door"},
+	"act9_reading_fog": {"kind": "inferred", "text": "note.act9.reading_fog"},
+	"act9_reading_shadow": {"kind": "inferred", "text": "note.act9.reading_shadow"},
+	"act9_reading_magic": {"kind": "inferred", "text": "note.act9.reading_magic"},
+	"act9_what_happened": {"kind": "untestable", "text": "note.act9.what_happened"}
+}

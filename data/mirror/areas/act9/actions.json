@@ -1,0 +1,181 @@
+[
+	{
+		"id": "act9_look_bell_rope",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act9.look_bell_rope",
+		"valid_targets": ["act9_bell_rope"],
+		"once_key": "act9_look_bell_rope",
+		"preconditions": {"story.act": "act9", "witch.place": "shop"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act9_look_bell_rope.knot",
+				"observed": {"outcome": "knot_seen"},
+				"knowledge_effects": [
+					{"id": "act9_shadow_knot", "proposition": {"knot": "tied_like_an_ear_on_the_bell_rope"}, "status": "ESTABLISHED", "scope": "shop"},
+					{"id": "act9_reading_shadow", "proposition": {"reading": "shadow_was_here"}, "status": "SUPPORTED", "scope": "shop"}
+				],
+				"evidence": [
+					{"type": "DIRECT", "payload": {"saw": "knot_tied_like_an_ear_on_the_bell_rope"}},
+					{"type": "INDIRECT", "payload": {"saw": "the_knot_matches_the_one_on_the_swing_and_the_coin"}}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act9_bell_rope"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act9.bell_rope"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act9_listen_jars",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act9.listen_jars",
+		"valid_targets": ["act7_jars"],
+		"once_key": "act9_listen_jars",
+		"preconditions": {"story.act": "act9", "witch.place": "shop"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act9_listen_jars.in_tune",
+				"observed": {"outcome": "jars_in_tune"},
+				"knowledge_effects": [
+					{"id": "act9_jars_in_tune", "proposition": {"jars": "hum_one_note_in_tune"}, "status": "ESTABLISHED", "scope": "shop"},
+					{"id": "act9_reading_magic", "proposition": {"reading": "my_magic_did_it"}, "status": "SUPPORTED", "scope": "shop"}
+				],
+				"evidence": [
+					{"type": "DIRECT", "payload": {"heard": "jars_hum_one_note_in_tune"}},
+					{"type": "INDIRECT", "payload": {"heard": "the_note_is_the_one_my_magic_left_in_the_jars"}}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act7_jars"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act9.jars"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act9_look_doorway",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act9.look_doorway",
+		"valid_targets": ["act9_doorway"],
+		"once_key": "act9_look_doorway",
+		"preconditions": {"story.act": "act9", "witch.place": "shop"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act9_look_doorway.empty",
+				"observed": {"outcome": "bell_rang_nobody_there"},
+				"knowledge_effects": [
+					{"id": "act9_bell_rang", "proposition": {"bell": "rang_with_nobody_at_the_door"}, "status": "ESTABLISHED", "scope": "shop"},
+					{"id": "act9_what_happened", "proposition": {"event": "what_happened_at_dusk"}, "status": "UNRESOLVED_BY_DESIGN", "scope": "global"}
+				],
+				"evidence": [{"type": "DIRECT", "payload": {"heard": "bell_rang_and_the_doorway_was_empty"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act9_doorway"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.act9.doorway_empty"},
+					{"kind": "line", "speaker": "witch", "key": "line.act9.doorway_witch"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act9_wait_at_door",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act9.wait_at_door",
+		"valid_targets": ["act9_doorway"],
+		"once_key": "act9_wait_at_door",
+		"time_cost": 2,
+		"preconditions": {"story.act": "act9", "witch.place": "shop", "$neq": {"npc.shadow.place": "shop"}},
+		"prediction_signature": ["WAIT", "EXPECT_DISTANCE"],
+		"response_contracts": [
+			{
+				"id": "act9_wait_at_door.arrives",
+				"observed": {"outcome": "shadow_at_the_door", "npc_expected": "EXPECT_RECIPROCITY"},
+				"effects": {"npc_state": {"shadow": {"place": "shop", "stance": "waiting"}}},
+				"knowledge_effects": [{"id": "act9_shadow_at_door", "proposition": {"shadow": "stands_in_the_open_doorway"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "shadow_stood_in_the_open_doorway"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "shadow"]},
+					{"kind": "dialogue", "title": "act9_shadow_hi", "npc": "shadow"},
+					{"kind": "camera", "mode": "consequence", "focus": ["shadow"]}
+				]
+			}
+		]
+	},
+	{
+		"id": "act9_look_step",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act9.look_step",
+		"valid_targets": ["act9_step"],
+		"once_key": "act9_look_step",
+		"preconditions": {"story.act": "act9", "witch.place": "street"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act9_look_step.dew",
+				"observed": {"outcome": "dew_on_the_step"},
+				"knowledge_effects": [
+					{"id": "act9_fog_dew", "proposition": {"step": "wet_with_fog_dew"}, "status": "ESTABLISHED", "scope": "street"},
+					{"id": "act9_reading_fog", "proposition": {"reading": "the_fog_did_it"}, "status": "SUPPORTED", "scope": "street"}
+				],
+				"evidence": [
+					{"type": "DIRECT", "payload": {"saw": "fog_dew_on_the_step_though_it_has_not_rained"}},
+					{"type": "INDIRECT", "payload": {"saw": "fog_dew_is_the_fog_dew_she_knows"}}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act9_step"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act9.step"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act9_look_clocks",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act9.look_clocks",
+		"valid_targets": ["act9_clocks"],
+		"once_key": "act9_look_clocks",
+		"preconditions": {"story.act": "act9", "witch.place": "street"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act9_look_clocks.stopped",
+				"observed": {"outcome": "clocks_stopped"},
+				"knowledge_effects": [{"id": "act9_clocks_stopped", "proposition": {"clocks": "stopped_on_one_second"}, "status": "ESTABLISHED", "scope": "street"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "clock_face_stopped_on_one_second_and_seemed_to_smile"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act9_clocks"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.act9.clocks"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act9_go_with_shadow",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act9.go_with_shadow",
+		"valid_targets": ["shadow"],
+		"once_key": "act9_go_with_shadow",
+		"preconditions": {"story.act": "act9", "witch.place": "shop", "npc.shadow.place": "shop"},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "act9_go_with_shadow.invitation",
+				"observed": {"outcome": "she_goes", "motive": "unknown", "npc_expected": "EXPECT_RECIPROCITY"},
+				"effects": {"world": {"story": {"act": "postgame"}}},
+				"presentation": [
+					{"kind": "dialogue", "title": "act9_shadow_come", "npc": "shadow"},
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "ending"}
+				]
+			}
+		]
+	}
+]

@@ -1,0 +1,14 @@
+[
+	{
+		"id": "act9_event",
+		"priority": 50,
+		"once_key": "act9_event",
+		"preconditions": {"story.act": "act9"},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act9.event_1"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act9.event_2"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act9.event_3"}
+		]
+	}
+]
