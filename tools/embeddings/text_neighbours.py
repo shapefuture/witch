@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Meaning-level checks over the text table (data/text/ru.json), using nim.py's embeddings. Offline, for authors.
+"""Meaning-level checks over the text table (data/text/ru.json and data/text/ru/*.json), using nim.py's embeddings. Offline, for authors.
 
     python3 tools/embeddings/text_neighbours.py dupes            # lines that say nearly the same thing
     python3 tools/embeddings/text_neighbours.py rhymes           # same meaning, different words (motif candidates)
@@ -26,11 +26,18 @@ sys.path.insert(0, HERE)
 from nim import REPO, embed, rerank  # noqa: E402
 
 TEXT = os.path.join(REPO, 'data', 'text', 'ru.json')
+FRAGMENTS = os.path.join(REPO, 'data', 'text', 'ru')
 
 
 def lines():
-    table = json.load(open(TEXT, encoding='utf-8'))
-    return [(k, v) for k, v in table.items() if not k.startswith('_') and isinstance(v, str) and v.strip()]
+    """Every line of the text table: ru.json plus the area fragments in data/text/ru/."""
+    paths = [TEXT] + (sorted(os.path.join(FRAGMENTS, f) for f in os.listdir(FRAGMENTS) if f.endswith('.json'))
+                      if os.path.isdir(FRAGMENTS) else [])
+    out = []
+    for path in paths:
+        table = json.load(open(path, encoding='utf-8'))
+        out += [(k, v) for k, v in table.items() if not k.startswith('_') and isinstance(v, str) and v.strip()]
+    return out
 
 
 def words(text):

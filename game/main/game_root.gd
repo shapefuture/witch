@@ -274,10 +274,12 @@ func _run_debug_sim() -> void:
 		paths = SimulationRunner.list_scripts()
 	var failed := false
 	for path in paths:
+		var script := SimulationRunner.load_script(path)
 		var fresh := MirrorRuntime.new()
+		fresh.include_areas = SimulationRunner.wants_areas(script)
 		fresh.new_game()
 		var runner := SimulationRunner.new()
-		var outcome := runner.run(fresh, SimulationRunner.load_script(path))
+		var outcome := runner.run(fresh, script)
 		print("=== %s: %s" % [path.get_file(), "OK" if outcome["ok"] else "FAILED"])
 		for line in runner.report(fresh):
 			print(line)
@@ -393,7 +395,7 @@ func _play_line(entry: Dictionary) -> void:
 func _play_dialogue(entry: Dictionary) -> void:
 	if dialogue == null or not dialogue.is_ready():
 		return
-	await dialogue.run(str(entry.get("title", "")), _dialogue_sink)
+	await dialogue.run(str(entry.get("title", "")), _dialogue_sink, null, str(entry.get("npc", "tomas")))
 
 func _dialogue_sink(speaker: String, text: String, _responses: Array) -> int:
 	await subtitles.show_line(speaker, text, dialogue.current_speaker_id)

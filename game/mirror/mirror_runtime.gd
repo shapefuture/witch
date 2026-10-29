@@ -23,6 +23,9 @@ var engine: MirrorEngine
 var minds: MirrorMinds
 var catalog_dir: String = MirrorCatalog.DEFAULT_DIR
 var minds_dir: String = MindsCatalog.DEFAULT_DIR
+# The content scope: false is the archive hall alone (root files); true adds every area package (the whole game).
+# Set it before setup() or new_game().
+var include_areas := false
 var catalog_report: Dictionary = {}
 var minds_report: Dictionary = {}
 var queue := ActionQueue.new()
@@ -41,14 +44,14 @@ func _ready() -> void:
 func setup(dir: String = "") -> Dictionary:
 	if not dir.is_empty():
 		catalog_dir = dir
-	var built := MirrorCatalog.build_engine(catalog_dir)
+	var built := MirrorCatalog.build_engine(catalog_dir, include_areas)
 	engine = built["engine"]
 	catalog_report = built["report"]
 	engine.transaction_committed.connect(func(result: Dictionary) -> void: committed.emit(result))
 	engine.transaction_failed.connect(func(result: Dictionary) -> void: failed.emit(result))
 	for error in catalog_report.get("errors", []):
 		push_error("Mirror catalog: %s" % error)
-	minds_report = MindsCatalog.load_dir(minds_dir)
+	minds_report = MindsCatalog.load_dir(minds_dir, include_areas)
 	minds = MirrorMinds.new(engine, minds_report["data"])
 	for error in minds_report.get("errors", []):
 		push_error("Minds catalog: %s" % error)

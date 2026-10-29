@@ -24,7 +24,7 @@ const PLAYER := "player"
 
 # ---- loading ------------------------------------------------------------------------------------------------
 
-static func load_catalog(mirror_dir: String = MIRROR_DIR) -> Dictionary:
+static func load_catalog(mirror_dir: String = MIRROR_DIR, areas: bool = false) -> Dictionary:
 	var actions: Array = []
 	var actions_dir := mirror_dir.path_join("actions")
 	var files := Array(DirAccess.get_files_at(actions_dir))
@@ -32,15 +32,32 @@ static func load_catalog(mirror_dir: String = MIRROR_DIR) -> Dictionary:
 	for file_name: String in files:
 		if file_name.ends_with(".json"):
 			actions.append_array(_read(actions_dir.path_join(file_name), []))
+	# The area packages (docs/engine/CONTENT_PACKAGES.md), merged the way the loaders merge them; a duplicate is the
+	# loaders' error to report, so it is ignored here.
+	var areas_dir := mirror_dir.path_join(ContentFiles.AREAS) if areas else ""
+	for path in ContentFiles.area_paths(areas_dir, "actions"):
+		actions.append_array(_read(path, []))
+	var hypotheses: Array = _read(mirror_dir.path_join("hypotheses.json"), [])
+	for path in ContentFiles.area_paths(areas_dir, "hypotheses"):
+		hypotheses.append_array(_read(path, []))
 	var minds_dir := mirror_dir.path_join("minds")
+	var raw: Dictionary = (_read(minds_dir.path_join("minds.json"), {}) as Dictionary).duplicate(true)
+	raw["rules"] = _read(minds_dir.path_join("world_rules.json"), [])
+	raw["interpretations"] = _read(minds_dir.path_join("interpretations.json"), [])
+	raw["conventions"] = _read(minds_dir.path_join("conventions.json"), [])
+	MindsCatalog.merge_areas(raw, areas_dir, [])
+	var lists := {}
+	for key in ["rules", "interpretations", "conventions"]:
+		lists[key] = raw[key]
+		raw.erase(key)
 	return {
 		"actions": actions,
-		"hypotheses": _read(mirror_dir.path_join("hypotheses.json"), []),
+		"hypotheses": hypotheses,
 		"minds": {
-			"world": _read(minds_dir.path_join("minds.json"), {}),
-			"rules": _read(minds_dir.path_join("world_rules.json"), []),
-			"interpretations": _read(minds_dir.path_join("interpretations.json"), []),
-			"conventions": _read(minds_dir.path_join("conventions.json"), []),
+			"world": raw,
+			"rules": lists["rules"],
+			"interpretations": lists["interpretations"],
+			"conventions": lists["conventions"],
 		},
 	}
 

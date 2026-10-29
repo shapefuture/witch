@@ -1,14 +1,15 @@
 extends TestCase
 
-# All player-visible Russian lives in data/text/ru.json and nowhere else, so text can be
-# edited by hand or by tool in one file. These tests enforce it; tools/text_tool.py is the
-# same check plus sort / CSV round-tripping.
+# All player-visible Russian lives in the text table and nowhere else: data/text/ru.json plus one fragment per
+# content area, data/text/ru/*.json (docs/engine/CONTENT_PACKAGES.md). These tests enforce it; tools/text_tool.py is
+# the same check plus sort / CSV round-tripping.
 
 # Every text file of the project, not only the game's own folders (audit L12): themes, configs, the vendored plugin,
 # the tools and the docs all count. A file that may hold Cyrillic on purpose is named in ALLOWED, deliberately.
 const SCAN_ROOTS := ["res://game", "res://autoload", "res://render", "res://data", "res://tests", "res://addons", "res://tools", "res://docs", "res://assets"]
 const SCAN_EXTENSIONS := ["gd", "json", "dialogue", "tscn", "tres", "cfg", "godot", "gdshader", "md", "py", "po"]
 const TABLE := "res://data/text/ru.json"
+const FRAGMENTS := "res://data/text/ru/"
 const ALLOWED := [
 	"res://addons/dialogue_manager/l10n/uk.po",
 	"res://docs/PLAN.md",
@@ -35,23 +36,28 @@ func test_no_russian_prose_outside_the_text_table() -> void:
 		_files(root, files)
 	var offenders: Array[String] = []
 	for path in files:
-		if path == TABLE or path in ALLOWED:
+		if path == TABLE or path.begins_with(FRAGMENTS) or path in ALLOWED:
 			continue
 		if cyrillic.search(FileAccess.get_file_as_string(path)) != null:
 			offenders.append(path)
 	eq(offenders, [], "Russian text must live only in data/text/ru.json")
 
 func test_table_is_a_flat_object_of_nonempty_strings() -> void:
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(TABLE))
-	ok(parsed is Dictionary, "a JSON object")
+	var loaded := Localization.load_tables()
 	var empty: Array[String] = []
-	for key in parsed.keys():
-		if str(key).begins_with("_"):
+	for file: String in loaded["files"]:
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(file))
+		ok(parsed is Dictionary, "%s is a JSON object" % file)
+		if not parsed is Dictionary:
 			continue
-		ok(parsed[key] is String, "%s is a string" % key)
-		if str(parsed[key]).strip_edges().is_empty():
-			empty.append(str(key))
+		for key in parsed.keys():
+			if str(key).begins_with("_"):
+				continue
+			ok(parsed[key] is String, "%s is a string" % key)
+			if str(parsed[key]).strip_edges().is_empty():
+				empty.append(str(key))
 	eq(empty, [], "no empty strings")
+	eq(loaded["duplicates"], [], "no key is defined in two table files")
 
 func test_every_key_used_by_code_dialogue_and_data_exists() -> void:
 	var table := Localization.load_table()

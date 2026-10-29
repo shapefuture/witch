@@ -4,15 +4,16 @@ func test_every_authored_sim_script_passes_its_expectations() -> void:
 	var scripts := SimulationRunner.list_scripts()
 	ok(scripts.size() >= 5, "found the authored sims")
 	for path in scripts:
-		var r := GameFixtures.runtime()
-		var outcome := SimulationRunner.new().run(r, SimulationRunner.load_script(path))
+		var script := SimulationRunner.load_script(path)
+		var r := GameFixtures.runtime(SimulationRunner.wants_areas(script))
+		var outcome := SimulationRunner.new().run(r, script)
 		ok(outcome["ok"], "%s: failed_step=%d expect=%s" % [path.get_file(), outcome["failed_step"], outcome["expect_failures"]])
 
 func test_a_sim_is_deterministic_same_steps_same_chain() -> void:
 	for path in SimulationRunner.list_scripts():
 		var script := SimulationRunner.load_script(path)
-		var a := SimulationRunner.new().run(GameFixtures.runtime(), script)
-		var b := SimulationRunner.new().run(GameFixtures.runtime(), script)
+		var a := SimulationRunner.new().run(GameFixtures.runtime(SimulationRunner.wants_areas(script)), script)
+		var b := SimulationRunner.new().run(GameFixtures.runtime(SimulationRunner.wants_areas(script)), script)
 		eq(a["head_hash"], b["head_hash"], "%s replays to an identical event chain" % path.get_file())
 		eq(a["event_count"], b["event_count"], "%s event count" % path.get_file())
 
@@ -46,17 +47,34 @@ func test_unmet_expectations_are_reported() -> void:
 	ok(not outcome["ok"], "not ok")
 	eq(outcome["expect_failures"].size(), 3, "each unmet expectation named")
 
+# Where to cut a run of `count` steps: every step for a short script; for a long one (a whole-game playthrough) the
+# first, the last and evenly spaced cuts between, so the check stays linear in the script's length.
+const MAX_CUTS := 12
+
+func _cuts(count: int) -> Array[int]:
+	var out: Array[int] = []
+	if count - 1 <= MAX_CUTS:
+		for cut in range(1, count):
+			out.append(cut)
+		return out
+	for i in MAX_CUTS:
+		var cut := 1 + int(round(float(i) * float(count - 2) / float(MAX_CUTS - 1)))
+		if not out.has(cut):
+			out.append(cut)
+	return out
+
 func test_save_mid_run_then_resume_equals_an_uninterrupted_run() -> void:
 	# The save/reload determinism requirement: state -> save -> reload -> identical canonical state.
 	for path in SimulationRunner.list_scripts():
 		var script := SimulationRunner.load_script(path)
 		var steps: Array = script["steps"]
-		var whole := SimulationRunner.new().run(GameFixtures.runtime(), script)
-		for cut in range(1, steps.size()):
-			var first := GameFixtures.runtime()
+		var whole := SimulationRunner.new().run(GameFixtures.runtime(SimulationRunner.wants_areas(script)), script)
+		for cut in _cuts(steps.size()):
+			var first := GameFixtures.runtime(SimulationRunner.wants_areas(script))
 			SimulationRunner.new().run(first, script, cut)
 			var saved := SaveCodec.encode(first.engine, {"cut": cut})
 			var second: MirrorRuntime = track(MirrorRuntime.new())
+			second.include_areas = SimulationRunner.wants_areas(script)
 			second.setup()
 			var loaded := SaveGame.load_text(second.engine, saved)
 			ok(loaded.get("ok", false), "%s cut %d loads: %s" % [path.get_file(), cut, JSON.stringify(loaded)])

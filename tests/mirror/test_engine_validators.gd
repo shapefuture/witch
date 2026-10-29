@@ -47,7 +47,7 @@ func test_the_known_findings_on_the_authored_game_are_advisory_warnings() -> voi
 		ok(_containing(routes, "'%s'" % claim_id).size() == 1, "%s is reported as fragile" % claim_id)
 
 func test_the_authored_text_passes_the_vocabulary_lint() -> void:
-	var texts: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/text/ru.json"))
+	var texts: Dictionary = Localization.load_table()
 	var report := MirrorValidator.new().validate_player_text(_game_engine(), texts)
 	eq(report["errors"], [], "no engine identifiers or vocabulary in ru.json")
 	ok(report["stats"]["texts"] > 50, "the lint read the whole table (%d texts)" % report["stats"]["texts"])

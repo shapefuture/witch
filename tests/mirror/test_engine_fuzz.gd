@@ -34,6 +34,10 @@ func _catalog_sources() -> Dictionary:
 	for file_name in DirAccess.get_files_at(SOURCE + "/actions"):
 		if file_name.ends_with(".json"):
 			sources["actions/" + file_name] = FileAccess.get_file_as_string(SOURCE + "/actions/" + file_name)
+	# The area packages (docs/engine/CONTENT_PACKAGES.md): each one's catalog fragments.
+	for name in ["world", "actions", "operators", "storylets", "hypotheses"]:
+		for path in ContentFiles.area_paths(SOURCE + "/" + ContentFiles.AREAS, name):
+			sources[path.trim_prefix(SOURCE + "/")] = FileAccess.get_file_as_string(path)
 	return sources
 
 func _write_work(path: String, text: String) -> void:
@@ -131,7 +135,7 @@ func test_seeded_catalog_mutations_are_refused_or_play_and_reload_intact() -> vo
 	names.sort()
 	var action_files: Array = []
 	for name in names:
-		if name.begins_with("actions/"):
+		if (name.begins_with("actions/") or name.ends_with("/actions.json")) and not (JSON.parse_string(sources[name]) as Array).is_empty():
 			action_files.append(name)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 4242
@@ -148,7 +152,7 @@ func test_seeded_catalog_mutations_are_refused_or_play_and_reload_intact() -> vo
 		for other in names:
 			_write_work(other, JSON.stringify(entries, "\t") if other == name else sources[other])
 		var engine := MirrorEngine.new()
-		var report := MirrorCatalog.load_into(engine, WORK)
+		var report := MirrorCatalog.load_into(engine, WORK, true)
 		var tag := "%s/%s#%d" % [kind, name, index]
 		if not report["ok"]:
 			refused += 1
@@ -161,7 +165,7 @@ func test_seeded_catalog_mutations_are_refused_or_play_and_reload_intact() -> vo
 		ok(engine.event_store.verify_chain()["ok"], "%s: the chain verifies after %d committed actions" % [tag, committed])
 		var text := engine.save_json()
 		var twin := MirrorEngine.new()
-		var twin_report := MirrorCatalog.load_into(twin, WORK)
+		var twin_report := MirrorCatalog.load_into(twin, WORK, true)
 		ok(twin_report["ok"], "%s: the same catalog loads twice" % tag)
 		var reloaded := twin.load_json(text)
 		ok(reloaded.get("ok", false), "%s: its save reloads: %s" % [tag, JSON.stringify(reloaded)])
@@ -171,6 +175,10 @@ func test_seeded_catalog_mutations_are_refused_or_play_and_reload_intact() -> vo
 	ok(kinds_refused.has("status_unknown") and kinds_refused.has("unknown_action_type"), "bad names are refused by the loader")
 	for name in names:
 		DirAccess.remove_absolute(WORK + "/" + name)
+	for name in names:
+		if name.begins_with(ContentFiles.AREAS + "/"):
+			DirAccess.remove_absolute((WORK + "/" + name).get_base_dir())
+	DirAccess.remove_absolute(WORK + "/" + ContentFiles.AREAS)
 	DirAccess.remove_absolute(WORK + "/actions")
 
 # A seeded byte-level edit to a save text: replace, insert, delete, swap, truncate or duplicate.

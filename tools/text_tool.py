@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Maintenance tool for the single Russian text table, data/text/ru.json.
+"""Maintenance tool for the Russian text table: data/text/ru.json plus one fragment per content area,
+data/text/ru/*.json (docs/engine/CONTENT_PACKAGES.md). A key is defined in exactly one of those files.
 
-Every player-visible string lives in that one file. Content and code refer to it by key:
+Every player-visible string lives in the table. Content and code refer to it by key:
   * data/mirror/**/*.json   -> "label_key" and presentation "key" fields
   * data/conversations/*.dialogue -> speaker ids and line text that is itself a key
   * *.gd                    -> tr("some.key")
@@ -9,9 +10,9 @@ Every player-visible string lives in that one file. Content and code refer to it
 Commands
   check                 missing keys (error), unused keys (warning), empty values (error),
                         Russian prose anywhere outside the table (error)
-  sort                  rewrite ru.json in canonical group order (stable, diff friendly)
+  sort                  rewrite each table file in canonical group order (stable, diff friendly)
   export-csv FILE       key,text rows for spreadsheets / translators / bulk tools
-  import-csv FILE       update ru.json from such a file (unknown keys are refused)
+  import-csv FILE       update the file that defines each key (unknown keys are refused)
 
 No third-party dependencies. Run from anywhere: paths resolve relative to the repo root.
 """
@@ -24,24 +25,56 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TABLE = ROOT / "data" / "text" / "ru.json"
+FRAGMENTS = ROOT / "data" / "text" / "ru"
 GROUP_ORDER = ["ui", "menu", "opt", "obj", "speaker", "line", "dlg", "toy"]
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
 KEY = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$")
 
 
-def load_table():
+def table_files():
+    """The root table first, then the fragments in name order."""
+    return [TABLE] + (sorted(FRAGMENTS.glob("*.json")) if FRAGMENTS.is_dir() else [])
+
+
+def load_file(path):
     def no_dupes(pairs):
         seen = collections.OrderedDict()
         for key, value in pairs:
             if key in seen:
-                raise SystemExit(f"duplicate key in {TABLE.name}: {key}")
+                raise SystemExit(f"duplicate key in {path.relative_to(ROOT)}: {key}")
             seen[key] = value
         return seen
-    return json.loads(TABLE.read_text(encoding="utf-8"), object_pairs_hook=no_dupes)
+    return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=no_dupes)
 
 
-def save_table(table):
-    TABLE.write_text(json.dumps(table, indent="\t", ensure_ascii=False) + "\n", encoding="utf-8")
+def load_tables():
+    """[(path, table)] for every table file. A content key defined in two files is refused."""
+    out, owner = [], {}
+    for path in table_files():
+        table = load_file(path)
+        for key in table:
+            if key.startswith("_"):
+                continue
+            if key in owner:
+                raise SystemExit(f"key {key} is defined in {owner[key].relative_to(ROOT)} and {path.relative_to(ROOT)}")
+            owner[key] = path
+        out.append((path, table))
+    return out
+
+
+def load_table():
+    """The merged table (keys starting with _ are each file's notes and are dropped, except the root's)."""
+    merged = collections.OrderedDict()
+    for path, table in load_tables():
+        for key, value in table.items():
+            if key.startswith("_") and path != TABLE:
+                continue
+            merged[key] = value
+    return merged
+
+
+def save_file(path, table):
+    path.write_text(json.dumps(table, indent="\t", ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 def referenced_keys():
@@ -98,7 +131,7 @@ def prose_outside_table():
     for folder, pattern in (("game", "*.gd"), ("autoload", "*.gd"), ("render", "*.gd"), ("render", "*.gdshader"),
                             ("data", "*.json"), ("data", "*.dialogue"), ("tests", "*.gd"), ("game", "*.tscn")):
         for path in (ROOT / folder).rglob(pattern):
-            if path == TABLE:
+            if path == TABLE or path.parent == FRAGMENTS:
                 continue
             if CYRILLIC.search(path.read_text(encoding="utf-8")):
                 offenders.append(str(path.relative_to(ROOT)))
@@ -123,7 +156,7 @@ def cmd_check():
         if key not in refs:
             warnings.append(f"unused key '{key}'")
     for path in prose_outside_table():
-        errors.append(f"Russian text outside {TABLE.name}: {path}")
+        errors.append(f"Russian text outside the text table: {path}")
     for line in errors:
         print("ERROR  ", line)
     for line in warnings:
@@ -138,14 +171,16 @@ def sort_key(key):
 
 
 def cmd_sort():
-    table = load_table()
-    about = {k: v for k, v in table.items() if k.startswith("_")}
-    content = {k: v for k, v in table.items() if not k.startswith("_")}
-    ordered = collections.OrderedDict(about)
-    for key in sorted(content, key=sort_key):
-        ordered[key] = content[key]
-    save_table(ordered)
-    print(f"sorted {len(content)} strings")
+    total = 0
+    for path, table in load_tables():
+        about = {k: v for k, v in table.items() if k.startswith("_")}
+        content = {k: v for k, v in table.items() if not k.startswith("_")}
+        ordered = collections.OrderedDict(about)
+        for key in sorted(content, key=sort_key):
+            ordered[key] = content[key]
+        save_file(path, ordered)
+        total += len(content)
+    print(f"sorted {total} strings")
     return 0
 
 
@@ -162,21 +197,23 @@ def cmd_export(path):
 
 
 def cmd_import(path):
-    table = load_table()
+    tables = load_tables()
+    owner = {key: table for _, table in tables for key in table if not key.startswith("_")}
     updated, unknown = 0, []
     with open(path, encoding="utf-8", newline="") as handle:
         for row in csv.DictReader(handle):
             key, text = row["key"], row["text"]
-            if key not in table:
+            if key not in owner:
                 unknown.append(key)
-            elif table[key] != text:
-                table[key] = text
+            elif owner[key][key] != text:
+                owner[key][key] = text
                 updated += 1
     if unknown:
         for key in unknown:
             print("ERROR   unknown key", key)
         return 1
-    save_table(table)
+    for file_path, table in tables:
+        save_file(file_path, table)
     print(f"updated {updated} strings")
     return 0
 

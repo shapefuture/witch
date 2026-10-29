@@ -53,9 +53,13 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 
 ## Rules that are enforced by tests
 
-- **All player-visible text is in `data/text/ru.json`** and nowhere else. Catalog, code and
-  `.dialogue` files reference keys (`tr("ui.paused")`, `label_key`, a dialogue line that *is* a
-  key). No Cyrillic in any other file: `tests/mirror/test_text_single_source.gd`.
+- **All player-visible text is in the text table**: `data/text/ru.json` plus one fragment per content area,
+  `data/text/ru/<area>.json`, and nowhere else. Catalog, code and `.dialogue` files reference keys
+  (`tr("ui.paused")`, `label_key`, a dialogue line that *is* a key). A key is defined in one file only. No Cyrillic in
+  any other file: `tests/mirror/test_text_single_source.gd`.
+- **Content is split into area packages** (`docs/engine/CONTENT_PACKAGES.md`): `data/mirror/areas/<area>/` holds an
+  area's catalog and Minds fragments, merged after the root files; a second definition of an id, entity, place, key or
+  dialogue title is an error. Parallel authors own whole areas, never shared files.
 - **The Mirror catalog (`data/mirror/`) contains ids and keys, never prose**, so rewording never
   changes the fingerprint saves are bound to.
 - The action ontology (LOOK/ASK/SHOW/WAIT/GO/CAST) is never shown to the player.

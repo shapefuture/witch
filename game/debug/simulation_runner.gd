@@ -186,6 +186,10 @@ static func load_script(path: String) -> Dictionary:
 		return {}
 	return json.data
 
+# A script that says "scope": "game" runs against the whole game (every area package); the default is the hall.
+static func wants_areas(script: Dictionary) -> bool:
+	return str(script.get("scope", "hall")) == "game"
+
 static func list_scripts() -> Array[String]:
 	var out: Array[String] = []
 	for file_name in DirAccess.get_files_at(SIM_DIR):
