@@ -300,3 +300,19 @@ Tasks live in beads under the stream-L epic.
 | L-audit (theater audit) | report only: `docs/qa/THEATER_AUDIT.md`; fixes go to the integrator |
 | L-brows | `tools/characters/ref/witch_face.png`, `assets/characters/witch.glb` |
 | L-live (coordinator in the hall, X13) | integrator: `game/main/game_root.gd` |
+
+## 15. Stream M: the whole game, from the bible (added 2026-10-29)
+
+The user supplied the narrative bible (`docs/design/BIBLE.md`), which answers DESIGN-FREEZE. The buildable design is
+`docs/design/GAME_SPEC.md`: decisions X21 to X40 (guesses, reviewable), the places, the shared world state of the
+`core` area, the presentation contracts, the authoring rules, the nine acts and the postgame, and the workcells. Voices
+and reserved phrases: `docs/design/VOICES.md`. What must never become false, with a verifier for each:
+`architecture/constitution.json` (checked by `tests/design/test_constitution.gd`). Content is split into area
+packages (`docs/engine/CONTENT_PACKAGES.md`) so the workcells never edit the same file. Tracker: epic `witch-29y.13`,
+one task per workcell (FW, SYS, A, B, C, D, ART, CHARS, QA).
+
+The method follows the three skills the user named: full-plan delivery (one tracker, frozen contracts, disjoint
+write sets, an integrator who merges after an independent check), the gauntlet loop for anything visual (a separate
+harsh critic picks blind between ours and the reference image), and AAA v7.1 (a constitution of hard invariants,
+workcells in isolated worktrees, deterministic simulation in the verification ladder). Art is limited by the free
+Hugging Face quota (about four plates a day), so every place plays on a stand-in stage until its plate exists.

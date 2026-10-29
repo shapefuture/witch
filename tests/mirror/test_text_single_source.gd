@@ -15,6 +15,8 @@ const ALLOWED := [
 	"res://docs/PLAN.md",
 	"res://docs/art/STYLE_BIBLE.md",
 	"res://docs/design/BIBLE.md",
+	"res://docs/design/GAME_SPEC.md",
+	"res://docs/design/VOICES.md",
 	"res://docs/design/PREPRODUCTION.md",
 	"res://tools/text_tool.py",
 ]
