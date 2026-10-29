@@ -450,6 +450,52 @@ func _on_prop_answered(prop_id: String, _reaction: String, sound: String, say: S
 	if not say.is_empty():
 		prop_said.emit(prop_id, say)
 
+# ---- the room slot (game/world/room_slot.gd): adapters over the painting, its walk and its props ----------
+
+# The painted room is the room of Mirror's "clearing": its toy box holds the globe, the statue and the lamp that
+# data/mirror/minds knows by name.
+const MIRROR_ROOM_ID := "clearing"
+
+func mirror_room_id() -> String:
+	return MIRROR_ROOM_ID
+
+func is_walkable(point: Vector3) -> bool:
+	return walk != null and walk.walkable != null and walk.walkable.is_standable(point.x, point.z)
+
+# room.json gives the footprints of the toy box's solid things, not their heights: a footprint hides at any height.
+func is_occluded(from: Vector3, to: Vector3) -> bool:
+	if walk == null or walk.walkable == null:
+		return false
+	for obstacle: Variant in walk.walkable.obstacles:
+		var at: Array = obstacle["at"]
+		if RoomSlot.segment_hits_cylinder(from, to, Vector2(float(at[0]), float(at[1])), float(obstacle["radius"]), INF):
+			return true
+	return false
+
+# A named place in world space: a character where she stands, or a prop at the depth its painting is at.
+func anchor(id: String) -> Variant:
+	if actors.has(id):
+		return (actors[id] as Node3D).position
+	for prop in props:
+		if prop.prop_id == id:
+			return pixel_at_depth(Vector2(prop.rect.get_center()), prop.depth)
+	return null
+
+func stage_actors() -> Dictionary:
+	return actors.duplicate()
+
+func request_reaction(target_id: String, reaction: String) -> bool:
+	for prop in props:
+		if prop.prop_id == target_id:
+			prop.play(reaction)
+			return true
+	return false
+
+# The painting's own camera is the only shot it has: a bolted frame, never cut.
+func cut_shots() -> Array[String]:
+	var out: Array[String] = ["wide"]
+	return out
+
 # For checking the room at rest: with `on`, the painting is drawn as the plate itself and the cutout cards are
 # hidden, which must look exactly like the room with its cards at rest over plate_empty.
 func show_originals(on: bool) -> void:

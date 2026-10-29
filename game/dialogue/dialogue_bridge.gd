@@ -13,6 +13,10 @@ extends RefCounted
 # All wording resolves through tr() from data/text/ru.json (a line's text IS its key).
 
 const DEFAULT_RESOURCE := "res://data/conversations/tomas.dialogue"
+const CONVERSATIONS_DIR := "res://data/conversations"
+
+# title -> the .dialogue file that defines it (titles are unique across data/conversations, one file per area).
+static var _title_index: Dictionary = {}
 
 var engine: MirrorEngine
 var context: MirrorDialogueContext
@@ -38,6 +42,32 @@ func load_resource(path: String = DEFAULT_RESOURCE) -> Resource:
 		_resources[path] = load(path)
 	return _resources[path]
 
+# The file that defines `title`; DEFAULT_RESOURCE for a title no file defines (Dialogue Manager then reports it).
+static func resource_for_title(title: String) -> String:
+	if _title_index.is_empty():
+		var built := title_index()
+		for duplicate: String in built["duplicates"]:
+			push_error("DialogueBridge: dialogue title defined twice: %s" % duplicate)
+		_title_index = built["titles"]
+	return str(_title_index.get(title, DEFAULT_RESOURCE))
+
+# Reads the titles (`~ name` lines) of every .dialogue file: {"titles": {title: path}, "duplicates": ["title (path)"]}.
+# A title may be defined in one file only; the first one wins.
+static func title_index(dir: String = CONVERSATIONS_DIR) -> Dictionary:
+	var titles := {}
+	var duplicates: Array[String] = []
+	for path in ContentFiles.files_in(dir, "dialogue"):
+		for raw in FileAccess.get_file_as_string(path).split("\n"):
+			var line := raw.strip_edges()
+			if not line.begins_with("~ "):
+				continue
+			var title := line.substr(2).strip_edges()
+			if titles.has(title):
+				duplicates.append("%s (%s)" % [title, path])
+				continue
+			titles[title] = path
+	return {"titles": titles, "duplicates": duplicates}
+
 # Plays one title to its end. `sink` is called once per line and awaited:
 #   func(speaker: String, text: String, responses: Array[Dictionary]) -> int
 # `responses` is a list of {"id", "text", "allowed"}; the sink returns the chosen index when
@@ -47,7 +77,7 @@ func run(title: String, sink: Callable, resource: Resource = null, npc_id: Strin
 	if manager == null:
 		push_error("DialogueBridge: DialogueManager autoload not available")
 		return shown
-	var script := resource if resource != null else load_resource()
+	var script := resource if resource != null else load_resource(resource_for_title(title))
 	var states: Array = [{"ctx": context}]
 	var line = await manager.get_next_dialogue_line(script, title, states)
 	while line != null:

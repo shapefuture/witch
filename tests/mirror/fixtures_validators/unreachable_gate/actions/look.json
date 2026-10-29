@@ -1,0 +1,70 @@
+[
+	{
+		"id": "look_a",
+		"action_type": "LOOK",
+		"valid_targets": [
+			"machine"
+		],
+		"preconditions": {},
+		"response_contracts": [
+			{
+				"id": "look_a.seen",
+				"observed": {
+					"outcome": "done"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"key": "line.look_a_seen"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "machine_seen",
+						"status": "SUPPORTED",
+						"proposition": {
+							"fixture": "machine_seen"
+						}
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "ask_b",
+		"action_type": "ASK",
+		"valid_targets": [
+			"machine"
+		],
+		"preconditions": {},
+		"requires_claims": [
+			{
+				"id": "never_made",
+				"min_status": "SUPPORTED"
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "ask_b.said",
+				"observed": {
+					"outcome": "done"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"key": "line.ask_b_said"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "machine_explained",
+						"status": "SUPPORTED",
+						"proposition": {
+							"fixture": "machine_explained"
+						}
+					}
+				]
+			}
+		]
+	}
+]

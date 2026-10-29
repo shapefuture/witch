@@ -1,0 +1,34 @@
+[
+	{
+		"id": "leave",
+		"action_type": "GO",
+		"valid_targets": [
+			"clearing"
+		],
+		"preconditions": {
+			"clearing.departed": false
+		},
+		"response_contracts": [
+			{
+				"id": "leave.depart",
+				"observed": {
+					"outcome": "left"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"key": "line.leave_depart"
+					}
+				],
+				"knowledge_effects": [],
+				"effects": {
+					"world": {
+						"clearing": {
+							"departed": true
+						}
+					}
+				}
+			}
+		]
+	}
+]

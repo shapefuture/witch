@@ -19,7 +19,7 @@ extends Node
 #   --variant name [--fade s]   show the room in a plate variant ("dusk"), or crossfade to it over s seconds
 #   --cam x,y,z,tx,ty,tz[,fov] put the camera there, looking at t (capture aid: inspect the set)
 
-const SLOT := 1
+const SLOT := SaveGame.DEFAULT_SLOT
 
 # Injected by tests; otherwise the `Mirror` autoload is used.
 var runtime: MirrorRuntime
@@ -27,6 +27,8 @@ var args: Dictionary = {}
 # Headless tests and capture aids: advance subtitles by themselves, and shorten magic.
 var auto_advance := -1.0
 var magic_time_scale := 1.0
+# Mirror's clock in the live hall. Off in headless tests, so a run's event chain does not depend on how long it took.
+var run_clock := true
 
 var room: ArchiveHall
 var witch: Witch
@@ -35,6 +37,7 @@ var director: CameraDirector
 var input: IntentInput
 var probe: InteractionProbe
 var flow: InteractionFlow
+var live: LiveHallCoordinator
 var subtitles: SubtitleUI
 var surface: InteractionPresenter
 var pause_menu: PauseMenuUI
@@ -163,6 +166,16 @@ func _build() -> void:
 	flow.runtime = runtime
 	flow.surface = surface
 	add_child(flow)
+	# The hall is a live room (X13): its props are happenings committed through the Minds layer, its characters turn
+	# to what moved (LOOK_AT), and Mirror's clock runs while the game does. The room's lines come back through _present.
+	live = LiveHallCoordinator.new()
+	live.name = "LiveHall"
+	live.runtime = runtime
+	live.run_clock = run_clock
+	add_child(live)
+	var bridge := live.attach(room)
+	if bridge != null:
+		bridge.presentation_ready.connect(_present)
 
 	input.intent_emitted.connect(flow.handle)
 	surface.option_chosen.connect(flow.choose_option)
@@ -240,6 +253,15 @@ func _capture_then_quit() -> void:
 		await get_tree().process_frame
 	var image := get_viewport().get_texture().get_image()
 	var path := str(args["capture"])
+	# The arrival subtitle's box in the picture's own pixels, for the pixel check (tests/render/analyze_shots.gd).
+	var box: Variant = null
+	if subtitles.is_active() and subtitles.bubble().is_showing():
+		var rect := subtitles.bubble().screen_rect()
+		box = [rect.position.x, rect.position.y, rect.size.x, rect.size.y]
+	var sidecar := FileAccess.open(path.get_basename() + ".subtitle.json", FileAccess.WRITE)
+	if sidecar != null:
+		sidecar.store_string(JSON.stringify({"subtitle": box}))
+		sidecar.close()
 	var error := image.save_png(path)
 	print("CAPTURE %s %s (%s)" % [path, image.get_size(), "ok" if error == OK else "error %d" % error])
 	get_tree().quit(0 if error == OK else 1)
@@ -252,10 +274,12 @@ func _run_debug_sim() -> void:
 		paths = SimulationRunner.list_scripts()
 	var failed := false
 	for path in paths:
+		var script := SimulationRunner.load_script(path)
 		var fresh := MirrorRuntime.new()
+		fresh.include_areas = SimulationRunner.wants_areas(script)
 		fresh.new_game()
 		var runner := SimulationRunner.new()
-		var outcome := runner.run(fresh, SimulationRunner.load_script(path))
+		var outcome := runner.run(fresh, script)
 		print("=== %s: %s" % [path.get_file(), "OK" if outcome["ok"] else "FAILED"])
 		for line in runner.report(fresh):
 			print(line)
@@ -371,7 +395,7 @@ func _play_line(entry: Dictionary) -> void:
 func _play_dialogue(entry: Dictionary) -> void:
 	if dialogue == null or not dialogue.is_ready():
 		return
-	await dialogue.run(str(entry.get("title", "")), _dialogue_sink)
+	await dialogue.run(str(entry.get("title", "")), _dialogue_sink, null, str(entry.get("npc", "tomas")))
 
 func _dialogue_sink(speaker: String, text: String, _responses: Array) -> int:
 	await subtitles.show_line(speaker, text, dialogue.current_speaker_id)
@@ -421,8 +445,13 @@ func _on_load() -> void:
 	if result.get("ok", false):
 		room.apply_mirror_state(runtime.engine)
 		_sync_departure()
-		pause_menu.say(tr("ui.loaded"))
-		pause_menu.close()
+		if result.has("recovered"):
+			# A recovered game says so and stays open: the count is the notice.
+			var recovered: Dictionary = result["recovered"]
+			pause_menu.say(tr("ui.save_recovered") % [int(recovered["kept"]), int(recovered["of"])])
+		else:
+			pause_menu.say(tr("ui.loaded"))
+			pause_menu.close()
 	elif result.get("error", "") == "no_save":
 		pause_menu.say(tr("ui.no_save"))
 	else:

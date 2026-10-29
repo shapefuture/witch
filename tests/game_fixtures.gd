@@ -13,9 +13,11 @@ static func ensure_localization() -> void:
 	_localized = true
 
 # A fresh runtime with the authored catalog and the prologue recorded, exactly as a new game.
-static func runtime() -> MirrorRuntime:
+# `areas`: the whole game (every area package) instead of the archive hall alone.
+static func runtime(areas: bool = false) -> MirrorRuntime:
 	ensure_localization()
 	var r: MirrorRuntime = TestCase.track(MirrorRuntime.new())
+	r.include_areas = areas
 	var result := r.new_game()
 	assert(result.get("ok", false), "new_game failed: %s" % JSON.stringify(result))
 	return r

@@ -1,0 +1,30 @@
+{
+	"_about": "The whole game's places and people for the Minds layer (docs/design/GAME_SPEC.md sections 2 and 3). 'offstage' holds anyone whose npc_state.place is empty. Adjacency is where a sound carries. The archive hall's place 'clearing' and the holders player, raccoon and tomas are defined by the root minds.json. Owned by the integrator.",
+	"places": {
+		"shop": {"adjacent": ["street", "garden", "window", "attic", "basement"], "subjects": {}},
+		"window": {"adjacent": ["shop"], "subjects": {}},
+		"garden": {"adjacent": ["shop"], "subjects": {}},
+		"street": {"adjacent": ["shop", "observatory", "clearing"], "subjects": {}},
+		"observatory": {"adjacent": ["street"], "subjects": {}},
+		"attic": {"adjacent": ["shop"], "subjects": {}},
+		"fog_edge": {"adjacent": [], "subjects": {}},
+		"basement": {"adjacent": ["shop"], "subjects": {}},
+		"hotel": {"adjacent": ["clocktower", "threshold"], "subjects": {}},
+		"clocktower": {"adjacent": ["hotel", "garden_below"], "subjects": {}},
+		"garden_below": {"adjacent": ["clocktower"], "subjects": {}},
+		"threshold": {"adjacent": ["hotel"], "subjects": {}},
+		"offstage": {"adjacent": [], "subjects": {}}
+	},
+	"holders": {
+		"miron": {"tags": ["person"], "place": "garden"},
+		"shadow": {"tags": ["person"], "place": "offstage"},
+		"elian": {"tags": ["person"], "place": "offstage"},
+		"vera": {"tags": ["person"], "place": "street"},
+		"ilya": {"tags": ["person"], "place": "observatory"},
+		"janitor": {"tags": ["person"], "place": "offstage"},
+		"concierge": {"tags": ["person", "bird"], "place": "hotel"}
+	},
+	"communities": {
+		"town": {"members": ["vera", "elian", "ilya", "janitor", "tomas"]}
+	}
+}

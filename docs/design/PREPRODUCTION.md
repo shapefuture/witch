@@ -1,0 +1,64 @@
+# Pre-production: what must be decided before the build
+
+Phase: **pre-production.** The game is not being built yet. The user finalises the design and the narrative, and this
+phase collects what the build needs once they are final. Gameplay code, new rooms, new characters and generated art
+wait behind three gates:
+
+- **DESIGN-FREEZE**: the questions below are answered, or deliberately deferred.
+- **STYLE-LOCK**: met 2026-10-14. The look is fixed as in `STYLE_BIBLE.md` (anchored to the master prompt, `ps1p`): SF, SC1, SC3, SC5, SC6 and SC7 are settled, and rules R1 to R12 are accepted.
+- **HALL**: the archive hall is a demo scene that may or may not stay in the final game, decided at DESIGN-FREEZE. The grade and geometry work waits on it.
+
+Work that is allowed now: the references, the style bible, the navigation design, the test and gate housekeeping, and
+the engine hardening (infrastructure, not game content).
+
+Answered or confirmed so far (2026-10-14): DQ2, DQ6, DQ7 (N1 to N3 confirmed), SC2 (the witch's hair is русый), and the guesses X1, X2, X3, X6, X7, X8, X9 and X12.
+
+Design lens for the questions below: `ALIVENESS.md` (what makes the world feel alive, read against what is built;
+source: `references/alive_experiences_skill.md`), and `ROOM_OF_US_REVIEW.md` (what transfers from the Room of Us feature list).
+
+## Design questions
+
+- **DQ1.** The witch's goal in the first thirty minutes.
+- **DQ2.** The verbs. The six verbs (LOOK, ASK, SHOW, WAIT, GO, CAST) stay internal, and the player never sees them
+  (`docs/DESIGN_INVARIANTS.md`). Options are shown as sentences. **Answered 2026-10-14: the six verbs stay hidden.**
+- **DQ3.** The rooms: how many, and which. None of the reference settings is canon (SC4). The archive hall is built
+  but may not stay (HALL).
+- **DQ4.** The ending: the path out (`go_path_out`), what it says, and whether there is more than one ending.
+- **DQ5.** Session length. A rough target in minutes.
+- **DQ6. Answered 2026-10-14:** mobile first, desktop second. The budgets follow the phone.
+- **DQ7. Answered 2026-10-14 (guess N1):** touch and mouse are primary. No tank controls and no movement keys.
+  Keyboard adds accelerators only (advance, pause). **Confirmed 2026-10-14.** CLAUDE.md now says touch and mouse, no movement keys.
+
+## Narrative questions
+
+- **NQ-a.** The premise: why the witch is in the archive, and what she wants there.
+- **NQ-b.** Tomas, Vera, Elian and Ilya: who they are and what they know. Vera's current design is invented in
+  `docs/art/new_character_and_props.md`; Elian and Ilya have no design. Decisions X2 and X3 in `PLAN.md`.
+- **NQ-c.** The raccoon's role. **Guess 2026-10-16 (X15):** the raccoon is the witch's partner voice, the one that
+  answers, crowns and remembers a bit, and its body shows other minds' feelings (`TONE_MAPPING.md`). The repo plans a tele-somatic perception channel (`CLAUDE.md`); its meaning depends on
+  the story.
+- **NQ-d.** The shadow: who she is and what she knows.
+- **NQ-e.** The antler witch (`witch_antler.glb`). Is she a second form of the witch, or another person?
+- **NQ-f.** Tone. Light and strange, grim, or something else. Examples would help. **Guess 2026-10-16 (X14):**
+  `TONE_GUIDE.md`, mapped onto the systems in `TONE_MAPPING.md`.
+- **NQ-g.** The order of places. None of the settings in the references is canon (SC4).
+
+## Asset needs (derived after the answers)
+
+Filled in after DESIGN-FREEZE. For each room: plates or painted art, proxy, anchors, lighting notes. For each
+character: model, clips, palette, text keys. For props and the interface: what the player reads and taps.
+Audio: none yet.
+
+## Tools present (checked, nothing generated)
+
+- Blender (for plate and proxy builds), numpy and Pillow (for the character and metrics tools), Godot 4.6.3 (the binary
+  is in the session scratchpad, not the repo).
+- Image and video generation (Higgsfield) costs money per run. `CLAUDE.md` requires an estimate and a cap for every
+  run. No generation is planned until the style is locked, and each run needs the user's approval.
+
+## Freeze criteria
+
+- **DESIGN-FREEZE** when DQ1 to DQ5 and NQ-a to NQ-g are answered or explicitly deferred (DQ2, DQ6 and DQ7 are done), the
+  room list is written, and the cast list is fixed.
+- **STYLE-LOCK** met 2026-10-14 (SF, SC1, SC3, SC5, SC6, SC7 settled; R1 to R12 accepted).
+- **HALL** decided at DESIGN-FREEZE, with the other design questions.

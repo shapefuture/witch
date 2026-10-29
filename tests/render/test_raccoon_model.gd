@@ -77,7 +77,9 @@ func test_it_is_chubby_with_a_big_tail_and_stays_within_the_mobile_budget() -> v
 		for surface in mesh_instance.mesh.get_surface_count():
 			var arrays := mesh_instance.mesh.surface_get_arrays(surface)
 			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
-			triangles += indices.size() / 3
+			# An unindexed surface has its triangles in order: count them from its vertices, not as zero (audit L11).
+			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			triangles += (indices.size() if indices.size() > 0 else vertices.size()) / 3
 	var size := high - low
 	# The tail sweeps out to one side (raccoon.py TAIL_SIDE), so the width includes it: body plus tail, still compact.
 	ok(size.x / size.y > 0.5 and size.x / size.y < 0.95, "chubby with a tail out to the side: %.2f of its height wide" % (size.x / size.y))

@@ -26,6 +26,12 @@ const SHINY := {"brass": 1.25, "gold": 1.3, "crystal": 1.1, "crystal_grey": 1.2,
 # Painted sheets cut out by their alpha (ink on the wall, not a poster).
 const CUTOUT := ["mural_eye"]
 
+# The motion and flicker a material carries, at its authored strength. Reduced effects (PSXGlobals) zero
+# them; the authored values live on the material (EFFECTS_META) so switching back restores them.
+const SCREEN_EFFECTS := {"glow_amount": 0.4, "vignette": 0.5, "grain_amount": 0.016}
+const EFFECTS_META := &"psx_effects"
+
+static var _effect_materials: Array[WeakRef] = []
 static var _shaders: Dictionary = {}
 static var _set_materials: Dictionary = {}
 static var _tiles: Dictionary = {}
@@ -44,7 +50,7 @@ static func unlit(color: Color) -> ShaderMaterial:
 # Lit with the per-vertex wobble that makes characters feel hand-animated (PSX GTE jitter).
 static func actor(color: Color, wobble: float = 0.004) -> ShaderMaterial:
 	var material := _colored(ACTOR, color)
-	material.set_shader_parameter("wobble_amount", wobble)
+	_track_effects(material, {"wobble_amount": wobble})
 	StageLight.apply(material)
 	return material
 
@@ -107,7 +113,28 @@ static func screen() -> ShaderMaterial:
 	var material := ShaderMaterial.new()
 	material.shader = shader(SCREEN)
 	material.set_shader_parameter("dither_tex", load(DITHER))
+	_track_effects(material, SCREEN_EFFECTS)
 	return material
+
+# Re-applies reduced effects (on or off) to every live material that carries effects.
+static func refresh_effects() -> void:
+	var live: Array[WeakRef] = []
+	for ref in _effect_materials:
+		var material := ref.get_ref() as ShaderMaterial
+		if material != null:
+			_apply_effects(material)
+			live.append(ref)
+	_effect_materials = live
+
+static func _track_effects(material: ShaderMaterial, authored: Dictionary) -> void:
+	material.set_meta(EFFECTS_META, authored.duplicate())
+	_apply_effects(material)
+	_effect_materials.append(weakref(material))
+
+static func _apply_effects(material: ShaderMaterial) -> void:
+	var authored: Dictionary = material.get_meta(EFFECTS_META, {})
+	for param: String in authored:
+		material.set_shader_parameter(param, 0.0 if PSXGlobals.reduced_effects() else float(authored[param]))
 
 static func _colored(path: String, color: Color) -> ShaderMaterial:
 	var material := ShaderMaterial.new()

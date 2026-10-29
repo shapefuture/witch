@@ -28,6 +28,8 @@ GODOT=... tools/visual_gauntlet/capture.sh out_dir                      # the st
 # image/video/audio generation (Higgsfield): estimate first, every run is capped by --max-usd
 python tools/higgsfield/hf.py run <model-path> --args-file job.json --max-usd 1   # see tools/higgsfield/README.md
 python tools/higgsfield/hf.py catalog        # refresh tools/higgsfield/catalog/CATALOG.md (models, inputs, prices, docs)
+# offline embeddings for authors (NVIDIA NIM, key in NVIDIA_NIM_KEY; never used by the game; cache in .cache/)
+python3 tools/embeddings/text_neighbours.py dupes|rhymes|query "..." [--rerank N]   # near-duplicate lines, motif rhymes, search (--rerank reorders the top N with nemotron-3.5-rerank-8b)
 ```
 `.env.local` (git-ignored) holds `HF_KEY=key-id:key-secret`. Never print it, commit it or copy it into another file.
 Run the gate before committing. **Godot exits 0 even when GDScript fails to compile**: never trust an
@@ -51,9 +53,13 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 
 ## Rules that are enforced by tests
 
-- **All player-visible text is in `data/text/ru.json`** and nowhere else. Catalog, code and
-  `.dialogue` files reference keys (`tr("ui.paused")`, `label_key`, a dialogue line that *is* a
-  key). No Cyrillic in any other file: `tests/mirror/test_text_single_source.gd`.
+- **All player-visible text is in the text table**: `data/text/ru.json` plus one fragment per content area,
+  `data/text/ru/<area>.json`, and nowhere else. Catalog, code and `.dialogue` files reference keys
+  (`tr("ui.paused")`, `label_key`, a dialogue line that *is* a key). A key is defined in one file only. No Cyrillic in
+  any other file: `tests/mirror/test_text_single_source.gd`.
+- **Content is split into area packages** (`docs/engine/CONTENT_PACKAGES.md`): `data/mirror/areas/<area>/` holds an
+  area's catalog and Minds fragments, merged after the root files; a second definition of an id, entity, place, key or
+  dialogue title is an error. Parallel authors own whole areas, never shared files.
 - **The Mirror catalog (`data/mirror/`) contains ids and keys, never prose**, so rewording never
   changes the fingerprint saves are bound to.
 - The action ontology (LOOK/ASK/SHOW/WAIT/GO/CAST) is never shown to the player.
@@ -90,8 +96,7 @@ that does not compile shaders. See `docs/DEBUGGING.md`.
 
 ## Input
 
-`pause` (Esc) and `debug_overlay` (F3: Mirror inspector; Tab changes page). Gameplay is pointer
-only: tap/click the ground to walk, an object to get its options. No WASD.
+`pause` (Esc) and `debug_overlay` (F3: Mirror inspector; Tab changes page). Gameplay is touch and mouse: tap or click the ground to walk, an object to get its options, a line to advance. No movement keys (no WASD). Keyboard accelerators are allowed for advancing text (Space, Enter) and pausing (Esc).
 
 ## Known caveats
 
@@ -102,8 +107,9 @@ only: tap/click the ground to walk, an object to get its options. No WASD.
 - The witch, Tomas and the raccoon are real models; the primitives in `game/world/placeholders.gd` remain only as a
   fallback when a GLB is missing. The shadow, the second (antler) witch and the unhooded woman are built but not yet
   placed in a scene.
-- The reference image the user supplied is NOT in the repo (it reached the session inline; I did not commit
-  someone's artwork without being asked). Put it at `docs/visual-gauntlet/bar/reference_hall.png` and
+- The reference images are committed, at the user's request: `docs/art/references/` (01 to 05, 11, 12; its README
+  says what each one sets; 11 and 12 are third-party captures, for personal reference only) and
+  `docs/visual-gauntlet/bar/` (`reference_hall.png`, the hall; `reference_characters.png`, the witch and raccoon sheet).
   `blind_ab.py` + `metrics.py` compare against the real thing; `visual-gauntlet/BAR.md` holds the numbers
   measured from it (low key: median luma 0.16, 99th percentile 0.63, saturation 0.58). Judge frames against
   the image, never a description: three rounds were wasted on a description that was wrong.
@@ -115,5 +121,7 @@ only: tap/click the ground to walk, an object to get its options. No WASD.
 
 ## Not built yet (by design)
 
-Raccoon tele-somatic signal (as a perception channel of the Minds layer), Vera/Elian/Ilya, `PaintedRoom` emitting `walked` and playing `PropEvents` reactions (coordinator wiring), the town graph, LimboAI, a world compiler from
-place resources, on-device mobile profiling, a main menu, the full ending, the shadow/antler witch in a scene.
+Raccoon tele-somatic signal (as a perception channel of the Minds layer), Vera/Elian/Ilya, the painted room playing `PropEvents` reactions (`PaintedRoom` already emits `walked`; the hall coordinator is built, its wiring into `game_root.gd` is not), the town graph, LimboAI, a world compiler from
+place resources, on-device mobile profiling, the main menu's wiring into the boot path (`game/ui/main_menu.gd`
+and `game/ui/plaque_stack.gd` are built; `game_root.gd` does not route to the menu yet), the full ending, the
+shadow/antler witch in a scene.

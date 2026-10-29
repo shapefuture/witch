@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """The witch of the new references: a purple star-and-moon hooded cloak whose peak is bent back, a ring of pink
-flowers on the hood's edge, very long golden-orange hair that ends in big spiral curls sticking out sideways, a
+flowers on the hood's edge, very long ash-blond hair that ends in big spiral curls sticking out sideways, a
 brown vest with two big pockets and a crescent pendant, a flared pleated skirt covered in gold stars and
 crescents, a pink star wand in one hand and a small grey bird on the other.
 
@@ -10,7 +10,7 @@ writes `witch.glb` (the file the game loads) with the skeleton and clip names ev
 (`witch.py`, `witch_painted.py`) plus `hat_tip`, the hood's drooping peak. The design comes from the user's own
 turnaround sheet and hero render (not in the repository; see docs/art/characters_painted.md). She is seen from
 BEHIND in the painted room at about 100 px tall, so the back reads first: the hood and its peak, the lobed
-orange hair with its spiral tips, the cloak's hem, the skirt; then the side; the front last.
+ash-blond hair with its spiral tips, the cloak's hem, the skirt; then the side; the front last.
 
 Authored in metres: y up, she faces +Z, +X is her left, feet at y = 0, the hood's top at 1.33 m. One atlas
 (nearest, 5 bit, 256 px): the skirt's and the hood's star tiles, the face, flat colour swatches; one surface.
@@ -55,7 +55,7 @@ COL = {
     'boot': (.26, .16, .12),
 }
 FAMILIES = {          # name: (base colour, relative spread): four tones per flat-coloured material, like paper folds
-    'hair': ((.94, .60, .27), .17), 'purple': ((.44, .25, .62), .12), 'sleeve': ((.40, .23, .58), .12),
+    'hair': ((.80, .69, .48), .20), 'purple': ((.44, .25, .62), .12), 'sleeve': ((.40, .23, .58), .12),
     'cuff': ((.47, .28, .63), .08), 'vest': ((.38, .27, .22), .12), 'pocket': ((.29, .20, .16), .12),
     'cloak': ((.39, .22, .55), .12),
 }
@@ -318,7 +318,7 @@ FRAME = [(.172, 1.160, .020), (.188, 1.070, .036), (.200, .975, .078), (.222, .9
          (.290, .740, -.095), (.300, .650, -.105), (.300, .580, -.100)]
 FRAME_CURL = dict(r0=.072, r1=.038, turns=1.1)
 
-# The long back hair: a lobed mass under the hood's back edge (a bulb, every lobe a flute) from which eight thick locks
+# The long back hair: a lobed mass under the hood's back edge (a bulb, every lobe a flute) from which ten thick locks
 # hang side by side down to the waist, each ending in a curl, like the sheet's back view (an octopus of hair).
 MASS_PHIS = [75 + 15 * k for k in range(15)]                 # 75 .. 285 degrees: the sides and the back
 MASS_ROWS = [(.70, .180, .140, -.095), (.78, .232, .190, -.100), (.86, .240, .196, -.105), (.92, .200, .150, -.108), (.99, .160, .115, -.105)]
@@ -326,9 +326,12 @@ MASS_ROWS = [(.70, .180, .140, -.095), (.78, .232, .190, -.100), (.86, .240, .19
 # (degrees round from the back's centre, stalk step, curl: 'out' or 'in' toward her middle, curl radius, lock radius).
 # The outer locks splay and end in big outward spirals (the hair is widest at the bottom); the inner ones curl in;
 # the middle one is short, with a small spiral at mid-back.
-LOCKS = [(-76, .066, 'out', .080, .034), (-57, .092, 'out', .064, .036), (-38, .118, 'in', .054, .038),
-         (-19, .136, 'in', .048, .038), (0, .052, 'in', .038, .036), (19, .132, 'out', .050, .038),
-         (38, .114, 'out', .056, .038), (57, .088, 'in', .060, .036), (76, .064, 'out', .078, .034)]
+# Thick enough that neighbouring locks close the gaps the cloak showed between them (the sheet's back is one mass);
+# the tenth lock fills the gap between the two inner-left locks at no cost to the rest (+180 triangles).
+LOCKS = [(-76, .066, 'out', .080, .046), (-57, .092, 'out', .064, .046), (-38, .118, 'in', .054, .046),
+         (-28.5, .125, 'in', .050, .046), (-19, .136, 'in', .048, .046), (0, .052, 'in', .038, .046),
+         (19, .132, 'out', .050, .046), (38, .114, 'out', .056, .046), (57, .088, 'in', .060, .046),
+         (76, .064, 'out', .078, .046)]
 
 
 def mass_pts():
@@ -734,11 +737,11 @@ def paint_face_tile(size=(64, 56)):
     d.polygon([P(.30, .72), P(.70, .72), P(.50, 1.0)], fill=c8((.90, .68, .58)))
     for cx in (.25, .75):                                   # cheeks
         d.ellipse([P(cx - .10, .56), P(cx + .10, .70)], fill=c8((.96, .60, .56)))
-    # hair-gold brows
+    # ash-blond brows: the hair's darker tone (SC2)
     for cx, sgn in ((.29, 1), (.71, -1)):
         d.polygon([P(cx - .14, .335), P(cx + .13, .26 if sgn > 0 else .30), P(cx + .13, .30 if sgn > 0 else .34),
                    P(cx - .14, .385)] if sgn > 0 else
-                  [P(cx - .13, .30), P(cx + .14, .335), P(cx + .14, .385), P(cx - .13, .34)], fill=c8((.78, .42, .14)))
+                  [P(cx - .13, .30), P(cx + .14, .335), P(cx + .14, .385), P(cx - .13, .34)], fill=c8((.60, .49, .32)))
     # eyes: white, a big blue iris, a dark pupil, a catch-light, a heavy upper lid
     for cx in (.29, .71):
         ex, ey = cx * W * k, .46 * H * k
@@ -1033,7 +1036,7 @@ def build_parts(M):
         m = len(pts)
         taper = (.80, .32) if name == 'tail' else (.85, .40)     # thick down into the curl, as on the sheet
         rad = np.interp(np.arange(m), [0, n_st, m - 1], [width, width * taper[0], width * taper[1]])
-        ratio = {'frame': .50, 'tail': .50}.get(name, .50)   # flat ribbons, as on the sheet
+        ratio = {'frame': .50, 'tail': 1.0}.get(name, .50)   # the back locks are round: flat ribbons read as paper strips
         flat = N_((side * .7, 0., 1.)) if name == 'frame' else (0, 0, 1.)
         cu = tube(pts, rad, N=nsides, ratio=ratio, flat=flat, cap=(0, .012), o=.5 if nsides == 4 else 0.)
         d = '.L' if side > 0 else '.R'

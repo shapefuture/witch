@@ -53,6 +53,15 @@ const STANCES := {
 static var atmosphere_enabled := true
 static var _walkable_cache := PackedVector2Array()
 
+# The room slot (game/world/room_slot.gd): what the rest of the game asks of this room.
+signal walked(pixel: Vector2, world_position: Vector3)
+signal prop_pressed(prop_id: String, reaction: String, world_position: Vector3)
+# A live prop answers a poke with one short hop, whatever its move is called (Mirror names the moves).
+const HOP_HEIGHT := 0.12
+const HOP_SECONDS := 0.5
+var _hop_rest: Dictionary = {}
+var _hop_tweens: Dictionary = {}
+
 var machine_view: MachineView
 var tomas: NPC
 var raccoon: Node3D
@@ -312,6 +321,97 @@ func focus_position(target_id: String) -> Variant:
 		return tomas.global_position + Vector3(0, 1.0, 0)
 	var interactable := get_interactable(target_id)
 	return interactable.focus_point() if interactable != null else null
+
+# ---- the room slot (game/world/room_slot.gd): adapters over this room's layout and live props -------------
+
+func mirror_room_id() -> String:
+	return room_id
+
+# Where the bolted frame shows her, and not blocked by the machine, the bell's post or Tomas.
+func is_walkable(point: Vector3) -> bool:
+	return stage_allows(point.x, point.z) and navigator != null and not navigator.is_blocked(point)
+
+func is_occluded(from: Vector3, to: Vector3) -> bool:
+	for obstacle: Variant in obstacles():
+		var at: Array = obstacle["at"]
+		if RoomSlot.segment_hits_cylinder(from, to, Vector2(float(at[0]), float(at[1])), float(obstacle["radius"]), float(obstacle.get("height", 1.5))):
+			return true
+	return false
+
+# A named place in world space: the set's authored points, and the raccoon where it sits.
+func anchor(id: String) -> Variant:
+	if id == "spawn":
+		return spawn_position
+	if id == "tomas":
+		return anchor_point("tomas_at", FALLBACK_TOMAS_AT)
+	if id == "raccoon" and raccoon != null:
+		return _world(raccoon)
+	if FALLBACK_INTERACTABLES.has(id):
+		return interactable_spec(id)["at"]
+	return null
+
+# The characters on stage. The witch is GameRoot's, not the room's: whoever places her adds her.
+func stage_actors() -> Dictionary:
+	var out: Dictionary = {}
+	if tomas != null:
+		out["tomas"] = tomas
+	if raccoon != null:
+		out["raccoon"] = raccoon
+	return out
+
+func request_reaction(target_id: String, _reaction: String) -> bool:
+	var prop := _live_prop(target_id)
+	if prop == null:
+		return false
+	_hop(prop)
+	return true
+
+# The witch pokes a live prop: it answers now, and the poke is reported (PropEvents commits it to Mirror).
+func press(prop_id: String, reaction: String) -> bool:
+	var prop := _live_prop(prop_id)
+	if prop == null:
+		return false
+	_hop(prop)
+	prop_pressed.emit(prop_id, reaction, _world(prop))
+	return true
+
+# The witch stopped here: whoever moves her says so, and the room reports it. What it means is Mirror's.
+func arrived(world_position: Vector3) -> void:
+	walked.emit(Vector2(-1.0, -1.0), world_position)
+
+func cut_shots() -> Array[String]:
+	var out: Array[String] = ["wide"]
+	if plates != null and plates.plates != null:
+		for plate: Dictionary in plates.plates.base_plates():
+			var mode := str(plate.get("mode", ""))
+			if str(plate.get("role", "")) == "shot" and mode not in out:
+				out.append(mode)
+	return out
+
+# The live props the witch can poke: the ones ArchiveProps draws (the machine is not poked; it is worked).
+func _live_prop(prop_id: String) -> Node3D:
+	if prop_id == "bell":
+		return bell
+	return null
+
+# One short hop from where the prop rests. A second poke during a hop starts again from that same rest.
+func _hop(prop: Node3D) -> void:
+	var key := prop.get_instance_id()
+	if not _hop_rest.has(key):
+		_hop_rest[key] = prop.position
+	var rest: Vector3 = _hop_rest[key]
+	var previous: Variant = _hop_tweens.get(key)
+	if previous is Tween and (previous as Tween).is_valid():
+		(previous as Tween).kill()
+	prop.position = rest
+	var tween := create_tween()
+	tween.tween_property(prop, "position", rest + Vector3(0.0, HOP_HEIGHT, 0.0), HOP_SECONDS * 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(prop, "position", rest, HOP_SECONDS * 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	_hop_tweens[key] = tween
+
+# A node's place in the room's world: its global position once it is in the tree, its own before that.
+func _world(node: Node3D) -> Vector3:
+	return node.global_position if node.is_inside_tree() else node.position
 
 # Makes the room LOOK like a Mirror state (used at start and after a load). Reads only.
 func apply_mirror_state(engine: MirrorEngine) -> void:

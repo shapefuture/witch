@@ -61,7 +61,6 @@ func test_the_presentation_director_awaits_each_handler_before_the_next() -> voi
 	eq(log, ["slow-start"], "fast has not run while slow is still playing")
 	gate.opened.emit()
 	eq(log, ["slow-start", "slow-end", "fast"], "then it continues")
-	ok(true, "done")
 
 class GateEmitter:
 	extends RefCounted

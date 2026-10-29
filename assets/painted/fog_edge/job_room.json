@@ -1,0 +1,122 @@
+{
+ "_about": "How plate.png was made: one generation on a free Hugging Face ZeroGPU Space through tools/hfspaces/plate.py (the record it wrote, below), then two local steps of the same tool. The candidates and the judging against docs/art/references/13_marsh_clocks_night.jpg are in tools/hfspaces/README.md.",
+ "generation": {
+  "tool": "tools/hfspaces/plate.py",
+  "ok": true,
+  "mode": "gen",
+  "space": "Qwen/Qwen-Image-2512",
+  "space_key": "qwen",
+  "space_sha": "560d76531f4db198cdd3a018224cdbda45faabc0",
+  "hardware": "zero-a10g",
+  "licence": "Apache-2.0",
+  "prompt": "A screenshot of a 1998 PlayStation 1 adventure game, rendered by the PS1 hardware: crude low-poly 3D models with crooked faceted polygons and jagged unfiltered edges, tiny low-resolution textures blown up into chunky square pixels with a visible ordered dithering pattern, warped affine texture mapping, no smooth gradients. Saturated jewel palette: deep violet, indigo, magenta, hot pink, moss green, gold yellow, and peach lantern light.\n\nThe scene: a night marsh at the edge of a towering wall of pale luminous fog. The camera is fixed like a theatre stage at eye height. The bottom third of the frame is a wide flat open mossy bank of moss green and violet heather, with an empty clear patch of flat ground in its middle. From the bank, a crooked path made of wooden planks and bright yellow square stone tiles zigzags away over still black water and disappears into the glowing fog bank, which fills the far distance from side to side like a cliff of cloud.\n\nOn the left, a dead twisted black tree dripping moss holds a big round clock face in its trunk: the clock face has a smiling cartoon face, two eyes and a wide grin, instead of numbers. Round glowing peach lanterns shaped like small full moons hang on strings from crooked branches and poles. A dozen eyeball flowers rise from the water and the bank: each is a big white eyeball with a red iris on a tall green stalk with magenta leaves. Beside the path one eyeball flower is dead: its stalk bent, its eye closed and grey. On the right, a carved wooden signpost painted with only an eye symbol and an arrow symbol. Lily pads, hot pink cattails, mossy stumps, white moonlight glinting on the black water. Deep violet night sky with purple clouds.\n\nThe place is deserted and still: no people, no animals, no text, no letters, no numbers.",
+  "seed": 1302,
+  "size_asked": [
+   1536,
+   864
+  ],
+  "date": "2026-10-29T11:24:09Z",
+  "zerogpu": {
+   "asks_seconds": 120,
+   "rate": 2,
+   "before": {
+    "seconds": 295.808309,
+    "of": 300.0,
+    "runs": 7,
+    "runs_of": 8,
+    "resets_at": "2026-10-30T11:23:20.845Z"
+   },
+   "after": {
+    "seconds": 226.580627,
+    "of": 300.0,
+    "runs": 6,
+    "runs_of": 8,
+    "resets_at": "2026-10-30T11:23:20.603Z"
+   },
+   "used_seconds": 69.2,
+   "used_runs": 1
+  },
+  "calls": [
+   {
+    "endpoint": "/infer",
+    "arguments": {
+     "prompt": "A screenshot of a 1998 PlayStation 1 adventure game, rendered by the PS1 hardware: crude low-poly 3D models with crooked faceted polygons and jagged unfiltered edges, tiny low-resolution textures blown up into chunky square pixels with a visible ordered dithering pattern, warped affine texture mapping, no smooth gradients. Saturated jewel palette: deep violet, indigo, magenta, hot pink, moss green, gold yellow, and peach lantern light.\n\nThe scene: a night marsh at the edge of a towering wall of pale luminous fog. The camera is fixed like a theatre stage at eye height. The bottom third of the frame is a wide flat open mossy bank of moss green and violet heather, with an empty clear patch of flat ground in its middle. From the bank, a crooked path made of wooden planks and bright yellow square stone tiles zigzags away over still black water and disappears into the glowing fog bank, which fills the far distance from side to side like a cliff of cloud.\n\nOn the left, a dead twisted black tree dripping moss holds a big round clock face in its trunk: the clock face has a smiling cartoon face, two eyes and a wide grin, instead of numbers. Round glowing peach lanterns shaped like small full moons hang on strings from crooked branches and poles. A dozen eyeball flowers rise from the water and the bank: each is a big white eyeball with a red iris on a tall green stalk with magenta leaves. Beside the path one eyeball flower is dead: its stalk bent, its eye closed and grey. On the right, a carved wooden signpost painted with only an eye symbol and an arrow symbol. Lily pads, hot pink cattails, mossy stumps, white moonlight glinting on the black water. Deep violet night sky with purple clouds.\n\nThe place is deserted and still: no people, no animals, no text, no letters, no numbers.",
+     "seed": 1302,
+     "randomize_seed": false,
+     "aspect_ratio": "16:9",
+     "guidance_scale": 4.0,
+     "num_inference_steps": 30,
+     "prompt_enhance": false
+    }
+   }
+  ],
+  "returned_format": "webp",
+  "size": [
+   1664,
+   928
+  ],
+  "latency_s": 37.5,
+  "png": "a2_qwen.png",
+  "sha256": "147127710b3c058db2135cc5d649cee26502d3f4a8be6775a48bc892f830dd09",
+  "attempts": [
+   {
+    "space": "Qwen/Qwen-Image-2512",
+    "outcome": "ok"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "do": "fit",
+   "command": "python tools/hfspaces/plate.py fit a2_qwen.png a2_qwen_1280.png",
+   "what": "centre-crop 1664x928 to 16:9 (1650x928), resize to 1280x720 (Lanczos)"
+  },
+  {
+   "do": "erase",
+   "command": "python tools/hfspaces/plate.py erase a2_qwen_1280.png plate.png --box 170,213,186,228 --box 137,257,146,273 --box 215,261,226,276 --box 178,304,190,320 --darker 0.75 --grow 3",
+   "what": "the clock numerals 12, 9, 3 and 6 painted out (673 pixels; everything outside the four boxes untouched): a plate carries no writing"
+  }
+ ],
+ "plate_sha256": "626ab5b8e50a03a1df94ba66cf84b8b88f5353bc2621fb0e34938400bc80b999",
+ "rejected": [
+  {
+   "name": "a1_schnell",
+   "space": "black-forest-labs/FLUX.1-schnell",
+   "mode": "gen",
+   "seed": 1301,
+   "size": [
+    1536,
+    864
+   ],
+   "latency_s": 7.1,
+   "zerogpu_used_seconds": 4.2,
+   "why_not": "a glossy modern render; the clock has numerals; no eyeball flowers, no yellow tiles (prompt A)"
+  },
+  {
+   "name": "a3_dev",
+   "space": "black-forest-labs/FLUX.1-dev",
+   "mode": "gen",
+   "seed": 1303,
+   "size": [
+    1536,
+    864
+   ],
+   "latency_s": 39.1,
+   "zerogpu_used_seconds": 34.2,
+   "why_not": "letters on the signpost and numerals on the clock; no fog bank; a Pixar-like render with depth of field (prompt A2)"
+  },
+  {
+   "name": "b1_kontext",
+   "space": "black-forest-labs/FLUX.1-Kontext-Dev",
+   "mode": "edit",
+   "seed": 1304,
+   "size": [
+    1360,
+    768
+   ],
+   "latency_s": 30.4,
+   "zerogpu_used_seconds": 26.9,
+   "why_not": "round 2, an edit of a2: flatter and further from the reference, the numerals stayed, and the fog bank was erased (prompt B)"
+  }
+ ]
+}

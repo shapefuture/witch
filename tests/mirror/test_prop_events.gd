@@ -131,7 +131,8 @@ func test_a_walk_nobody_reacts_to_writes_nothing() -> void:
 	var bridge := _bridge(room, r)
 	bridge.poke("lamp", "wobble", Vector3.ZERO)
 	var before := r.engine.event_store.size()
-	bridge.walked(Vector2.ZERO, Vector3(9, 0, 0))
+	var result := bridge.walked(Vector2.ZERO, Vector3(9, 0, 0))
+	ok(result.get("ok", false) and not result.get("recorded", true), "the walk was taken and not recorded, because nobody reacted")
 	eq(r.engine.event_store.size(), before, "with nobody there to notice, the log is untouched")
 
 func test_deferred_consequences_reach_the_same_outputs_when_time_passes() -> void:
