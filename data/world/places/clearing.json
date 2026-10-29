@@ -1,0 +1,9 @@
+{
+	"_about": "Архив (Tomas's archive, Mirror place 'clearing'): the archive hall, built from the user's reference still. Its own spawn point and stances are the hall's; arrive is empty because the hall places her at its spawn.",
+	"id": "clearing",
+	"room": {"kind": "hall"},
+	"variants": {},
+	"spots": {},
+	"arrive": {},
+	"stage": {"palette": ["#3f3a2a", "#4a3a5a", "#7d8a4a", "#8a6ab0", "#15110d"]}
+}

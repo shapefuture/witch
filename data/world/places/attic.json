@@ -1,0 +1,9 @@
+{
+	"_about": "Чердак (GAME_SPEC section 2): Гаврила's workshop under the roof, reached by the shop's staircase and its hatch. Stand-in stage until the plate exists.",
+	"id": "attic",
+	"room": {"kind": "painted", "dir": "res://assets/painted/attic"},
+	"variants": {},
+	"spots": {"default": [640, 560], "raccoon": [500, 560]},
+	"arrive": {"shop": [640, 620], "default": [640, 560]},
+	"stage": {"palette": ["#4a3426", "#6d4f7a", "#c28a46", "#8a6b9a", "#1e1410"]}
+}

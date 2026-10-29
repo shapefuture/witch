@@ -1,0 +1,9 @@
+{
+	"_about": "Край Тумана (GAME_SPEC section 2): where the fog begins over the marsh; the spike's plate.",
+	"id": "fog_edge",
+	"room": {"kind": "painted", "dir": "res://assets/painted/fog_edge"},
+	"variants": {},
+	"spots": {"default": [640, 564], "raccoon": [768, 580], "miron": [560, 520]},
+	"arrive": {"default": [640, 564]},
+	"stage": {"palette": ["#2f4a40", "#7a3c7e", "#c58a3c", "#b9d4c4", "#14101e"]}
+}

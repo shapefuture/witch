@@ -1,0 +1,9 @@
+{
+	"_about": "Порог (GAME_SPEC section 2): the fogged glass; Мирон's side is behind it. Stand-in stage until the plate exists.",
+	"id": "threshold",
+	"room": {"kind": "painted", "dir": "res://assets/painted/threshold"},
+	"variants": {},
+	"spots": {"default": [640, 600], "miron": [640, 300]},
+	"arrive": {"hotel": [640, 600], "default": [640, 600]},
+	"stage": {"palette": ["#5f7a8c", "#c9d6dc", "#e0a050", "#3c5366", "#141a20"]}
+}

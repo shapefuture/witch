@@ -1,0 +1,9 @@
+{
+	"_about": "Подвал (GAME_SPEC section 2): old stock, the father's toolbox, crooked doors that open onto the hotel. Stand-in stage until the plate exists.",
+	"id": "basement",
+	"room": {"kind": "painted", "dir": "res://assets/painted/basement"},
+	"variants": {},
+	"spots": {"default": [640, 600]},
+	"arrive": {"shop": [640, 600], "default": [640, 600]},
+	"stage": {"palette": ["#e3e0d8", "#3b5a9a", "#7a4aa0", "#e8843a", "#141c30"]}
+}
