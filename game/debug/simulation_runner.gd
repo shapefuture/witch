@@ -180,11 +180,25 @@ func report(runtime: MirrorRuntime) -> Array[String]:
 	out.append("  head: %s (%d events)" % [e.event_store.head_hash(), events.size()])
 	return out
 
-static func load_script(path: String) -> Dictionary:
+# A script may begin where others end: "after": "res://data/sim/act1_main.json" (or a list) runs those scripts' steps
+# first (their expectations are not checked), so a whole-game playthrough is a chain of act sims.
+const MAX_CHAIN := 16
+
+static func load_script(path: String, depth: int = 0) -> Dictionary:
 	var json := JSON.new()
-	if json.parse(FileAccess.get_file_as_string(path)) != OK or not json.data is Dictionary:
+	if depth > MAX_CHAIN or json.parse(FileAccess.get_file_as_string(path)) != OK or not json.data is Dictionary:
 		return {}
-	return json.data
+	var script: Dictionary = json.data
+	var after: Variant = script.get("after", [])
+	var priors: Array = [after] if after is String else (after as Array if after is Array else [])
+	if priors.is_empty():
+		return script
+	var steps: Array = []
+	for prior in priors:
+		steps.append_array(load_script(str(prior), depth + 1).get("steps", []))
+	steps.append_array(script.get("steps", []))
+	script["steps"] = steps
+	return script
 
 # A script that says "scope": "game" runs against the whole game (every area package); the default is the hall.
 static func wants_areas(script: Dictionary) -> bool:

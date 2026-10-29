@@ -83,3 +83,18 @@ func test_save_mid_run_then_resume_equals_an_uninterrupted_run() -> void:
 			var finished := SimulationRunner.new().run(second, rest)
 			ok(finished["ok"], "%s cut %d resumes: %s" % [path.get_file(), cut, finished["expect_failures"]])
 			eq(second.engine.event_store.head_hash(), whole["head_hash"], "%s cut %d: resumed run ends on the identical chain head" % [path.get_file(), cut])
+
+func test_a_script_can_start_where_another_ends() -> void:
+	var first := {"name": "first", "steps": [{"action": "look_tomas", "target": "tomas"}], "expect": {"knows": ["never_known"]}}
+	var second := {"name": "second", "after": "user://sim_chain_first.json", "steps": [{"action": "look_bell", "target": "bell"}]}
+	for pair in [["user://sim_chain_first.json", first], ["user://sim_chain_second.json", second]]:
+		var file := FileAccess.open(pair[0], FileAccess.WRITE)
+		file.store_string(JSON.stringify(pair[1]))
+		file.close()
+	var chained := SimulationRunner.load_script("user://sim_chain_second.json")
+	eq(chained["steps"].size(), 2, "the earlier script's steps come first")
+	eq(chained["steps"][0]["action"], "look_tomas", "in order")
+	var outcome := SimulationRunner.new().run(GameFixtures.runtime(), chained)
+	ok(outcome["ok"], "the chain runs, and the earlier script's expectations are not checked: %s" % [outcome["expect_failures"]])
+	DirAccess.remove_absolute("user://sim_chain_first.json")
+	DirAccess.remove_absolute("user://sim_chain_second.json")
