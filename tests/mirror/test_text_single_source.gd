@@ -13,6 +13,7 @@ const ALLOWED := [
 	"res://addons/dialogue_manager/l10n/uk.po",
 	"res://docs/PLAN.md",
 	"res://docs/art/STYLE_BIBLE.md",
+	"res://docs/design/BIBLE.md",
 	"res://docs/design/PREPRODUCTION.md",
 	"res://tools/text_tool.py",
 ]
