@@ -12,7 +12,9 @@ any test runs (class names are registered by it).
 1. Notebook kinds (done): NotebookView lists only claims a sidecar names, with the authored kind (seven kinds);
    UNRESOLVED_BY_DESIGN is untestable whatever the sidecar says; load_claims validates data/notebook/*.json;
    pages() groups by kind for the slab. Old names (TOLD, GUESSED, OPEN) kept as aliases.
-2. Notebook slab and the witch's systems actions: pending.
+2. Notebook slab and the witch's systems actions (done): NotebookSlab (game/ui/notebook_slab.gd) shows one page a
+   kind, turns by tap, closes by its plaque; NotebookPresenter plays the `notebook` step and waits for the close;
+   data/mirror/areas/systems/actions.json has the witch's two options (notebook; sight, not in the postgame).
 3. Expectation-Sight (sight step, ghosts, render/psx/ghost_*): pending.
 4. flash (the telesomatic vignette, render/psx/flash_*): pending.
 5. Magic modes (violet, verdigris, gold) and effect fizzle: pending.

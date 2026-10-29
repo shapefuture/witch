@@ -1,0 +1,37 @@
+[
+	{
+		"id": "systems_witch_open_notebook",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.systems.open_notebook",
+		"valid_targets": ["witch"],
+		"prediction_signature": ["LOOK"],
+		"response_contracts": [
+			{
+				"id": "systems_witch_open_notebook.open",
+				"observed": {"outcome": "opened"},
+				"presentation": [
+					{"kind": "notebook"}
+				]
+			}
+		]
+	},
+	{
+		"id": "systems_witch_listen_sight",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.systems.listen_sight",
+		"valid_targets": ["witch"],
+		"preconditions": {"$neq": {"story.act": "postgame"}},
+		"prediction_signature": ["LOOK"],
+		"response_contracts": [
+			{
+				"id": "systems_witch_listen_sight.listen",
+				"observed": {"outcome": "listened"},
+				"presentation": [
+					{"kind": "sight"}
+				]
+			}
+		]
+	}
+]
