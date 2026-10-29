@@ -1,7 +1,7 @@
 extends TestCase
 
-# Act VII, the town and the exit: verdigris stabilises the chooser (Tomas sets the cams himself; Вера chooses the grey
-# lantern, not the red one the witch would), violet still works, and the next morning needs both (GAME_SPEC act VII).
+# Act VII, the town and the exit: verdigris stabilises the chooser (Tomas sets the cams himself; the stallholder chooses
+# the grey lantern, not the red one the witch would), violet still works, and the next morning needs both (GAME_SPEC act VII).
 
 func _shop(extra_world: Dictionary = {}) -> MirrorRuntime:
 	var world := {"story": {"act": "act7"}, "witch": {"place": "shop", "from": ""}, "magic": {"state": "returned"},
@@ -72,7 +72,7 @@ func test_the_morning_needs_both_town_and_tomas_and_leads_to_act_eight() -> void
 	var result: Dictionary = GameFixtures.do(r, "act7_morning", "act7_lamp")
 	ok(result.get("ok", false), "the morning commits")
 	eq(r.engine.get_world("story", {}).get("act", ""), "act8", "the story moves to act eight")
-	eq(r.engine.get_npc_state("miron").get("place", ""), "fog", "Мирон is still in the Fog after act seven (constitution C8)")
+	eq(r.engine.get_npc_state("miron").get("place", ""), "fog", "Miron is still in the Fog after act seven (constitution C8)")
 
 func test_the_morning_is_not_offered_without_the_town_choice() -> void:
 	var r := _shop()

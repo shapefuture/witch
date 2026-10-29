@@ -1,0 +1,14 @@
+{
+	"_about": "Act VIII (area act8): the ordinary flower. Look, touch, or leave it be: no cast, no take, at most two short lines.",
+	"opt.act8.look_flower": "Посмотреть на цветок",
+	"opt.act8.touch_flower": "Коснуться лепестка",
+	"opt.act8.leave_flower": "Оставить как есть",
+	"opt.act8.go_evening": "Домой, уже вечер",
+	"obj.act8_flower": "цветок",
+	"line.act8.flower_look": "Маленький. Растёт в трещине, ни для чего.",
+	"line.act8.flower_touch": "Лепесток мятый. Ну и пусть.",
+	"line.act8.flower_leave": "Цветок остаётся на ступеньке.",
+	"line.act8.flower_met": "На ступеньке, в трещине, растёт цветок.",
+	"line.act8.evening": "Вечер. Звонок над дверью молчит.",
+	"note.act8.flower": "Цветок в трещине. Не мой. Ничей."
+}
