@@ -3,8 +3,9 @@
 
     python tools/painted/walkable.py assets/painted/hall_clean [--preview walkable.png] [--check]
 
-Reads room.json (the calibrated depth grid, the camera, the actors' feet) and props.json (the lifted objects),
-and writes a "walkable" block back into room.json; nothing else in the file changes.
+Reads room.json (the calibrated depth grid, the camera, the actors' feet), props.json (the lifted objects) and,
+when the room has one, not_floor.json (polygons in plate pixels that are not floor: water, a void; the depth
+calls a flat pond floor). Writes a "walkable" block back into room.json; nothing else in the file changes.
 
 1. The depth grid is lifted to 3D points (the painting's camera, metres) and smoothed; a surface normal and a
    height above the floor plane (y = 0) come from it.
@@ -124,7 +125,20 @@ def prop_masks(room_dir, size):
     return out
 
 
-def floor_pixels(room, cam, points, rays, props):
+def not_floor_mask(room_dir, size):
+    """Pixels that are not floor however flat they look: water, a void (not_floor.json: {"polygons": [[[x, y], ...], ...]} in
+    plate pixels). The depth calls still water floor, so a painted pond needs its outline here; empty without the file."""
+    w, h = size
+    path = Path(room_dir) / "not_floor.json"
+    canvas = Image.new("L", (w, h), 0)
+    if path.exists():
+        draw = ImageDraw.Draw(canvas)
+        for polygon in json.loads(path.read_text(encoding="utf-8"))["polygons"]:
+            draw.polygon([tuple(p) for p in polygon], fill=255)
+    return np.asarray(canvas) > 127
+
+
+def floor_pixels(room, cam, points, rays, props, not_floor=None):
     smooth, normal = surface_normals(points, rays)
     height = smooth[..., 1]
     mask = (height > -FLOOR_BELOW) & (height < MAX_STEP) & (normal[..., 1] > MIN_NY)
@@ -132,6 +146,8 @@ def floor_pixels(room, cam, points, rays, props):
     mask = ndi.binary_opening(mask, iterations=2)
     for prop in props:
         mask &= ~ndi.binary_dilation(prop["mask"], iterations=PROP_GROW)
+    if not_floor is not None:
+        mask &= ~not_floor
     labels, _ = ndi.label(mask)
     witch = room["actors"]["witch"]["pixel"]
     label = labels[int(witch[1]), int(witch[0])]
@@ -199,7 +215,7 @@ def build(room, room_dir):
     cam = Camera(room)
     points, rays = lift(room, cam)
     props = prop_masks(room_dir, (cam.w, cam.h))
-    floor, smooth = floor_pixels(room, cam, points, rays, props)
+    floor, smooth = floor_pixels(room, cam, points, rays, props, not_floor_mask(room_dir, (cam.w, cam.h)))
 
     ys, xs = np.where(floor)
     p = smooth[ys, xs]
