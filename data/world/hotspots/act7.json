@@ -1,0 +1,7 @@
+[
+	{"place": "shop", "target": "act7_jars", "at": [1000, 300], "radius": 110},
+	{"place": "shop", "target": "act7_lamp", "at": [210, 240], "radius": 70},
+	{"place": "shop", "target": "act7_trapdoor", "at": [420, 610], "radius": 70},
+	{"place": "street", "target": "act7_lanterns", "at": [470, 345], "radius": 60},
+	{"place": "attic", "target": "act7_bench", "at": [500, 430], "radius": 80}
+]

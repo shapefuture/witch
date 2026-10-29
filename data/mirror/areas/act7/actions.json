@@ -1,0 +1,229 @@
+[
+	{
+		"id": "act7_return_jars",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act7.return_jars",
+		"valid_targets": ["act7_jars"],
+		"once_key": "act7_return_jars",
+		"preconditions": {"story.act": "act7", "witch.place": "shop", "magic.state": "gone"},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "act7_return_jars.kept", "priority": 30, "when": {"wand.fate": "kept"},
+				"observed": {"outcome": "magic_returned", "motive": "joyful", "branch": "kept"},
+				"effects": {"world": {"magic": {"state": "returned"}, "verdigris": {"known": true}}},
+				"knowledge_effects": [{"id": "act7_magic_returned", "proposition": {"magic": "returned"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "jars_hummed_and_the_magic_came_back_with_the_wand_warm_in_the_satchel"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["act7_jars"]},
+					{"kind": "magic", "effect": "flourish", "mode": "violet", "target": "act7_jars"},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.return_kept_1"},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.return_kept_2"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			},
+			{
+				"id": "act7_return_jars.shattered", "priority": 30, "when": {"wand.fate": "shattered"},
+				"observed": {"outcome": "magic_returned", "motive": "joyful", "branch": "shattered"},
+				"effects": {"world": {"magic": {"state": "returned"}, "verdigris": {"known": true}}},
+				"knowledge_effects": [{"id": "act7_magic_returned", "proposition": {"magic": "returned"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "jars_hummed_and_the_magic_came_back_while_the_pieces_glowed_in_their_jar"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["act7_jars"]},
+					{"kind": "magic", "effect": "flourish", "mode": "violet", "target": "act7_jars"},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.return_shattered_1"},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.return_shattered_2"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			},
+			{
+				"id": "act7_return_jars.given", "priority": 30, "when": {"wand.fate": "given"},
+				"observed": {"outcome": "magic_returned", "motive": "joyful", "branch": "given"},
+				"effects": {"world": {"magic": {"state": "returned"}, "verdigris": {"known": true}}},
+				"knowledge_effects": [{"id": "act7_magic_returned", "proposition": {"magic": "returned"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "jars_hummed_and_the_magic_came_back_and_the_raccoon_offered_the_wand_back"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["act7_jars"]},
+					{"kind": "magic", "effect": "flourish", "mode": "violet", "target": "act7_jars"},
+					{"kind": "dialogue", "title": "act7_return_given", "npc": "raccoon"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			},
+			{
+				"id": "act7_return_jars.hidden", "priority": 30, "when": {"wand.fate": "hidden"},
+				"observed": {"outcome": "magic_returned", "motive": "joyful", "branch": "hidden"},
+				"effects": {"world": {"magic": {"state": "returned"}, "verdigris": {"known": true}}},
+				"knowledge_effects": [{"id": "act7_magic_returned", "proposition": {"magic": "returned"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "jars_hummed_and_the_magic_came_back_with_the_wand_still_in_the_basement"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["act7_jars"]},
+					{"kind": "magic", "effect": "flourish", "mode": "violet", "target": "act7_jars"},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.return_hidden_1"},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.return_hidden_2"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			},
+			{
+				"id": "act7_return_jars.bare", "priority": 0,
+				"observed": {"outcome": "magic_returned", "motive": "joyful", "branch": "none"},
+				"effects": {"world": {"magic": {"state": "returned"}, "verdigris": {"known": true}}},
+				"knowledge_effects": [{"id": "act7_magic_returned", "proposition": {"magic": "returned"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "jars_hummed_and_the_magic_came_back"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["act7_jars"]},
+					{"kind": "magic", "effect": "flourish", "mode": "violet", "target": "act7_jars"},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.return_bare_1"},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.return_bare_2"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act7_hold_frame",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act7.hold_frame",
+		"valid_targets": ["machine"],
+		"once_key": "act7_hold_frame",
+		"preconditions": {"story.act": "act7", "witch.place": "clearing", "magic.state": "returned"},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "act7_hold_frame.steady",
+				"observed": {"outcome": "frame_held", "motive": "steady", "npc_expected": "EXPECT_RECIPROCITY"},
+				"knowledge_effects": [{"id": "act7_enabled_tomas", "proposition": {"tomas": "sets_the_cams_himself"}, "status": "ESTABLISHED", "scope": "tomas"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "frame_held_still_and_tomas_set_the_cams_with_his_own_hands"}}],
+				"relationship_target": "tomas",
+				"relationship_tags": ["INVITATION"],
+				"relationship_payload": {"topic": "cams", "via": "verdigris"},
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["machine"]},
+					{"kind": "magic", "effect": "repair", "mode": "verdigris", "target": "machine"},
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]},
+					{"kind": "dialogue", "title": "act7_frame_held", "npc": "tomas"},
+					{"kind": "camera", "mode": "consequence", "focus": ["machine"]}
+				]
+			}
+		]
+	},
+	{
+		"id": "act7_cast_violet",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act7.cast_violet",
+		"valid_targets": ["machine"],
+		"once_key": "act7_cast_violet",
+		"preconditions": {"story.act": "act7", "witch.place": "clearing", "magic.state": "returned"},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "act7_cast_violet.spun",
+				"observed": {"outcome": "violet_worked", "motive": "showing_off", "npc_expected": "EXPECT_MAGIC"},
+				"knowledge_effects": [{"id": "act7_violet_works", "proposition": {"magic": "violet_still_works"}, "status": "ESTABLISHED", "scope": "clearing"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "violet_spun_the_cams_and_tomas_looked_at_them_like_a_stranger_would"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["machine"]},
+					{"kind": "magic", "effect": "flourish", "mode": "violet", "target": "machine"},
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "tomas"]},
+					{"kind": "dialogue", "title": "act7_violet_result", "npc": "tomas"},
+					{"kind": "camera", "mode": "consequence", "focus": ["machine"]}
+				]
+			}
+		]
+	},
+	{
+		"id": "act7_lanterns",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act7.lanterns",
+		"valid_targets": ["act7_lanterns"],
+		"once_key": "act7_lanterns",
+		"preconditions": {"story.act": "act7", "witch.place": "street", "magic.state": "returned"},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "act7_lanterns.laid_out",
+				"observed": {"outcome": "town_chose", "motive": "unknown", "npc_expected": "EXPECT_MAGIC"},
+				"knowledge_effects": [{"id": "act7_town_chose", "proposition": {"vera": "chose_the_grey_lantern"}, "status": "ESTABLISHED", "scope": "street"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "three_lanterns_laid_out_and_vera_took_the_grey_one_not_the_red_one"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["act7_lanterns"]},
+					{"kind": "magic", "effect": "flourish", "mode": "verdigris", "target": "act7_lanterns"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act7.lanterns_laid"},
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "vera"]},
+					{"kind": "dialogue", "title": "act7_vera_lantern", "npc": "vera"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act7_attic_bench",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act7.attic_bench",
+		"valid_targets": ["act7_bench"],
+		"once_key": "act7_attic_bench",
+		"preconditions": {"story.act": "act7", "witch.place": "attic"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act7_attic_bench.bare",
+				"observed": {"outcome": "bench_bare"},
+				"knowledge_effects": [{"id": "act7_lamp_went_out", "proposition": {"lamp": "left_the_attic"}, "status": "ESTABLISHED", "scope": "attic"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "bench_bare_where_the_half_lamp_stood"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act7_bench"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.bench"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act7_trapdoor_look",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act7.trapdoor",
+		"valid_targets": ["act7_trapdoor"],
+		"once_key": "act7_trapdoor_look",
+		"preconditions": {"story.act": "act7", "witch.place": "shop", "wand.fate": "hidden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act7_trapdoor_look.crate",
+				"observed": {"outcome": "wand_left_below"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act7_trapdoor"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act7.trapdoor"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act7_morning",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act7.morning",
+		"valid_targets": ["act7_lamp"],
+		"time_cost": 8,
+		"preconditions": {"story.act": "act7", "witch.place": "shop", "magic.state": "returned"},
+		"requires_claims": [
+			{"id": "act7_enabled_tomas", "holder_id": "player"},
+			{"id": "act7_town_chose", "holder_id": "player"}
+		],
+		"prediction_signature": ["WAIT", "EXPECT_DISTANCE"],
+		"response_contracts": [
+			{
+				"id": "act7_morning.next_day",
+				"observed": {"outcome": "time_passes"},
+				"effects": {"world": {"story": {"act": "act8"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act7.morning"}
+				]
+			}
+		]
+	}
+]

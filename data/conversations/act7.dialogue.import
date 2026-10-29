@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://ckkoangh4lm50"
+path="res://.godot/imported/act7.dialogue-2db7b61d7e132554074461446838957c.tres"
+
+[deps]
+
+source_file="res://data/conversations/act7.dialogue"
+dest_files=["res://.godot/imported/act7.dialogue-2db7b61d7e132554074461446838957c.tres"]
+
+[params]
+
+defaults=true
