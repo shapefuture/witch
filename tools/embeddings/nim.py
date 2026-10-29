@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Text embeddings through NVIDIA NIM (`nvidia/nemotron-3-embed-1b`), for offline tools only.
+"""Text embeddings through NVIDIA NIM (`nvidia/nemotron-3.5-embed-1b`), for offline tools only.
 
 The game never calls this: embeddings are a build-time aid (finding near-duplicate lines in the text table,
 suggesting motif rhymes to an author, the private tone study). Nothing here ships.
@@ -24,7 +24,7 @@ import urllib.request
 import numpy as np
 
 URL = 'https://integrate.api.nvidia.com/v1/embeddings'
-MODEL = 'nvidia/nemotron-3-embed-1b'
+MODEL = 'nvidia/nemotron-3.5-embed-1b'
 DIMS = 2048
 BATCH = 32
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

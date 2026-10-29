@@ -8,8 +8,9 @@
 `dupes` catches accidental repetition (a reworded line that now duplicates another). `rhymes` borrows the echo
 rule from room_engine (high cosine, low word overlap): two lines that mean the same thing in different words are
 candidates for an authored motif, never applied automatically. Prints keys and scores; writes nothing to the repo.
-Calibration (2026-10-16, this model, 108 lines): the median pair scores 0.59, the top 1% 0.84, the top 0.1%
-0.93; the defaults sit at the top 1% (rhymes) and the top 0.1% (dupes). Short lines score high by default.
+Calibration (2026-10-29, nemotron-3.5-embed-1b, 114 lines): the median pair scores 0.58, the top 1% 0.84, the top
+0.1% 0.93 (nemotron-3-embed-1b gives the same to two decimals); the defaults sit at the top 1% (rhymes) and the top
+0.1% (dupes). Short lines score high by default.
 EMBED_MOCK=1 runs without the network (scores are then meaningless; only the plumbing is tested).
 """
 import argparse
@@ -64,7 +65,7 @@ def main(argv=None):
     q.add_argument('text')
     q.add_argument('-k', type=int, default=5)
     q.add_argument('--rerank', type=int, default=0, metavar='N',
-                   help='reorder the top N embedding candidates with the reranker (0: off)')
+                   help='reorder the top N embedding candidates with the reranker (0: off; 20 is the usual choice)')
     a = ap.parse_args(argv)
 
     items = lines()
