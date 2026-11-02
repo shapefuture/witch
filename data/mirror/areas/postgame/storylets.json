@@ -1,0 +1,12 @@
+[
+	{
+		"id": "postgame_house",
+		"priority": 10,
+		"once_key": "postgame_house",
+		"preconditions": {"story.act": "postgame"},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.postgame.arrival"}
+		]
+	}
+]

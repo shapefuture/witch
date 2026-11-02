@@ -1,0 +1,23 @@
+[
+	{"place": "shop", "target": "pg_wand_pieces", "at": [1150, 330], "radius": 60},
+	{"place": "shop", "target": "pg_satchel", "at": [1120, 250], "radius": 50},
+	{"place": "shop", "target": "pg_hook", "at": [1215, 230], "radius": 50},
+	{"place": "shop", "target": "pg_till", "at": [240, 470], "radius": 60},
+	{"place": "shop", "target": "pg_ledger", "at": [255, 395], "radius": 50},
+	{"place": "shop", "target": "pg_half_lamp", "at": [760, 230], "radius": 50},
+	{"place": "shop", "target": "pg_spare_cam", "at": [455, 330], "radius": 50},
+	{"place": "shop", "target": "pg_doorframe", "at": [50, 440], "radius": 60},
+	{"place": "shop", "target": "pg_notebook", "at": [335, 395], "radius": 50},
+	{"place": "shop", "target": "pg_trapdoor", "at": [420, 610], "radius": 70},
+	{"place": "attic", "target": "pg_glue", "at": [360, 450], "radius": 60},
+	{"place": "basement", "target": "pg_crate", "at": [560, 500], "radius": 70},
+	{"place": "basement", "target": "pg_hotel_key", "at": [250, 300], "radius": 50},
+	{"place": "basement", "target": "pg_stairs", "at": [120, 300], "radius": 60},
+	{"place": "basement", "target": "pg_low_door", "at": [900, 380], "radius": 60},
+	{"place": "garden", "target": "pg_swing", "at": [235, 300], "radius": 60},
+	{"place": "garden", "target": "pg_bench", "at": [190, 430], "radius": 70},
+	{"place": "garden", "target": "pg_gate", "at": [640, 300], "radius": 60},
+	{"place": "garden", "target": "pg_lilies", "at": [1100, 470], "radius": 80},
+	{"place": "garden_below", "target": "pg_dust", "at": [760, 440], "radius": 120},
+	{"place": "garden_below", "target": "pg_below_stairs", "at": [120, 480], "radius": 60}
+]
