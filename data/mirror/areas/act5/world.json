@@ -1,0 +1,8 @@
+{
+	"_about": "Act V's world: the hold of the rescue at the glass (docs/design/GAME_SPEC.md section 6, decision X35).",
+	"world": {
+		"act5_hold": {
+			"held": false
+		}
+	}
+}

@@ -1,0 +1,85 @@
+{
+	"name": "Act V: the rescue works and holds; he goes back on release; the garden fades to dust",
+	"scope": "game",
+	"after": [
+		"res://data/sim/act4_main.json"
+	],
+	"steps": [
+		{
+			"action": "act3_go_garden_clocktower",
+			"target": "act3_stairs_garden_clocktower"
+		},
+		{
+			"action": "act3_go_clocktower_hotel",
+			"target": "act3_stairs_clocktower_hotel"
+		},
+		{
+			"action": "act5_ask_key",
+			"target": "concierge"
+		},
+		{
+			"action": "act5_go_hotel_threshold",
+			"target": "act5_door_hotel_threshold"
+		},
+		{
+			"action": "act5_bell",
+			"target": "act5_desk_bell"
+		},
+		{
+			"action": "act5_ask_raccoon",
+			"target": "raccoon"
+		},
+		{
+			"action": "act5_pull_raccoon",
+			"target": "act5_glass"
+		},
+		{
+			"action": "act5_pull_miron",
+			"target": "act5_glass"
+		},
+		{
+			"action": "act5_ask_hello",
+			"target": "miron"
+		},
+		{
+			"action": "act5_ask_tired",
+			"target": "miron"
+		},
+		{
+			"action": "act5_let_go",
+			"target": "act5_glass"
+		},
+		{
+			"action": "act5_go_threshold_hotel",
+			"target": "act5_door_threshold_hotel"
+		},
+		{
+			"action": "act3_go_hotel_basement",
+			"target": "act3_door_hotel_basement"
+		},
+		{
+			"action": "act5_stairs_home",
+			"target": "act5_stairs_home"
+		}
+	],
+	"expect": {
+		"state": {
+			"story.act": "act6",
+			"witch.place": "shop",
+			"magic.state": "gone",
+			"garden_below.state": "fading",
+			"act5_hold.held": false,
+			"npc.raccoon.place": "shop",
+			"npc.miron.place": "fog"
+		},
+		"knows": [
+			"act5_spell_moves_things",
+			"act5_raccoon_volunteered",
+			"act5_pull_proves_nothing",
+			"act5_he_stood_here",
+			"act5_he_went_back",
+			"act5_miron_spoke",
+			"act5_would_he_come"
+		]
+	}
+}

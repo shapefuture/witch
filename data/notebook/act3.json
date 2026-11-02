@@ -1,0 +1,58 @@
+{
+	"act3_father_toolbox": {
+		"kind": "seen",
+		"text": "note.act3.father_toolbox"
+	},
+	"act3_rooms_by_memory": {
+		"kind": "heard",
+		"text": "note.act3.rooms_by_memory"
+	},
+	"act3_key_garden_number": {
+		"kind": "shown",
+		"text": "note.act3.key_garden_number"
+	},
+	"act3_key_shop_number": {
+		"kind": "shown",
+		"text": "note.act3.key_shop_number"
+	},
+	"act3_key_fog_number": {
+		"kind": "shown",
+		"text": "note.act3.key_fog_number"
+	},
+	"act3_key_tower_number": {
+		"kind": "shown",
+		"text": "note.act3.key_tower_number"
+	},
+	"act3_keys_watch": {
+		"kind": "seen",
+		"text": "note.act3.keys_watch"
+	},
+	"act3_shadow_key": {
+		"kind": "seen",
+		"text": "note.act3.shadow_key"
+	},
+	"act3_tower_counts_down": {
+		"kind": "inferred",
+		"text": "note.act3.tower_counts_down"
+	},
+	"act3_bench_straight": {
+		"kind": "seen",
+		"text": "note.act3.bench_straight"
+	},
+	"act3_no_sunflowers": {
+		"kind": "seen",
+		"text": "note.act3.no_sunflowers"
+	},
+	"act3_no_knot": {
+		"kind": "seen",
+		"text": "note.act3.no_knot"
+	},
+	"act3_bees_stopped": {
+		"kind": "seen",
+		"text": "note.act3.bees_stopped"
+	},
+	"act3_only_mine": {
+		"kind": "inferred",
+		"text": "note.act3.only_mine"
+	}
+}
