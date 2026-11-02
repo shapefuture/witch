@@ -44,21 +44,39 @@ sign caught), Ilya (act2_clock shown or fixed), Gavrila's refusal (act2_raccoon_
   before suggesting. Operator op.act3_revise_before_repeating is not referenced yet (act III missing;
   the validator would reject an unknown operator).
 
+## Act VI (published, exit, lamp fix)
+
+- Published claims: act6_tomas_finished_it, act6_elian_ty, act6_vera_cart, act6_vera_customer (both new Vera
+  contexts), act6_ilya_together, act6_half_light, act6_shadow_flower (claim and world act6_shadow_flower {"left": true}).
+- Exit (the jars, shop): story.act act7 once act6_lamp is sat (the half-light) and two of five items hold:
+  act6_done_tomas, act6_done_elian, act6_done_vera, act6_done_ilya, act6_shadow_flower left.
+- Softlock fix: an unasked suggestion covers the lamp (act6_lamp covered). Gavrila takes the cloth off on a wait
+  (act6_uncover_lamp, a WAIT that sets shown), so the half-light stays reachable. Test:
+  test_suggesting_covers_the_lamp_and_waiting_has_him_uncover_it, and the worst-choices route in
+  test_the_exit_stays_reachable_after_the_worst_choices. The sim is data/sim_pending/act6_main.json.
+- Vera's two contexts: the cart (acting at once, GO, is right; waiting crashes it) and the customer (waiting is
+  right; stepping in spoils the deal). Same verbs, opposite outcomes (C7).
+- Tomas's second machine targets tomas: asking first needs op.ask_before_acting; taking the tools leaves the work
+  to the witch (no claim).
+
 ## Status
 
-- Act II: in progress (see git log for the committed slices).
-- Act VI: not started.
+- Act II: done (commit 74441d9, now in the integrated branch). The listening LOOK on the attic ladder uses core's
+  ladder hit area (target ladder_shop_attic, core hotspot at 530,420 radius 48). act2.json has no ladder entry.
+- Act VI: done in the commit that carries this note (22 actions, 1 storylet, 16 dialogues, 7 claims).
 
 ## Needs from the integrator
 
 - magic_presentation.gd must handle effect "fizzle" (SYS). Only repair and flourish exist today.
 - The hall's cast_repair and cast_flourish (data/mirror/actions/cast.json, root) are not gated by act;
   they stay available in acts II and VI. Gate them or accept the hall-only casts.
-- Hotspot for ladder_shop_attic is in act2.json; core should not duplicate it.
+- ladder_shop_attic: core's hotspot serves both the exit and act II's listening LOOK. No act2 entry, no duplicate.
 - Act III operator op.act3_revise_before_repeating: act VI does not use it yet.
 - Storylet "act2_morning" and "act2_attic_dust" are presentation only (FW selects them).
 
 ## Voice budgets (VOICES.md)
 
 - Reserved phrase "fine, don't": 1 used in act II (after Gavrila's refusal). Budget 4; act IV has one.
-- Reserved greeting (Shadow): act VI uses it per the brief and GAME_SPEC; VOICES reserves the pair for act IX. Flagged.
+- Reserved greeting (Shadow): act IX already spends the one allowed greeting (dlg.act9_shadow_hi.1, the voice
+  lint budget is 1). Act VI's Shadow says a different line on the step (dlg.act6.shadow_hello.1), as VOICES asks
+  (her earlier lines are other words). The brief and GAME_SPEC asked for the greeting in act VI: conflict, flagged.

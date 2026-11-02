@@ -1,0 +1,1474 @@
+[
+	{
+		"id": "act6_wait_counter",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act6.wait_counter",
+		"valid_targets": [
+			"act2_counter"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act6",
+			"npc.elian.place": ""
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_wait_counter.elian_comes",
+				"observed": {
+					"outcome": "elian_comes"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.wait_counter.1"
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"elian": {
+							"place": "shop",
+							"stance": "needs"
+						}
+					}
+				}
+			}
+		],
+		"time_cost": 4
+	},
+	{
+		"id": "act6_look_tap",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act6.look_tap",
+		"valid_targets": [
+			"act6_tap"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act6",
+			"npc.elian.place": "shop",
+			"npc.elian.address": "vy"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_look_tap.vy",
+				"observed": {
+					"outcome": "vy"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"elian"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_elian_tap_vy",
+						"npc": "elian"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_done_elian": {
+							"done": true
+						}
+					},
+					"npc_state": {
+						"elian": {
+							"address": "ty",
+							"stance": "warm"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act6_elian_ty",
+						"proposition": {
+							"act6": "act6_elian_ty"
+						},
+						"status": "SUPPORTED",
+						"scope": "act6"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act6_look_tap_ty",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act6.look_tap",
+		"valid_targets": [
+			"act6_tap"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act6",
+			"npc.elian.place": "shop",
+			"npc.elian.address": "ty",
+			"act6_done_elian.done": false
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_look_tap_ty.ty",
+				"observed": {
+					"outcome": "ty"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"elian"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_elian_tap_ty",
+						"npc": "elian"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.look_tap_ty.1"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_done_elian": {
+							"done": true
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act6_elian_ty",
+						"proposition": {
+							"act6": "act6_elian_ty"
+						},
+						"status": "SUPPORTED",
+						"scope": "act6"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act6_look_ladder",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act6.look_ladder",
+		"valid_targets": [
+			"ladder_shop_attic"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act6",
+			"$neq": {
+				"npc.raccoon.place": "attic"
+			}
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_look_ladder.raccoon_up",
+				"observed": {
+					"outcome": "raccoon_up"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"ladder_shop_attic"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.look_ladder.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act6.look_ladder.2"
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"raccoon": {
+							"place": "attic"
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act6_look_jars",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act6.look_jars",
+		"valid_targets": [
+			"act6_jars"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act6",
+			"act6_lamp.state": "sat",
+			"$any": [
+				{
+					"$all": [
+						{
+							"act6_done_tomas.done": true
+						},
+						{
+							"act6_done_elian.done": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_tomas.done": true
+						},
+						{
+							"act6_done_vera.done": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_tomas.done": true
+						},
+						{
+							"act6_done_ilya.done": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_tomas.done": true
+						},
+						{
+							"act6_shadow_flower.left": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_elian.done": true
+						},
+						{
+							"act6_done_vera.done": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_elian.done": true
+						},
+						{
+							"act6_done_ilya.done": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_elian.done": true
+						},
+						{
+							"act6_shadow_flower.left": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_vera.done": true
+						},
+						{
+							"act6_done_ilya.done": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_vera.done": true
+						},
+						{
+							"act6_shadow_flower.left": true
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act6_done_ilya.done": true
+						},
+						{
+							"act6_shadow_flower.left": true
+						}
+					]
+				}
+			]
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_look_jars.hum",
+				"observed": {
+					"outcome": "hum"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.look_jars.1"
+					}
+				],
+				"effects": {
+					"world": {
+						"story": {
+							"act": "act7"
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act6_look_ledger",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act6.look_ledger",
+		"valid_targets": [
+			"act6_ledger"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act6",
+			"act6_shadow_flower.left": true
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_look_ledger.petal",
+				"observed": {
+					"outcome": "petal"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act6_ledger"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act6.look_ledger.1"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act6_shadow_flower",
+						"proposition": {
+							"act6": "act6_shadow_flower"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act6"
+					}
+				]
+			}
+		],
+		"excludes_claims": [
+			{
+				"id": "act6_shadow_flower"
+			}
+		]
+	},
+	{
+		"id": "act6_wait_step",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act6.wait_step",
+		"valid_targets": [
+			"act6_step"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act6",
+			"npc.shadow.place": "",
+			"act6_shadow_flower.left": false
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_wait_step.hello",
+				"observed": {
+					"outcome": "hello"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"shadow"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_shadow_hello",
+						"npc": "shadow"
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"shadow": {
+							"place": "street",
+							"stance": "sitting"
+						}
+					}
+				}
+			}
+		],
+		"time_cost": 3
+	},
+	{
+		"id": "act6_wait_step_leave",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act6.wait_step_leave",
+		"valid_targets": [
+			"act6_step"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act6",
+			"npc.shadow.place": "street",
+			"act6_shadow_flower.left": false
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_wait_step_leave.goes",
+				"observed": {
+					"outcome": "goes"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.wait_step_leave.1"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_shadow_flower": {
+							"left": true
+						}
+					},
+					"npc_state": {
+						"shadow": {
+							"place": "",
+							"stance": "passing"
+						}
+					}
+				}
+			}
+		],
+		"time_cost": 3
+	},
+	{
+		"id": "act6_cart_stop",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act6.cart_stop",
+		"valid_targets": [
+			"act6_cart"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act6",
+			"act6_cart.state": "rolling"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_cart_stop.held",
+				"observed": {
+					"outcome": "held"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act6_cart"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act6.cart_stop.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.cart_stop.2"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"vera"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_vera_cart",
+						"npc": "vera"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_cart": {
+							"state": "held"
+						},
+						"act6_done_vera": {
+							"done": true
+						}
+					},
+					"npc_state": {
+						"vera": {
+							"stance": "grateful"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act6_vera_cart",
+						"proposition": {
+							"act6": "act6_vera_cart"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act6"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act6_cart_wait",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act6.cart_wait",
+		"valid_targets": [
+			"act6_cart"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act6",
+			"act6_cart.state": "rolling"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_cart_wait.crashed",
+				"observed": {
+					"outcome": "crashed"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.cart_wait.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"vera"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_vera_cart_crash",
+						"npc": "vera"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_cart": {
+							"state": "crashed"
+						}
+					},
+					"npc_state": {
+						"vera": {
+							"stance": "upset"
+						}
+					}
+				}
+			}
+		],
+		"time_cost": 2
+	},
+	{
+		"id": "act6_customer_wait",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act6.customer_wait",
+		"valid_targets": [
+			"act6_customer"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act6",
+			"act6_customer.state": "haggling"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_customer_wait.settled",
+				"observed": {
+					"outcome": "settled"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.customer_wait.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"vera"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_vera_customer",
+						"npc": "vera"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_customer": {
+							"state": "settled"
+						},
+						"act6_done_vera": {
+							"done": true
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act6_vera_customer",
+						"proposition": {
+							"act6": "act6_vera_customer"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act6"
+					}
+				]
+			}
+		],
+		"time_cost": 4
+	},
+	{
+		"id": "act6_customer_help",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act6.customer_help",
+		"valid_targets": [
+			"act6_customer"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act6",
+			"act6_customer.state": "haggling"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_customer_help.spoiled",
+				"observed": {
+					"outcome": "spoiled"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.customer_help.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"vera"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_vera_spoiled",
+						"npc": "vera"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_customer": {
+							"state": "spoiled"
+						}
+					},
+					"npc_state": {
+						"vera": {
+							"stance": "upset"
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act6_wait_clock",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act6.wait_clock",
+		"valid_targets": [
+			"act2_clock"
+		],
+		"preconditions": {
+			"witch.place": "observatory",
+			"story.act": "act6",
+			"act6_done_ilya.done": false
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_wait_clock.turned_back",
+				"observed": {
+					"outcome": "turned_back"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"ilya"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.wait_clock.2"
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_ilya_turned_back",
+						"npc": "ilya"
+					}
+				],
+				"when": {
+					"act2_clock.state": "fixed"
+				},
+				"priority": 10,
+				"effects": {
+					"world": {
+						"act2_clock": {
+							"state": "shown"
+						},
+						"act6_done_ilya": {
+							"done": true
+						}
+					},
+					"npc_state": {
+						"ilya": {
+							"stance": "showing"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act6_ilya_together",
+						"proposition": {
+							"act6": "act6_ilya_together"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act6"
+					}
+				]
+			},
+			{
+				"id": "act6_wait_clock.together",
+				"observed": {
+					"outcome": "together"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"ilya"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.wait_clock.1"
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_ilya_together",
+						"npc": "ilya"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_done_ilya": {
+							"done": true
+						}
+					},
+					"npc_state": {
+						"ilya": {
+							"stance": "showing"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act6_ilya_together",
+						"proposition": {
+							"act6": "act6_ilya_together"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act6"
+					}
+				]
+			}
+		],
+		"time_cost": 4
+	},
+	{
+		"id": "act6_look_lamp",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act6.look_lamp",
+		"valid_targets": [
+			"act6_lamp"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act6",
+			"npc.raccoon.place": "attic",
+			"act6_lamp.state": "unshown"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_look_lamp.shown",
+				"observed": {
+					"outcome": "shown"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"raccoon"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_raccoon_lamp",
+						"npc": "raccoon"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_lamp": {
+							"state": "shown"
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act6_wait_lamp",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act6.wait_lamp",
+		"valid_targets": [
+			"act6_lamp"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act6",
+			"npc.raccoon.place": "attic",
+			"$in": {
+				"act6_lamp.state": [
+					"shown",
+					"asked"
+				]
+			}
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_wait_lamp.half_light",
+				"observed": {
+					"outcome": "half_light"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.wait_lamp.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"raccoon"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_half_light",
+						"npc": "raccoon"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_lamp": {
+							"state": "sat"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act6_half_light",
+						"proposition": {
+							"act6": "act6_half_light"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act6"
+					}
+				]
+			}
+		],
+		"time_cost": 6
+	},
+	{
+		"id": "act6_suggest_lamp",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act6.suggest_lamp",
+		"valid_targets": [
+			"act6_lamp"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act6",
+			"npc.raccoon.place": "attic",
+			"act6_lamp.state": "shown"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_suggest_lamp.covered",
+				"observed": {
+					"outcome": "covered"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act6_lamp"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act6.suggest_lamp.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.suggest_lamp.2"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"raccoon"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_raccoon_covers",
+						"npc": "raccoon"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_lamp": {
+							"state": "covered"
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act6_uncover_lamp",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act6.uncover_lamp",
+		"valid_targets": [
+			"act6_lamp"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act6",
+			"npc.raccoon.place": "attic",
+			"act6_lamp.state": "covered"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_uncover_lamp.back",
+				"observed": {
+					"outcome": "back"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.uncover_lamp.1"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_lamp": {
+							"state": "shown"
+						}
+					}
+				}
+			}
+		],
+		"time_cost": 4
+	},
+	{
+		"id": "act6_ask_lamp",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act6.ask_lamp",
+		"valid_targets": [
+			"raccoon"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act6",
+			"npc.raccoon.place": "attic",
+			"act6_lamp.state": "shown"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_PERMISSION"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_ask_lamp.not_now",
+				"observed": {
+					"outcome": "not_now"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"raccoon"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_raccoon_ask",
+						"npc": "raccoon"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_lamp": {
+							"state": "asked"
+						}
+					}
+				}
+			}
+		],
+		"requires_operators": [
+			{
+				"id": "op.ask_before_acting"
+			}
+		]
+	},
+	{
+		"id": "act6_look_second",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act6.look_second",
+		"valid_targets": [
+			"tomas"
+		],
+		"preconditions": {
+			"witch.place": "clearing",
+			"story.act": "act6",
+			"act6_second_machine.state": "unfinished"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_look_second.unfinished",
+				"observed": {
+					"outcome": "unfinished"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.look_second.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "tomas",
+						"key": "line.act6.look_second.2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act6_ask_second",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act6.ask_second",
+		"valid_targets": [
+			"tomas"
+		],
+		"preconditions": {
+			"witch.place": "clearing",
+			"story.act": "act6",
+			"act6_second_machine.state": "unfinished"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_PERMISSION"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_ask_second.asked",
+				"observed": {
+					"outcome": "asked"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_tomas_ask",
+						"npc": "tomas"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_second_machine": {
+							"state": "asked"
+						}
+					}
+				}
+			}
+		],
+		"requires_operators": [
+			{
+				"id": "op.ask_before_acting"
+			}
+		]
+	},
+	{
+		"id": "act6_show_second",
+		"action_type": "SHOW",
+		"affordance_group": "social",
+		"label_key": "opt.act6.show_second",
+		"valid_targets": [
+			"tomas"
+		],
+		"preconditions": {
+			"witch.place": "clearing",
+			"story.act": "act6",
+			"act6_second_machine.state": "asked"
+		},
+		"prediction_signature": [
+			"SHOW",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_show_second.finished_by_tomas",
+				"observed": {
+					"outcome": "finished_by_tomas"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_tomas_finishes",
+						"npc": "tomas"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_second_machine": {
+							"state": "finished_by_tomas"
+						},
+						"act6_done_tomas": {
+							"done": true
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act6_tomas_finished_it",
+						"proposition": {
+							"act6": "act6_tomas_finished_it"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act6"
+					}
+				]
+			}
+		],
+		"time_cost": 5
+	},
+	{
+		"id": "act6_take_second",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act6.take_second",
+		"valid_targets": [
+			"tomas"
+		],
+		"preconditions": {
+			"witch.place": "clearing",
+			"story.act": "act6",
+			"$in": {
+				"act6_second_machine.state": [
+					"unfinished",
+					"asked"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act6_take_second.by_witch",
+				"observed": {
+					"outcome": "by_witch"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"tomas"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.take_second.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"tomas"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act6_tomas_taken",
+						"npc": "tomas"
+					}
+				],
+				"effects": {
+					"world": {
+						"act6_second_machine": {
+							"state": "finished_by_witch"
+						}
+					}
+				}
+			}
+		]
+	}
+]
