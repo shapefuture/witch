@@ -14,6 +14,7 @@ const ALLOWED := [
 	"res://addons/dialogue_manager/l10n/uk.po",
 	"res://docs/PLAN.md",
 	"res://docs/art/STYLE_BIBLE.md",
+	"res://docs/design/AWARD_PLAN.md",
 	"res://docs/design/BIBLE.md",
 	"res://docs/design/GAME_SPEC.md",
 	"res://docs/design/VOICES.md",

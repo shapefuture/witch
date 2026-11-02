@@ -1,5 +1,5 @@
 {
-	"_about": "Архив (Tomas's archive, Mirror place 'clearing'): the archive hall, built from the user's reference still. Its own spawn point and stances are the hall's; arrive is empty because the hall places her at its spawn.",
+	"_about": "Archive (Tomas's archive, Mirror place 'clearing'): the archive hall, built from the user's reference still. Its own spawn point and stances are the hall's; arrive is empty because the hall places her at its spawn.",
 	"id": "clearing",
 	"room": {"kind": "hall"},
 	"variants": {},

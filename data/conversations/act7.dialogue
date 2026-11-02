@@ -1,0 +1,22 @@
+# Act VII (area act7): linear exchanges only. Every line is a key; the prose lives in data/text/ru/act7.json.
+# The Mirror runtime commits the action first, then the title named by the response presents.
+
+~ act7_return_given
+raccoon: dlg.act7_return_given.1
+witch: dlg.act7_return_given.2
+=> END
+
+~ act7_frame_held
+tomas: dlg.act7_frame_held.1
+tomas: dlg.act7_frame_held.2
+=> END
+
+~ act7_violet_result
+tomas: dlg.act7_violet_result.1
+tomas: dlg.act7_violet_result.2
+=> END
+
+~ act7_vera_lantern
+vera: dlg.act7_vera_lantern.1
+vera: dlg.act7_vera_lantern.2
+=> END

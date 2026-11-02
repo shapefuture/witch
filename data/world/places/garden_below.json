@@ -1,5 +1,5 @@
 {
-	"_about": "Нижний сад (GAME_SPEC section 2): the garden again, below the town. Variants fading and dust are the same garden after the wand's act. Stand-in stage until the plates exist.",
+	"_about": "Lower garden (GAME_SPEC section 2): the garden again, below the town. Variants fading and dust are the same garden after the wand's act. Stand-in stage until the plates exist.",
 	"id": "garden_below",
 	"room": {"kind": "painted", "dir": "res://assets/painted/garden_below"},
 	"variants": {"fading": "res://assets/painted/garden_below_fading", "dust": "res://assets/painted/garden_below_dust"},

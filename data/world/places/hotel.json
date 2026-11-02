@@ -1,5 +1,5 @@
 {
-	"_about": "Запределье (GAME_SPEC section 2): the hotel beyond, a checkerboard lobby with a bird at the desk. Stand-in stage until the plate exists.",
+	"_about": "Beyond (GAME_SPEC section 2): the hotel beyond, a checkerboard lobby with a bird at the desk. Stand-in stage until the plate exists.",
 	"id": "hotel",
 	"room": {"kind": "painted", "dir": "res://assets/painted/hotel"},
 	"variants": {},

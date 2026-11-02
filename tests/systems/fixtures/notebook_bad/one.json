@@ -1,0 +1,5 @@
+{
+	"c.wrong_kind": {"kind": "guessed", "text": "note.fixture.wrong"},
+	"c.no_note": {"kind": "seen", "text": "a line without a note key"},
+	"c.twice": {"kind": "seen", "text": "note.fixture.twice"}
+}

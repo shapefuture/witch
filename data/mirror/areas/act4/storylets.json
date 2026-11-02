@@ -1,0 +1,26 @@
+[
+	{
+		"id": "act4_wand_glows",
+		"priority": 0,
+		"preconditions": {
+			"story.act": "act4",
+			"witch.place": "garden_below",
+			"wand.fate": "held"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "inspect",
+				"focus": [
+					"witch"
+				]
+			},
+			{
+				"kind": "line",
+				"speaker": "witch",
+				"key": "line.act4.wand_glows"
+			}
+		],
+		"once_key": "act4_wand_glows"
+	}
+]

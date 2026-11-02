@@ -1,0 +1,6 @@
+[
+	{"place": "shop", "target": "act9_bell_rope", "at": [1110, 150], "radius": 60},
+	{"place": "shop", "target": "act9_doorway", "at": [60, 330], "radius": 80},
+	{"place": "street", "target": "act9_step", "at": [345, 565], "radius": 60},
+	{"place": "street", "target": "act9_clocks", "at": [120, 400], "radius": 60}
+]

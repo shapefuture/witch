@@ -1,0 +1,23 @@
+{
+ "id": "garden_below",
+ "kind": "garden",
+ "title": "The Garden Below",
+ "prompt": "The walled garden of the first room, but below: the same wall, house, pear tree, stone post, gate, path and sundial in the same places, under a deep violet dusk with no golden sun. Her violet star-lilies fill the raised beds in neat straight rows and nothing else blooms. The stone bench under the tree is straight and clean. A plain wooden swing hangs from a low branch of the pear tree, its ropes tied with a neat bow. The wheelbarrow and the watering can are gone. Everything is perfectly still and tidy: no wind, no fallen leaves, no people, no animals, no writing.",
+ "story": "Act III: the same garden with only her things in it, and everything too still. Looking registers a difference only when she holds the prologue's claim (the straight bench, no sunflowers, the bow on the swing). Magic works here; each perfecting cast makes it stiller.",
+ "horizon": 0.6,
+ "actors": {
+  "witch": [
+   0.44,
+   0.72
+  ],
+  "raccoon": [
+   0.53,
+   0.8
+  ]
+ },
+ "variants": {
+  "fading": "the violet star-lilies have half gone grey and bowed over, a few of their petals lie on the path, the swing's rope is frayed; the rest unchanged",
+  "dust": "a thin grey dust lies over the raised beds, the bench, the swing and the path, and the lantern's light is dimmer; the rest unchanged"
+ },
+ "_plate": "An edit of assets/painted/garden/plate.png on Kontext-Dev (tools/hfspaces/plate.py edit, one run, 2026-10-29, seed 1305; the instruction is in build/hfspaces/garden_below/prompt_a1.txt and the record in assets/painted/garden_below/job_room.json). Fitted to 1280x720 and passed through the PS1 pass (tools/hfspaces/ps1pass.py). Built with the garden's horizon (0.6), sun direction and floor box (384 590 896 705), so the camera and floor are the garden's."
+}

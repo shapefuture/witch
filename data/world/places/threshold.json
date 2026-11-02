@@ -1,5 +1,5 @@
 {
-	"_about": "Порог (GAME_SPEC section 2): the fogged glass; Мирон's side is behind it. Stand-in stage until the plate exists.",
+	"_about": "Threshold (GAME_SPEC section 2): the fogged glass; Miron's side is behind it. Stand-in stage until the plate exists.",
 	"id": "threshold",
 	"room": {"kind": "painted", "dir": "res://assets/painted/threshold"},
 	"variants": {},

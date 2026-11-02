@@ -350,6 +350,7 @@ def check(room_dir):
         if not p.get("reactions", {}).get("press"):
             problems.append("%s: no press reactions" % p["id"])
         for r in p.get("reactions", {}).get("press", []):
+            r = {"do": r} if isinstance(r, str) else r              # a bare word is a reaction too (painted_room.md, Toy box)
             if r.get("do") not in words:
                 problems.append("%s: unknown reaction %r" % (p["id"], r.get("do")))
             if r.get("sound") and r["sound"] not in sounds:

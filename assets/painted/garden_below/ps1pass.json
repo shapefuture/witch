@@ -1,0 +1,38 @@
+{
+ "tool": "tools/hfspaces/ps1pass.py apply",
+ "source": "build/hfspaces/garden_below/a1_fit.png",
+ "source_sha256": "c7c2e89415e88c4609686c04e2e28f185e81ee44ef32208fa231f0560d74f0b9",
+ "size": [
+  1280,
+  720
+ ],
+ "texel": 5,
+ "grid": [
+  256,
+  144
+ ],
+ "dither": 0.6,
+ "cool": 0.2,
+ "sat": 1.0,
+ "lift": 1.0,
+ "gamma": 0.75,
+ "transfer_to_references": 0.6,
+ "split_tone": {
+  "hi": [
+   0.9490196078431372,
+   0.7058823529411765,
+   0.2549019607843137
+  ],
+  "hi_amount": 0.7,
+  "lo": [
+   0.16470588235294117,
+   0.12156862745098039,
+   0.3607843137254902
+  ],
+  "lo_amount": 0.5
+ },
+ "palette": "plate",
+ "colours": 64,
+ "palette_refs_colours": 24,
+ "out_sha256": "1ad6e92f07ad87d0b4443a44d1064574ceb91957faac72978e06a07cdbd1224d"
+}

@@ -1,5 +1,5 @@
 {
-	"_about": "Обсерватория Ильи (GAME_SPEC section 2): the backwards clock, at night.",
+	"_about": "Ilya's observatory (GAME_SPEC section 2): the backwards clock, at night.",
 	"id": "observatory",
 	"room": {"kind": "painted", "dir": "res://assets/painted/observatory"},
 	"variants": {},

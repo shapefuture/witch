@@ -1,5 +1,5 @@
 {
-	"_about": "Край Тумана (GAME_SPEC section 2): where the fog begins over the marsh; the spike's plate.",
+	"_about": "Fog's edge (GAME_SPEC section 2): where the fog begins over the marsh; the spike's plate.",
 	"id": "fog_edge",
 	"room": {"kind": "painted", "dir": "res://assets/painted/fog_edge"},
 	"variants": {},

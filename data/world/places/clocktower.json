@@ -1,5 +1,5 @@
 {
-	"_about": "Часовая башня (GAME_SPEC section 2): two landings joined by cuts, the loop of act III. Stand-in stage until the plates exist.",
+	"_about": "Clock tower (GAME_SPEC section 2): two landings joined by cuts, the loop of act III. Stand-in stage until the plates exist.",
 	"id": "clocktower",
 	"room": {"kind": "painted", "dir": "res://assets/painted/clocktower"},
 	"variants": {},

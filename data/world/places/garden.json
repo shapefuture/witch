@@ -1,5 +1,5 @@
 {
-	"_about": "Наш сад (GAME_SPEC section 2): the painted garden with Мирон's crooked bench and her star-lilies.",
+	"_about": "Our garden (GAME_SPEC section 2): the painted garden with Miron's crooked bench and her star-lilies.",
 	"id": "garden",
 	"room": {"kind": "painted", "dir": "res://assets/painted/garden"},
 	"variants": {},

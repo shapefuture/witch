@@ -1,0 +1,5 @@
+{
+	"id": "fixture_room",
+	"room": {"kind": "painted", "dir": "res://assets/painted/fog_edge"},
+	"spots": {"default": [640, 360]}
+}

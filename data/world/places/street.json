@@ -1,5 +1,5 @@
 {
-	"_about": "Улица (GAME_SPEC section 2). The quiet variant is the same street at night, painted separately.",
+	"_about": "Street (GAME_SPEC section 2). The quiet variant is the same street at night, painted separately.",
 	"id": "street",
 	"room": {"kind": "painted", "dir": "res://assets/painted/street"},
 	"variants": {"quiet": "res://assets/painted/street_quiet"},

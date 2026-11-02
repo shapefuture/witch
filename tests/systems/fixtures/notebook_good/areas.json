@@ -1,0 +1,10 @@
+{
+	"_about": "Fixture sidecar: one claim for each of the seven notebook kinds (GAME_SPEC section 4).",
+	"c.seen": {"kind": "seen", "text": "note.fixture.seen"},
+	"c.heard": {"kind": "heard", "text": "note.fixture.heard"},
+	"c.shown": {"kind": "shown", "text": "note.fixture.shown"},
+	"c.inferred": {"kind": "inferred", "text": "note.fixture.inferred"},
+	"c.predicted": {"kind": "predicted", "text": "note.fixture.predicted"},
+	"c.altered": {"kind": "altered", "text": "note.fixture.altered"},
+	"c.untestable": {"kind": "untestable", "text": "note.fixture.untestable"}
+}

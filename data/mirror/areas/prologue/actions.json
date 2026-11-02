@@ -1,0 +1,588 @@
+[
+	{
+		"id": "prologue_look_kettle",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_kettle",
+		"valid_targets": ["prologue_kettle"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_kettle.stops",
+				"when": {"prologue_kettle.state": "simmering"},
+				"priority": 2,
+				"observed": {"outcome": "kettle_stopped_when_watched"},
+				"effects": {"world": {"prologue_kettle": {"state": "still"}}},
+				"knowledge_effects": [
+					{"id": "prologue_kettle_still", "proposition": {"kettle": "stops_when_watched"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_kettle"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_still"}
+				]
+			},
+			{
+				"id": "prologue_look_kettle.quiet",
+				"observed": {"outcome": "kettle_quiet"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_kettle"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_look_again"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_wait_kettle",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.prologue.wait_kettle",
+		"valid_targets": ["prologue_kettle"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"prediction_signature": ["WAIT", "EXPECT_PATIENCE"],
+		"response_contracts": [
+			{
+				"id": "prologue_wait_kettle.rule",
+				"when": {"prologue_kettle.state": "still"},
+				"priority": 2,
+				"observed": {"outcome": "kettle_boiled_unwatched"},
+				"effects": {"world": {"prologue_kettle": {"state": "boiled"}}},
+				"knowledge_effects": [
+					{"id": "prologue_kettle_boiled", "proposition": {"kettle": "boiled_while_turned_away"}, "status": "ESTABLISHED", "scope": "prologue"},
+					{"id": "prologue_kettle_rule", "proposition": {"kettle": "boils_only_unwatched"}, "status": "SUPPORTED", "scope": "prologue"}
+				],
+				"operator_effects": [{"type": "acquire", "operator_id": "op.prologue_unwatched"}],
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.prologue.kettle_wait_caption"},
+					{"kind": "wait", "seconds": 0.8},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_boiled"},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_rule"}
+				]
+			},
+			{
+				"id": "prologue_wait_kettle.boils",
+				"when": {"prologue_kettle.state": "simmering"},
+				"priority": 1,
+				"observed": {"outcome": "kettle_boiled_by_itself"},
+				"effects": {"world": {"prologue_kettle": {"state": "boiled"}}},
+				"knowledge_effects": [
+					{"id": "prologue_kettle_boiled", "proposition": {"kettle": "boiled_while_turned_away"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.prologue.kettle_wait_caption"},
+					{"kind": "wait", "seconds": 0.8},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_boiled_alone"}
+				]
+			},
+			{
+				"id": "prologue_wait_kettle.tidy",
+				"observed": {"outcome": "tidied_while_kettle_waited"},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_tidy"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_cast_kettle",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.prologue.cast_kettle",
+		"valid_targets": ["prologue_kettle"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop", "$in": {"prologue_kettle.state": ["simmering", "still"]}},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "prologue_cast_kettle.thunder",
+				"observed": {"outcome": "kettle_boiled_by_magic"},
+				"effects": {
+					"world": {"prologue_kettle": {"state": "thunder"}},
+					"npc_state": {"raccoon": {"stance": "soaked"}}
+				},
+				"knowledge_effects": [
+					{"id": "prologue_kettle_thunder", "proposition": {"kettle": "boiled_by_magic", "tea": "tastes_of_thunder"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["prologue_kettle"]},
+					{"kind": "magic", "effect": "flourish", "target": "prologue_kettle", "mode": "violet"},
+					{"kind": "line", "speaker": "raccoon", "key": "line.prologue.kettle_cast_raccoon"},
+					{"kind": "line", "speaker": "narrator", "key": "line.prologue.kettle_cast_caption"},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_cast_witch"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_refill_kettle",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.prologue.refill_kettle",
+		"valid_targets": ["prologue_kettle"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop", "$in": {"prologue_kettle.state": ["boiled", "thunder"]}},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "prologue_refill_kettle.simmer",
+				"observed": {"outcome": "kettle_back_on_the_flame"},
+				"effects": {"world": {"prologue_kettle": {"state": "simmering"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_kettle"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_refill"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_look_drawing",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_drawing",
+		"valid_targets": ["prologue_drawing"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_drawing.seen",
+				"observed": {"outcome": "drawing_seen"},
+				"knowledge_effects": [
+					{"id": "prologue_father_drawing", "proposition": {"drawing": "tall_man_lifts_girl_toward_comet"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_drawing"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.drawing_look"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_ask_raccoon_drawing",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.prologue.ask_raccoon_drawing",
+		"valid_targets": ["raccoon"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"requires_claims": [{"id": "prologue_father_drawing", "holder_id": "player", "min_status": "ESTABLISHED"}],
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "prologue_ask_raccoon_drawing.older",
+				"observed": {"outcome": "drawing_is_older"},
+				"knowledge_effects": [
+					{"id": "prologue_drawing_older", "proposition": {"drawing": "older_than_the_raccoon"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.drawing_ask"},
+					{"kind": "line", "speaker": "raccoon", "key": "line.prologue.drawing_raccoon"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_ask_raccoon_noise",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.prologue.ask_raccoon_noise",
+		"valid_targets": ["raccoon"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "prologue_ask_raccoon_noise.verdict",
+				"observed": {"outcome": "raccoon_complains"},
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.noise_ask"},
+					{"kind": "line", "speaker": "raccoon", "key": "line.prologue.noise_raccoon"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_sight_self",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.sight_self",
+		"valid_targets": ["witch"],
+		"preconditions": {"story.act": "prologue"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_sight_self.shows",
+				"observed": {"outcome": "expectation_sight_used"},
+				"knowledge_effects": [
+					{"id": "prologue_sight_used", "proposition": {"sight": "used_on_the_room"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.sight_witch"},
+					{"kind": "sight"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_look_board",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_board",
+		"valid_targets": ["prologue_board"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_board.three",
+				"observed": {"outcome": "three_requests_read"},
+				"knowledge_effects": [
+					{"id": "prologue_board_three", "proposition": {"board": "three_requests"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_board"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.board_oven"},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.board_clock"},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.board_lamps"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_end_day",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.prologue.end_day",
+		"valid_targets": ["prologue_bed"],
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"requires_claims": [
+			{"id": "prologue_kettle_rule", "holder_id": "player", "min_status": "SUPPORTED"},
+			{"id": "prologue_garden_two_tastes", "holder_id": "player", "min_status": "SUPPORTED"},
+			{"id": "prologue_bench_crooked", "holder_id": "player", "min_status": "ESTABLISHED"},
+			{"id": "prologue_knot", "holder_id": "player", "min_status": "ESTABLISHED"},
+			{"id": "prologue_sunflowers", "holder_id": "player", "min_status": "ESTABLISHED"},
+			{"id": "prologue_fog_mentioned", "holder_id": "player", "min_status": "ESTABLISHED"}
+		],
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "prologue_end_day.act1",
+				"observed": {"outcome": "day_ended"},
+				"effects": {"world": {"story": {"act": "act1"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.prologue.end_caption"},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.end_witch"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_look_lilies",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_lilies",
+		"valid_targets": ["prologue_lilies"],
+		"preconditions": {"story.act": "prologue", "witch.place": "garden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_lilies.two_tastes",
+				"priority": 1,
+				"requires_claims": [{"id": "prologue_sunflowers", "holder_id": "player", "min_status": "ESTABLISHED"}],
+				"observed": {"outcome": "lilies_beside_sunflowers"},
+				"knowledge_effects": [
+					{"id": "prologue_lilies_tidy", "proposition": {"lilies": "planted_in_rows"}, "status": "ESTABLISHED", "scope": "prologue"},
+					{"id": "prologue_garden_two_tastes", "proposition": {"garden": "two_tastes"}, "status": "SUPPORTED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_lilies"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.lilies_two"}
+				]
+			},
+			{
+				"id": "prologue_look_lilies.tidy",
+				"observed": {"outcome": "lilies_seen"},
+				"knowledge_effects": [
+					{"id": "prologue_lilies_tidy", "proposition": {"lilies": "planted_in_rows"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_lilies"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.lilies_tidy"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_look_sunflowers",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_sunflowers",
+		"valid_targets": ["prologue_sunflowers"],
+		"preconditions": {"story.act": "prologue", "witch.place": "garden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_sunflowers.crooked",
+				"observed": {"outcome": "sunflowers_seen"},
+				"knowledge_effects": [
+					{"id": "prologue_sunflowers", "proposition": {"sunflowers": "grow_crooked"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_sunflowers"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.sunflowers"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_look_bench",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_bench",
+		"valid_targets": ["prologue_bench"],
+		"preconditions": {"story.act": "prologue", "witch.place": "garden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_bench.crooked",
+				"observed": {"outcome": "bench_seen"},
+				"knowledge_effects": [
+					{"id": "prologue_bench_crooked", "proposition": {"bench": "leans"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_bench"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.bench_look"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_cast_bench",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.prologue.cast_bench",
+		"valid_targets": ["prologue_bench"],
+		"once_key": "prologue_cast_bench",
+		"preconditions": {"story.act": "prologue", "witch.place": "garden"},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "prologue_cast_bench.straightens",
+				"observed": {"outcome": "bench_straightened_then_leaned"},
+				"knowledge_effects": [
+					{"id": "prologue_bench_crooked", "proposition": {"bench": "leans"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.bench_cast_witch"},
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["prologue_bench"]},
+					{"kind": "magic", "effect": "flourish", "target": "prologue_bench", "mode": "violet"},
+					{"kind": "line", "speaker": "narrator", "key": "line.prologue.bench_cast_caption"},
+					{"kind": "line", "speaker": "miron", "key": "line.prologue.bench_cast_miron"},
+					{"kind": "line", "speaker": "narrator", "key": "line.prologue.bench_cast_caption2"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_look_swing",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_swing",
+		"valid_targets": ["prologue_swing"],
+		"preconditions": {"story.act": "prologue", "witch.place": "garden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_swing.knot",
+				"observed": {"outcome": "knot_seen"},
+				"knowledge_effects": [
+					{"id": "prologue_knot", "proposition": {"swing": "tied_with_his_knot"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_swing"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.swing_look"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_ask_miron_light",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.prologue.ask_miron_light",
+		"valid_targets": ["miron"],
+		"preconditions": {"story.act": "prologue", "witch.place": "garden", "npc.miron.place": "garden"},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "prologue_ask_miron_light.quiet",
+				"observed": {"outcome": "miron_mentions_quiet"},
+				"knowledge_effects": [
+					{"id": "prologue_fog_mentioned", "proposition": {"miron_said": "over_the_marsh_it_is_quiet"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.light_ask"},
+					{"kind": "line", "speaker": "miron", "key": "line.prologue.light_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_ask_miron_bench",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.prologue.ask_miron_bench",
+		"valid_targets": ["miron"],
+		"once_key": "prologue_ask_miron_bench",
+		"preconditions": {"story.act": "prologue", "witch.place": "garden", "npc.miron.place": "garden"},
+		"requires_claims": [{"id": "prologue_bench_crooked", "holder_id": "player", "min_status": "ESTABLISHED"}],
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "prologue_ask_miron_bench.answer",
+				"observed": {"outcome": "miron_defends_the_bench"},
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.bench_ask"},
+					{"kind": "line", "speaker": "miron", "key": "line.prologue.bench_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_cast_lamp",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.prologue.cast_lamp",
+		"valid_targets": ["prologue_lamp"],
+		"once_key": "prologue_cast_lamp",
+		"preconditions": {"story.act": "prologue", "witch.place": "street"},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "prologue_cast_lamp.lights",
+				"observed": {"outcome": "lamp_lit_by_magic"},
+				"effects": {"world": {"prologue_lamp": {"lit": true}}},
+				"knowledge_effects": [
+					{"id": "prologue_lamp_lit", "proposition": {"lamp": "lit_by_the_witch"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.lamp_witch"},
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["prologue_lamp"]},
+					{"kind": "magic", "effect": "flourish", "target": "prologue_lamp", "mode": "violet"},
+					{"kind": "line", "speaker": "narrator", "key": "line.prologue.lamp_caption"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_look_lamp",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_lamp",
+		"valid_targets": ["prologue_lamp"],
+		"preconditions": {"story.act": "prologue", "witch.place": "street"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_lamp.lit",
+				"when": {"prologue_lamp.lit": true},
+				"priority": 1,
+				"observed": {"outcome": "lamp_burns"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_lamp"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.lamp_look_lit"}
+				]
+			},
+			{
+				"id": "prologue_look_lamp.dark",
+				"observed": {"outcome": "lamp_unlit"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_lamp"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.lamp_look"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_look_oven",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.prologue.look_oven",
+		"valid_targets": ["prologue_oven"],
+		"preconditions": {"story.act": "prologue", "witch.place": "street"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "prologue_look_oven.lit",
+				"when": {"prologue_oven.lit": true},
+				"priority": 1,
+				"observed": {"outcome": "oven_burns"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_oven"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.oven_look_lit"}
+				]
+			},
+			{
+				"id": "prologue_look_oven.cold",
+				"observed": {"outcome": "oven_cold"},
+				"knowledge_effects": [
+					{"id": "prologue_oven_cold", "proposition": {"oven": "cold_chimney"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["prologue_oven"]},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.oven_look"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_cast_oven",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.prologue.cast_oven",
+		"valid_targets": ["prologue_oven"],
+		"once_key": "prologue_cast_oven",
+		"preconditions": {"story.act": "prologue", "witch.place": "street"},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "prologue_cast_oven.lights",
+				"observed": {"outcome": "oven_lit_by_magic"},
+				"effects": {"world": {"prologue_oven": {"lit": true}}},
+				"knowledge_effects": [
+					{"id": "prologue_oven_lit", "proposition": {"oven": "lit_by_the_witch"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.oven_cast_witch"},
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["prologue_oven"]},
+					{"kind": "magic", "effect": "flourish", "target": "prologue_oven", "mode": "violet"},
+					{"kind": "line", "speaker": "vera", "key": "line.prologue.oven_cast_vera"},
+					{"kind": "line", "speaker": "narrator", "key": "line.prologue.oven_caption"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_ask_vera",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.prologue.ask_vera",
+		"valid_targets": ["vera"],
+		"preconditions": {"story.act": "prologue", "witch.place": "street", "npc.vera.place": "street"},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "prologue_ask_vera.later",
+				"observed": {"outcome": "vera_puts_it_off"},
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.vera_ask"},
+					{"kind": "line", "speaker": "vera", "key": "line.prologue.vera_answer"}
+				]
+			}
+		]
+	}
+]

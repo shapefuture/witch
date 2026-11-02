@@ -1,0 +1,18 @@
+{
+	"act4_wand_shattered": {
+		"kind": "altered",
+		"text": "note.act4.wand_shattered"
+	},
+	"act4_wand_kept": {
+		"kind": "altered",
+		"text": "note.act4.wand_kept"
+	},
+	"act4_wand_given": {
+		"kind": "altered",
+		"text": "note.act4.wand_given"
+	},
+	"act4_wand_hidden": {
+		"kind": "altered",
+		"text": "note.act4.wand_hidden"
+	}
+}

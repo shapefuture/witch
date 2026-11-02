@@ -1,5 +1,5 @@
 {
-	"_about": "Окно лавки (GAME_SPEC section 2): a close shot from the shop, through the front window at dusk.",
+	"_about": "Shop window (GAME_SPEC section 2): a close shot from the shop, through the front window at dusk.",
 	"id": "window",
 	"room": {"kind": "painted", "dir": "res://assets/painted/shop_window"},
 	"variants": {},
