@@ -1,0 +1,14 @@
+{
+	"name": "Act VIII: the flower is looked at and touched, and going home is the evening",
+	"scope": "game",
+	"after": "res://data/sim/act7_main.json",
+	"steps": [
+		{"action": "act8_look_flower", "target": "act8_flower"},
+		{"action": "act8_touch_flower", "target": "act8_flower"},
+		{"action": "act8_go_evening", "target": "door_street_shop"}
+	],
+	"expect": {
+		"state": {"story.act": "act9", "witch.place": "shop", "gold.known": true, "npc.miron.place": "fog"},
+		"knows": ["act8_flower"]
+	}
+}

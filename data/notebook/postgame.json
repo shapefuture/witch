@@ -1,0 +1,20 @@
+{
+	"postgame_knot_swing": {"kind": "seen", "text": "note.postgame.knot_swing"},
+	"postgame_coin_string": {"kind": "seen", "text": "note.postgame.coin_string"},
+	"postgame_hotel_key": {"kind": "seen", "text": "note.postgame.hotel_key"},
+	"postgame_petal": {"kind": "seen", "text": "note.postgame.petal"},
+	"postgame_his_key": {"kind": "seen", "text": "note.postgame.his_key"},
+	"postgame_she_knew_him": {"kind": "inferred", "text": "note.postgame.she_knew_him"},
+	"postgame_he_asked_her": {"kind": "inferred", "text": "note.postgame.he_asked_her"},
+	"postgame_he_cared": {"kind": "inferred", "text": "note.postgame.he_cared"},
+	"postgame_he_left": {"kind": "seen", "text": "note.postgame.he_left"},
+	"postgame_he_chose": {"kind": "heard", "text": "note.postgame.he_chose"},
+	"postgame_wand_pieces": {"kind": "seen", "text": "note.postgame.wand_pieces"},
+	"postgame_wand_satchel": {"kind": "seen", "text": "note.postgame.wand_satchel"},
+	"postgame_wand_glue": {"kind": "seen", "text": "note.postgame.wand_glue"},
+	"postgame_wand_crate": {"kind": "seen", "text": "note.postgame.wand_crate"},
+	"postgame_scratch": {"kind": "seen", "text": "note.postgame.scratch"},
+	"postgame_half_lamp": {"kind": "seen", "text": "note.postgame.half_lamp"},
+	"postgame_spare_cam": {"kind": "seen", "text": "note.postgame.spare_cam"},
+	"postgame_below_dust": {"kind": "seen", "text": "note.postgame.below_dust"}
+}
