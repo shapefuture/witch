@@ -1,16 +1,22 @@
 class_name VoiceLint
 extends RefCounted
 
-# VOICES.md "Form", the glossary and the reserved phrases, as a lint over every line of the Russian text table.
-# check() returns one failure per broken rule, as "key | rule | text". The Russian words are written as \u escapes
-# (a post-processing step converts them): the single-source test forbids Cyrillic in any file but the table.
+# VOICES.md "Form", the glossary, the reserved phrases and the caption register, as a lint over every line of the
+# Russian text table: the root table and every area fragment. check() returns one failure per broken rule, as
+# "key | rule | text". The Russian words are written as \u escapes (a post-processing step converts them): the
+# single-source test forbids Cyrillic in any file but the table.
 #
 # A bubble line is at most 90 characters, an option (`opt.` keys) at most 40. Captions (a line only the narrator
 # speaks, see usage()) and the designer-facing Minds texts (`rule.`, `conv.`: read by the four-laws linter, never
-# shown in a bubble) have no length limit. Every other rule applies to every line.
+# shown in a bubble) have no length limit. A caption an area wrote (not the root table, whose lines stay as they are)
+# is in the third person: no second-person pronoun, and no mental verb with a person as its subject. An untestable
+# note (a notebook entry the game shows as an open question) ends with a question mark. Every other rule applies to
+# every line.
 
 const DATA_MIRROR := "res://data/mirror"
 const DATA_CONVERSATIONS := "res://data/conversations"
+const DATA_NOTEBOOK := "res://data/notebook"
+const ROOT_TABLE := "res://data/text/ru.json"
 const MAX_BUBBLE := 90
 const MAX_OPTION := 40
 const DESIGNER_PREFIXES := ["rule.", "conv."]
@@ -33,7 +39,7 @@ const NEVER_NOTEBOOK := ["\u0438\u0437\u043c\u0435\u043d\u0438\u043b\u0430"]
 # The hotel has one name: its old name (a phrase together with the word for hotel) is refused.
 const HOTEL_PHRASE := "\u043f\u043e \u0442\u0443 \u0441\u0442\u043e\u0440\u043e\u043d\u0443"
 const HOTEL_WORD := "\u043e\u0442\u0435\u043b"
-# Words whose spelling with the letter \u0435 (never \u0451) is never right: \u0451 is always written.
+# Words whose spelling with the plain letter e (never the letter with the diaeresis) is never right.
 const NO_YO := ["\u0435\u0449\u0435", "\u0435\u0435", "\u043f\u043e\u0439\u0434\u0435\u043c", "\u043f\u043e\u0439\u0434\u0435\u043c\u0442\u0435", "\u0438\u0434\u0435\u043c", "\u0438\u0434\u0435\u0442", "\u0438\u0434\u0435\u0448\u044c", "\u0447\u044c\u0435", "\u043f\u043e\u0448\u0435\u043b", "\u0436\u0434\u0435\u0442", "\u043f\u0440\u0438\u0434\u0435\u0442", "\u0436\u0438\u0432\u0435\u0442", "\u0431\u0435\u0440\u0435\u0442", "\u0437\u043e\u0432\u0435\u0442", "\u0432\u0435\u0434\u0435\u0442", "\u043f\u043e\u0435\u0442", "\u043f\u044c\u0435\u0442", "\u0432\u0435\u0437\u0435\u0442", "\u043d\u0435\u0441\u0435\u0442"]
 # Intent words need a hedge.
 const INTENT := ["\u043d\u0430\u0440\u043e\u0447\u043d\u043e", "\u0441\u043f\u0435\u0446\u0438\u0430\u043b\u044c\u043d\u043e"]
@@ -45,15 +51,23 @@ const BUDGETS := {
 	"\u043f\u043e\u0439\u0434\u0451\u043c.": 1,
 	"\u0432\u0435\u0434\u044c \u043c\u044b \u0431\u044b\u043b\u0438 \u0437\u0434\u0435\u0441\u044c": 1,
 }
+# The caption register (areas only): second-person words; mental verbs; the words that make a person the subject.
+const SECOND_PERSON := ["\u0442\u044b", "\u0442\u0435\u0431\u044f", "\u0442\u0435\u0431\u0435", "\u0442\u043e\u0431\u043e\u0439", "\u0442\u043e\u0431\u043e\u044e", "\u0442\u0432\u043e\u0439", "\u0442\u0432\u043e\u044f", "\u0442\u0432\u043e\u0451", "\u0442\u0432\u043e\u0438", "\u0442\u0432\u043e\u0438\u0445", "\u0442\u0432\u043e\u0438\u043c", "\u0442\u0432\u043e\u0435\u0439", "\u0442\u0432\u043e\u0435\u0433\u043e", "\u0432\u044b", "\u0432\u0430\u0441", "\u0432\u0430\u043c", "\u0432\u0430\u043c\u0438", "\u0432\u0430\u0448", "\u0432\u0430\u0448\u0430", "\u0432\u0430\u0448\u0435", "\u0432\u0430\u0448\u0438", "\u0432\u0430\u0448\u0435\u0433\u043e", "\u0432\u0430\u0448\u0435\u0439", "\u0432\u0430\u0448\u0438\u043c"]
+const MENTAL_PREFIXES := ["\u0445\u043e\u0447", "\u0445\u043e\u0442\u0435\u043b", "\u0431\u043e\u0438\u0442", "\u0431\u043e\u044f\u0442\u044c\u0441\u044f", "\u0431\u043e\u044f\u0437", "\u0431\u043e\u044e\u0441\u044c", "\u0436\u0434", "\u043f\u043e\u043d\u0438\u043c\u0430"]
+const PERSON_WORDS := ["\u043e\u043d", "\u043e\u043d\u0430", "\u043e\u043d\u0438", "\u043e\u043d\u043e", "\u043c\u0438\u0440\u043e\u043d", "\u0432\u0435\u0440\u0430", "\u0438\u043b\u044c\u044f", "\u044d\u043b\u0438\u0430\u043d", "\u0442\u0435\u043d\u044c", "\u0442\u043e\u043c\u0430\u0441", "\u0433\u0430\u0432\u0440\u0438\u043b\u0430", "\u0433\u0430\u0432\u0440\u0438\u043a", "\u0434\u0432\u043e\u0440\u043d\u0438\u043a", "\u043f\u043e\u0440\u0442\u044c\u0435", "\u043d\u0438\u043a\u0442\u043e"]
 const DIALOGUE_LINE := "^(?:[a-z_][a-z0-9_]*:\\s+)?([a-z][a-z0-9_]*(?:\\.[a-z0-9_]+)+)$"
 
-# The rules over the merged table. `usage` is usage(): which keys are captions (exempt from the bubble limit).
+# The rules over the merged table. `usage` is usage(): the caption and untestable-note keys and the root table's keys.
 static func check(table: Dictionary, usage: Dictionary) -> Array[String]:
 	var failures: Array[String] = []
 	var keys: Array = table.keys()
 	keys.sort()
 	for key in keys:
 		failures.append_array(check_line(str(key), str(table[key]), usage))
+	var untestable: Dictionary = usage.get("untestable", {})
+	for note_key in untestable.keys():
+		if table.has(note_key) and not str(table[note_key]).strip_edges().ends_with("?"):
+			failures.append(_failure(str(note_key), "an untestable note ends with «?»", str(table[note_key])))
 	return failures
 
 static func check_line(key: String, text: String, usage: Dictionary) -> Array[String]:
@@ -98,6 +112,10 @@ static func check_line(key: String, text: String, usage: Dictionary) -> Array[St
 		failures.append(_failure(key, "the notebook kind is never \u0418\u0437\u043c\u0435\u043d\u0438\u043b\u0430", text))
 	if _has_any(words, INTENT) and not _has_any(words, HEDGES):
 		failures.append(_failure(key, "an intent word needs a hedge (\u0431\u0443\u0434\u0442\u043e, \u043a\u0430\u0436\u0435\u0442\u0441\u044f, \u043f\u043e\u0445\u043e\u0436\u0435)", text))
+	var captions: Dictionary = usage.get("captions", {})
+	var root: Dictionary = usage.get("root_keys", {})
+	if captions.has(key) and not root.has(key):
+		failures.append_array(_caption_failures(key, words, text))
 	return failures
 
 # Reserved phrases counted over every line of the table (each occurrence counts, lowercase).
@@ -119,7 +137,8 @@ static func budget_failures(table: Dictionary) -> Array[String]:
 	return failures
 
 # Which keys are captions (a line only the narrator speaks) and which are spoken (a bubble), read from the Mirror data
-# and the dialogue files. A key a dialogue file speaks is always a bubble.
+# and the dialogue files; a key a dialogue file speaks is always a bubble. Also: the root table's keys (the hall's own
+# lines) and the notebook's untestable notes (the text keys of entries the game shows as open questions).
 static func usage() -> Dictionary:
 	var captions: Dictionary = {}
 	var bubbles: Dictionary = {}
@@ -135,10 +154,23 @@ static func usage() -> Dictionary:
 	for key in captions.keys():
 		if not bubbles.has(key):
 			caption_keys[key] = true
-	return {"captions": caption_keys, "bubbles": bubbles}
+	var root: Dictionary = {}
+	var root_table: Variant = JSON.parse_string(FileAccess.get_file_as_string(ROOT_TABLE))
+	if root_table is Dictionary:
+		for key in root_table.keys():
+			root[str(key)] = true
+	var untestable: Dictionary = {}
+	for path in _files(DATA_NOTEBOOK, "json"):
+		var sidecar: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if sidecar is Dictionary:
+			for claim in sidecar.keys():
+				var entry: Variant = sidecar[claim]
+				if entry is Dictionary and str(entry.get("kind", "")) == "untestable":
+					untestable[str(entry.get("text", ""))] = true
+	return {"captions": caption_keys, "bubbles": bubbles, "root_keys": root, "untestable": untestable}
 
 # One violation and its clean twin per rule. "rule" is a substring of the failure the bad text must raise; the clean
-# text must raise nothing. "usage" (bad) and "clean_usage" say whether the key is a caption; "clean_key" renames it.
+# text must raise nothing. "usage" (bad) and "clean_usage" carry the caption, root and untestable keys of the fixture.
 static func fixtures() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	out.append({"rule": "over 90", "key": "line.fx.bubble", "bad": "".lpad(91, "a"), "clean": "".lpad(90, "a")})
@@ -163,6 +195,10 @@ static func fixtures() -> Array[Dictionary]:
 	out.append({"rule": "notebook kind is never", "key": "ui.notebook.kind.fx", "bad": NEVER_NOTEBOOK[0], "clean": "fx"})
 	out.append({"rule": "missing \u0451", "key": "line.fx.yo", "bad": "x " + NO_YO[0] + " y", "clean": "x \u0435\u0449\u0451 y"})
 	out.append({"rule": "intent word", "key": "line.fx.intent", "bad": INTENT[0] + " turned", "clean": HEDGES[0] + " " + INTENT[0] + " turned"})
+	out.append({"rule": "second person", "key": "line.fx.caption_you", "bad": "\u0422\u044b \u0442\u0438\u043a\u0430\u0435\u0448\u044c.", "clean": "\u0428\u0435\u0441\u0442\u0435\u0440\u043d\u0438 \u0442\u0438\u043a\u0430\u044e\u0442.", "usage": {"captions": {"line.fx.caption_you": true}}, "clean_usage": {"captions": {"line.fx.caption_you": true}}})
+	out.append({"rule": "second person", "key": "line.fx.caption_hall", "bad": "\u0422\u044b \u0442\u0438\u043a\u0430\u0435\u0448\u044c.", "clean": "\u0422\u044b \u0442\u0438\u043a\u0430\u0435\u0448\u044c.", "usage": {"captions": {"line.fx.caption_hall": true}}, "clean_usage": {"captions": {"line.fx.caption_hall": true}, "root_keys": {"line.fx.caption_hall": true}}})
+	out.append({"rule": "mental verb", "key": "line.fx.caption_mind", "bad": "\u041e\u043d \u0436\u0434\u0451\u0442.", "clean": "\u0428\u0435\u0441\u0442\u0435\u0440\u043d\u0438 \u0442\u0438\u043a\u0430\u044e\u0442.", "usage": {"captions": {"line.fx.caption_mind": true}}, "clean_usage": {"captions": {"line.fx.caption_mind": true}}})
+	out.append({"rule": "untestable note", "key": "note.fx.open", "bad": "\u042d\u0442\u043e \u0431\u044b\u043b\u043e.", "clean": "\u042d\u0442\u043e \u0431\u044b\u043b\u043e?", "usage": {"untestable": {"note.fx.open": true}}, "clean_usage": {"untestable": {"note.fx.open": true}}})
 	return out
 
 # ---- helpers ----------------------------------------------------------------------------------
@@ -181,6 +217,23 @@ static func _limit(key: String, usage: Dictionary) -> int:
 	if captions.has(key):
 		return 0
 	return MAX_BUBBLE
+
+# The caption register: no second person, and no mental verb with a person as the subject.
+static func _caption_failures(key: String, words: Array[String], text: String) -> Array[String]:
+	var failures: Array[String] = []
+	var person := false
+	var mental := false
+	for word in words:
+		var lowered := word.to_lower()
+		if lowered in SECOND_PERSON:
+			failures.append(_failure(key, "caption in the third person: second person '%s'" % word, text))
+		if _any_prefix(lowered, MENTAL_PREFIXES):
+			mental = true
+		if lowered in PERSON_WORDS:
+			person = true
+	if mental and person:
+		failures.append(_failure(key, "caption: a mental verb with a person as the subject", text))
+	return failures
 
 # The words of a line: each run of cased letters (Latin or Cyrillic). Digits, marks and spaces separate them.
 static func _words(text: String) -> Array[String]:
