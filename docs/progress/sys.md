@@ -20,7 +20,10 @@ any test runs (class names are registered by it).
    gives each ghost its pose; SightPresenter copies the actor's meshes onto the same skeleton, plays each move, and
    removes the copies. Ghost copies carry the chuika_ghost metadata. render/psx/ghost_silhouette.gdshader is the look.
    Writes nothing to Mirror (tested by event count and world/npc state).
-4. flash (the telesomatic vignette, render/psx/flash_*): pending.
+4. flash (done): FlashPresenter hangs a card on the camera for two seconds: the place's plate (its place file, else
+   assets/painted/<image>/plate.png, else a flat stand-in) through render/psx/flash_card.gdshader, warped and
+   colour-shifted, faded in and out, with the painted rooms' chime. No caption; the sensation note is never read.
+   Reduced effects take the warp out.
 5. Magic modes (violet, verdigris, gold) and effect fizzle: pending.
 6. docs/engine/SYSTEMS.md, final gate: pending.
 

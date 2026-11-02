@@ -20,6 +20,10 @@ static func register(director: PresentationDirector, host: Node) -> void:
 	sight.room_provider = func() -> Object: return host.get("room") as Object
 	host.add_child(sight)
 	director.register("sight", sight.play_entry)
+	var flash := FlashPresenter.new()
+	flash.name = "FlashPresenter"
+	host.add_child(flash)
+	director.register("flash", flash.play_entry)
 
 # The Mirror runtime the host holds, or the Mirror autoload when the host holds none.
 static func runtime_of(host: Node) -> MirrorRuntime:
