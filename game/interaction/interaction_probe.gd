@@ -48,7 +48,8 @@ func _nearest_on_screen(screen_position: Vector2, ground_point: Vector3) -> Stri
 	var best_distance := SNAP_PIXELS
 	for node in camera.get_tree().get_nodes_in_group("interactable"):
 		var interactable := node as Interactable
-		if interactable == null or camera.is_position_behind(interactable.focus_point()):
+		# A hotspot Mirror offers nothing on has no pick layer (PlaceRoom.set_offered): it cannot be pointed at.
+		if interactable == null or (interactable.collision_layer & PhysicsLayers.INTERACTABLE) == 0 or camera.is_position_behind(interactable.focus_point()):
 			continue
 		# Low things are only chosen by a tap near their base; things up in the air (the bell) have
 		# no base under the tap, so they are chosen on screen distance alone.

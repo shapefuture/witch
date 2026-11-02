@@ -10,6 +10,7 @@ func _tree() -> SceneTree:
 func _boot() -> GameRoot:
 	GameFixtures.ensure_localization()
 	var game := GameRoot.new()
+	game.demo = true   # the archive hall demo: the root catalog and the hall, no main menu (the places are tested apart)
 	game.runtime = track(MirrorRuntime.new())
 	game.auto_advance = 0.0
 	game.magic_time_scale = 0.01
@@ -56,6 +57,7 @@ func _settled(game: GameRoot) -> bool:
 	return not game.runtime.is_busy() and not game.subtitles.is_active()
 
 func _open_surface(game: GameRoot, target_id: String, use_touch: bool = false) -> bool:
+	print("DBG open %s input=%s open=%s busy=%s subs=%s presenting=%s at=%s" % [target_id, game.input.enabled, game.surface.is_open(), game.runtime.is_busy(), game.subtitles.is_active(), game._presenting, _screen_point(game, target_id)])
 	if use_touch:
 		_tap(game, _screen_point(game, target_id))
 	else:
@@ -75,7 +77,7 @@ func test_boot_builds_the_scene_and_plays_the_arrival_beat_from_mirror() -> void
 	ok(await _until(func() -> bool: return game.input.enabled and _settled(game)), "the arrival beat finished and input is live")
 	var events := game.runtime.engine.event_store.get_all()
 	ok(events.any(func(e): return e.event_type == "ContentConsumed" and e.payload["storylet_id"] == "story.arrival"), "the arrival was consumed from the log, not hard-coded")
-	eq(game.room.tomas.pose, "braced", "Tomas is posed from Mirror state")
+	eq((game.room as ArchiveHall).tomas.pose, "braced", "Tomas is posed from Mirror state")
 	ok(game.camera.current, "the authored camera is the active camera")
 
 func test_clicking_tomas_walks_there_and_opens_russian_options() -> void:
@@ -215,6 +217,7 @@ func test_a_loaded_game_in_which_the_witch_has_left_has_no_witch() -> void:
 	GameFixtures.do(played, "go_path_out", "path_out")
 	var text := SaveCodec.encode(played.engine)
 	var game := GameRoot.new()
+	game.demo = true
 	game.run_clock = false
 	game.runtime = track(MirrorRuntime.new())
 	game.runtime.setup()

@@ -110,13 +110,42 @@ func pass_time(ticks: int, reason: String = "wait") -> Array:
 	return result.get("fired", [])
 
 func _process(delta: float) -> void:
+	advance_clock(delta)
+
+# Adds `delta` seconds of play to the clock and commits what is due. Returns the ticks committed (0 when they are kept
+# for a heartbeat). Idle time is batched, not committed a second at a time: a clock event per second would fill the
+# event store's cap in about four and a half hours (constitution C17). No time is lost, only the commits are fewer:
+# the clock stops at a consequence that falls due, so it still happens on its tick.
+const HEARTBEAT_TICKS := 60
+
+func advance_clock(delta: float) -> int:
 	if not run_clock or runtime == null or runtime.minds == null or seconds_per_tick <= 0.0:
-		return
+		return 0
 	_clock += delta
 	var ticks := int(_clock / seconds_per_tick)
-	if ticks > 0:
-		_clock -= ticks * seconds_per_tick
-		pass_time(ticks, "clock")
+	if ticks <= 0:
+		return 0
+	var now := int(runtime.engine.get_time())
+	var due := _next_due()
+	var wanted := 0
+	if due >= 0 and due <= now + ticks:
+		wanted = maxi(due - now, 1)
+	elif ticks >= HEARTBEAT_TICKS:
+		wanted = ticks
+	else:
+		return 0
+	_clock -= wanted * seconds_per_tick
+	pass_time(wanted, "clock")
+	return wanted
+
+# The earliest tick at which something in the deferred queue falls due, or -1 when nothing is waiting.
+func _next_due() -> int:
+	var earliest := -1
+	for entry: Variant in runtime.minds.pending():
+		var due := int((entry as Dictionary).get("due", -1))
+		if due >= 0 and (earliest < 0 or due < earliest):
+			earliest = due
+	return earliest
 
 # ---- perception data off the scene -----------------------------------------------------------------------
 

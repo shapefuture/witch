@@ -9,6 +9,7 @@ func _tree() -> SceneTree:
 func _boot() -> GameRoot:
 	GameFixtures.ensure_localization()
 	var game := GameRoot.new()
+	game.demo = true   # the archive hall demo (the game's own hall, under the root catalog)
 	game.runtime = track(MirrorRuntime.new())
 	game.auto_advance = 0.0
 	game.magic_time_scale = 0.01
@@ -36,7 +37,7 @@ func test_the_game_hall_is_attached_to_the_minds_layer() -> void:
 func test_a_poke_in_the_game_commits_the_same_happenings_as_the_headless_hall() -> void:
 	var game := await _boot()
 	game.live.bridge.run_clock = false
-	ok(game.room.press("bell", "hop"), "the game's hall answers the poke")
+	ok((game.room as ArchiveHall).press("bell", "hop"), "the game's hall answers the poke")
 	await _tree().process_frame
 	var in_game := _happenings(game.runtime)
 	ok(in_game.has("PROP_POKED:bell"), "the poke is a PROP_POKED on the bell in the game's log")
