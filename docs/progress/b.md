@@ -59,6 +59,17 @@ sign caught), Ilya (act2_clock shown or fixed), Gavrila's refusal (act2_raccoon_
 - Tomas's second machine targets tomas: asking first needs op.ask_before_acting; taking the tools leaves the work
   to the witch (no claim).
 
+## Lore pass (from the lore briefs present on 2026-10-29; HUMOUR_MECHANISMS read only by title)
+
+- Act II seeds and returns: "Do not chop the living" (Gavrila, at the workshop lamp; returns in IV and VIII);
+  the unasked-initiative verdict (his one word, after the witch's workshop cast; released in VIII); the witch
+  takes Vera's bread and says thanks (receiving); the act ends on dust (the trapdoor caption).
+- Act VI callbacks: "Not as a joke" (the witch to Elian about the tap; the tap is named with a diminutive,
+  the object id act6_tap); Elian's "it matters to me more than the tap"; the half-light with the taps answered
+  (a caption); the spare bolt brought unasked (a caption); the witch's face falls when he covers the lamp (a
+  caption); the lamp is a "half-lamp" (object id act6_lamp); Gavrila's "not because I must, because I like it".
+- The witch's own exclamation mark is rare (none in acts II or VI; her "catch" line lost its mark).
+
 ## Status
 
 - Act II: done (commit 74441d9, now in the integrated branch). The listening LOOK on the attic ladder uses core's

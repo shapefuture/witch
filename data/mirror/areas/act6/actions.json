@@ -1035,6 +1035,11 @@
 						"key": "line.act6.wait_lamp.1"
 					},
 					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act6.wait_lamp.2"
+					},
+					{
 						"kind": "camera",
 						"mode": "conversation",
 						"focus": [

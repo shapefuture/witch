@@ -1947,7 +1947,8 @@
 		"preconditions": {
 			"witch.place": "attic",
 			"story.act": "act2",
-			"magic.state": "failing"
+			"magic.state": "failing",
+			"npc.raccoon.place": "attic"
 		},
 		"prediction_signature": [
 			"CAST",
@@ -1988,6 +1989,11 @@
 						"focus": [
 							"act2_workshop"
 						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_raccoon_unasked",
+						"npc": "raccoon"
 					}
 				],
 				"knowledge_effects": [

@@ -27,6 +27,7 @@ janitor: dlg.act2.janitor_lamps.3
 ~ act2_vera_oven_taste
 vera: dlg.act2.vera_oven_taste.1
 vera: dlg.act2.vera_oven_taste.2
+witch: dlg.act2.vera_oven_taste.3
 => END
 
 ~ act2_vera_not_now
@@ -78,6 +79,13 @@ witch: dlg.act2.raccoon_spoon.3
 raccoon: dlg.act2.raccoon_workshop.1
 witch: dlg.act2.raccoon_workshop.2
 raccoon: dlg.act2.raccoon_workshop.3
+witch: dlg.act2.raccoon_workshop.4
+raccoon: dlg.act2.raccoon_workshop.5
+=> END
+
+~ act2_raccoon_unasked
+raccoon: dlg.act2.raccoon_unasked.1
+witch: dlg.act2.raccoon_unasked.2
 => END
 
 ~ act2_raccoon_refuses
