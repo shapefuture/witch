@@ -1,0 +1,10 @@
+# Act IX (area act9): the invitation. The shadow's two lines (the greeting, then the invitation) are a pair, written once,
+# at the end. Linear exchanges only; every line is a key, the prose lives in data/text/ru/act9.json.
+
+~ act9_shadow_hi
+shadow: dlg.act9_shadow_hi.1
+=> END
+
+~ act9_shadow_come
+shadow: dlg.act9_shadow_come.1
+=> END

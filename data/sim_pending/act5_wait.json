@@ -1,0 +1,53 @@
+{
+	"name": "Act V, the other way: wait at the glass; his hand lifts and the magic goes",
+	"scope": "game",
+	"after": [
+		"res://data/sim/act4_main.json"
+	],
+	"steps": [
+		{
+			"action": "act3_go_garden_clocktower",
+			"target": "act3_stairs_garden_clocktower"
+		},
+		{
+			"action": "act3_go_clocktower_hotel",
+			"target": "act3_stairs_clocktower_hotel"
+		},
+		{
+			"action": "act5_ask_key",
+			"target": "concierge"
+		},
+		{
+			"action": "act5_go_hotel_threshold",
+			"target": "act5_door_hotel_threshold"
+		},
+		{
+			"action": "act5_wait_glass",
+			"target": "act5_glass"
+		},
+		{
+			"action": "act5_go_threshold_hotel",
+			"target": "act5_door_threshold_hotel"
+		},
+		{
+			"action": "act3_go_hotel_basement",
+			"target": "act3_door_hotel_basement"
+		},
+		{
+			"action": "act5_stairs_home",
+			"target": "act5_stairs_home"
+		}
+	],
+	"expect": {
+		"state": {
+			"story.act": "act6",
+			"magic.state": "gone",
+			"garden_below.state": "fading",
+			"npc.miron.place": "fog"
+		},
+		"knows": [
+			"act5_hand_lifted",
+			"act5_what_the_wave_meant"
+		]
+	}
+}

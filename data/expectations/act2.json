@@ -1,0 +1,53 @@
+[
+	{
+		"id": "act2_elian_step_back",
+		"npc": "elian",
+		"when": {
+			"npc.elian.place": "shop",
+			"npc.elian.stance": "needs"
+		},
+		"ghost": "step_back",
+		"source": "npc",
+		"note": "note.act2.ghost_elian_step_back"
+	},
+	{
+		"id": "act2_vera_reaches",
+		"npc": "vera",
+		"when": {
+			"act2_vera_sign.state": "swinging"
+		},
+		"ghost": "reach",
+		"source": "npc",
+		"note": "note.act2.ghost_vera_reach"
+	},
+	{
+		"id": "act2_raccoon_flinch_projection",
+		"npc": "raccoon",
+		"when": {
+			"npc.raccoon.place": "attic"
+		},
+		"ghost": "flinch",
+		"source": "projection",
+		"note": "note.act2.ghost_raccoon_projection"
+	},
+	{
+		"id": "act2_ilya_looks_at_clock",
+		"npc": "ilya",
+		"when": {
+			"act2_clock.state": "shown"
+		},
+		"ghost": "look_at:act2_clock",
+		"source": "npc",
+		"note": "note.act2.ghost_ilya_look"
+	},
+	{
+		"id": "act2_shadow_holds_breath",
+		"npc": "shadow",
+		"when": {
+			"npc.shadow.place": "street"
+		},
+		"ghost": "hold_breath",
+		"source": "npc",
+		"note": "note.act2.ghost_shadow_breath"
+	}
+]

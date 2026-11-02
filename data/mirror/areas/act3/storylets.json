@@ -1,0 +1,85 @@
+[
+	{
+		"id": "act3_arrive_basement",
+		"priority": 0,
+		"preconditions": {
+			"witch.place": "basement",
+			"story.act": "act3"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "narrator",
+				"key": "line.act3.basement_arrive"
+			}
+		],
+		"once_key": "act3_arrive_basement"
+	},
+	{
+		"id": "act3_arrive_hotel",
+		"priority": 0,
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act3"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "narrator",
+				"key": "line.act3.hotel_arrive"
+			},
+			{
+				"kind": "sight"
+			}
+		],
+		"once_key": "act3_arrive_hotel"
+	},
+	{
+		"id": "act3_arrive_clocktower",
+		"priority": 0,
+		"preconditions": {
+			"witch.place": "clocktower",
+			"story.act": "act3"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "narrator",
+				"key": "line.act3.clock_arrive"
+			}
+		],
+		"once_key": "act3_arrive_clocktower"
+	},
+	{
+		"id": "act3_arrive_garden",
+		"priority": 0,
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "witch",
+				"key": "line.act3.garden_arrive"
+			}
+		],
+		"once_key": "act3_arrive_garden"
+	}
+]

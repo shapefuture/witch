@@ -1,0 +1,92 @@
+{
+	"name": "Act III: the basement, the hotel, the loop, the garden below, and the bench",
+	"scope": "game",
+	"after": [
+		"res://data/sim/act2_main.json"
+	],
+	"steps": [
+		{
+			"action": "act3_look_toolbox",
+			"target": "act3_toolbox"
+		},
+		{
+			"action": "act3_go_basement_hotel",
+			"target": "act3_door_basement_hotel"
+		},
+		{
+			"action": "act3_ask_rooms",
+			"target": "concierge"
+		},
+		{
+			"action": "act3_room_garden",
+			"target": "concierge"
+		},
+		{
+			"action": "act3_ask_shadow",
+			"target": "shadow"
+		},
+		{
+			"action": "act3_wait_shadow",
+			"target": "shadow"
+		},
+		{
+			"action": "act3_go_hotel_clocktower",
+			"target": "act3_stairs_hotel_clocktower"
+		},
+		{
+			"action": "act3_climb",
+			"target": "act3_stairs_up"
+		},
+		{
+			"action": "act3_climb",
+			"target": "act3_stairs_up"
+		},
+		{
+			"action": "act3_climb",
+			"target": "act3_stairs_up"
+		},
+		{
+			"action": "act3_read_clock_backwards",
+			"target": "act3_clock"
+		},
+		{
+			"action": "act3_go_clocktower_garden",
+			"target": "act3_stairs_clocktower_garden"
+		},
+		{
+			"action": "act3_look_bench",
+			"target": "act3_bench"
+		},
+		{
+			"action": "act3_look_bed",
+			"target": "act3_sunflower_bed"
+		},
+		{
+			"action": "act3_look_garden",
+			"target": "act3_garden_whole"
+		},
+		{
+			"action": "act3_sit_bench",
+			"target": "act3_bench"
+		}
+	],
+	"expect": {
+		"state": {
+			"story.act": "act4",
+			"npc.shadow.place": "",
+			"act3_shadow_key.left": true
+		},
+		"knows": [
+			"act3_father_toolbox",
+			"act3_shadow_key",
+			"act3_key_garden_number",
+			"act3_bench_straight",
+			"act3_no_sunflowers",
+			"act3_only_mine",
+			"act3_tower_counts_down"
+		],
+		"operators": [
+			"op.act3_revise_before_repeating"
+		]
+	}
+}

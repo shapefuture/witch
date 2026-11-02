@@ -1,0 +1,9 @@
+{
+	"_about": "A place (GAME_SPEC section 2). room: painted (dir with room.json), hall (the archive) or stage (no picture). spots: where people stand, by npc id or default, in 1280x720 plate pixels. arrive: where she appears, by the place she came from. stage: the palette of the stand-in stage used while the painting does not exist.",
+	"id": "shop",
+	"room": {"kind": "painted", "dir": "res://assets/painted/shop_ps1"},
+	"variants": {},
+	"spots": {"default": [640, 640], "raccoon": [768, 665]},
+	"arrive": {"street": [330, 600], "garden": [640, 500], "attic": [530, 450], "window": [640, 600], "default": [640, 640]},
+	"stage": {"palette": ["#2d5d5b", "#3d3050", "#b58b3a", "#6d4a2c", "#1c1424"]}
+}

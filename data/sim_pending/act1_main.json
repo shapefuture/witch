@@ -1,0 +1,41 @@
+{
+	"name": "Act I, the plain route: five days, the window beat on day three, the Fog's edge on day four, the key on day five, to act II",
+	"scope": "game",
+	"after": "res://data/sim/prologue_main.json",
+	"steps": [
+		{"action": "core_go_door_shop_garden", "target": "door_shop_garden"},
+		{"action": "act1_look_miron", "target": "miron"},
+		{"action": "act1_ask_where", "target": "miron"},
+		{"action": "core_go_door_garden_shop", "target": "door_garden_shop"},
+		{"action": "act1_end_day", "target": "act1_bed"},
+		{"action": "core_go_door_shop_garden", "target": "door_shop_garden"},
+		{"action": "act1_look_miron", "target": "miron"},
+		{"action": "act1_ask_mill", "target": "miron"},
+		{"action": "core_go_door_garden_shop", "target": "door_garden_shop"},
+		{"action": "act1_end_day", "target": "act1_bed"},
+		{"action": "act1_window_sit", "target": "window_seat"},
+		{"action": "act1_window_look", "target": "miron"},
+		{"action": "act1_window_turn_away", "target": "miron"},
+		{"action": "core_go_window_back", "target": "window_back"},
+		{"action": "act1_end_day", "target": "act1_bed"},
+		{"action": "core_go_door_shop_street", "target": "door_shop_street"},
+		{"action": "act1_marsh_road", "target": "act1_marsh_road"},
+		{"action": "act1_fog_call", "target": "act1_fog"},
+		{"action": "act1_scarf_look", "target": "act1_scarf"},
+		{"action": "act1_marsh_back", "target": "act1_marsh_back"},
+		{"action": "core_go_door_street_shop", "target": "door_street_shop"},
+		{"action": "act1_end_day", "target": "act1_bed"},
+		{"action": "act1_look_hook", "target": "act1_hook"},
+		{"action": "act1_think_replaced", "target": "witch"},
+		{"action": "act1_end_day", "target": "act1_bed"}
+	],
+	"expect": {
+		"state": {"story.act": "act2", "magic.state": "failing", "npc.miron.place": "fog", "act1_day.n": 5},
+		"knows": [
+			"act1_fogdew", "act1_where_quiet", "act1_silver_moss", "act1_said_mill", "act1_not_at_mill",
+			"act1_he_lingers", "act1_predicts_he_goes", "act1_miron_left", "act1_visits_unwatched",
+			"act1_fog_is_quiet", "act1_why_quiet", "act1_scarf_on_branch", "act1_key_on_hook", "act1_replaced"
+		],
+		"operators": ["op.prologue_unwatched"]
+	}
+}

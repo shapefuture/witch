@@ -1,0 +1,47 @@
+[
+	{
+		"place": "hotel",
+		"target": "act5_door_hotel_threshold",
+		"at": [
+			600,
+			470
+		],
+		"radius": 48
+	},
+	{
+		"place": "threshold",
+		"target": "act5_door_threshold_hotel",
+		"at": [
+			140,
+			500
+		],
+		"radius": 48
+	},
+	{
+		"place": "threshold",
+		"target": "act5_glass",
+		"at": [
+			640,
+			300
+		],
+		"radius": 48
+	},
+	{
+		"place": "threshold",
+		"target": "act5_desk_bell",
+		"at": [
+			380,
+			500
+		],
+		"radius": 48
+	},
+	{
+		"place": "basement",
+		"target": "act5_stairs_home",
+		"at": [
+			1120,
+			260
+		],
+		"radius": 48
+	}
+]

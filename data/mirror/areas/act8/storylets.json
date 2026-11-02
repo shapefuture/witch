@@ -1,0 +1,12 @@
+[
+	{
+		"id": "act8_flower_met",
+		"priority": 10,
+		"once_key": "act8_flower_met",
+		"preconditions": {"story.act": "act8", "witch.place": "street"},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act8.flower_met"}
+		]
+	}
+]

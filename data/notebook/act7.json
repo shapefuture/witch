@@ -1,0 +1,7 @@
+{
+	"act7_magic_returned": {"kind": "seen", "text": "note.act7.magic_returned"},
+	"act7_enabled_tomas": {"kind": "altered", "text": "note.act7.enabled_tomas"},
+	"act7_violet_works": {"kind": "seen", "text": "note.act7.violet_works"},
+	"act7_town_chose": {"kind": "seen", "text": "note.act7.town_chose"},
+	"act7_lamp_went_out": {"kind": "seen", "text": "note.act7.lamp_went_out"}
+}

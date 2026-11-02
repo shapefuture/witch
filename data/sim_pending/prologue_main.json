@@ -1,0 +1,41 @@
+{
+	"name": "Prologue, the patient route: the kettle learned by looking and then turning away, the garden claims, the street, the bed",
+	"scope": "game",
+	"steps": [
+		{"action": "prologue_look_kettle", "target": "prologue_kettle"},
+		{"action": "prologue_wait_kettle", "target": "prologue_kettle"},
+		{"action": "prologue_look_drawing", "target": "prologue_drawing"},
+		{"action": "prologue_ask_raccoon_drawing", "target": "raccoon"},
+		{"action": "prologue_sight_self", "target": "witch"},
+		{"action": "prologue_look_board", "target": "prologue_board"},
+		{"action": "prologue_ask_raccoon_noise", "target": "raccoon"},
+		{"action": "prologue_refill_kettle", "target": "prologue_kettle"},
+		{"action": "core_go_door_shop_garden", "target": "door_shop_garden"},
+		{"action": "prologue_look_lilies", "target": "prologue_lilies"},
+		{"action": "prologue_look_sunflowers", "target": "prologue_sunflowers"},
+		{"action": "prologue_look_lilies", "target": "prologue_lilies"},
+		{"action": "prologue_look_bench", "target": "prologue_bench"},
+		{"action": "prologue_cast_bench", "target": "prologue_bench"},
+		{"action": "prologue_look_swing", "target": "prologue_swing"},
+		{"action": "prologue_ask_miron_light", "target": "miron"},
+		{"action": "prologue_ask_miron_bench", "target": "miron"},
+		{"action": "core_go_door_garden_shop", "target": "door_garden_shop"},
+		{"action": "core_go_door_shop_street", "target": "door_shop_street"},
+		{"action": "prologue_cast_lamp", "target": "prologue_lamp"},
+		{"action": "prologue_look_oven", "target": "prologue_oven"},
+		{"action": "prologue_cast_oven", "target": "prologue_oven"},
+		{"action": "prologue_ask_vera", "target": "vera"},
+		{"action": "core_go_door_street_shop", "target": "door_street_shop"},
+		{"action": "prologue_end_day", "target": "prologue_bed"}
+	],
+	"expect": {
+		"state": {"story.act": "act1", "magic.state": "full", "npc.miron.place": "garden"},
+		"knows": [
+			"prologue_kettle_still", "prologue_kettle_boiled", "prologue_kettle_rule",
+			"prologue_father_drawing", "prologue_drawing_older", "prologue_sight_used", "prologue_board_three",
+			"prologue_lilies_tidy", "prologue_garden_two_tastes", "prologue_sunflowers", "prologue_bench_crooked",
+			"prologue_knot", "prologue_fog_mentioned", "prologue_lamp_lit", "prologue_oven_cold", "prologue_oven_lit"
+		],
+		"operators": ["op.prologue_unwatched"]
+	}
+}

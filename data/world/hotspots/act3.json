@@ -1,0 +1,137 @@
+[
+	{
+		"place": "basement",
+		"target": "act3_toolbox",
+		"at": [
+			330,
+			470
+		],
+		"radius": 48
+	},
+	{
+		"place": "basement",
+		"target": "act3_door_basement_hotel",
+		"at": [
+			1000,
+			330
+		],
+		"radius": 48
+	},
+	{
+		"place": "hotel",
+		"target": "act3_door_hotel_basement",
+		"at": [
+			160,
+			430
+		],
+		"radius": 48
+	},
+	{
+		"place": "hotel",
+		"target": "act3_stairs_hotel_clocktower",
+		"at": [
+			1080,
+			360
+		],
+		"radius": 48
+	},
+	{
+		"place": "hotel",
+		"target": "act3_key_rack",
+		"at": [
+			880,
+			260
+		],
+		"radius": 48
+	},
+	{
+		"place": "clocktower",
+		"target": "act3_clock",
+		"at": [
+			640,
+			220
+		],
+		"radius": 48
+	},
+	{
+		"place": "clocktower",
+		"target": "act3_stairs_up",
+		"at": [
+			640,
+			520
+		],
+		"radius": 48
+	},
+	{
+		"place": "clocktower",
+		"target": "act3_stairs_clocktower_hotel",
+		"at": [
+			160,
+			500
+		],
+		"radius": 48
+	},
+	{
+		"place": "clocktower",
+		"target": "act3_stairs_clocktower_garden",
+		"at": [
+			1100,
+			520
+		],
+		"radius": 48
+	},
+	{
+		"place": "garden_below",
+		"target": "act3_lilies",
+		"at": [
+			300,
+			480
+		],
+		"radius": 48
+	},
+	{
+		"place": "garden_below",
+		"target": "act3_bench",
+		"at": [
+			640,
+			540
+		],
+		"radius": 48
+	},
+	{
+		"place": "garden_below",
+		"target": "act3_swing",
+		"at": [
+			980,
+			380
+		],
+		"radius": 48
+	},
+	{
+		"place": "garden_below",
+		"target": "act3_sunflower_bed",
+		"at": [
+			170,
+			600
+		],
+		"radius": 48
+	},
+	{
+		"place": "garden_below",
+		"target": "act3_garden_whole",
+		"at": [
+			640,
+			360
+		],
+		"radius": 48
+	},
+	{
+		"place": "garden_below",
+		"target": "act3_stairs_garden_clocktower",
+		"at": [
+			1150,
+			560
+		],
+		"radius": 48
+	}
+]

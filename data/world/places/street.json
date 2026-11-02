@@ -1,0 +1,9 @@
+{
+	"_about": "Street (GAME_SPEC section 2). The quiet variant is the same street at night, painted separately.",
+	"id": "street",
+	"room": {"kind": "painted", "dir": "res://assets/painted/street"},
+	"variants": {"quiet": "res://assets/painted/street_quiet"},
+	"spots": {"default": [640, 645], "raccoon": [768, 668], "vera": [1100, 600]},
+	"arrive": {"shop": [330, 600], "clearing": [705, 560], "observatory": [1100, 600], "default": [640, 645]},
+	"stage": {"palette": ["#5b4a33", "#4b3a5e", "#6f7f52", "#c79d4a", "#1b1624"]}
+}
