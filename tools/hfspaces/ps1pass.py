@@ -90,17 +90,21 @@ def reference_stats(refs, texel_width=256):
     return lab.mean(0), lab.std(0)
 
 
-def transfer(rgb, mu_ref, sd_ref, strength):
-    """Reinhard colour transfer in Lab: the plate's texels take the references' mean and spread, by `strength` (0 to 1).
-    This is the hue bias: a gold plate moves toward the references' violets, blues and magentas, and its darks lift to theirs."""
+def transfer(rgb, mu_ref, sd_ref, strength, chroma=None):
+    """Reinhard colour transfer in Lab: the plate's texels take the references' mean and spread, by `strength` (0 to 1) for
+    lightness and by `chroma` (default: the same) for the a and b axes. The chroma pull moves a plate's hues toward the
+    references' pooled mean, which is violet-magenta: a violet plate gets more magenta, and its blues drift to violet, so a
+    smaller chroma pull keeps the blues the references have."""
     if strength <= 0:
         return rgb
+    chroma = strength if chroma is None else chroma
     lab = to_lab(rgb)
     mu = lab.reshape(-1, 3).mean(0)
     sd = np.maximum(lab.reshape(-1, 3).std(0), 1e-3)
     scale = np.clip(sd_ref / sd, 0.5, 2.0)
     moved = (lab - mu) * scale + mu_ref
-    return np.clip(lab_to_rgb(lab * (1 - strength) + moved * strength), 0.0, 1.0)
+    weight = np.array([strength, chroma, chroma], np.float32)
+    return np.clip(lab_to_rgb(lab * (1 - weight) + moved * weight), 0.0, 1.0)
 
 
 def plate_palette(rgb, colours=48, refs=None, ref_colours=24, seed=7):
@@ -212,8 +216,8 @@ def bits_map(rgb, bits=5, dither=1.0):
     return np.clip(np.round(rgb * levels + t), 0, levels) / levels
 
 
-def apply(src, dst, *, texel=5, palette="plate", colours=48, transfer_to=0.6, dither=0.6, cool=0.0, sat=1.0, lift=1.0, gamma=1.0,
-          hi=None, hi_amount=0.0, lo=None, lo_amount=0.0, use_palette=True, refs=None):
+def apply(src, dst, *, texel=5, palette="plate", colours=48, transfer_to=0.6, chroma=None, dither=0.6, cool=0.0, sat=1.0, lift=1.0,
+          gamma=1.0, hi=None, hi_amount=0.0, lo=None, lo_amount=0.0, use_palette=True, refs=None):
     """Runs the pass; writes DST (PNG at the input's size) and DST.json; returns the provenance dict.
 
     palette: "plate" (the plate's own colour table, k-means on its texels after the reference transfer), or a JSON file of
@@ -227,10 +231,11 @@ def apply(src, dst, *, texel=5, palette="plate", colours=48, transfer_to=0.6, di
     provenance = {"tool": "tools/hfspaces/ps1pass.py apply", "source": str(src), "source_sha256": sha256_file(src),
                   "size": [w, h], "texel": texel, "grid": [gw, gh], "dither": dither, "cool": cool, "sat": sat, "lift": lift,
                   "gamma": gamma, "transfer_to_references": transfer_to,
+                  "transfer_chroma": transfer_to if chroma is None else chroma,
                   "split_tone": {"hi": hi, "hi_amount": hi_amount, "lo": lo, "lo_amount": lo_amount}}
     if transfer_to > 0:
         mu_ref, sd_ref = reference_stats([Path(r) for r in (REFERENCES if refs is None else refs)])
-        grid = transfer(grid, mu_ref, sd_ref, transfer_to)
+        grid = transfer(grid, mu_ref, sd_ref, transfer_to, chroma=chroma)
     if palette == "15bit" or not use_palette:
         quant = bits_map(grid, 5, dither)
         provenance.update(palette=None, bits=5)
@@ -283,7 +288,8 @@ def main(argv=None):
     p.add_argument("--palette", default="plate", help="'plate' (its own colour table, the default), 'FILE.json' (a fixed table of "
                                                      "{\"colours\": [[r,g,b] 0-255, ...]}), or '15bit'")
     p.add_argument("--colours", type=int, default=48, help="size of the plate's colour table")
-    p.add_argument("--transfer", type=float, default=0.6, help="pull toward the references' Lab mean and spread (0 to 1)")
+    p.add_argument("--transfer", type=float, default=0.6, help="pull lightness toward the references' Lab mean and spread (0 to 1)")
+    p.add_argument("--chroma", type=float, default=None, help="pull the hues too (0 to 1; default: as --transfer)")
     p.add_argument("--dither", type=float, default=0.6, help="Bayer amplitude in palette spacings (0 is none)")
     p.add_argument("--cool", type=float, default=0.0, help="how far dark texels move toward indigo and plum (0 to 1)")
     p.add_argument("--sat", type=float, default=1.0)
@@ -298,7 +304,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
     if args.cmd == "apply":
         prov = apply(args.src, args.dst, texel=args.texel, palette=args.palette, colours=args.colours, transfer_to=args.transfer,
-                     dither=args.dither, cool=args.cool, sat=args.sat, lift=args.lift, gamma=args.gamma, hi=args.hi,
+                     chroma=args.chroma, dither=args.dither, cool=args.cool, sat=args.sat, lift=args.lift, gamma=args.gamma, hi=args.hi,
                      hi_amount=args.hi_amount, lo=args.lo, lo_amount=args.lo_amount)
         print("wrote %s (texel %d, grid %dx%d, %s)" % (args.dst, prov["texel"], prov["grid"][0], prov["grid"][1],
                                                      "%d colours" % prov["colours"] if prov.get("colours") else "15-bit"))
