@@ -1,0 +1,519 @@
+[
+	{
+		"id": "postgame_exit_down",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.postgame.trapdoor",
+		"valid_targets": ["pg_trapdoor"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop"},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "postgame_exit_down.move",
+				"observed": {"outcome": "moved"},
+				"effects": {"world": {"witch": {"place": "basement", "from": "shop"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.down"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_exit_up",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.postgame.stairs_up",
+		"valid_targets": ["pg_stairs"],
+		"preconditions": {"story.act": "postgame", "witch.place": "basement"},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "postgame_exit_up.move",
+				"observed": {"outcome": "moved"},
+				"effects": {"world": {"witch": {"place": "shop", "from": "basement"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.up"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_exit_below",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.postgame.low_door",
+		"valid_targets": ["pg_low_door"],
+		"preconditions": {"story.act": "postgame", "witch.place": "basement"},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "postgame_exit_below.move",
+				"observed": {"outcome": "moved"},
+				"effects": {"world": {"witch": {"place": "garden_below", "from": "basement"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.below"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_exit_basement",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.postgame.below_stairs",
+		"valid_targets": ["pg_below_stairs"],
+		"preconditions": {"story.act": "postgame", "witch.place": "garden_below"},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "postgame_exit_basement.move",
+				"observed": {"outcome": "moved"},
+				"effects": {"world": {"witch": {"place": "basement", "from": "garden_below"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.below_up"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_wand_pieces",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.wand_pieces",
+		"valid_targets": ["pg_wand_pieces"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop", "wand.fate": "shattered"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_wand_pieces.seen",
+				"observed": {"outcome": "trace_seen", "branch": "shattered"},
+				"knowledge_effects": [{"id": "postgame_wand_pieces", "proposition": {"wand": "pieces_in_a_jar"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "wand_pieces_in_a_jar_on_the_shelf"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_wand_pieces"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.wand_pieces"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_wand_satchel",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.wand_satchel",
+		"valid_targets": ["pg_satchel"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop", "wand.fate": "kept"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_wand_satchel.seen",
+				"observed": {"outcome": "trace_seen", "branch": "kept"},
+				"knowledge_effects": [{"id": "postgame_wand_satchel", "proposition": {"wand": "in_the_satchel_on_the_hook"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "wand_in_the_satchel_on_the_hook_still_warm"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_satchel"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.wand_satchel"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_wand_glue",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.wand_glue",
+		"valid_targets": ["pg_glue"],
+		"preconditions": {"story.act": "postgame", "witch.place": "attic", "wand.fate": "given"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_wand_glue.seen",
+				"observed": {"outcome": "trace_seen", "branch": "given"},
+				"knowledge_effects": [{"id": "postgame_wand_glue", "proposition": {"wand": "stirs_the_glue"}, "status": "ESTABLISHED", "scope": "attic"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "wand_stirring_the_glue_pot_in_the_attic"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_glue"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.wand_glue"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_wand_crate",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.wand_crate",
+		"valid_targets": ["pg_crate"],
+		"preconditions": {"story.act": "postgame", "witch.place": "basement", "wand.fate": "hidden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_wand_crate.seen",
+				"observed": {"outcome": "trace_seen", "branch": "hidden"},
+				"knowledge_effects": [{"id": "postgame_wand_crate", "proposition": {"wand": "in_the_crate_below"}, "status": "ESTABLISHED", "scope": "basement"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "wand_in_the_crate_against_the_wall"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_crate"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.wand_crate"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_hook",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.hook",
+		"valid_targets": ["pg_hook"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop"},
+		"requires_claims": [{"id": "act1_key_on_hook", "holder_id": "player"}],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_hook.key",
+				"observed": {"outcome": "key_on_the_hook"},
+				"effects": {"world": {"postgame_clue_hook": {"seen": true}}},
+				"knowledge_effects": [{"id": "postgame_his_key", "proposition": {"item": "his_key_still_on_the_hook"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "his_key_on_the_hook_by_the_door"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_hook"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.hook"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_till",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.till",
+		"valid_targets": ["pg_till"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop", "act2_shadow_coin.left": true},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_till.coin",
+				"observed": {"outcome": "coin_in_string"},
+				"effects": {"world": {"postgame_clue_coin": {"seen": true}}},
+				"knowledge_effects": [{"id": "postgame_coin_string", "proposition": {"coin": "wrapped_in_string_with_a_loop"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "coin_wrapped_in_string_tied_with_a_loop_like_an_ear"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_till"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.till"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_ledger",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.ledger",
+		"valid_targets": ["pg_ledger"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop", "act6_shadow_flower.left": true},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_ledger.petal",
+				"observed": {"outcome": "petal_pressed"},
+				"effects": {"world": {"postgame_clue_petal": {"seen": true}}},
+				"knowledge_effects": [{"id": "postgame_petal", "proposition": {"petal": "pressed_crooked_sunflower_petal"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "pressed_crooked_sunflower_petal_in_the_ledger"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_ledger"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.ledger"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_half_lamp",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.half_lamp",
+		"valid_targets": ["pg_half_lamp"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop"},
+		"requires_claims": [{"id": "act6_half_light", "holder_id": "player"}],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_half_lamp.seen",
+				"observed": {"outcome": "half_lamp_in_the_kitchen"},
+				"knowledge_effects": [{"id": "postgame_half_lamp", "proposition": {"lamp": "lights_half_the_kitchen"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "half_lamp_lights_half_the_kitchen"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_half_lamp"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.half_lamp"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_spare_cam",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.spare_cam",
+		"valid_targets": ["pg_spare_cam"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop"},
+		"requires_claims": [{"id": "act7_enabled_tomas", "holder_id": "player"}],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_spare_cam.seen",
+				"observed": {"outcome": "spare_cam_as_a_bookend"},
+				"knowledge_effects": [{"id": "postgame_spare_cam", "proposition": {"cam": "bookend_on_the_shelf"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "spare_cam_holding_the_books_open"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_spare_cam"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.spare_cam"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_doorframe",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.doorframe",
+		"valid_targets": ["pg_doorframe"],
+		"once_key": "postgame_look_doorframe",
+		"preconditions": {"story.act": "postgame", "witch.place": "shop"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_doorframe.scratch",
+				"observed": {"outcome": "scratch_seen"},
+				"knowledge_effects": [{"id": "postgame_scratch", "proposition": {"scratch": "written_on_the_doorframe_in_a_hand_not_hers"}, "status": "ESTABLISHED", "scope": "shop"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "scratch_on_the_doorframe_in_an_unfamiliar_hand"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_doorframe"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.doorframe"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_think_she_knew",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.think_she_knew",
+		"valid_targets": ["pg_notebook"],
+		"preconditions": {
+			"story.act": "postgame",
+			"witch.place": "shop",
+			"$any": [
+				{"$all": [{"postgame_clue_knot.seen": true}, {"postgame_clue_coin.seen": true}, {"postgame_clue_key.seen": true}]},
+				{"$all": [{"postgame_clue_knot.seen": true}, {"postgame_clue_coin.seen": true}, {"postgame_clue_petal.seen": true}]},
+				{"$all": [{"postgame_clue_knot.seen": true}, {"postgame_clue_coin.seen": true}, {"postgame_clue_hook.seen": true}]},
+				{"$all": [{"postgame_clue_knot.seen": true}, {"postgame_clue_key.seen": true}, {"postgame_clue_petal.seen": true}]},
+				{"$all": [{"postgame_clue_knot.seen": true}, {"postgame_clue_key.seen": true}, {"postgame_clue_hook.seen": true}]},
+				{"$all": [{"postgame_clue_knot.seen": true}, {"postgame_clue_petal.seen": true}, {"postgame_clue_hook.seen": true}]},
+				{"$all": [{"postgame_clue_coin.seen": true}, {"postgame_clue_key.seen": true}, {"postgame_clue_petal.seen": true}]},
+				{"$all": [{"postgame_clue_coin.seen": true}, {"postgame_clue_key.seen": true}, {"postgame_clue_hook.seen": true}]},
+				{"$all": [{"postgame_clue_coin.seen": true}, {"postgame_clue_petal.seen": true}, {"postgame_clue_hook.seen": true}]},
+				{"$all": [{"postgame_clue_key.seen": true}, {"postgame_clue_petal.seen": true}, {"postgame_clue_hook.seen": true}]}
+			]
+		},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_think_she_knew.inferred",
+				"observed": {"outcome": "inferred_she_knew_him"},
+				"knowledge_effects": [{"id": "postgame_she_knew_him", "proposition": {"shadow": "knew_him"}, "status": "SUPPORTED", "scope": "shop"}],
+				"evidence": [{"type": "INDIRECT", "payload": {"saw": "three_seen_objects_point_at_one_person"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_notebook"]},
+					{"kind": "line", "speaker": "witch", "key": "line.postgame.think_she_knew"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_think_asked",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.think_asked",
+		"valid_targets": ["pg_notebook"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop"},
+		"requires_claims": [
+			{"id": "postgame_petal", "holder_id": "player"},
+			{"id": "postgame_knot_swing", "holder_id": "player"}
+		],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_think_asked.inferred",
+				"observed": {"outcome": "inferred_he_asked_her"},
+				"knowledge_effects": [
+					{"id": "postgame_he_asked_her", "proposition": {"he": "asked_her_to_look_after_the_witch"}, "status": "SUPPORTED", "scope": "shop"},
+					{"id": "postgame_he_cared", "proposition": {"he": "cared_about_the_witch"}, "status": "SUPPORTED", "scope": "shop"}
+				],
+				"evidence": [{"type": "INDIRECT", "payload": {"saw": "petal_and_knot_together_suggest_a_request_and_a_care"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_notebook"]},
+					{"kind": "line", "speaker": "witch", "key": "line.postgame.think_asked"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_open_notebook",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.open_notebook",
+		"valid_targets": ["pg_notebook"],
+		"preconditions": {"story.act": "postgame", "witch.place": "shop"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_open_notebook.read",
+				"observed": {"outcome": "notebook_opened"},
+				"presentation": [
+					{"kind": "notebook"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_swing",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.swing",
+		"valid_targets": ["pg_swing"],
+		"preconditions": {"story.act": "postgame", "witch.place": "garden"},
+		"requires_claims": [{"id": "prologue_knot", "holder_id": "player"}],
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_swing.knot",
+				"observed": {"outcome": "knot_on_the_swing"},
+				"effects": {"world": {"postgame_clue_knot": {"seen": true}}},
+				"knowledge_effects": [{"id": "postgame_knot_swing", "proposition": {"knot": "on_the_swing_with_a_loop_like_an_ear"}, "status": "ESTABLISHED", "scope": "garden"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "knot_on_the_swing_the_same_as_on_the_bell_rope"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_swing"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.swing"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_bench",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.bench",
+		"valid_targets": ["pg_bench"],
+		"preconditions": {"story.act": "postgame", "witch.place": "garden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_bench.empty",
+				"observed": {"outcome": "bench_empty"},
+				"knowledge_effects": [{"id": "postgame_he_left", "proposition": {"he": "left_the_garden"}, "status": "ESTABLISHED", "scope": "garden"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "crooked_bench_empty_in_the_evening"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_bench"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.bench"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_gate",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.gate",
+		"valid_targets": ["pg_gate"],
+		"preconditions": {"story.act": "postgame", "witch.place": "garden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_gate.quiet",
+				"observed": {"outcome": "quiet_beyond_the_gate"},
+				"knowledge_effects": [{"id": "postgame_he_chose", "proposition": {"he": "went_to_the_quiet_on_purpose"}, "status": "SUPPORTED", "scope": "garden"}],
+				"evidence": [{"type": "DIRECT", "payload": {"heard": "quiet_from_the_marsh_side_of_the_gate"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_gate"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.gate"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_lilies",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.lilies",
+		"valid_targets": ["pg_lilies"],
+		"preconditions": {"story.act": "postgame", "witch.place": "garden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_lilies.seen",
+				"observed": {"outcome": "lilies_in_rows"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_lilies"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.lilies"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_dust",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.dust",
+		"valid_targets": ["pg_dust"],
+		"preconditions": {"story.act": "postgame", "witch.place": "garden_below"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_dust.dust",
+				"priority": 10,
+				"when": {"garden_below.state": "dust"},
+				"observed": {"outcome": "garden_below_is_dust"},
+				"knowledge_effects": [{"id": "postgame_below_dust", "proposition": {"garden_below": "dust_not_restored"}, "status": "ESTABLISHED", "scope": "garden_below"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "garden_below_dust_where_the_flowers_were"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_dust"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.dust"}
+				]
+			},
+			{
+				"id": "postgame_look_dust.fading",
+				"priority": 0,
+				"observed": {"outcome": "garden_below_fading"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_dust"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.dust_fading"}
+				]
+			}
+		]
+	},
+	{
+		"id": "postgame_look_hotel_key",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.postgame.hotel_key",
+		"valid_targets": ["pg_hotel_key"],
+		"preconditions": {"story.act": "postgame", "witch.place": "basement", "act3_shadow_key.left": true},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "postgame_look_hotel_key.tag",
+				"observed": {"outcome": "hotel_key_with_a_number"},
+				"effects": {"world": {"postgame_clue_key": {"seen": true}}},
+				"knowledge_effects": [{"id": "postgame_hotel_key", "proposition": {"item": "hotel_key_with_the_garden_number"}, "status": "ESTABLISHED", "scope": "basement"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "hotel_key_with_a_tag_carrying_the_garden_number"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["pg_hotel_key"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.postgame.hotel_key"}
+				]
+			}
+		]
+	}
+]

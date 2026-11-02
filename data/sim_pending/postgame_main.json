@@ -1,0 +1,30 @@
+{
+	"name": "Postgame: the house is looked at, the gift clues are put together, the Garden Below is dust, the notebook closes",
+	"scope": "game",
+	"after": "res://data/sim/act9_main.json",
+	"steps": [
+		{"action": "postgame_look_hook", "target": "pg_hook"},
+		{"action": "postgame_look_till", "target": "pg_till"},
+		{"action": "postgame_look_ledger", "target": "pg_ledger"},
+		{"action": "core_go_door_shop_garden", "target": "door_shop_garden"},
+		{"action": "postgame_look_swing", "target": "pg_swing"},
+		{"action": "postgame_look_bench", "target": "pg_bench"},
+		{"action": "postgame_look_gate", "target": "pg_gate"},
+		{"action": "core_go_door_garden_shop", "target": "door_garden_shop"},
+		{"action": "postgame_think_she_knew", "target": "pg_notebook"},
+		{"action": "postgame_think_asked", "target": "pg_notebook"},
+		{"action": "postgame_look_wand_satchel", "target": "pg_satchel"},
+		{"action": "postgame_exit_down", "target": "pg_trapdoor"},
+		{"action": "postgame_look_hotel_key", "target": "pg_hotel_key"},
+		{"action": "postgame_exit_below", "target": "pg_low_door"},
+		{"action": "postgame_look_dust", "target": "pg_dust"},
+		{"action": "postgame_exit_basement", "target": "pg_below_stairs"},
+		{"action": "postgame_exit_up", "target": "pg_stairs"},
+		{"action": "postgame_look_doorframe", "target": "pg_doorframe"},
+		{"action": "postgame_open_notebook", "target": "pg_notebook"}
+	],
+	"expect": {
+		"state": {"story.act": "postgame", "witch.place": "shop", "npc.miron.place": "fog"},
+		"knows": ["postgame_she_knew_him", "postgame_he_asked_her", "postgame_he_cared", "postgame_he_left", "postgame_he_chose", "postgame_wand_satchel", "postgame_scratch", "postgame_hotel_key", "postgame_below_dust", "act9_what_happened"]
+	}
+}
