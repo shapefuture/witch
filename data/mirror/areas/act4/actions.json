@@ -1,0 +1,243 @@
+[
+	{
+		"id": "act4_wand_break",
+		"action_type": "CUSTOM",
+		"affordance_group": "act",
+		"label_key": "opt.act4.break",
+		"valid_targets": [
+			"witch"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act4",
+			"wand.fate": "held"
+		},
+		"prediction_signature": [
+			"CUSTOM",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act4_wand_break.shattered",
+				"observed": {
+					"outcome": "shattered"
+				},
+				"effects": {
+					"world": {
+						"wand": {
+							"fate": "shattered"
+						},
+						"story": {
+							"act": "act5"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"witch"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act4.break"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act4_wand_shattered",
+						"proposition": {
+							"act4_wand_shattered": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act4"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act4_wand_keep",
+		"action_type": "CUSTOM",
+		"affordance_group": "act",
+		"label_key": "opt.act4.keep",
+		"valid_targets": [
+			"witch"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act4",
+			"wand.fate": "held"
+		},
+		"prediction_signature": [
+			"CUSTOM",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act4_wand_keep.kept",
+				"observed": {
+					"outcome": "kept"
+				},
+				"effects": {
+					"world": {
+						"wand": {
+							"fate": "kept"
+						},
+						"story": {
+							"act": "act5"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"witch"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act4.keep"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act4_wand_kept",
+						"proposition": {
+							"act4_wand_kept": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act4"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act4_wand_give",
+		"action_type": "CUSTOM",
+		"affordance_group": "act",
+		"label_key": "opt.act4.give",
+		"valid_targets": [
+			"witch"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act4",
+			"wand.fate": "held"
+		},
+		"prediction_signature": [
+			"CUSTOM",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act4_wand_give.given",
+				"observed": {
+					"outcome": "given"
+				},
+				"effects": {
+					"world": {
+						"wand": {
+							"fate": "given"
+						},
+						"story": {
+							"act": "act5"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"witch"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "raccoon",
+						"key": "line.act4.give"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act4_wand_given",
+						"proposition": {
+							"act4_wand_given": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act4"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act4_wand_hide",
+		"action_type": "CUSTOM",
+		"affordance_group": "act",
+		"label_key": "opt.act4.hide",
+		"valid_targets": [
+			"witch"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act4",
+			"wand.fate": "held"
+		},
+		"prediction_signature": [
+			"CUSTOM",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act4_wand_hide.hidden",
+				"observed": {
+					"outcome": "hidden"
+				},
+				"effects": {
+					"world": {
+						"wand": {
+							"fate": "hidden"
+						},
+						"story": {
+							"act": "act5"
+						},
+						"witch": {
+							"place": "basement",
+							"from": "garden_below"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act4.hide"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act4_wand_hidden",
+						"proposition": {
+							"act4_wand_hidden": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act4"
+					}
+				]
+			}
+		]
+	}
+]

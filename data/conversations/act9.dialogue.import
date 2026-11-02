@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://dyve44vx68unw"
+path="res://.godot/imported/act9.dialogue-4b3eca99d7014e10c4852aa1ccdf07da.tres"
+
+[deps]
+
+source_file="res://data/conversations/act9.dialogue"
+dest_files=["res://.godot/imported/act9.dialogue-4b3eca99d7014e10c4852aa1ccdf07da.tres"]
+
+[params]
+
+defaults=true

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""The witch of the new references: a purple star-and-moon hooded cloak whose peak is bent back, a ring of pink
-flowers on the hood's edge, very long ash-blond hair that ends in big spiral curls sticking out sideways, a
-brown vest with two big pockets and a crescent pendant, a flared pleated skirt covered in gold stars and
+"""The witch of the new references: a purple star-and-moon pointed hat whose point bends back (X23), a ring of pink
+flowers on its edge, very long copper-ginger hair and blue-grey eyes that end in big spiral curls sticking out
+sideways, a brown vest with two big pockets and a crescent pendant, a flared pleated skirt covered in gold stars and
 crescents, a pink star wand in one hand and a small grey bird on the other.
 
     python tools/characters/witch_ref.py --out assets/characters [--preview DIR]
@@ -33,7 +33,7 @@ import atlas as atl            # noqa: E402
 import witch_glb as glb         # noqa: E402
 from witch_kit import A, N_, Model, bake_uvs, blob, catmull, cres3d, loft, rotm, star3d, tube   # noqa: E402
 
-HEIGHT = 1.33
+HEIGHT = 1.36                                     # the pointed hat (X23) raised the top; the scale per unit stays the shipped 0.993
 S = math.sin
 C = math.cos
 RAD = math.radians
@@ -55,7 +55,7 @@ COL = {
     'boot': (.26, .16, .12),
 }
 FAMILIES = {          # name: (base colour, relative spread): four tones per flat-coloured material, like paper folds
-    'hair': ((.80, .69, .48), .20), 'purple': ((.44, .25, .62), .12), 'sleeve': ((.40, .23, .58), .12),
+    'hair': ((.86, .48, .22), .20), 'purple': ((.44, .25, .62), .12), 'sleeve': ((.40, .23, .58), .12),
     'cuff': ((.47, .28, .63), .08), 'vest': ((.38, .27, .22), .12), 'pocket': ((.29, .20, .16), .12),
     'cloak': ((.39, .22, .55), .12),
 }
@@ -88,7 +88,7 @@ def lit_toned(name, n=4):
 # ---- skeleton (absolute rest positions; the parent only builds the hierarchy) ---------------------------
 BONES = {'root': (None, (0, 0, 0)), 'hips': ('root', (0, .30, 0)), 'spine': ('hips', (0, .41, 0)),
          'neck': ('spine', (0, .86, 0)), 'head': ('neck', (0, .93, 0)), 'cape': ('spine', (0, .84, -.08)),
-         'hat_tip': ('head', (0, 1.10, -.22))}
+         'hat_tip': ('head', (0, 1.10, -.06))}
 ARM = {'.L': ((.20, .80, -.01), (.275, .655, .025), (.285, .715, .165)),       # shoulder, elbow, wrist
        '.R': ((-.20, .80, -.01), (-.28, .67, .015), (-.30, .785, .125))}
 for _s, _d in ((1, '.L'), (-1, '.R')):
@@ -214,25 +214,20 @@ def head_z(x, y):
 # ---- the hood: a dome with a front opening, the peak folded back into a tip below its top ------------------------
 HOOD_N = 12
 HOOD_ROWS = [(.89, .228, .204, -.072), (.98, .244, .206, -.066), (1.07, .244, .200, -.054), (1.165, .222, .176, -.040),
-             (1.25, .172, .140, -.020), (1.312, .098, .084, -.008), (1.332, .036, .030, -.002), (1.340, .001, .001, -.002)]   # the last ring is the cap: no hole at the tip
+             (1.235, .140, .122, -.036), (1.300, .068, .064, -.030), (1.345, .024, .022, -.022), (1.370, .001, .001, -.020)]   # the cone above the brow ring (X23: a pointed hat); the last ring is the point
 HOOD_HEM_DIP = .035                          # the bottom edge hangs this much lower at the centre back (draped, not a ring)
 HOOD_FRONT_BANDS = (0, 1, 2)                 # bands below the brow ring are open at the front...
 HOOD_OPEN_COLS = (10, 11, 0, 1)              # ...in these columns (phi -60 .. +60)
-HOOD_TIP = (0., 1.07, -.355)                # the folded peak, back and below the top
+HOOD_TIP = (0., 1.37, -.11)                 # the point, bent back over the hood's back (the hat_tip bone moves with it)
 
 
 def hood_pts():
     P = np.array([ring(y, rx, rz, cz, n=HOOD_N) for y, rx, rz, cz in HOOD_ROWS], float)
-    # the peak: the back-centre column is pulled out to the tip and its neighbours half way (a ridge, then a point)
+    # the point: the cap ring is moved onto HOOD_TIP, and the back-centre column leans back up the cone so the tip bends
     k6 = HOOD_N // 2
-    P[3, k6] = HOOD_TIP
-    for dk in (-1, 1):
-        P[3, k6 + dk] += (0., .008, -.060)
-    P[4, k6] += (0., -.015, -.080)
-    P[2, k6] += (0., .0, -.020)
-    P[2, k6 - 1] += (0., 0., -.008)
-    P[2, k6 + 1] += (0., 0., -.008)
-    P[5, k6] += (0., 0., -.012)
+    P[7] += A(HOOD_TIP, float) - P[7].mean(0)
+    P[5, k6] += (0., 0., -.015)
+    P[6, k6] += (0., 0., -.030)
     for c in range(HOOD_N):
         P[0, c, 1] -= HOOD_HEM_DIP * max(0., -C(RAD(360. * c / HOOD_N)))
     # hand-made crumple (mirror-symmetric): paper, not a lathe
@@ -593,6 +588,18 @@ def face_ref():
     if os.path.exists(FACE_REF + '_depth.png'):
         depth = np.asarray(Image.open(FACE_REF + '_depth.png').convert('L'), float) / 255.
     return meta, Image.open(FACE_REF + '.png').convert('RGB'), depth
+
+
+def grey_eyes(img):
+    """The reference's irises are sky blue; the witch's are blue-grey (X23). Only the blue-dominant texels change: they keep
+    their tone (lifted a little so the eye still reads at 480x360) and lose most of their saturation."""
+    a = np.asarray(img.convert('RGB'), float) / 255
+    blue = (a[..., 2] > a[..., 0] + .10) & (a[..., 2] > a[..., 1])
+    luma = a @ np.array([.2126, .7152, .0722])
+    grey = np.clip(1.25 * luma[..., None] * np.array([.95, 1., 1.08]), 0, 1)
+    out = a.copy()
+    out[blue] = .55 * a[blue] + .45 * grey[blue]
+    return Image.fromarray(np.round(out * 255).astype(np.uint8))
 
 
 def membrane(values, mask):
@@ -1261,7 +1268,7 @@ def make_model():
     at = atl.Atlas(256)
     P = hood_pts()
     ref = face_ref()
-    tiles = {'skirt': paint_skirt_tile(), 'hood': paint_hood_tile(P), 'face': ref[1] if ref is not None else paint_face_tile(),
+    tiles = {'skirt': paint_skirt_tile(), 'hood': paint_hood_tile(P), 'face': grey_eyes(ref[1]) if ref is not None else paint_face_tile(),
              'sleeve': paint_sleeve_tile()}
     for k, im in tiles.items():
         at.alloc(k, *im.size)

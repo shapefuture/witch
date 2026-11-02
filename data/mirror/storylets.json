@@ -3,7 +3,7 @@
 		"id": "story.arrival",
 		"priority": 1,
 		"once_key": "story_arrival",
-		"preconditions": {"clearing.departed": false},
+		"preconditions": {"clearing.departed": false, "$any": [{"$exists": {"witch.place": false}}, {"witch.place": "clearing"}]},
 		"presentation": [
 			{"kind": "camera", "mode": "wide"},
 			{"kind": "line", "speaker": "narrator", "key": "line.arrival.1"},

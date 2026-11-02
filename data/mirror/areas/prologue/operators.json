@@ -1,0 +1,9 @@
+[
+	{
+		"id": "op.prologue_unwatched",
+		"abstraction": {"pattern": "boils_only_unwatched"},
+		"action_ids": ["prologue_wait_kettle"],
+		"source_model_ids": [],
+		"transfer_rule_ids": []
+	}
+]

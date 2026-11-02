@@ -1,0 +1,7 @@
+{
+	"_about": "Act I's own state (docs/design/GAME_SPEC.md section 6, Act I). act1_day counts the days (1 to 5); ending a day advances it, and the fifth ending is the exit to act II. Miron's place and stance are npc_state.miron in the core area.",
+	"world": {
+		"act1_day": {"n": 1},
+		"act1_key": {"on": "none"}
+	}
+}

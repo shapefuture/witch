@@ -1,0 +1,22 @@
+{
+	"name": "Act IV: the wand is kept",
+	"scope": "game",
+	"after": [
+		"res://data/sim/act3_main.json"
+	],
+	"steps": [
+		{
+			"action": "act4_wand_keep",
+			"target": "witch"
+		}
+	],
+	"expect": {
+		"state": {
+			"story.act": "act5",
+			"wand.fate": "kept"
+		},
+		"knows": [
+			"act4_wand_kept"
+		]
+	}
+}

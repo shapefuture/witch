@@ -1,0 +1,15 @@
+[
+	{
+		"id": "op.act3_revise_before_repeating",
+		"abstraction": {
+			"pattern": "revise_before_repeating"
+		},
+		"action_ids": [
+			"act3_read_clock_known",
+			"act3_read_clock_backwards",
+			"act3_go_hotel_clocktower"
+		],
+		"source_model_ids": [],
+		"transfer_rule_ids": []
+	}
+]

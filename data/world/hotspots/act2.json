@@ -1,0 +1,101 @@
+[
+	{
+		"place": "shop",
+		"target": "act2_hearth",
+		"at": [
+			760,
+			400
+		],
+		"radius": 60
+	},
+	{
+		"place": "shop",
+		"target": "act2_counter",
+		"at": [
+			290,
+			470
+		],
+		"radius": 90
+	},
+	{
+		"place": "shop",
+		"target": "act2_candle_box",
+		"at": [
+			1000,
+			470
+		],
+		"radius": 50
+	},
+	{
+		"place": "shop",
+		"target": "trapdoor",
+		"at": [
+			400,
+			610
+		],
+		"radius": 80
+	},
+	{
+		"place": "street",
+		"target": "act2_street_lamp",
+		"at": [
+			470,
+			340
+		],
+		"radius": 50
+	},
+	{
+		"place": "street",
+		"target": "act2_oven",
+		"at": [
+			1040,
+			520
+		],
+		"radius": 60
+	},
+	{
+		"place": "street",
+		"target": "act2_sign",
+		"at": [
+			1000,
+			430
+		],
+		"radius": 50
+	},
+	{
+		"place": "street",
+		"target": "act2_corner",
+		"at": [
+			700,
+			470
+		],
+		"radius": 60
+	},
+	{
+		"place": "observatory",
+		"target": "act2_clock",
+		"at": [
+			650,
+			460
+		],
+		"radius": 90
+	},
+	{
+		"place": "attic",
+		"target": "act2_cloth",
+		"at": [
+			420,
+			500
+		],
+		"radius": 60
+	},
+	{
+		"place": "attic",
+		"target": "act2_workshop",
+		"at": [
+			760,
+			460
+		],
+		"radius": 110
+	}
+]

@@ -181,6 +181,24 @@ def test_check_catches_a_plate_empty_that_differs_outside_the_masks():
         assert any("plate_empty differs" in p for p in toys.check(room)), toys.check(room)
 
 
+def test_a_bare_word_reaction_is_checked_like_an_object_and_an_unknown_one_is_still_refused():
+    plate, edit = _synthetic_edit()
+    layout = {"elements": [{"label": "LAMP", "at": [0.455, 0.12, 0.505, 0.27], "toy": "lantern"}]}
+    with tempfile.TemporaryDirectory() as tmp:
+        room = _room(tmp, plate)
+        edit_path = Path(tmp) / "edit.png"
+        edit.save(edit_path)
+        toys.lift(room, edit_path, toys.toys_of(layout), scratch=Path(tmp) / "s")
+        data = json.loads((room / "props.json").read_text(encoding="utf-8"))
+        for entry in data["props"]:
+            entry["reactions"]["press"] = ["wobble", {"do": "spin", "sound": "chime"}]
+        (room / "props.json").write_text(json.dumps(data), encoding="utf-8")
+        assert toys.check(room) == [], toys.check(room)
+        data["props"][0]["reactions"]["press"] = ["nonsense"]
+        (room / "props.json").write_text(json.dumps(data), encoding="utf-8")
+        assert any("unknown reaction 'nonsense'" in p for p in toys.check(room)), toys.check(room)
+
+
 def test_the_whole_step_from_a_given_edit_lifts_and_measures_without_paying():
     plate, edit = _synthetic_edit()
     layout = {"ground": [0.3, 0.7, 0.7, 0.98], "horizon": 0.5, "elements": [

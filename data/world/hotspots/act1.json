@@ -1,0 +1,9 @@
+[
+	{"place": "shop", "target": "act1_hook", "at": [1215, 230], "radius": 40},
+	{"place": "shop", "target": "act1_bed", "at": [575, 410], "radius": 60},
+	{"place": "shop", "target": "window_seat", "at": [200, 230], "radius": 90},
+	{"place": "street", "target": "act1_marsh_road", "at": [120, 560], "radius": 80},
+	{"place": "fog_edge", "target": "act1_fog", "at": [900, 200], "radius": 220},
+	{"place": "fog_edge", "target": "act1_scarf", "at": [320, 240], "radius": 50},
+	{"place": "fog_edge", "target": "act1_marsh_back", "at": [1110, 420], "radius": 70}
+]

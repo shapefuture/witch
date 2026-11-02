@@ -1,0 +1,1713 @@
+[
+	{
+		"id": "act5_go_hotel_threshold",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act5.go_threshold",
+		"valid_targets": [
+			"act5_door_hotel_threshold"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act5"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_go_hotel_threshold.move",
+				"observed": {
+					"outcome": "move"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "threshold",
+							"from": "hotel"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"act5_key_given"
+		]
+	},
+	{
+		"id": "act5_ask_key",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act5.ask_key",
+		"valid_targets": [
+			"concierge"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act5"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_ask_key.given",
+				"observed": {
+					"outcome": "given"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "concierge",
+						"key": "line.act5.key"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_key_given",
+						"proposition": {
+							"act5_key_given": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			}
+		],
+		"once_key": "act5_once_ask_key"
+	},
+	{
+		"id": "act5_go_threshold_hotel",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act5.go_hotel",
+		"valid_targets": [
+			"act5_door_threshold_hotel"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_go_threshold_hotel.released",
+				"observed": {
+					"outcome": "released"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "hotel",
+							"from": "threshold"
+						},
+						"act5_hold": {
+							"held": false
+						},
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "fog"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "caption.act5.went_back"
+					}
+				],
+				"when": {
+					"act5_hold.held": true
+				},
+				"priority": 30,
+				"knowledge_effects": [
+					{
+						"id": "act5_he_went_back",
+						"proposition": {
+							"act5_he_went_back": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_would_he_come",
+						"proposition": {
+							"act5_would_he_come": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_go_threshold_hotel.move",
+				"observed": {
+					"outcome": "move"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "hotel",
+							"from": "threshold"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_bell",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act5.bell",
+		"valid_targets": [
+			"act5_desk_bell"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5",
+			"magic.state": "below"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_bell.released",
+				"observed": {
+					"outcome": "released"
+				},
+				"effects": {
+					"world": {
+						"act5_hold": {
+							"held": false
+						},
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "fog"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "caption.act5.went_back"
+					},
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act5_glass"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act5_desk_bell",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.bell_back"
+					}
+				],
+				"when": {
+					"act5_hold.held": true
+				},
+				"priority": 30,
+				"knowledge_effects": [
+					{
+						"id": "act5_he_went_back",
+						"proposition": {
+							"act5_he_went_back": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_would_he_come",
+						"proposition": {
+							"act5_would_he_come": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_spell_moves_things",
+						"proposition": {
+							"act5_spell_moves_things": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_bell.done",
+				"observed": {
+					"outcome": "done"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act5_glass"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act5_desk_bell",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.bell_back"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_spell_moves_things",
+						"proposition": {
+							"act5_spell_moves_things": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_ask_raccoon",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act5.ask_raccoon",
+		"valid_targets": [
+			"raccoon"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_ask_raccoon.released",
+				"observed": {
+					"outcome": "released"
+				},
+				"effects": {
+					"world": {
+						"act5_hold": {
+							"held": false
+						},
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "fog"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "caption.act5.went_back"
+					},
+					{
+						"kind": "line",
+						"speaker": "raccoon",
+						"key": "line.act5.raccoon_volunteer"
+					}
+				],
+				"when": {
+					"act5_hold.held": true
+				},
+				"priority": 30,
+				"knowledge_effects": [
+					{
+						"id": "act5_he_went_back",
+						"proposition": {
+							"act5_he_went_back": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_would_he_come",
+						"proposition": {
+							"act5_would_he_come": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_raccoon_volunteered",
+						"proposition": {
+							"act5_raccoon_volunteered": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_ask_raccoon.volunteer",
+				"observed": {
+					"outcome": "volunteer"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "raccoon",
+						"key": "line.act5.raccoon_volunteer"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_raccoon_volunteered",
+						"proposition": {
+							"act5_raccoon_volunteered": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_pull_raccoon",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act5.pull_raccoon",
+		"valid_targets": [
+			"act5_glass"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5",
+			"magic.state": "below"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_pull_raccoon.released",
+				"observed": {
+					"outcome": "released"
+				},
+				"effects": {
+					"world": {
+						"act5_hold": {
+							"held": false
+						},
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "fog"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "caption.act5.went_back"
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act5_glass",
+						"mode": "violet"
+					},
+					{
+						"kind": "flash",
+						"image": "fog_edge",
+						"sensation": "note.act5.flash_quiet"
+					},
+					{
+						"kind": "line",
+						"speaker": "raccoon",
+						"key": "line.act5.raccoon_back"
+					}
+				],
+				"when": {
+					"act5_hold.held": true
+				},
+				"priority": 30,
+				"knowledge_effects": [
+					{
+						"id": "act5_he_went_back",
+						"proposition": {
+							"act5_he_went_back": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_would_he_come",
+						"proposition": {
+							"act5_would_he_come": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_pull_proves_nothing",
+						"proposition": {
+							"act5_pull_proves_nothing": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_pull_raccoon.back",
+				"observed": {
+					"outcome": "back"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act5_glass",
+						"mode": "violet"
+					},
+					{
+						"kind": "flash",
+						"image": "fog_edge",
+						"sensation": "note.act5.flash_quiet"
+					},
+					{
+						"kind": "line",
+						"speaker": "raccoon",
+						"key": "line.act5.raccoon_back"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_pull_proves_nothing",
+						"proposition": {
+							"act5_pull_proves_nothing": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act5"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"act5_raccoon_volunteered"
+		]
+	},
+	{
+		"id": "act5_pull_miron",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act5.pull_miron",
+		"valid_targets": [
+			"act5_glass"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5",
+			"magic.state": "below",
+			"act5_hold.held": false
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_pull_miron.held",
+				"observed": {
+					"outcome": "held"
+				},
+				"effects": {
+					"world": {
+						"act5_hold": {
+							"held": true
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "threshold"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act5_glass"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act5_glass",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.pull_miron"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_he_stood_here",
+						"proposition": {
+							"act5_he_stood_here": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			}
+		],
+		"requires_operators": [
+			"op.act3_revise_before_repeating"
+		]
+	},
+	{
+		"id": "act5_ask_hello",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act5.ask_hello",
+		"valid_targets": [
+			"miron"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5",
+			"act5_hold.held": true
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_ask_hello.answer",
+				"observed": {
+					"outcome": "answer"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "miron",
+						"key": "line.act5.miron_hello"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_miron_spoke",
+						"proposition": {
+							"act5_miron_spoke": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_ask_tired",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act5.ask_tired",
+		"valid_targets": [
+			"miron"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5",
+			"act5_hold.held": true
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_ask_tired.answer",
+				"observed": {
+					"outcome": "answer"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "miron",
+						"key": "line.act5.miron_tired"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_miron_spoke",
+						"proposition": {
+							"act5_miron_spoke": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_ask_fine",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act5.ask_fine",
+		"valid_targets": [
+			"miron"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5",
+			"act5_hold.held": true
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_ask_fine.answer",
+				"observed": {
+					"outcome": "answer"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "miron",
+						"key": "line.act5.miron_fine"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_miron_spoke",
+						"proposition": {
+							"act5_miron_spoke": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_let_go",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act5.let_go",
+		"valid_targets": [
+			"act5_glass"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5",
+			"act5_hold.held": true
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_let_go.release",
+				"observed": {
+					"outcome": "release"
+				},
+				"effects": {
+					"world": {
+						"act5_hold": {
+							"held": false
+						},
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "fog"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.let_go"
+					},
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "caption.act5.went_back"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_he_went_back",
+						"proposition": {
+							"act5_he_went_back": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_would_he_come",
+						"proposition": {
+							"act5_would_he_come": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_wait_glass",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act5.wait_glass",
+		"valid_targets": [
+			"act5_glass"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_wait_glass.released",
+				"observed": {
+					"outcome": "released"
+				},
+				"effects": {
+					"world": {
+						"act5_hold": {
+							"held": false
+						},
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "fog"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "caption.act5.went_back"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.hand_lifted"
+					}
+				],
+				"when": {
+					"act5_hold.held": true
+				},
+				"priority": 30,
+				"knowledge_effects": [
+					{
+						"id": "act5_he_went_back",
+						"proposition": {
+							"act5_he_went_back": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_would_he_come",
+						"proposition": {
+							"act5_would_he_come": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_hand_lifted",
+						"proposition": {
+							"act5_hand_lifted": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_what_the_wave_meant",
+						"proposition": {
+							"act5_what_the_wave_meant": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_wait_glass.lifts",
+				"observed": {
+					"outcome": "lifts"
+				},
+				"effects": {
+					"world": {
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "stay"
+					},
+					{
+						"kind": "wait",
+						"seconds": 2
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.hand_lifted"
+					}
+				],
+				"when": {
+					"act5_hold.held": false,
+					"magic.state": "below"
+				},
+				"priority": 20,
+				"knowledge_effects": [
+					{
+						"id": "act5_hand_lifted",
+						"proposition": {
+							"act5_hand_lifted": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_what_the_wave_meant",
+						"proposition": {
+							"act5_what_the_wave_meant": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_wait_glass.after",
+				"observed": {
+					"outcome": "after"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "stay"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.hand_again"
+					}
+				],
+				"when": {
+					"magic.state": "gone"
+				},
+				"priority": 10,
+				"knowledge_effects": [
+					{
+						"id": "act5_hand_lifted",
+						"proposition": {
+							"act5_hand_lifted": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_what_the_wave_meant",
+						"proposition": {
+							"act5_what_the_wave_meant": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_wait_glass.nothing",
+				"observed": {
+					"outcome": "nothing"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "stay"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.glass_nothing"
+					}
+				]
+			}
+		],
+		"time_cost": 6
+	},
+	{
+		"id": "act5_show_seed",
+		"action_type": "SHOW",
+		"affordance_group": "social",
+		"label_key": "opt.act5.show_seed",
+		"valid_targets": [
+			"act5_glass"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5"
+		},
+		"prediction_signature": [
+			"SHOW",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_show_seed.released",
+				"observed": {
+					"outcome": "released"
+				},
+				"effects": {
+					"world": {
+						"act5_hold": {
+							"held": false
+						},
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "fog"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "caption.act5.went_back"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_seed"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_touched"
+					}
+				],
+				"when": {
+					"act5_hold.held": true
+				},
+				"priority": 30,
+				"knowledge_effects": [
+					{
+						"id": "act5_he_went_back",
+						"proposition": {
+							"act5_he_went_back": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_would_he_come",
+						"proposition": {
+							"act5_would_he_come": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_show_touched_glass",
+						"proposition": {
+							"act5_show_touched_glass": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_show_seed.lifts",
+				"observed": {
+					"outcome": "lifts"
+				},
+				"effects": {
+					"world": {
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_seed"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_touched"
+					}
+				],
+				"when": {
+					"act5_hold.held": false,
+					"magic.state": "below"
+				},
+				"priority": 20,
+				"knowledge_effects": [
+					{
+						"id": "act5_show_touched_glass",
+						"proposition": {
+							"act5_show_touched_glass": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_show_seed.after",
+				"observed": {
+					"outcome": "after"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_seed"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_touched"
+					}
+				],
+				"when": {
+					"magic.state": "gone"
+				},
+				"priority": 10,
+				"knowledge_effects": [
+					{
+						"id": "act5_show_touched_glass",
+						"proposition": {
+							"act5_show_touched_glass": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_show_seed.nothing",
+				"observed": {
+					"outcome": "nothing"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_seed"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"prologue_sunflowers"
+		]
+	},
+	{
+		"id": "act5_show_bench",
+		"action_type": "SHOW",
+		"affordance_group": "social",
+		"label_key": "opt.act5.show_bench",
+		"valid_targets": [
+			"act5_glass"
+		],
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5"
+		},
+		"prediction_signature": [
+			"SHOW",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_show_bench.released",
+				"observed": {
+					"outcome": "released"
+				},
+				"effects": {
+					"world": {
+						"act5_hold": {
+							"held": false
+						},
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					},
+					"npc_state": {
+						"miron": {
+							"place": "fog"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "caption.act5.went_back"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_bench"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_touched"
+					}
+				],
+				"when": {
+					"act5_hold.held": true
+				},
+				"priority": 30,
+				"knowledge_effects": [
+					{
+						"id": "act5_he_went_back",
+						"proposition": {
+							"act5_he_went_back": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_would_he_come",
+						"proposition": {
+							"act5_would_he_come": true
+						},
+						"status": "UNRESOLVED_BY_DESIGN",
+						"scope": "act5"
+					},
+					{
+						"id": "act5_show_touched_glass",
+						"proposition": {
+							"act5_show_touched_glass": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_show_bench.lifts",
+				"observed": {
+					"outcome": "lifts"
+				},
+				"effects": {
+					"world": {
+						"magic": {
+							"state": "gone"
+						},
+						"garden_below": {
+							"state": "fading"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_bench"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_touched"
+					}
+				],
+				"when": {
+					"act5_hold.held": false,
+					"magic.state": "below"
+				},
+				"priority": 20,
+				"knowledge_effects": [
+					{
+						"id": "act5_show_touched_glass",
+						"proposition": {
+							"act5_show_touched_glass": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_show_bench.after",
+				"observed": {
+					"outcome": "after"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_bench"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_touched"
+					}
+				],
+				"when": {
+					"magic.state": "gone"
+				},
+				"priority": 10,
+				"knowledge_effects": [
+					{
+						"id": "act5_show_touched_glass",
+						"proposition": {
+							"act5_show_touched_glass": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act5_show_bench.nothing",
+				"observed": {
+					"outcome": "nothing"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.show_bench"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"prologue_bench_crooked"
+		]
+	},
+	{
+		"id": "act5_stairs_home",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act5.stairs_home",
+		"valid_targets": [
+			"act5_stairs_home"
+		],
+		"preconditions": {
+			"witch.place": "basement",
+			"story.act": "act5",
+			"magic.state": "gone"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_stairs_home.up",
+				"observed": {
+					"outcome": "up"
+				},
+				"effects": {
+					"world": {
+						"story": {
+							"act": "act6"
+						},
+						"witch": {
+							"place": "shop",
+							"from": "basement"
+						}
+					},
+					"npc_state": {
+						"raccoon": {
+							"place": "shop"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "raccoon",
+						"key": "line.act5.raccoon_home"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_cast_gone",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act5.try_again",
+		"valid_targets": [
+			"act3_lilies"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act5",
+			"magic.state": "gone"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_cast_gone.nothing",
+				"observed": {
+					"outcome": "nothing"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "stay"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.cast_gone"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_water_garden",
+		"action_type": "CUSTOM",
+		"affordance_group": "act",
+		"label_key": "opt.act5.water",
+		"valid_targets": [
+			"act3_lilies"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act5",
+			"$in": {
+				"garden_below.state": [
+					"fading",
+					"dust"
+				]
+			}
+		},
+		"prediction_signature": [
+			"CUSTOM",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_water_garden.dust",
+				"observed": {
+					"outcome": "dust"
+				},
+				"effects": {
+					"world": {
+						"garden_below": {
+							"state": "dust"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_lilies"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.water"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_cannot_be_restored",
+						"proposition": {
+							"act5_cannot_be_restored": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_press_flower",
+		"action_type": "CUSTOM",
+		"affordance_group": "act",
+		"label_key": "opt.act5.press",
+		"valid_targets": [
+			"act3_lilies"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act5",
+			"$in": {
+				"garden_below.state": [
+					"fading",
+					"dust"
+				]
+			}
+		},
+		"prediction_signature": [
+			"CUSTOM",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_press_flower.stain",
+				"observed": {
+					"outcome": "stain"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_lilies"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act5.press"
+					},
+					{
+						"kind": "notebook",
+						"claim": "act5_stain"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_stain",
+						"proposition": {
+							"act5_stain": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act5_wait_garden",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act5.wait_garden",
+		"valid_targets": [
+			"act3_garden_whole"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act5",
+			"garden_below.state": "fading"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act5_wait_garden.dust",
+				"observed": {
+					"outcome": "dust"
+				},
+				"effects": {
+					"world": {
+						"garden_below": {
+							"state": "dust"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "stay"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act5.wait_garden"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act5_cannot_be_restored",
+						"proposition": {
+							"act5_cannot_be_restored": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act5"
+					}
+				]
+			}
+		]
+	}
+]

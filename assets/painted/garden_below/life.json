@@ -1,0 +1,78 @@
+{
+ "_about": "Drafted by tools/painted/new_scene.py from the plate's bright blobs, then placed by hand: the lantern, the window, the gate's bell, the sundial, and her lilies (magic). Edit by hand (see docs/art/painted_room.md, Light and life).",
+ "fps": 8,
+ "glow": {
+  "levels": 6,
+  "depth": 0.97,
+  "spare": 6
+ },
+ "lights": [
+  {
+   "id": "lantern",
+   "pixel": [536, 191],
+   "radius": 26,
+   "core": 0.25,
+   "color": [1.0, 0.72, 0.32],
+   "strength": 0.35,
+   "flicker": {"kind": "candle", "amount": 0.32, "seed": 25, "shift": 0.4}
+  },
+  {
+   "id": "window",
+   "pixel": [1097, 142],
+   "radius": 40,
+   "core": 0.14,
+   "color": [1.0, 0.72, 0.32],
+   "strength": 0.3,
+   "depth_mode": "near",
+   "flicker": {"kind": "lamp", "amount": 0.14, "seed": 14, "shift": 0.2}
+  },
+  {
+   "id": "gate_bell",
+   "pixel": [640, 272],
+   "radius": 16,
+   "core": 0.2,
+   "color": [1.0, 0.8, 0.5],
+   "strength": 0.22,
+   "flicker": {"kind": "lamp", "amount": 0.2, "seed": 31, "shift": 0.0}
+  },
+  {
+   "id": "sundial",
+   "pixel": [921, 360],
+   "radius": 26,
+   "core": 0.25,
+   "color": [0.76, 0.46, 1.0],
+   "strength": 0.4,
+   "flicker": {"kind": "magic", "amount": 0.35, "seed": 36, "shift": 0.0}
+  },
+  {
+   "id": "lilies_near",
+   "pixel": [1040, 470],
+   "radius": 30,
+   "core": 0.25,
+   "color": [0.76, 0.46, 1.0],
+   "strength": 0.35,
+   "flicker": {"kind": "magic", "amount": 0.35, "seed": 58, "shift": 0.0}
+  },
+  {
+   "id": "lilies_far",
+   "pixel": [1170, 500],
+   "radius": 28,
+   "core": 0.25,
+   "color": [0.76, 0.46, 1.0],
+   "strength": 0.35,
+   "flicker": {"kind": "magic", "amount": 0.35, "seed": 69, "shift": 0.0}
+  }
+ ],
+ "frame": {
+  "strength": 0.0,
+  "breath": 0.5,
+  "tint": [0.34, 0.24, 0.4]
+ },
+ "occluders": {
+  "witch": {"radius": 0.26, "height": 1.2},
+  "raccoon": {"radius": 0.2, "height": 0.5}
+ },
+ "actors": {
+  "follow": 1.0
+ }
+}

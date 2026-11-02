@@ -88,7 +88,9 @@ func step(delta: float) -> void:
 	if witch != null:
 		witch.advance(delta)
 	if raccoon != null:
-		_follow(delta)
+		# The raccoon trails the painted witch; a room whose witch is the game's own has nothing to trail.
+		if witch != null:
+			_follow(delta)
 		raccoon.advance(delta)
 
 # The raccoon: trails a little behind the witch while she walks, gives her room when she comes close, and

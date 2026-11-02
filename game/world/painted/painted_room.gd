@@ -1,14 +1,12 @@
 class_name PaintedRoom
-extends Node3D
+extends PlaceRoom
 
 # An experiment (docs/art/painted_room.md): a painted still made into a room. tools/painted/build_painted.py
 # writes room.json (the painting's camera, a grid of depths in metres, the light the characters stand in);
 # props.json, written by hand or by tools/painted/lift_prop.py, lifts parts of the painting into things that
 # answer a tap. From the painting's camera the frame is the painting; characters stand in it, lit by it.
 
-signal prop_pressed(prop_id: String, reaction: String, world_position: Vector3)
-# She arrived at a tapped spot of the floor: the painting pixel that was tapped and where she stands.
-signal walked(pixel: Vector2, world_position: Vector3)
+# (prop_pressed and walked are declared by PlaceRoom: the room slot.)
 # A reaction's line (a key of data/text/ru.json): the toy box says something; whoever presents text listens.
 signal prop_said(prop_id: String, text_key: String)
 # A tap that hit no prop was answered by fallback(): where, in painting pixels.
@@ -46,6 +44,10 @@ var walk: PaintedWalk
 var input: IntentInput
 var sfx: PaintedSfx
 var pings: PaintedPings
+# Off when the game routes taps itself (GameRoot): the room keeps its walk grid and props, not its own input.
+var own_input := true
+# Actors of the painting that the game's own characters stand in for (the witch walks as the game's Witch).
+var skip_actors := PackedStringArray()
 var _behind: Texture2D
 var _focal := 1.0
 var _pitch := 0.0
@@ -102,7 +104,8 @@ func _ready() -> void:
 	_build_camera()
 	_build_room(behind)
 	for id in room.get("actors", {}):
-		_spawn_actor(str(id), room["actors"][id])
+		if not skip_actors.has(str(id)):
+			_spawn_actor(str(id), room["actors"][id])
 	sfx = PaintedSfx.new()
 	sfx.name = "Sfx"
 	add_child(sfx)
@@ -118,6 +121,8 @@ func _ready() -> void:
 	_build_life()
 	_build_screen()
 	_build_walk()
+	navigator = walk.walkable.navigator if walk.walkable != null else null
+	build_ground_pick()
 	set_psx(psx)
 
 func _load_props() -> Dictionary:
@@ -396,11 +401,12 @@ func _build_walk() -> void:
 	add_child(walk)
 	walk.setup(self)
 	walk.walked.connect(func(pixel: Vector2, world_position: Vector3) -> void: walked.emit(pixel, world_position))
-	input = IntentInput.new()
-	input.name = "IntentInput"
-	input.picker = _pick
-	input.intent_emitted.connect(func(_intent: PlayerIntent) -> void: tap(_tap_pixel))
-	add_child(input)
+	if own_input:
+		input = IntentInput.new()
+		input.name = "IntentInput"
+		input.picker = _pick
+		input.intent_emitted.connect(func(_intent: PlayerIntent) -> void: tap(_tap_pixel))
+		add_child(input)
 
 # IntentInput's picker: a prop under the tap is what was pointed at, anything else inside the frame is ground.
 func _pick(screen: Vector2) -> Dictionary:
@@ -452,12 +458,9 @@ func _on_prop_answered(prop_id: String, _reaction: String, sound: String, say: S
 
 # ---- the room slot (game/world/room_slot.gd): adapters over the painting, its walk and its props ----------
 
-# The painted room is the room of Mirror's "clearing": its toy box holds the globe, the statue and the lamp that
-# data/mirror/minds knows by name.
-const MIRROR_ROOM_ID := "clearing"
-
+# The room's key in Mirror's world is its place id (data/world/places), set by the room factory.
 func mirror_room_id() -> String:
-	return MIRROR_ROOM_ID
+	return room_id
 
 func is_walkable(point: Vector3) -> bool:
 	return walk != null and walk.walkable != null and walk.walkable.is_standable(point.x, point.z)
@@ -482,7 +485,23 @@ func anchor(id: String) -> Variant:
 	return null
 
 func stage_actors() -> Dictionary:
-	return actors.duplicate()
+	var out: Dictionary = npcs.duplicate()
+	for id in actors:
+		out[id] = actors[id]
+	return out
+
+# A person the painting shows, or one the presence sync placed (PlaceRoom).
+func npc_node(id: String) -> Node3D:
+	if actors.has(id):
+		return actors[id] as Node3D
+	return super.npc_node(id)
+
+func pixel_to_floor(px: Vector2) -> Vector3:
+	return floor_at(px)
+
+# Off the bottom of the frame, toward the viewer: where the witch walks to leave the picture.
+func exit_point() -> Vector3:
+	return floor_at(Vector2(_size.x * 0.5, _size.y + 90.0))
 
 func request_reaction(target_id: String, reaction: String) -> bool:
 	for prop in props:

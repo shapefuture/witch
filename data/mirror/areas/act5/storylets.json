@@ -1,0 +1,43 @@
+[
+	{
+		"id": "act5_arrive_threshold",
+		"priority": 0,
+		"preconditions": {
+			"witch.place": "threshold",
+			"story.act": "act5"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "narrator",
+				"key": "line.act5.arrive_threshold"
+			}
+		],
+		"once_key": "act5_arrive_threshold"
+	},
+	{
+		"id": "act5_garden_quiet",
+		"priority": 0,
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act5",
+			"garden_below.state": "fading"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "narrator",
+				"key": "line.act5.garden_quiet"
+			}
+		],
+		"once_key": "act5_garden_quiet"
+	}
+]

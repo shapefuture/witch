@@ -1,0 +1,18 @@
+[
+	{
+		"id": "prologue_raccoon_bath",
+		"npc": "raccoon",
+		"when": {"witch.place": "shop", "prologue_kettle.state": "simmering"},
+		"ghost": "flinch",
+		"source": "projection",
+		"note": "note.prologue.raccoon_bath"
+	},
+	{
+		"id": "prologue_raccoon_kettle",
+		"npc": "raccoon",
+		"when": {"witch.place": "shop", "prologue_kettle.state": "thunder"},
+		"ghost": "flinch",
+		"source": "npc",
+		"note": "note.prologue.raccoon_kettle"
+	}
+]

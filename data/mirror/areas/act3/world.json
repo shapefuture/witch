@@ -1,0 +1,20 @@
+{
+	"_about": "Act III's world (docs/design/GAME_SPEC.md section 6): the clock loop, the garden's stillness, the shadow's key and the garden below's state.",
+	"world": {
+		"act3_loop": {
+			"n": 0
+		},
+		"act3_clock": {
+			"face": "awake"
+		},
+		"act3_garden": {
+			"stillness": 0
+		},
+		"act3_shadow_key": {
+			"left": false
+		},
+		"garden_below": {
+			"state": "lush"
+		}
+	}
+}
