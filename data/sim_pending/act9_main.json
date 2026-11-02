@@ -1,0 +1,20 @@
+{
+	"name": "Act IX: the evidence, the shadow at the open door, and going with her to the postgame",
+	"scope": "game",
+	"after": "res://data/sim/act8_main.json",
+	"steps": [
+		{"action": "act9_look_bell_rope", "target": "act9_bell_rope"},
+		{"action": "act9_listen_jars", "target": "act7_jars"},
+		{"action": "act9_look_doorway", "target": "act9_doorway"},
+		{"action": "act9_wait_at_door", "target": "act9_doorway"},
+		{"action": "core_go_door_shop_street", "target": "door_shop_street"},
+		{"action": "act9_look_step", "target": "act9_step"},
+		{"action": "act9_look_clocks", "target": "act9_clocks"},
+		{"action": "core_go_door_street_shop", "target": "door_street_shop"},
+		{"action": "act9_go_with_shadow", "target": "shadow"}
+	],
+	"expect": {
+		"state": {"story.act": "postgame", "witch.place": "shop", "npc.shadow.place": "shop", "npc.miron.place": "fog"},
+		"knows": ["act9_shadow_knot", "act9_jars_in_tune", "act9_fog_dew", "act9_clocks_stopped", "act9_what_happened"]
+	}
+}
