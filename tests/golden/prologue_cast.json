@@ -1,7 +1,7 @@
 {
 	"final": {
 		"event_count": 36,
-		"head_hash": "49eba821bc5f4db98d8bfce02e55743bf4930baceab3fde9068e2271432f829c",
+		"head_hash": "b44e826b3cece250dad7044518a6220d1e06c6be8ffd2b786c71b43e90555b98",
 		"knowledge": {
 			"prologue_bench_crooked": "ESTABLISHED",
 			"prologue_board_three": "ESTABLISHED",
@@ -110,6 +110,33 @@
 			},
 			"act5_hold": {
 				"held": false
+			},
+			"act6_cart": {
+				"state": "rolling"
+			},
+			"act6_customer": {
+				"state": "haggling"
+			},
+			"act6_done_elian": {
+				"done": false
+			},
+			"act6_done_ilya": {
+				"done": false
+			},
+			"act6_done_tomas": {
+				"done": false
+			},
+			"act6_done_vera": {
+				"done": false
+			},
+			"act6_lamp": {
+				"state": "unshown"
+			},
+			"act6_second_machine": {
+				"state": "unfinished"
+			},
+			"act6_shadow_flower": {
+				"left": false
 			},
 			"clearing": {
 				"departed": false

@@ -1,7 +1,7 @@
 {
 	"final": {
 		"event_count": 209,
-		"head_hash": "8f9dc72f2fee84b9a5f21d28396c0d4d7c53767bbddd0211e913a71763e139e4",
+		"head_hash": "106344c9fbc9ca0a5738211dcdcb6bf273b45616f636d14234d1746a22457eed",
 		"knowledge": {
 			"act1_fog_is_quiet": "SUPPORTED",
 			"act1_fogdew": "ESTABLISHED",
@@ -42,6 +42,7 @@
 			"machine_needs_second_component": "SUPPORTED",
 			"machine_runs": "ESTABLISHED",
 			"prologue_bench_crooked": "ESTABLISHED",
+			"prologue_bench_defended": "ESTABLISHED",
 			"prologue_board_three": "ESTABLISHED",
 			"prologue_drawing_older": "ESTABLISHED",
 			"prologue_father_drawing": "ESTABLISHED",
@@ -53,10 +54,12 @@
 			"prologue_knot": "ESTABLISHED",
 			"prologue_lamp_lit": "ESTABLISHED",
 			"prologue_lilies_tidy": "ESTABLISHED",
+			"prologue_noise_rated": "ESTABLISHED",
 			"prologue_oven_cold": "ESTABLISHED",
 			"prologue_oven_lit": "ESTABLISHED",
 			"prologue_sight_used": "ESTABLISHED",
 			"prologue_sunflowers": "ESTABLISHED",
+			"prologue_vera_later": "ESTABLISHED",
 			"tomas_explained_alignment": "SUPPORTED",
 			"tomas_glances_toward_tree": "POSSIBLE",
 			"tomas_invited_help": "SUPPORTED",
@@ -216,6 +219,9 @@
 			},
 			"postgame_clue_petal": {
 				"seen": false
+			},
+			"prologue_bench": {
+				"state": "leans_back"
 			},
 			"prologue_kettle": {
 				"state": "simmering"
