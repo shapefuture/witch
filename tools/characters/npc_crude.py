@@ -9,8 +9,9 @@ on one bone each, so a walk swings the legs without bending the skirts; the body
 
     python tools/characters/npc_crude.py --out assets/characters [--only miron] [--preview DIR]
 
-writes DIR/<id>.glb for each character and, with --preview, DIR/<id>_sixview.png. The budgets are 3,000 triangles and one
-surface (tests/world/test_npc_models.gd). The choices the bible does not make are listed in docs/art/characters.md.
+writes DIR/<id>.glb for each character and, with --preview, DIR/<id>_sixview.png. Each model is one surface and one 128 px
+atlas, inside the actor budgets of tests/render/test_character_models.gd. The choices the bible does not make are listed
+in docs/art/characters.md.
 """
 import argparse
 import math
@@ -194,7 +195,7 @@ def miron():
     f.add(profile([(.27 * H, .122 * H, .088 * H), (.42 * H, .118 * H, .084 * H), (.56 * H, .100 * H, .074 * H),
                    (.66 * H, .112 * H, .082 * H), (.74 * H, .124 * H, .086 * H), (.80 * H, .120 * H, .080 * H),
                    (.835 * H, .064 * H, .056 * H)]), 'coat')
-    f.add(tube((0, .81 * H, 0), (0, .89 * H, 0), .068 * H, .064 * H), 'collar')
+    f.add(box((0, .84 * H, -.045 * H), (.06 * H, .045 * H, .02 * H)), 'collar')
     f.add(tube((0, .79 * H, 0), (0, .89 * H, 0), .03 * H, .03 * H), 'skin')
     f.add(ellipsoid((0, .895 * H, 0), (.046 * H, .07 * H, .058 * H)), 'skin', 'head')
     f.add(ellipsoid((0, .92 * H, -.006 * H), (.05 * H, .054 * H, .062 * H)), 'hair', 'head')
@@ -206,7 +207,7 @@ def miron():
         arm(f, d, j['arm_upper' + d], j['arm_lower' + d], j['hand' + d], 'coat', ellipsoid((j['hand' + d][0], .47 * H, .02 * H),
             (.03 * H, .04 * H, .025 * H), 3, 6), 'skin', (.045 * H, .038 * H, .032 * H))
         leg(f, d, j['leg' + d], (s * .065 * H, .08 * H, .01 * H), 'trous',
-            ellipsoid((s * .065 * H, .045 * H, .02 * H), (.045 * H, .045 * H, .07 * H), 3, 6), 'boot', (.05 * H, .04 * H))
+            box((s * .065 * H, .035 * H, .02 * H), (.04 * H, .035 * H, .07 * H)), 'boot', (.05 * H, .04 * H))
     return f, {'coat': (.66, .50, .32), 'collar': (.42, .30, .20), 'trous': (.30, .29, .36), 'boot': (.24, .16, .12),
                'skin': (.93, .74, .62), 'hair': (.34, .24, .18), 'scarf': (.74, .24, .22), 'ink': (.12, .08, .14),
                'sigil': (.86, .36, .80)}
@@ -229,10 +230,10 @@ def elian():
         hand = ellipsoid((j['hand' + d][0], .47 * H, .02 * H), (.03 * H, .04 * H, .025 * H), 3, 6)
         arm(f, d, j['arm_upper' + d], j['arm_lower' + d], j['hand' + d], 'jacket', hand, 'skin', (.042 * H, .036 * H, .03 * H))
         leg(f, d, j['leg' + d], (s * .065 * H, .08 * H, .01 * H), 'trous',
-            ellipsoid((s * .065 * H, .045 * H, .02 * H), (.045 * H, .045 * H, .07 * H), 3, 6), 'boot', (.042 * H, .036 * H))
+            box((s * .065 * H, .035 * H, .02 * H), (.04 * H, .035 * H, .07 * H)), 'boot', (.042 * H, .036 * H))
     # the cap, held in the left hand: a crown and a brim, both on the hand bone
     hx, hy, hz = j['hand.L']
-    f.add(tube((hx, hy - .03 * H, hz + .03 * H), (hx, hy - .015 * H, hz + .03 * H), .05 * H, .052 * H), 'cap', 'hand.L')
+    f.add(ellipsoid((hx, hy - .025 * H, hz + .02 * H), (.045 * H, .028 * H, .045 * H), 4, 8), 'cap', 'hand.L')
     f.add(box((hx, hy - .03 * H, hz + .065 * H), (.034 * H, .004 * H, .03 * H)), 'cap', 'hand.L')
     return f, {'jacket': (.24, .38, .62), 'trous': (.36, .36, .44), 'boot': (.34, .22, .14), 'skin': (.93, .74, .62),
                'hair': (.26, .17, .12), 'hair2': (.22, .14, .10), 'ink': (.12, .08, .14), 'cap': (.52, .24, .30)}
@@ -244,7 +245,7 @@ def vera():
     H = 1.66
     j, segs = humanoid(H)
     f = Figure(H, j, segs)
-    f.add(profile([(.02 * H, .25 * H, .21 * H), (.12 * H, .235 * H, .20 * H), (.30 * H, .175 * H, .15 * H),
+    f.add(profile([(0., .25 * H, .21 * H), (.12 * H, .235 * H, .20 * H), (.30 * H, .175 * H, .15 * H),
                    (.48 * H, .135 * H, .11 * H), (.56 * H, .118 * H, .10 * H), (.64 * H, .13 * H, .11 * H),
                    (.70 * H, .124 * H, .10 * H)]), 'dress')
     f.add(profile([(.63 * H, .142 * H, .12 * H), (.70 * H, .15 * H, .124 * H), (.765 * H, .132 * H, .11 * H),
@@ -286,7 +287,7 @@ def ilya():
         hand = ellipsoid((j['hand' + d][0], .47 * H, .02 * H), (.03 * H, .04 * H, .025 * H), 3, 6)
         arm(f, d, j['arm_upper' + d], j['arm_lower' + d], j['hand' + d], 'coat', hand, 'skin', (.05 * H, .045 * H, .036 * H))
         leg(f, d, j['leg' + d], (s * .065 * H, .08 * H, .01 * H), 'trous',
-            ellipsoid((s * .065 * H, .045 * H, .02 * H), (.045 * H, .045 * H, .07 * H), 3, 6), 'boot', (.045 * H, .04 * H))
+            box((s * .065 * H, .035 * H, .02 * H), (.04 * H, .035 * H, .07 * H)), 'boot', (.045 * H, .04 * H))
     hx, hy, hz = j['hand.L']
     f.add(tube((hx + .01 * H, hy, hz + .02 * H), (hx - .02 * H, hy, hz + .32 * H), .018 * H, .014 * H), 'brass', 'hand.L')
     f.add(tube((hx - .02 * H, hy, hz + .32 * H), (hx - .02 * H, hy, hz + .325 * H), .016 * H, .016 * H), 'ink', 'hand.L')
@@ -315,7 +316,7 @@ def janitor():
         hand = ellipsoid((j['hand' + d][0], .47 * H, .02 * H), (.03 * H, .04 * H, .025 * H), 3, 6)
         arm(f, d, j['arm_upper' + d], j['arm_lower' + d], j['hand' + d], 'uniform', hand, 'skin', (.046 * H, .04 * H, .033 * H))
         leg(f, d, j['leg' + d], (s * .065 * H, .08 * H, .01 * H), 'trous',
-            ellipsoid((s * .065 * H, .045 * H, .02 * H), (.045 * H, .045 * H, .07 * H), 3, 6), 'boot', (.045 * H, .04 * H))
+            box((s * .065 * H, .035 * H, .02 * H), (.04 * H, .035 * H, .07 * H)), 'boot', (.045 * H, .04 * H))
     rx, ry, rz = j['hand.R']
     f.add(tube((rx, ry, rz), (rx - .05 * H, .06 * H, rz + .12 * H), .014 * H, .014 * H), 'wood', 'hand.R')
     f.add(box((rx - .06 * H, .02 * H, rz + .13 * H), (.07 * H, .02 * H, .03 * H)), 'straw', 'hand.R')
@@ -346,7 +347,7 @@ def concierge():
         f.add(tube(j['arm_lower' + d], j['hand' + d], .04, .03), 'wing', 'arm_lower' + d)
         f.add(ellipsoid(j['hand' + d], (.035, .05, .02), 3, 6), 'wing', 'hand' + d)
         f.add(tube((s * .05, .30, 0), (s * .05, .06, .02), .018, .014, 6), 'legs', 'leg' + d)
-        f.add(box((s * .05, .03, .05), (.035, .02, .06)), 'legs', 'foot' + d)
+        f.add(box((s * .05, .02, .05), (.035, .02, .06)), 'legs', 'foot' + d)
     f.add(ellipsoid((0, .34, -.13), (.07, .06, .04)), 'jacket')
     return f, {'jacket': (.52, .14, .20), 'white': (.94, .94, .96), 'gold': (.95, .76, .38), 'beak': (.96, .80, .24),
                'ink': (.12, .08, .14), 'hat': (.80, .16, .22), 'band': (.30, .08, .14), 'wing': (.46, .46, .54),
