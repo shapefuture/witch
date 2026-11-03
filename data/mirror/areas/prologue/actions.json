@@ -25,6 +25,9 @@
 			{
 				"id": "prologue_look_kettle.quiet",
 				"observed": {"outcome": "kettle_quiet"},
+				"knowledge_effects": [
+					{"id": "prologue_kettle_again", "proposition": {"kettle": "same_kettle_again"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
 				"presentation": [
 					{"kind": "camera", "mode": "inspect", "focus": ["prologue_kettle"]},
 					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_look_again"}
@@ -106,6 +109,7 @@
 					{"id": "prologue_kettle_thunder", "proposition": {"kettle": "boiled_by_magic", "tea": "tastes_of_thunder"}, "status": "ESTABLISHED", "scope": "prologue"}
 				],
 				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_cast_chant"},
 					{"kind": "camera", "mode": "magic_reveal", "focus": ["prologue_kettle"]},
 					{"kind": "magic", "effect": "flourish", "target": "prologue_kettle", "mode": "violet"},
 					{"kind": "line", "speaker": "raccoon", "key": "line.prologue.kettle_cast_raccoon"},
@@ -132,6 +136,29 @@
 				"presentation": [
 					{"kind": "camera", "mode": "inspect", "focus": ["prologue_kettle"]},
 					{"kind": "line", "speaker": "witch", "key": "line.prologue.kettle_refill"}
+				]
+			}
+		]
+	},
+	{
+		"id": "prologue_name_kettle",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.prologue.name_kettle",
+		"valid_targets": ["raccoon"],
+		"once_key": "prologue_name_kettle",
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "prologue_name_kettle.corrected",
+				"observed": {"outcome": "raccoon_corrects_the_word"},
+				"knowledge_effects": [
+					{"id": "prologue_kettle_named", "proposition": {"kettle": "named_by_the_correction"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.name_witch"},
+					{"kind": "line", "speaker": "raccoon", "key": "line.prologue.name_raccoon"}
 				]
 			}
 		]
@@ -193,6 +220,9 @@
 			{
 				"id": "prologue_ask_raccoon_noise.verdict",
 				"observed": {"outcome": "raccoon_complains"},
+				"knowledge_effects": [
+					{"id": "prologue_noise_rated", "proposition": {"noise": "rated_loud_below_the_title"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
 				"presentation": [
 					{"kind": "line", "speaker": "witch", "key": "line.prologue.noise_ask"},
 					{"kind": "line", "speaker": "raccoon", "key": "line.prologue.noise_raccoon"}
@@ -270,7 +300,8 @@
 				"presentation": [
 					{"kind": "camera", "mode": "wide"},
 					{"kind": "line", "speaker": "narrator", "key": "line.prologue.end_caption"},
-					{"kind": "line", "speaker": "witch", "key": "line.prologue.end_witch"}
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.end_witch"},
+					{"kind": "line", "speaker": "witch", "key": "line.prologue.end_rule"}
 				]
 			}
 		]
@@ -368,6 +399,7 @@
 			{
 				"id": "prologue_cast_bench.straightens",
 				"observed": {"outcome": "bench_straightened_then_leaned"},
+				"effects": {"world": {"prologue_bench": {"state": "leans_back"}}},
 				"knowledge_effects": [
 					{"id": "prologue_bench_crooked", "proposition": {"bench": "leans"}, "status": "ESTABLISHED", "scope": "prologue"}
 				],
@@ -442,6 +474,9 @@
 			{
 				"id": "prologue_ask_miron_bench.answer",
 				"observed": {"outcome": "miron_defends_the_bench"},
+				"knowledge_effects": [
+					{"id": "prologue_bench_defended", "proposition": {"miron_said": "sitting_straight_is_dull"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
 				"presentation": [
 					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
 					{"kind": "line", "speaker": "witch", "key": "line.prologue.bench_ask"},
@@ -578,6 +613,9 @@
 			{
 				"id": "prologue_ask_vera.later",
 				"observed": {"outcome": "vera_puts_it_off"},
+				"knowledge_effects": [
+					{"id": "prologue_vera_later", "proposition": {"vera": "will_look_at_the_oven_in_the_evening"}, "status": "ESTABLISHED", "scope": "prologue"}
+				],
 				"presentation": [
 					{"kind": "line", "speaker": "witch", "key": "line.prologue.vera_ask"},
 					{"kind": "line", "speaker": "vera", "key": "line.prologue.vera_answer"}

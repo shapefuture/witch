@@ -74,3 +74,34 @@ func test_the_hotspot_files_merge_with_no_errors_and_the_core_exits_are_there() 
 	for spec: Dictionary in PlaceCatalog.hotspots_for("clearing"):
 		clearing.append(spec["target"])
 	in_array("door_archive_street", clearing, "the archive's arch is the way out to the street")
+
+# The prologue's and act I's painted rooms, reached as a player reaches them: every hotspot a tap can open has an approach
+# the witch can walk to from where she appears (the floor the picture shows nearest a thing on the wall or far off), and
+# every arrival stands on the floor. The window has no walk grid: its taps are taken where she stands.
+func test_the_act_one_rooms_are_reachable_as_a_player_reaches_them() -> void:
+	for id in ["shop", "street", "garden", "fog_edge", "window"]:
+		var place := PlaceCatalog.load_place(id)
+		var room := _built(place)
+		await _tree().process_frame
+		ok(room is PaintedRoom, "%s is a painted room: its picture is the room" % id)
+		var start: Vector3 = room.arrival_point("default")
+		for spec: Dictionary in PlaceCatalog.hotspots_for(id):
+			if not spec.has("at"):
+				continue
+			var target := str(spec["target"])
+			var interactable: Interactable = room.get_interactable(target)
+			ok(interactable != null, "%s: %s is an interactable" % [id, target])
+			if interactable == null:
+				continue
+			var approach: Vector3 = interactable.approach_point
+			if id == "window":
+				ok(approach.is_finite(), "%s: %s keeps its place (no floor to walk)" % [id, target])
+				continue
+			ok(room.is_walkable(approach), "%s: %s has a standable approach" % [id, target])
+			ok(not room.navigator.find_path(start, approach).is_empty(), "%s: she can walk from her arrival to %s" % [id, target])
+		for from: String in place.arrive.keys():
+			var arrival: Vector3 = room.arrival_point(from)
+			if id != "window":
+				ok(room.is_walkable(arrival), "%s: an arrival from %s stands on the floor" % [id, from])
+		_release(room)
+		await _tree().process_frame

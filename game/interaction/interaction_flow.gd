@@ -45,7 +45,10 @@ func _inspect(target_id: String) -> void:
 	if interactable == null:
 		return
 	_focus(target_id)
-	var arrived := await witch.walk_to(interactable.approach_point)
+	# A room with no floor to walk on (the window's close shot) takes the tap where she stands.
+	var arrived: bool = true
+	if witch.navigator != null:
+		arrived = await witch.walk_to(interactable.approach_point)
 	if mine != _token or not arrived:
 		return
 	witch.face_toward(interactable.focus_point())

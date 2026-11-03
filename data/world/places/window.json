@@ -3,7 +3,7 @@
 	"id": "window",
 	"room": {"kind": "painted", "dir": "res://assets/painted/shop_window"},
 	"variants": {},
-	"spots": {"default": [640, 600]},
+	"spots": {"default": [640, 600], "miron": [650, 470]},
 	"arrive": {"shop": [640, 600], "default": [640, 600]},
 	"stage": {"palette": ["#2b2a3e", "#e0a85a", "#6b3f6e", "#8c5b3b", "#120c18"]}
 }

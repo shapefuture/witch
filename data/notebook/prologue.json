@@ -16,5 +16,10 @@
 	"prologue_fog_mentioned": {"kind": "heard", "text": "note.prologue.fog_mentioned"},
 	"prologue_oven_cold": {"kind": "seen", "text": "note.prologue.oven_cold"},
 	"prologue_oven_lit": {"kind": "altered", "text": "note.prologue.oven_lit"},
-	"prologue_lamp_lit": {"kind": "altered", "text": "note.prologue.lamp"}
+	"prologue_lamp_lit": {"kind": "altered", "text": "note.prologue.lamp"},
+	"prologue_kettle_again": {"kind": "seen", "text": "note.prologue.kettle_again"},
+	"prologue_kettle_named": {"kind": "heard", "text": "note.prologue.kettle_named"},
+	"prologue_noise_rated": {"kind": "heard", "text": "note.prologue.noise"},
+	"prologue_bench_defended": {"kind": "heard", "text": "note.prologue.bench_defended"},
+	"prologue_vera_later": {"kind": "heard", "text": "note.prologue.vera_later"}
 }

@@ -499,6 +499,24 @@ func npc_node(id: String) -> Node3D:
 func pixel_to_floor(px: Vector2) -> Vector3:
 	return floor_at(px)
 
+# The standable floor that shows nearest painting pixel `px` on screen: where she walks to reach a thing on the wall or
+# far off, whose own floor point can lie beyond the walk grid. Vector3.INF when the room has no walk grid.
+func standable_near_pixel(px: Vector2) -> Vector3:
+	if walk == null or walk.walkable == null:
+		return Vector3.INF
+	var walkable: PaintedWalkable = walk.walkable
+	var best := Vector3.INF
+	var best_distance: float = INF
+	for center: Vector2 in walkable.standable_cells():
+		var point := Vector3(center.x, walkable.height_at(center.x, center.y), center.y)
+		if (point - Vector3(0.0, _eye, 0.0)).dot(view_axis()) <= 0.0:
+			continue
+		var distance: float = world_to_pixel(point).distance_to(px)
+		if distance < best_distance:
+			best_distance = distance
+			best = point
+	return best
+
 # Off the bottom of the frame, toward the viewer: where the witch walks to leave the picture.
 func exit_point() -> Vector3:
 	return floor_at(Vector2(_size.x * 0.5, _size.y + 90.0))

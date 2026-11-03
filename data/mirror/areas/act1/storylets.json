@@ -6,7 +6,8 @@
 		"preconditions": {"story.act": "act1", "witch.place": "shop", "act1_day.n": 1},
 		"presentation": [
 			{"kind": "camera", "mode": "wide"},
-			{"kind": "line", "speaker": "narrator", "key": "line.act1.morning_1"}
+			{"kind": "line", "speaker": "narrator", "key": "line.act1.morning_1"},
+			{"kind": "line", "speaker": "miron", "key": "line.act1.morning_1_miron"}
 		]
 	},
 	{
