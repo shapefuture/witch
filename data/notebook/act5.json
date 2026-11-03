@@ -23,9 +23,17 @@
 		"kind": "seen",
 		"text": "note.act5.he_went_back"
 	},
-	"act5_miron_spoke": {
+	"act5_miron_said_hello": {
 		"kind": "heard",
-		"text": "note.act5.miron_spoke"
+		"text": "note.act5.miron_said_hello"
+	},
+	"act5_miron_said_tired": {
+		"kind": "heard",
+		"text": "note.act5.miron_said_tired"
+	},
+	"act5_miron_said_fine": {
+		"kind": "heard",
+		"text": "note.act5.miron_said_fine"
 	},
 	"act5_would_he_come": {
 		"kind": "untestable",

@@ -47,6 +47,10 @@
 		"kind": "seen",
 		"text": "note.act3.no_knot"
 	},
+	"act3_shadow_not_staying": {
+		"kind": "heard",
+		"text": "note.act3.shadow_not_staying"
+	},
 	"act3_bees_stopped": {
 		"kind": "seen",
 		"text": "note.act3.bees_stopped"

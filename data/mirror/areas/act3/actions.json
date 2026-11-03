@@ -811,6 +811,16 @@
 						"speaker": "shadow",
 						"key": "line.act3.shadow_refuses"
 					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_shadow_not_staying",
+						"proposition": {
+							"act3_shadow_not_staying": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
 				]
 			}
 		]
