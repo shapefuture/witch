@@ -685,7 +685,7 @@ func _play_magic(entry: Dictionary) -> void:
 	var position: Vector3 = at if at is Vector3 else Vector3.ZERO
 	witch.animation.play("cast")
 	magic.peaked.connect(func(_effect: String) -> void: room.apply_mirror_state(runtime.engine), CONNECT_ONE_SHOT)
-	await magic.play(str(entry.get("effect", "")), Vector3(position.x, 0.0, position.z))
+	await magic.play(str(entry.get("effect", "")), Vector3(position.x, 0.0, position.z), str(entry.get("mode", "violet")))
 
 # The actor walks off the frame (the witch by default) and is gone from it. `to` (a plate pixel) sets the way out.
 func _play_leave_frame(entry: Dictionary) -> void:
