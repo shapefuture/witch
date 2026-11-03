@@ -1,7 +1,7 @@
 {
 	"final": {
 		"event_count": 207,
-		"head_hash": "985a03225d9d26990f25d9097e6a7e37df007524554eb2ef9b7263deb673ddbd",
+		"head_hash": "945bf2e0137db314b9a0413d50e39b2c49c4f69288edbed0df684f1b532abc32",
 		"knowledge": {
 			"act1_fog_is_quiet": "SUPPORTED",
 			"act1_fogdew": "ESTABLISHED",
@@ -157,6 +157,33 @@
 			},
 			"act5_hold": {
 				"held": false
+			},
+			"act6_cart": {
+				"state": "rolling"
+			},
+			"act6_customer": {
+				"state": "haggling"
+			},
+			"act6_done_elian": {
+				"done": false
+			},
+			"act6_done_ilya": {
+				"done": false
+			},
+			"act6_done_tomas": {
+				"done": false
+			},
+			"act6_done_vera": {
+				"done": false
+			},
+			"act6_lamp": {
+				"state": "unshown"
+			},
+			"act6_second_machine": {
+				"state": "unfinished"
+			},
+			"act6_shadow_flower": {
+				"left": false
 			},
 			"clearing": {
 				"departed": false
