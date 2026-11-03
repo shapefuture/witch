@@ -26,6 +26,12 @@ const INK := Color(0.15, 0.10, 0.08)
 const BRASS := Color(0.84, 0.66, 0.28)
 const PLAQUE := Color(1.18, 1.0, 0.86)
 const PRIORITY := 40
+# The tab words, by kind. Literal keys, so the text table's check sees each one as used.
+const KIND_KEYS := {
+	"seen": "ui.notebook.kind.seen", "heard": "ui.notebook.kind.heard", "shown": "ui.notebook.kind.shown",
+	"inferred": "ui.notebook.kind.inferred", "predicted": "ui.notebook.kind.predicted",
+	"altered": "ui.notebook.kind.altered", "untestable": "ui.notebook.kind.untestable",
+}
 
 var camera: Camera3D
 
@@ -193,7 +199,7 @@ func _build() -> void:
 		_add_text(tr("ui.systems.notebook_empty"), Vector2(PAD, BODY_TOP))
 	else:
 		var page: Dictionary = _pages[_index]
-		_add_tab(tr("ui.notebook.kind.%s" % str(page["kind"])))
+		_add_tab(tr(str(KIND_KEYS[str(page["kind"])])))
 		var y := BODY_TOP
 		var items: Array = page["entries"]
 		for i in items.size():
