@@ -46,3 +46,18 @@ in that brief; GAME_SPEC section 7 row FW). Resume from this file.
 - `data/world/hotspots/core.json` is outside the brief's write set (created because the core exits need hotspots to be
   playable). Move it into the core area's ownership if that is the integrator's rule.
 - The arrival storylet's gate is the only root catalog change; the goldens need regenerating for it.
+
+## Resumed run: gate fixes (decisions, guesses)
+
+- Dark captures (`--show-options` frames lit 21%): the first room is built after `_build` framed the default pose, and
+  only a played turn reframed the wide shot. `_enter_place` now frames the room's wide shot as a cut.
+- Exit leak ("77 resources still in use"): measured by bisecting the suites. Each directory passes alone; the leak needs
+  `tests/input` (its resolve test, which runs `options_for` and `resolve_now`) followed by a later suite that names
+  `ArchiveHall` in a script that also types `GameRoot`. Loading `game_root.gd` alone does not trigger it, and the base
+  test files trigger it only with the WIP game root. Godot 4.6.3 keeps that script graph alive at exit. The fix is on the
+  test side: `test_game_flow.gd` no longer names `ArchiveHall` (the floor check uses `is_walkable`, the pose is read
+  through `npc_node`), and `test_live_hall_game.gd` types `GameRoot` as `Node`. The game code is unchanged for this.
+- go_assist and go_path_out: the headless UI playthrough (`test_a_full_playthrough...`) offers both and matches the
+  scripted sim, and it passes in the gate. The real app was not run, so the on-device symptom is not confirmed closed.
+- Guess: the leak is a Godot class-loading quirk, not a leak in our objects. It could return if another suite types
+  `GameRoot` next to a named `ArchiveHall`.

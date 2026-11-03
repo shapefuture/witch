@@ -85,7 +85,7 @@ static func parse_args(raw: PackedStringArray) -> Dictionary:
 
 func _ready() -> void:
 	args = parse_args(OS.get_cmdline_user_args())
-	demo = demo or args.has("demo")
+	demo = demo or args.has("demo") or _has_hall_capture_aid()
 	_acquire_runtime()
 	if args.has("debug-sim"):
 		_run_debug_sim()
@@ -98,6 +98,14 @@ func _ready() -> void:
 	if args.has("capture"):
 		_capture_then_quit()
 	await _begin()
+
+# The capture aids were written for the archive hall (the render check boots them), so one of them selects the hall demo
+# on its own: the picture is then the hall, as before the main menu existed.
+func _has_hall_capture_aid() -> bool:
+	for aid in ["capture", "sim-first", "show-options", "shot", "cam", "variant", "magic", "lens"]:
+		if args.has(aid):
+			return true
+	return false
 
 func _acquire_runtime() -> void:
 	if runtime == null:
@@ -334,6 +342,9 @@ func _enter_place(place_id: String, from: String, variant: String = "") -> void:
 		camera.make_current()
 	RoomFactory.dress(room, place)
 	flow.room = room
+	# The camera is framed on the room she is in, as a cut: the first room is built after `_build` framed the default
+	# pose, and a boot that does not play a turn (a capture aid) would otherwise keep it.
+	director.frame("wide", [], true)
 	_point_views_at_camera()
 	live.attach(room)
 	room.apply_mirror_state(runtime.engine)
@@ -433,12 +444,14 @@ func _refresh_offers() -> void:
 func _offers(target: String) -> bool:
 	return not runtime.options_for(target).is_empty()
 
-# The state the rest of the game reads after a change: the postgame, the offers, whether input may run.
+# The state the rest of the game reads after a change: the postgame, the wide shot (unless a stay holds it), the offers,
+# and whether input may run. A shot that a presentation chose (a conversation, a close look) ends here.
 func _refresh_world_view() -> void:
 	_postgame = _is_postgame()
 	flow.postgame = _postgame
 	if _postgame:
 		witch.visible = false
+	director.return_to_wide()
 	_refresh_offers()
 	_refresh_input()
 
@@ -494,12 +507,15 @@ func _run_turn() -> void:
 # After a committed result: its presentation plays, then she is moved if Mirror moved her, then every eligible
 # storylet plays (one at a time; a storylet may move her too, so the place is checked after each).
 func _present(entries: Array, _result: Dictionary) -> void:
+	# The commit's result holds Mirror's events: nothing that waits on a presentation may keep them alive.
+	_result = {}
 	await _take_turn()
 	await presentation.play(entries)
 	await _play_storylets()
-	_refresh_world_view()
+	# Mirror is the truth: whatever the choreography did, end on what actually happened, in the wide shot.
 	if room != null:
 		room.apply_mirror_state(runtime.engine)
+	_refresh_world_view()
 	inspector.refresh()
 	_release_turn()
 
@@ -509,7 +525,9 @@ func _play_storylets() -> void:
 		var story := runtime.next_story()
 		if not story.get("ok", false):
 			break
-		await presentation.play(story.get("presentation", []))
+		var entries: Array = story.get("presentation", [])
+		story.clear()   # the consumed storylet's result holds Mirror's events; only its lines are kept while they play
+		await presentation.play(entries)
 		_sync_place()
 
 func _refresh_input() -> void:

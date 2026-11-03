@@ -3,6 +3,9 @@ extends TestCase
 # End-to-end through the REAL scene: synthetic mouse / touch input -> intent -> walk -> options
 # -> Mirror commit -> presentation -> state. Headless, so physics and picking run but nothing
 # is rendered.
+#
+# The hall class is not named in this file: a typed GameRoot beside a named ArchiveHall keeps the script graph alive at
+# exit under Godot 4.6.3 (see docs/progress/fw.md). The room is reached through the room's own methods.
 
 func _tree() -> SceneTree:
 	return Engine.get_main_loop() as SceneTree
@@ -57,7 +60,6 @@ func _settled(game: GameRoot) -> bool:
 	return not game.runtime.is_busy() and not game.subtitles.is_active()
 
 func _open_surface(game: GameRoot, target_id: String, use_touch: bool = false) -> bool:
-	print("DBG open %s input=%s open=%s busy=%s subs=%s presenting=%s at=%s" % [target_id, game.input.enabled, game.surface.is_open(), game.runtime.is_busy(), game.subtitles.is_active(), game._presenting, _screen_point(game, target_id)])
 	if use_touch:
 		_tap(game, _screen_point(game, target_id))
 	else:
@@ -77,7 +79,7 @@ func test_boot_builds_the_scene_and_plays_the_arrival_beat_from_mirror() -> void
 	ok(await _until(func() -> bool: return game.input.enabled and _settled(game)), "the arrival beat finished and input is live")
 	var events := game.runtime.engine.event_store.get_all()
 	ok(events.any(func(e): return e.event_type == "ContentConsumed" and e.payload["storylet_id"] == "story.arrival"), "the arrival was consumed from the log, not hard-coded")
-	eq((game.room as ArchiveHall).tomas.pose, "braced", "Tomas is posed from Mirror state")
+	eq(game.room.npc_node("tomas").get("pose"), "braced", "Tomas is posed from Mirror state")
 	ok(game.camera.current, "the authored camera is the active camera")
 
 func test_clicking_tomas_walks_there_and_opens_russian_options() -> void:
@@ -128,7 +130,7 @@ func test_clicking_empty_ground_walks_there_and_closes_the_surface() -> void:
 			var candidate := Vector3(xi * 0.5, 0, zi * 0.5)
 			var at := game.camera.unproject_position(candidate)
 			var clear := busy.all(func(b: Vector3) -> bool: return b.distance_to(candidate) > 1.8)
-			if ground == Vector3.ZERO and clear and ArchiveHall.stage_allows(candidate.x, candidate.z) and not game.camera.is_position_behind(candidate) and Rect2(Vector2.ZERO, size).grow(-10).has_point(at) and game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
+			if ground == Vector3.ZERO and clear and game.room.is_walkable(candidate) and not game.camera.is_position_behind(candidate) and Rect2(Vector2.ZERO, size).grow(-10).has_point(at) and game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
 				ground = candidate
 	ok(ground != Vector3.ZERO, "found floor the plaques do not cover")
 	ok(game.surface.is_open(), "the surface is open before the click")
@@ -211,6 +213,8 @@ func test_taking_the_path_out_freezes_the_camera_and_removes_the_witch() -> void
 	ok(await _until(func() -> bool: return not game.witch.visible, 2400), "the witch walked out of the frame")
 	eq(game.camera.current_pose()["look_at"], frozen_pose["look_at"], "and the camera never followed her")
 	eq(game.runtime.engine.get_world("clearing")["departed"], true, "Mirror recorded the departure")
+	# The departure's presentation ends the turn; a test that stops earlier leaves it suspended at exit.
+	ok(await _until(func() -> bool: return _settled(game) and game.input.enabled, 3000), "the departure finished presenting")
 
 func test_a_loaded_game_in_which_the_witch_has_left_has_no_witch() -> void:
 	var played := GameFixtures.runtime()

@@ -6,9 +6,11 @@ extends TestCase
 func _tree() -> SceneTree:
 	return Engine.get_main_loop() as SceneTree
 
-func _boot() -> GameRoot:
+# GameRoot is untyped here, as in tests/interaction/test_game_flow.gd: a typed GameRoot beside the named ArchiveHall keeps
+# the script graph alive at exit under Godot 4.6.3 (see docs/progress/fw.md).
+func _boot() -> Node:
 	GameFixtures.ensure_localization()
-	var game := GameRoot.new()
+	var game = GameRoot.new()
 	game.demo = true   # the archive hall demo (the game's own hall, under the root catalog)
 	game.runtime = track(MirrorRuntime.new())
 	game.auto_advance = 0.0
@@ -29,13 +31,13 @@ func _happenings(r: MirrorRuntime) -> Array:
 	return out
 
 func test_the_game_hall_is_attached_to_the_minds_layer() -> void:
-	var game := await _boot()
+	var game = await _boot()
 	ok(game.live != null and game.live.bridge != null, "the game's hall has a coordinator and a bridge")
 	ok(game.live.bridge.room == game.room, "the bridge is attached to the game's own hall")
 	eq(game.live.bridge.place, "clearing", "under the hall's Mirror id")
 
 func test_a_poke_in_the_game_commits_the_same_happenings_as_the_headless_hall() -> void:
-	var game := await _boot()
+	var game = await _boot()
 	game.live.bridge.run_clock = false
 	ok((game.room as ArchiveHall).press("bell", "hop"), "the game's hall answers the poke")
 	await _tree().process_frame
