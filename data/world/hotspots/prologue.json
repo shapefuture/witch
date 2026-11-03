@@ -1,7 +1,7 @@
 [
 	{"place": "shop", "target": "prologue_kettle", "at": [760, 300], "radius": 60},
 	{"place": "shop", "target": "prologue_drawing", "at": [965, 240], "radius": 50},
-	{"place": "shop", "target": "prologue_board", "at": [100, 500], "radius": 70},
+	{"place": "shop", "target": "prologue_board", "at": [130, 430], "radius": 55},
 	{"place": "shop", "target": "prologue_bed", "at": [575, 410], "radius": 60},
 	{"place": "garden", "target": "prologue_lilies", "at": [1090, 470], "radius": 120},
 	{"place": "garden", "target": "prologue_sunflowers", "at": [420, 420], "radius": 60},

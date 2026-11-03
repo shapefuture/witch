@@ -143,6 +143,7 @@
 				"presentation": [
 					{"kind": "camera", "mode": "inspect", "focus": ["miron"]},
 					{"kind": "line", "speaker": "narrator", "key": "line.act1.window_look_caption"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.window_look_miron"},
 					{"kind": "line", "speaker": "witch", "key": "line.act1.window_look_witch"}
 				]
 			}
@@ -277,6 +278,30 @@
 					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
 					{"kind": "line", "speaker": "witch", "key": "line.act1.ask_mill_plain_witch"},
 					{"kind": "line", "speaker": "miron", "key": "line.act1.ask_mill_plain_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_ask_dream",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act1.ask_dream",
+		"valid_targets": ["miron"],
+		"once_key": "act1_ask_dream",
+		"preconditions": {"story.act": "act1", "witch.place": "garden", "npc.miron.place": "garden"},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "act1_ask_dream.will_try",
+				"observed": {"outcome": "miron_will_try_no_promise"},
+				"knowledge_effects": [
+					{"id": "act1_he_will_try", "proposition": {"miron_said": "will_try_to_come_in_a_dream"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.dream_witch"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.dream_miron"}
 				]
 			}
 		]

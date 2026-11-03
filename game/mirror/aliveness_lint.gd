@@ -451,6 +451,7 @@ static func catalog_metrics(catalog: Dictionary) -> Dictionary:
 # a mind's reading (a model or a custom's tally) or the world (state, or a consequence scheduled or cancelled).
 static func measure_sim(script: Dictionary, targets: Array) -> Dictionary:
 	var runtime := MirrorRuntime.new()
+	runtime.include_areas = SimulationRunner.wants_areas(script)
 	runtime.new_game()
 	runtime.next_story()
 	var taps := 0

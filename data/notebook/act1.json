@@ -17,5 +17,6 @@
 	"act1_scarf_on_branch": {"kind": "seen", "text": "note.act1.scarf"},
 	"act1_fog_is_quiet": {"kind": "heard", "text": "note.act1.fog_quiet"},
 	"act1_why_quiet": {"kind": "untestable", "text": "note.act1.why_quiet"},
-	"act1_replaced": {"kind": "inferred", "text": "note.act1.replaced"}
+	"act1_replaced": {"kind": "inferred", "text": "note.act1.replaced"},
+	"act1_he_will_try": {"kind": "heard", "text": "note.act1.dream"}
 }

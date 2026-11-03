@@ -107,14 +107,28 @@ func spot_point(npc_id: String) -> Vector3:
 # Where she appears coming from `from` (a place id): the place's arrival, else the hall's spawn.
 func arrival_point(from: String) -> Vector3:
 	if place != null and (place.has_arrival(from) or place.spots.has("default")):
-		var at := pixel_to_floor(place.arrival_for(from))
+		var px := place.arrival_for(from)
+		var at := pixel_to_floor(px)
 		if at.is_finite():
-			return walkable_near(at)
+			return _standable_for(at, px)
 	return spawn_position
 
 # The floor point under a pixel of the place's plate. Rooms without a plate answer Vector3.INF.
 func pixel_to_floor(_px: Vector2) -> Vector3:
 	return Vector3.INF
+
+# The standable floor nearest a pixel as it shows on screen (painted rooms). Rooms without a plate answer Vector3.INF.
+func standable_near_pixel(_px: Vector2) -> Vector3:
+	return Vector3.INF
+
+# Where she stands for something at `at` (the floor point of plate pixel `px`): a walkable point near it, else the floor
+# nearest the pixel on screen, else `at` itself.
+func _standable_for(at: Vector3, px: Vector2) -> Vector3:
+	var near := walkable_near(at)
+	if is_walkable(near):
+		return near
+	var shown := standable_near_pixel(px)
+	return shown if shown.is_finite() else near
 
 # A walkable point at or near `at` (the place file may put a point just off the floor).
 func walkable_near(at: Vector3) -> Vector3:
@@ -144,6 +158,7 @@ func add_hotspots(specs: Array) -> int:
 			continue
 		var at := Vector3.INF
 		var approach := Vector3.INF
+		var px := Vector2(-1.0, -1.0)
 		var anchor_name := str(entry.get("anchor", ""))
 		if not anchor_name.is_empty():
 			var source := get_interactable(anchor_name)
@@ -153,12 +168,18 @@ func add_hotspots(specs: Array) -> int:
 			if source != null:
 				approach = source.approach_point
 		elif entry.has("at"):
-			at = pixel_to_floor(entry["at"])
+			px = entry["at"]
+			at = pixel_to_floor(px)
 		if not at.is_finite():
 			push_warning("PlaceRoom %s: hotspot %s has no place in this room" % [room_id, target])
 			continue
 		if not approach.is_finite():
 			approach = _approach_for(at)
+			if not is_walkable(approach) and px.x >= 0.0:
+				# A thing on the wall, or far off: she walks to the floor the picture shows nearest it.
+				var shown := standable_near_pixel(px)
+				if shown.is_finite():
+					approach = shown
 		add_interactable(target, "obj." + target, at, 0.6, 0.9, approach, PackedStringArray())
 		added += 1
 	return added

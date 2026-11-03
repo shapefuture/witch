@@ -135,3 +135,12 @@ func standable_count() -> int:
 	for row in _rows:
 		n += row.count("#")
 	return n
+
+# The centre of every standable cell, in world x/z.
+func standable_cells() -> PackedVector2Array:
+	var out := PackedVector2Array()
+	for y in range(size.y):
+		for x in range(size.x):
+			if _rows[y][x] == "#":
+				out.append(center_of(Vector2i(x, y)))
+	return out

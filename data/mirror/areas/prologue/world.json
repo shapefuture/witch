@@ -3,6 +3,7 @@
 	"world": {
 		"prologue_kettle": {"state": "simmering"},
 		"prologue_lamp": {"lit": false},
-		"prologue_oven": {"lit": false}
+		"prologue_oven": {"lit": false},
+		"prologue_bench": {"state": "crooked"}
 	}
 }
