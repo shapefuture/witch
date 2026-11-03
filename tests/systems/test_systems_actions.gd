@@ -26,4 +26,4 @@ func test_the_chuika_is_not_offered_in_the_postgame_but_the_notebook_is() -> voi
 	ok(MirrorConditions.matches(sight_gate, {"story": {"act": "act3"}}), "open in the middle of the game")
 	ok(not MirrorConditions.matches(sight_gate, {"story": {"act": "postgame"}}), "closed in the postgame")
 	var notebook_gate: Dictionary = r.engine.action_definitions["systems_witch_open_notebook"].get("preconditions", {})
-	ok(MirrorConditions.matches(notebook_gate, {"story": {"act": "postgame"}}), "the notebook stays open in the postgame: closing it returns to the menu")
+	ok(MirrorConditions.matches(notebook_gate, {"story": {"act": "postgame"}}), "the notebook is offered in the postgame too, as her own record")

@@ -5,6 +5,7 @@ extends TestCase
 
 const FIXTURES := "res://tests/systems/fixtures"
 const S := MirrorDomain.EpistemicStatus
+const StubHost := preload("res://tests/systems/stub_host.gd")
 
 func _held(r: MirrorRuntime, claim_id: String, status: int) -> void:
 	r.engine.record_observation("player", "bell", {"signature": ["FIXTURE", claim_id]}, {}, [], [{"id": claim_id, "holder_id": "player", "proposition": {"fixture": claim_id}, "status": status, "scope": "room"}])
@@ -73,3 +74,29 @@ func test_a_claim_nobody_sidecar_names_is_never_listed() -> void:
 	slab.close()
 	await Engine.get_main_loop().process_frame
 	await Engine.get_main_loop().process_frame
+
+func test_the_director_plays_the_notebook_step_through_the_seam_and_holds_until_she_closes_it() -> void:
+	var r := GameFixtures.runtime()
+	_held(r, "c.seen", S.SUPPORTED)
+	_held(r, "c.heard", S.SUPPORTED)
+	var viewport := _stage()
+	var host := StubHost.new()
+	host.runtime = r
+	viewport.add_child(host)
+	var director := PresentationDirector.new()
+	SystemsPresenters.register(director, host)
+	var presenter := host.find_child("NotebookPresenter", false, false) as NotebookPresenter
+	presenter.sidecar_dir = FIXTURES + "/notebook_good"
+	var finished: Array = []
+	presenter.finished.connect(func() -> void: finished.append(true))
+	director.play([{"kind": "notebook", "claim": "c.heard"}])
+	var slab := presenter.find_child("Notebook", false, false) as NotebookSlab
+	ok(slab != null and slab.is_open(), "the step opens the notebook")
+	eq(slab.shown_claims(), ["c.heard"], "at the claim the step names")
+	eq(finished.size(), 0, "the director waits while she reads")
+	slab.close()
+	await Engine.get_main_loop().process_frame
+	await Engine.get_main_loop().process_frame
+	eq(finished.size(), 1, "the step ends when she closes it")
+	eq(director.played, ["notebook"], "the director played the notebook step through its handler")
+	eq(director.unhandled, [], "and no kind was left without a handler")

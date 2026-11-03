@@ -54,6 +54,58 @@ func test_reduced_effects_take_the_warp_out_of_the_flash() -> void:
 	eq(warp, 0.0, "a player who is sensitive to motion sees the plate without the wobble")
 	await _settle(0.4)
 
+func test_a_flash_step_plays_through_the_registered_seam_and_takes_its_card_away() -> void:
+	var viewport := _stage()
+	var host := Node.new()
+	viewport.add_child(host)
+	var director := PresentationDirector.new()
+	SystemsPresenters.register(director, host)
+	var flash := host.find_child("FlashPresenter", false, false) as FlashPresenter
+	flash.time_scale = 0.05
+	await director.play([{"kind": "flash", "image": "fog_edge", "sensation": "note.fixture.cold"}])
+	eq(director.played, ["flash"], "the director played the flash step through its handler")
+	eq(director.unhandled, [], "and no kind was left without a handler")
+	ok(flash.card() == null, "the card is gone when the step ends")
+	await _cue_played_out(flash)
+
+func test_a_flash_brightens_once_over_its_two_seconds_and_never_flickers() -> void:
+	var viewport := _stage()
+	var presenter := FlashPresenter.new()
+	viewport.add_child(presenter)
+	presenter.play_entry({"kind": "flash", "image": "fog_edge", "sensation": "note.fixture.cold"})
+	ok(presenter.card() != null and presenter.card().get_parent() == viewport.get_camera_3d(), "the card hangs on the camera, in front of it")
+	var tree := Engine.get_main_loop() as SceneTree
+	var seconds := 0.0
+	var rises := 0
+	var bright := false
+	while presenter.card() != null and seconds < 4.0:
+		var strength := float((presenter.card().material_override as ShaderMaterial).get_shader_parameter("strength"))
+		if strength > 0.5 and not bright:
+			rises += 1
+		bright = strength > 0.5
+		await tree.process_frame
+		# The tween runs on the engine's clock, so the length is counted on that clock too.
+		seconds += tree.root.get_process_delta_time()
+	eq(rises, 1, "the card brightens once: one flash, not a flicker")
+	ok(seconds >= 1.8 and seconds <= 2.4, "and the flash lasts about two seconds on the engine clock (%.2f s)" % seconds)
+	await _cue_played_out(presenter)
+
+# The cue is a 0.7 second chime. A test waits for it to play out, so no playback is still running when the run ends.
+func _cue_played_out(presenter: FlashPresenter) -> void:
+	var cue := presenter.find_child("Cue", false, false)
+	var tree := Engine.get_main_loop() as SceneTree
+	var waited := 0.0
+	while cue != null and _any_voice_playing(cue) and waited < 3.0:
+		await tree.process_frame
+		waited += tree.root.get_process_delta_time()
+	ok(cue == null or not _any_voice_playing(cue), "the chime has played out")
+
+func _any_voice_playing(cue: Node) -> bool:
+	for voice in cue.get_children():
+		if (voice as AudioStreamPlayer).playing:
+			return true
+	return false
+
 # A picture with a camera made current, as the game has one.
 func _stage() -> SubViewport:
 	var viewport := SubViewport.new()
