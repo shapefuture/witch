@@ -56,7 +56,7 @@ func test_the_toolbox_is_seen_and_the_crooked_door_leads_up_to_the_hotel() -> vo
 	eq(_status(r, "act3_father_toolbox"), MirrorDomain.EpistemicStatus.ESTABLISHED, "the child-size hammer is seen")
 	ok(_do(r, "act3_go_basement_hotel", "act3_door_basement_hotel"), "she goes through the crooked door")
 	eq(_place(r), "hotel", "she is in the hotel")
-	eq(r.engine.get_npc_state("shadow").get("place", ""), "hotel", "Shadow is sitting in the lobby")
+	eq(r.engine.get_npc_state("shadow").get("place", ""), "hotel", "the shadow is sitting in the lobby")
 
 
 func test_the_concierge_offers_only_the_rooms_she_remembers() -> void:
@@ -72,10 +72,10 @@ func test_the_concierge_offers_only_the_rooms_she_remembers() -> void:
 func test_the_shadow_leaves_her_key_on_the_counter_when_she_waits() -> void:
 	var r: MirrorRuntime = _at("basement")
 	ok(_do(r, "act3_go_basement_hotel", "act3_door_basement_hotel"), "into the hotel")
-	ok(_do(r, "act3_ask_shadow", "shadow"), "she asks Shadow")
-	ok(_do(r, "act3_wait_shadow", "shadow"), "she waits and Shadow gets up")
+	ok(_do(r, "act3_ask_shadow", "shadow"), "she asks the shadow")
+	ok(_do(r, "act3_wait_shadow", "shadow"), "she waits and the shadow gets up")
 	eq(r.engine.get_world("act3_shadow_key", {}).get("left", false), true, "the key is left (postgame evidence)")
-	eq(r.engine.get_npc_state("shadow").get("place", "x"), "", "Shadow is gone from the lobby")
+	eq(r.engine.get_npc_state("shadow").get("place", "x"), "", "the shadow is gone from the lobby")
 	eq(_status(r, "act3_shadow_key"), MirrorDomain.EpistemicStatus.ESTABLISHED, "she saw the key on the counter")
 
 
@@ -105,7 +105,7 @@ func test_going_down_and_up_again_also_ends_the_loop_and_grants_the_operator() -
 
 func test_with_ilyas_backwards_clock_she_reads_it_at_once() -> void:
 	var r: MirrorRuntime = _at("clocktower", PROLOGUE + ["act2_ilya_backwards"])
-	ok(_can(r, "act3_read_clock_known", "act3_clock"), "read it straight away, from Ilya's clock")
+	ok(_can(r, "act3_read_clock_known", "act3_clock"), "she can read it straight away, from Ilya's clock")
 	ok(_do(r, "act3_read_clock_known", "act3_clock"), "she reads it")
 	ok(r.engine.operators.has(OPERATOR, "player"), "the operator is granted")
 	eq(_status(r, "act3_tower_counts_down"), MirrorDomain.EpistemicStatus.SUPPORTED, "the tower counting down is inferred")
@@ -142,7 +142,7 @@ func test_perfecting_casts_make_the_garden_stiller_and_the_bees_stop_after_two()
 	eq(_stillness(r), 4, "it stops at stone")
 
 
-func test_three_casts_are_a_way_to_see_the_garden_as_only_hers_when_the_claims_are_missing() -> void:
+func test_three_casts_also_let_her_see_the_garden_as_only_hers_when_the_claims_are_missing() -> void:
 	var r: MirrorRuntime = _at("garden_below", [])
 	ok(_do(r, "act3_cast_lilies", "act3_lilies"), "cast")
 	ok(_do(r, "act3_cast_bench", "act3_bench"), "cast")

@@ -682,9 +682,9 @@
 				],
 				"knowledge_effects": [
 					{
-						"id": "act5_miron_spoke",
+						"id": "act5_miron_said_hello",
 						"proposition": {
-							"act5_miron_spoke": true
+							"act5_miron_said_hello": true
 						},
 						"status": "ESTABLISHED",
 						"scope": "act5"
@@ -726,9 +726,9 @@
 				],
 				"knowledge_effects": [
 					{
-						"id": "act5_miron_spoke",
+						"id": "act5_miron_said_tired",
 						"proposition": {
-							"act5_miron_spoke": true
+							"act5_miron_said_tired": true
 						},
 						"status": "ESTABLISHED",
 						"scope": "act5"
@@ -770,9 +770,9 @@
 				],
 				"knowledge_effects": [
 					{
-						"id": "act5_miron_spoke",
+						"id": "act5_miron_said_fine",
 						"proposition": {
-							"act5_miron_spoke": true
+							"act5_miron_said_fine": true
 						},
 						"status": "ESTABLISHED",
 						"scope": "act5"
