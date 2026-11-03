@@ -1,0 +1,62 @@
+{
+	"name": "Act II end to end: the failing magic, the town's substitutes, Tomas's way, and the trapdoor",
+	"scope": "game",
+	"after": "res://data/sim/act1_main.json",
+	"steps": [
+		{"action": "act2_cast_hearth", "target": "act2_hearth"},
+		{"action": "act2_wait_counter", "target": "act2_counter"},
+		{"action": "act2_show_elian_tea", "target": "elian"},
+		{"action": "act2_wait_elian", "target": "elian"},
+		{"action": "act2_take_candle", "target": "act2_candle_box"},
+		{"action": "act2_look_ladder", "target": "ladder_shop_attic"},
+		{"action": "core_go_ladder_shop_attic", "target": "ladder_shop_attic"},
+		{"action": "act2_look_cloth", "target": "act2_cloth"},
+		{"action": "act2_look_workshop", "target": "act2_workshop"},
+		{"action": "act2_ask_commission", "target": "raccoon"},
+		{"action": "act2_cast_workshop", "target": "act2_workshop"},
+		{"action": "core_go_ladder_attic_shop", "target": "ladder_attic_shop"},
+		{"action": "core_go_door_shop_street", "target": "door_shop_street"},
+		{"action": "act2_look_lamp", "target": "act2_street_lamp"},
+		{"action": "act2_cast_lamp", "target": "act2_street_lamp"},
+		{"action": "act2_help_oven", "target": "act2_oven"},
+		{"action": "act2_wait_oven", "target": "act2_oven"},
+		{"action": "act2_catch_sign", "target": "act2_sign"},
+		{"action": "act2_wait_corner", "target": "act2_corner"},
+		{"action": "act2_sell_candle", "target": "shadow"},
+		{"action": "core_go_door_street_observatory", "target": "door_street_observatory"},
+		{"action": "act2_look_clock", "target": "act2_clock"},
+		{"action": "core_go_door_observatory_street", "target": "door_observatory_street"},
+		{"action": "core_go_door_street_archive", "target": "door_street_archive"},
+		{"action": "look_tomas", "target": "tomas"},
+		{"action": "look_bell", "target": "bell"},
+		{"action": "ask_tomas_what", "target": "tomas"},
+		{"action": "look_machine_informed", "target": "machine"},
+		{"action": "wait_watch", "target": "tomas"},
+		{"action": "go_assist", "target": "machine"},
+		{"action": "core_go_door_archive_street", "target": "door_archive_street"},
+		{"action": "core_go_door_street_shop", "target": "door_street_shop"},
+		{"action": "act2_trapdoor_op", "target": "trapdoor"}
+	],
+	"expect": {
+		"state": {
+			"story.act": "act3",
+			"witch.place": "basement",
+			"magic.state": "below",
+			"npc.raccoon.place": "with_witch"
+		},
+		"knows": [
+			"act2_magic_failing",
+			"act2_lamps_without_me",
+			"act2_elian_company",
+			"act2_vera_wait_helped",
+			"act2_vera_direct_helped",
+			"act2_ilya_backwards",
+			"act2_raccoon_hid_it",
+			"act2_raccoon_refused",
+			"act2_shadow_coin"
+		],
+		"operators": [
+			"op.ask_before_acting"
+		]
+	}
+}

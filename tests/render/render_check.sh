@@ -48,6 +48,19 @@ if grep -E "SHADER ERROR|SCRIPT ERROR|Parse Error|Shader compilation failed" "$l
 GODOT="$GODOT" ./tests/render/painted_walk_check.sh "$OUT/painted_walk" || fail=1
 [ "$fail" -ne 0 ] && { echo "RENDER FAILED"; exit 1; }
 
-"$GODOT" --headless --path . --script res://tests/render/analyze_shots.gd -- \
-	"$OUT/start.png" "$OUT/mundane.png" "$OUT/magic.png" 2>&1 | grep -E "^STATS|^RENDER"
-[ "${PIPESTATUS[0]}" -eq 0 ] && echo "screenshots in $OUT" || exit 1
+# The pixel verdict is positive or it fails: a non-zero exit, a script error or a missing RENDER PASSED
+# all count (a script that does not compile prints no verdict at all).
+pixels="$("$GODOT" --headless --path . --script res://tests/render/analyze_shots.gd -- \
+	"$OUT/start.png" "$OUT/mundane.png" "$OUT/magic.png" 2>&1)"
+pixels_code=$?
+echo "$pixels" | grep -E "^STATS|^RENDER"
+if [ "$pixels_code" -ne 0 ] || echo "$pixels" | grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" || ! echo "$pixels" | grep -q "^RENDER PASSED"; then
+	echo "RENDER FAILED: the pixel checks did not pass (exit $pixels_code)"; fail=1
+fi
+# Negative proof: the same start frame without its subtitle box must fail the subtitle check.
+bare="$OUT/no_subtitle_box"; mkdir -p "$bare"; cp "$OUT/start.png" "$bare/start.png"
+if ! "$GODOT" --headless --path . --script res://tests/render/analyze_shots.gd -- "$bare/start.png" 2>&1 | grep -q "no arrival subtitle on screen"; then
+	echo "RENDER FAILED: a frame without its subtitle box passed the subtitle check"; fail=1
+fi
+[ "$fail" -ne 0 ] && { echo "RENDER FAILED"; exit 1; }
+echo "screenshots in $OUT"

@@ -1,0 +1,32 @@
+{
+	"_about": "Workcell B, act VI: the town after magic (docs/design/GAME_SPEC.md section 6). Owned by act6.",
+	"world": {
+		"act6_cart": {
+			"state": "rolling"
+		},
+		"act6_customer": {
+			"state": "haggling"
+		},
+		"act6_second_machine": {
+			"state": "unfinished"
+		},
+		"act6_lamp": {
+			"state": "unshown"
+		},
+		"act6_done_tomas": {
+			"done": false
+		},
+		"act6_done_elian": {
+			"done": false
+		},
+		"act6_done_vera": {
+			"done": false
+		},
+		"act6_done_ilya": {
+			"done": false
+		},
+		"act6_shadow_flower": {
+			"left": false
+		}
+	}
+}

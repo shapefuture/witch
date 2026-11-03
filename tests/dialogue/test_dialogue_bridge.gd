@@ -46,8 +46,12 @@ func test_every_authored_title_plays_to_the_end_in_russian() -> void:
 			titles.append(line.substr(2).strip_edges())
 	ok(titles.size() >= 11, "found the titles")
 	for title in titles:
+		var head := r.engine.event_store.head_hash()
+		var before := MirrorHash.canonical_json(r.engine.projection_snapshot())
 		var shown := await _collect(bridge, title)
 		ok(shown.size() > 0, "%s produced lines" % title)
+		eq(r.engine.event_store.head_hash(), head, "%s: speaking writes no event (audit L8, every title)" % title)
+		eq(MirrorHash.canonical_json(r.engine.projection_snapshot()), before, "%s: speaking changes no state" % title)
 		for entry in shown:
 			ok(cyrillic.search(entry["text"]) != null or entry["text"] == "...", "%s resolved to prose, not a key: %s" % [title, entry["text"]])
 

@@ -8,6 +8,12 @@ func _saved_json() -> String:
 	e.resolve_action(MirrorFixtures.act("cast_light", "lamp", T.CAST))
 	return e.save_json()
 
+# These tests edit a save on purpose to reach the deeper checks (projection replay, section
+# shapes, event fields). Re-sealing keeps the checksum from rejecting them first; the checksum
+# itself is tested in tests/save/test_save_hardening.gd.
+func _sealed(data: Dictionary) -> String:
+	return JSON.stringify(MirrorPersistence.seal(data))
+
 func test_failed_load_leaves_engine_exactly_as_before() -> void:
 	# A save whose event chain is valid but whose derived projection was edited must be
 	# rejected AND must not leave the rejected data inside the engine.
@@ -15,7 +21,7 @@ func test_failed_load_leaves_engine_exactly_as_before() -> void:
 	data["knowledge"]["claims"]["player::forged"] = {"id": "forged", "holder_id": "player", "proposition": {}, "evidence": [], "status": 4, "source": "x", "scope": "x", "context": {}, "first_seen_event": "", "last_updated_event": "", "contradictions": [], "revision_of": ""}
 	var target := MirrorFixtures.engine()
 	var before := MirrorHash.canonical_json(target.projection_snapshot())
-	var res := target.load_json(JSON.stringify(data))
+	var res := target.load_json(_sealed(data))
 	ok(not res.get("ok", true), "forged projection rejected")
 	eq(res.get("error", ""), "projection_mismatch", "reported as projection mismatch")
 	ok(not target.knowledge.has("forged"), "forged claim must not survive in the engine")
@@ -29,7 +35,7 @@ func test_failed_load_on_a_live_engine_keeps_its_progress() -> void:
 	var head := target.event_store.head_hash()
 	var data: Dictionary = JSON.parse_string(_saved_json())
 	data["world_state"]["door"] = "forged"
-	ok(not target.load_json(JSON.stringify(data)).get("ok", true), "rejected")
+	ok(not target.load_json(_sealed(data)).get("ok", true), "rejected")
 	eq(target.event_store.head_hash(), head, "live progress intact after a rejected load")
 
 func test_empty_object_is_rejected_cleanly() -> void:
@@ -44,7 +50,7 @@ func test_missing_section_is_rejected_cleanly() -> void:
 		var bad := data.duplicate(true)
 		bad.erase(section)
 		var target := MirrorFixtures.engine()
-		ok(not target.load_json(JSON.stringify(bad)).get("ok", true), "missing %s rejected" % section)
+		ok(not target.load_json(_sealed(bad)).get("ok", true), "missing %s rejected" % section)
 
 func test_nested_shape_corruption_is_rejected_cleanly() -> void:
 	var data: Dictionary = JSON.parse_string(_saved_json())
@@ -57,7 +63,7 @@ func test_nested_shape_corruption_is_rejected_cleanly() -> void:
 		var bad := data.duplicate(true)
 		bad[c[0]][c[1]] = "corrupt"
 		var target := MirrorFixtures.engine()
-		ok(not target.load_json(JSON.stringify(bad)).get("ok", true), "corrupt %s.%s rejected" % [c[0], c[1]])
+		ok(not target.load_json(_sealed(bad)).get("ok", true), "corrupt %s.%s rejected" % [c[0], c[1]])
 		eq(target.event_store.size(), 0, "%s.%s leaves engine empty" % [c[0], c[1]])
 
 func test_malformed_event_fields_are_rejected_cleanly() -> void:
@@ -66,7 +72,7 @@ func test_malformed_event_fields_are_rejected_cleanly() -> void:
 		var bad := data.duplicate(true)
 		bad["event_store"]["events"][0][field] = 12345
 		var target := MirrorFixtures.engine()
-		ok(not target.load_json(JSON.stringify(bad)).get("ok", true), "event field %s corrupt rejected" % field)
+		ok(not target.load_json(_sealed(bad)).get("ok", true), "event field %s corrupt rejected" % field)
 	var bad_entry := data.duplicate(true)
 	bad_entry["event_store"]["events"][0] = "not an event"
-	ok(not MirrorFixtures.engine().load_json(JSON.stringify(bad_entry)).get("ok", true), "non-dictionary event entry rejected")
+	ok(not MirrorFixtures.engine().load_json(_sealed(bad_entry)).get("ok", true), "non-dictionary event entry rejected")

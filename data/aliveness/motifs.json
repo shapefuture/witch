@@ -1,0 +1,4 @@
+{
+	"_about": "Authored motifs (ROOM_OF_US item 4, the room_engine echo, as a design feature). Outside the Mirror catalog. Schema: `motifs` is a list of {claim, tag, room, form}. claim is a claim or hypothesis id the notebook shows; tag is the motif's short id (the same tag on two entries makes them a rhyme); room is where it shows; form is how it shows (sound, light, object, gesture, word). A rhyme note needs the same tag in another room AND another form; the notebook shows it and never applies it. Candidates come from tools/embeddings/text_neighbours.py rhymes (offline, for authors; never shipped). Empty until DESIGN-FREEZE: the motifs are content.",
+	"motifs": []
+}

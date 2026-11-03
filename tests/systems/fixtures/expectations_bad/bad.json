@@ -1,0 +1,7 @@
+[
+	{"id": "e.wave", "npc": "raccoon", "when": {}, "ghost": "wave", "source": "npc", "note": "note.fixture.wave"},
+	{"id": "e.no_npc", "when": {}, "ghost": "flinch", "source": "npc", "note": "note.fixture.no_npc"},
+	{"id": "e.source", "npc": "raccoon", "when": {}, "ghost": "flinch", "source": "maybe", "note": "note.fixture.source"},
+	{"id": "e.dup", "npc": "raccoon", "when": {}, "ghost": "look_at:witch", "source": "projection", "note": "note.fixture.dup"},
+	{"id": "e.dup", "npc": "raccoon", "when": {}, "ghost": "reach", "source": "npc", "note": "note.fixture.dup_again"}
+]

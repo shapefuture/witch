@@ -1,0 +1,26 @@
+[
+	{
+		"id": "act1_miron_braces",
+		"npc": "miron",
+		"when": {"npc.miron.stance": "braced"},
+		"ghost": "hold_breath",
+		"source": "npc",
+		"note": "note.act1.miron_braces"
+	},
+	{
+		"id": "act1_miron_projection",
+		"npc": "miron",
+		"when": {"act1_day.n": 2, "npc.miron.stance": "warm"},
+		"ghost": "flinch",
+		"source": "projection",
+		"note": "note.act1.miron_projection"
+	},
+	{
+		"id": "act1_window_turn",
+		"npc": "miron",
+		"when": {"witch.place": "window", "npc.miron.place": "window"},
+		"ghost": "turn_away",
+		"source": "npc",
+		"note": "note.act1.window_turn"
+	}
+]

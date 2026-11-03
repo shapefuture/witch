@@ -45,6 +45,10 @@ and a brief using it; `python tools/painted/test_new_scene.py` checks both.
 Run `python tools/painted/new_scene.py --list` for what is built. `--all --budget 1.0 --variants` builds the rest: each picture is
 about USD 0.09, so the whole plan is under USD 1.
 
+`fog_edge` was built for free instead: its plate came from a free Hugging Face ZeroGPU Space (`tools/hfspaces/plate.py`, then
+`new_scene.py fog_edge --image ...`), in the look of `docs/art/references/13_marsh_clocks_night.jpg`. What the free Spaces can and
+cannot do, the daily quota, and how the plate was judged are in `tools/hfspaces/README.md`.
+
 ## What the draft rules mean for the plates
 
 Encoded in every prompt (`new_scene.STYLE`, checked by the tests): faceted low-poly papercraft with a broken-PS1 geometry, no black outline

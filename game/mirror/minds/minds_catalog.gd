@@ -27,10 +27,13 @@ const DEFAULTS := {
 	"holders": {},
 	"communities": {},
 	"initial_beliefs": [],
+	"clocks": {"cadences": {}},
+	"routines": [],
 }
 
-# Returns {"data": Dictionary, "errors": Array, "warnings": Array}.
-static func load_dir(dir: String = DEFAULT_DIR) -> Dictionary:
+# Returns {"data": Dictionary, "errors": Array, "warnings": Array}. `areas` adds the area packages beside `dir`
+# (data/mirror/areas), the same content scope as MirrorCatalog.build_engine.
+static func load_dir(dir: String = DEFAULT_DIR, areas: bool = false) -> Dictionary:
 	var errors: Array = []
 	var raw: Dictionary = {}
 	var minds: Dictionary = _read_object(dir.path_join("minds.json"), errors)
@@ -39,7 +42,43 @@ static func load_dir(dir: String = DEFAULT_DIR) -> Dictionary:
 	raw["interpretations"] = _read_array(dir.path_join("interpretations.json"), errors)
 	raw["rules"] = _read_array(dir.path_join("world_rules.json"), errors)
 	raw["conventions"] = _read_array(dir.path_join("conventions.json"), errors)
+	if areas:
+		merge_areas(raw, dir.get_base_dir().path_join(ContentFiles.AREAS), errors)
 	return build(raw, errors)
+
+# Sections an area package may add to (docs/engine/CONTENT_PACKAGES.md). Tuning (limits, attention, perception,
+# reaction ops, the default place) belongs to the root minds.json alone.
+const AREA_KEYED := ["event_kinds", "places", "holders", "communities"]
+const AREA_LISTED := ["initial_beliefs", "routines"]
+
+# Adds each area's minds.json, interpretations.json, world_rules.json and conventions.json to `raw`. A place,
+# holder, community, event kind or cadence defined twice is an error; list entries are appended (their ids are
+# checked by build()).
+static func merge_areas(raw: Dictionary, areas_dir: String, errors: Array) -> void:
+	for path in ContentFiles.area_paths(areas_dir, "minds"):
+		var fragment := _read_object(path, errors)
+		for key in fragment.keys():
+			if key in AREA_KEYED:
+				if not raw.has(key):
+					raw[key] = {}
+				ContentFiles.merge_unique(raw[key], fragment[key], str(key).trim_suffix("s"), path, errors)
+			elif key in AREA_LISTED:
+				if not raw.has(key):
+					raw[key] = []
+				(raw[key] as Array).append_array(fragment[key])
+			elif key == "clocks":
+				if not raw.has("clocks"):
+					raw["clocks"] = {"cadences": {}}
+				if not (raw["clocks"] as Dictionary).has("cadences"):
+					raw["clocks"]["cadences"] = {}
+				ContentFiles.merge_unique(raw["clocks"]["cadences"], fragment["clocks"].get("cadences", {}), "cadence", path, errors)
+			else:
+				errors.append("%s: an area may not set '%s' (only the root minds.json may)" % [path, key])
+	for pair in [["interpretations", "interpretations"], ["rules", "world_rules"], ["conventions", "conventions"]]:
+		for path in ContentFiles.area_paths(areas_dir, pair[1]):
+			if not raw.has(pair[0]):
+				raw[pair[0]] = []
+			(raw[pair[0]] as Array).append_array(_read_array(path, errors))
 
 # Normalises raw authored data (defaults, enum names) and checks the structure the runtime relies on.
 static func build(raw: Dictionary, errors: Array = []) -> Dictionary:
@@ -68,6 +107,11 @@ static func build(raw: Dictionary, errors: Array = []) -> Dictionary:
 			elif variant_ids.has(variant_id):
 				errors.append("duplicate variant id %s" % variant_id)
 			variant_ids[variant_id] = true
+	for routine in data["routines"]:
+		if str(routine.get("id", "")).is_empty() or int(routine.get("every", 0)) <= 0 or not (routine.get("event", null) is Dictionary):
+			errors.append("routine %s needs an id, every above zero and an event" % routine.get("id", "?"))
+		elif not data["event_kinds"].has(str(routine["event"].get("kind", ""))):
+			errors.append("routine %s names event kind %s, which minds.json does not define" % [routine["id"], routine["event"].get("kind", "")])
 	return {"data": data, "errors": errors, "warnings": warnings}
 
 static func empty() -> Dictionary:

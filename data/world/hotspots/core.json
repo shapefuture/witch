@@ -1,0 +1,13 @@
+[
+	{"place": "shop", "target": "door_shop_street", "at": [640, 690], "radius": 90},
+	{"place": "street", "target": "door_street_shop", "at": [330, 480], "radius": 60},
+	{"place": "shop", "target": "door_shop_garden", "at": [60, 560], "radius": 60},
+	{"place": "garden", "target": "door_garden_shop", "at": [910, 250], "radius": 60},
+	{"place": "window", "target": "window_back", "at": [640, 610], "radius": 120},
+	{"place": "street", "target": "door_street_archive", "at": [705, 475], "radius": 48},
+	{"place": "clearing", "target": "door_archive_street", "anchor": "path_out"},
+	{"place": "street", "target": "door_street_observatory", "at": [1100, 500], "radius": 48},
+	{"place": "observatory", "target": "door_observatory_street", "at": [640, 650], "radius": 56},
+	{"place": "shop", "target": "ladder_shop_attic", "at": [530, 420], "radius": 48},
+	{"place": "attic", "target": "ladder_attic_shop", "at": [640, 300], "radius": 56}
+]

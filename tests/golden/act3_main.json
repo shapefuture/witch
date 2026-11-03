@@ -1,0 +1,3308 @@
+{
+	"final": {
+		"event_count": 207,
+		"head_hash": "c256403ec3c5ba2f02cc59e63144d0f6eaa3db17f2e0c26741cf7b606b43129f",
+		"knowledge": {
+			"act1_fog_is_quiet": "SUPPORTED",
+			"act1_fogdew": "ESTABLISHED",
+			"act1_he_lingers": "ESTABLISHED",
+			"act1_key_on_hook": "ESTABLISHED",
+			"act1_miron_left": "ESTABLISHED",
+			"act1_not_at_mill": "SUPPORTED",
+			"act1_predicts_he_goes": "POSSIBLE",
+			"act1_replaced": "SUPPORTED",
+			"act1_said_mill": "ESTABLISHED",
+			"act1_scarf_on_branch": "ESTABLISHED",
+			"act1_silver_moss": "ESTABLISHED",
+			"act1_visits_unwatched": "SUPPORTED",
+			"act1_where_quiet": "ESTABLISHED",
+			"act1_why_quiet": "UNRESOLVED_BY_DESIGN",
+			"act2_elian_company": "SUPPORTED",
+			"act2_ilya_backwards": "ESTABLISHED",
+			"act2_lamps_without_me": "ESTABLISHED",
+			"act2_magic_failing": "ESTABLISHED",
+			"act2_raccoon_hid_it": "POSSIBLE",
+			"act2_raccoon_refused": "SUPPORTED",
+			"act2_shadow_coin": "ESTABLISHED",
+			"act2_vera_direct_helped": "ESTABLISHED",
+			"act2_vera_not_now": "SUPPORTED",
+			"act2_vera_wait_helped": "ESTABLISHED",
+			"act3_bench_straight": "ESTABLISHED",
+			"act3_father_toolbox": "ESTABLISHED",
+			"act3_key_garden_number": "ESTABLISHED",
+			"act3_no_sunflowers": "ESTABLISHED",
+			"act3_only_mine": "SUPPORTED",
+			"act3_rooms_by_memory": "ESTABLISHED",
+			"act3_shadow_key": "ESTABLISHED",
+			"act3_shadow_not_staying": "ESTABLISHED",
+			"act3_tower_counts_down": "SUPPORTED",
+			"bell_tilted_into_wind": "SUPPORTED",
+			"help_respected_authorship": "SUPPORTED",
+			"machine_needs_second_component": "SUPPORTED",
+			"machine_runs": "ESTABLISHED",
+			"prologue_bench_crooked": "ESTABLISHED",
+			"prologue_bench_defended": "ESTABLISHED",
+			"prologue_board_three": "ESTABLISHED",
+			"prologue_drawing_older": "ESTABLISHED",
+			"prologue_father_drawing": "ESTABLISHED",
+			"prologue_fog_mentioned": "ESTABLISHED",
+			"prologue_garden_two_tastes": "SUPPORTED",
+			"prologue_kettle_boiled": "ESTABLISHED",
+			"prologue_kettle_rule": "SUPPORTED",
+			"prologue_kettle_still": "ESTABLISHED",
+			"prologue_knot": "ESTABLISHED",
+			"prologue_lamp_lit": "ESTABLISHED",
+			"prologue_lilies_tidy": "ESTABLISHED",
+			"prologue_noise_rated": "ESTABLISHED",
+			"prologue_oven_cold": "ESTABLISHED",
+			"prologue_oven_lit": "ESTABLISHED",
+			"prologue_sight_used": "ESTABLISHED",
+			"prologue_sunflowers": "ESTABLISHED",
+			"prologue_vera_later": "ESTABLISHED",
+			"tomas_explained_alignment": "SUPPORTED",
+			"tomas_glances_toward_tree": "POSSIBLE",
+			"tomas_invited_help": "SUPPORTED",
+			"tomas_times_work_to_the_bell": "SUPPORTED"
+		},
+		"models": {
+			"m.help_needs_authorship": "SUPPORTED",
+			"m.helping_is_welcome": "CONTEXTUAL"
+		},
+		"npc_state": {
+			"concierge": {
+				"place": "hotel",
+				"stance": "officious"
+			},
+			"elian": {
+				"address": "ty",
+				"place": "",
+				"stance": "warm"
+			},
+			"ilya": {
+				"place": "observatory",
+				"stance": "showing"
+			},
+			"janitor": {
+				"place": "street",
+				"stance": "working"
+			},
+			"miron": {
+				"place": "fog",
+				"stance": "far"
+			},
+			"raccoon": {
+				"place": "with_witch",
+				"stance": "busy"
+			},
+			"shadow": {
+				"place": "",
+				"stance": "sitting"
+			},
+			"tomas": {
+				"expects": "EXPECT_RECIPROCITY",
+				"invited": true,
+				"stance": "partnered",
+				"tense": false
+			},
+			"vera": {
+				"place": "street",
+				"stance": "grateful"
+			}
+		},
+		"operators": [
+			"op.act3_revise_before_repeating",
+			"op.ask_before_acting",
+			"op.prologue_unwatched"
+		],
+		"world": {
+			"__mirror_time": 23,
+			"act1_day": {
+				"n": 5.0
+			},
+			"act1_key": {
+				"on": "hook"
+			},
+			"act2_candle": {
+				"state": "sold"
+			},
+			"act2_clock": {
+				"state": "shown"
+			},
+			"act2_lamp": {
+				"state": "lit_by_janitor"
+			},
+			"act2_raccoon_commission": {
+				"state": "refused"
+			},
+			"act2_shadow_coin": {
+				"left": true
+			},
+			"act2_spoon": {
+				"state": "hidden"
+			},
+			"act2_vera_oven": {
+				"state": "solved"
+			},
+			"act2_vera_sign": {
+				"state": "caught"
+			},
+			"act3_clock": {
+				"face": "counted"
+			},
+			"act3_garden": {
+				"stillness": 0.0
+			},
+			"act3_loop": {
+				"n": 3.0
+			},
+			"act3_shadow_key": {
+				"left": true
+			},
+			"act5_hold": {
+				"held": false
+			},
+			"act6_cart": {
+				"state": "rolling"
+			},
+			"act6_customer": {
+				"state": "haggling"
+			},
+			"act6_done_elian": {
+				"done": false
+			},
+			"act6_done_ilya": {
+				"done": false
+			},
+			"act6_done_tomas": {
+				"done": false
+			},
+			"act6_done_vera": {
+				"done": false
+			},
+			"act6_lamp": {
+				"state": "unshown"
+			},
+			"act6_second_machine": {
+				"state": "unfinished"
+			},
+			"act6_shadow_flower": {
+				"left": false
+			},
+			"clearing": {
+				"departed": false
+			},
+			"garden_below": {
+				"state": "lush"
+			},
+			"gold": {
+				"known": false
+			},
+			"machine": {
+				"in_tune": true,
+				"state": "running_together"
+			},
+			"magic": {
+				"state": "below"
+			},
+			"postgame_clue_coin": {
+				"seen": false
+			},
+			"postgame_clue_hook": {
+				"seen": false
+			},
+			"postgame_clue_key": {
+				"seen": false
+			},
+			"postgame_clue_knot": {
+				"seen": false
+			},
+			"postgame_clue_petal": {
+				"seen": false
+			},
+			"prologue_bench": {
+				"state": "leans_back"
+			},
+			"prologue_kettle": {
+				"state": "simmering"
+			},
+			"prologue_lamp": {
+				"lit": true
+			},
+			"prologue_oven": {
+				"lit": true
+			},
+			"story": {
+				"act": "act4"
+			},
+			"verdigris": {
+				"known": false
+			},
+			"wand": {
+				"fate": "held"
+			},
+			"witch": {
+				"from": "clocktower",
+				"place": "garden_below"
+			}
+		}
+	},
+	"name": "Act III: the basement, the hotel, the loop, the garden below, and the bench",
+	"steps": [
+		{
+			"action": "prologue_look_kettle",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "kettle_stopped_when_watched"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_kettle.stops",
+			"target": "prologue_kettle"
+		},
+		{
+			"action": "prologue_wait_kettle",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "kettle_boiled_unwatched"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_wait_kettle.rule",
+			"target": "prologue_kettle"
+		},
+		{
+			"action": "prologue_look_drawing",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "drawing_seen"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_drawing.seen",
+			"target": "prologue_drawing"
+		},
+		{
+			"action": "prologue_ask_raccoon_drawing",
+			"camera": [],
+			"observed": {
+				"outcome": "drawing_is_older"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_ask_raccoon_drawing.older",
+			"target": "raccoon"
+		},
+		{
+			"action": "prologue_sight_self",
+			"camera": [],
+			"observed": {
+				"outcome": "expectation_sight_used"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_sight_self.shows",
+			"target": "witch"
+		},
+		{
+			"action": "prologue_look_board",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "three_requests_read"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_board.three",
+			"target": "prologue_board"
+		},
+		{
+			"action": "prologue_ask_raccoon_noise",
+			"camera": [],
+			"observed": {
+				"outcome": "raccoon_complains"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_ask_raccoon_noise.verdict",
+			"target": "raccoon"
+		},
+		{
+			"action": "prologue_refill_kettle",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "kettle_back_on_the_flame"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_refill_kettle.simmer",
+			"target": "prologue_kettle"
+		},
+		{
+			"action": "core_go_door_shop_garden",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_shop_garden.move",
+			"target": "door_shop_garden"
+		},
+		{
+			"action": "prologue_look_lilies",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "lilies_seen"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_lilies.tidy",
+			"target": "prologue_lilies"
+		},
+		{
+			"action": "prologue_look_sunflowers",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "sunflowers_seen"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_sunflowers.crooked",
+			"target": "prologue_sunflowers"
+		},
+		{
+			"action": "prologue_look_lilies",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "lilies_beside_sunflowers"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_lilies.two_tastes",
+			"target": "prologue_lilies"
+		},
+		{
+			"action": "prologue_look_bench",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "bench_seen"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_bench.crooked",
+			"target": "prologue_bench"
+		},
+		{
+			"action": "prologue_cast_bench",
+			"camera": [
+				"magic_reveal",
+				"wide"
+			],
+			"observed": {
+				"outcome": "bench_straightened_then_leaned"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_cast_bench.straightens",
+			"target": "prologue_bench"
+		},
+		{
+			"action": "prologue_look_swing",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "knot_seen"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_swing.knot",
+			"target": "prologue_swing"
+		},
+		{
+			"action": "prologue_ask_miron_light",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "miron_mentions_quiet"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_ask_miron_light.quiet",
+			"target": "miron"
+		},
+		{
+			"action": "prologue_ask_miron_bench",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "miron_defends_the_bench"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_ask_miron_bench.answer",
+			"target": "miron"
+		},
+		{
+			"action": "core_go_door_garden_shop",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_garden_shop.move",
+			"target": "door_garden_shop"
+		},
+		{
+			"action": "core_go_door_shop_street",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_shop_street.move",
+			"target": "door_shop_street"
+		},
+		{
+			"action": "prologue_cast_lamp",
+			"camera": [
+				"magic_reveal",
+				"wide"
+			],
+			"observed": {
+				"outcome": "lamp_lit_by_magic"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_cast_lamp.lights",
+			"target": "prologue_lamp"
+		},
+		{
+			"action": "prologue_look_oven",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "oven_cold"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_look_oven.cold",
+			"target": "prologue_oven"
+		},
+		{
+			"action": "prologue_cast_oven",
+			"camera": [
+				"magic_reveal",
+				"wide"
+			],
+			"observed": {
+				"outcome": "oven_lit_by_magic"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_cast_oven.lights",
+			"target": "prologue_oven"
+		},
+		{
+			"action": "prologue_ask_vera",
+			"camera": [],
+			"observed": {
+				"outcome": "vera_puts_it_off"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_ask_vera.later",
+			"target": "vera"
+		},
+		{
+			"action": "core_go_door_street_shop",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_street_shop.move",
+			"target": "door_street_shop"
+		},
+		{
+			"action": "prologue_end_day",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "day_ended"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "prologue_end_day.act1",
+			"target": "prologue_bed"
+		},
+		{
+			"action": "core_go_door_shop_garden",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_shop_garden.move",
+			"target": "door_shop_garden"
+		},
+		{
+			"action": "act1_look_miron",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "coat_wet_with_fog_dew"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_look_miron.fog_dew",
+			"target": "miron"
+		},
+		{
+			"action": "act1_ask_where",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "miron_answers_about_the_quiet"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_ask_where.quiet",
+			"target": "miron"
+		},
+		{
+			"action": "core_go_door_garden_shop",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_garden_shop.move",
+			"target": "door_garden_shop"
+		},
+		{
+			"action": "act1_end_day",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "night_passes"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_end_day.night1",
+			"target": "act1_bed"
+		},
+		{
+			"action": "core_go_door_shop_garden",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_shop_garden.move",
+			"target": "door_shop_garden"
+		},
+		{
+			"action": "act1_look_miron",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "boots_carry_silver_moss"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_look_miron.silver_moss",
+			"target": "miron"
+		},
+		{
+			"action": "act1_ask_mill",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "mill_claim_against_boots"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_ask_mill.doubt",
+			"target": "miron"
+		},
+		{
+			"action": "core_go_door_garden_shop",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_garden_shop.move",
+			"target": "door_garden_shop"
+		},
+		{
+			"action": "act1_end_day",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "night_passes"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_end_day.night2",
+			"target": "act1_bed"
+		},
+		{
+			"action": "act1_window_sit",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "miron_passes_the_window"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_window_sit.miron_passes",
+			"target": "window_seat"
+		},
+		{
+			"action": "act1_window_look",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "miron_lingers_watched"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_window_look.lingers",
+			"target": "miron"
+		},
+		{
+			"action": "act1_window_turn_away",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "miron_goes_when_unwatched"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_window_turn_away.goes",
+			"target": "miron"
+		},
+		{
+			"action": "core_go_window_back",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_window_back.move",
+			"target": "window_back"
+		},
+		{
+			"action": "act1_end_day",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "miron_gone_for_good"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_end_day.night3",
+			"target": "act1_bed"
+		},
+		{
+			"action": "core_go_door_shop_street",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_shop_street.move",
+			"target": "door_shop_street"
+		},
+		{
+			"action": "act1_marsh_road",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "witch_follows_to_the_marsh"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_marsh_road.to_fog_edge",
+			"target": "act1_marsh_road"
+		},
+		{
+			"action": "act1_fog_call",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "voice_from_the_fog"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_fog_call.quiet",
+			"target": "act1_fog"
+		},
+		{
+			"action": "act1_scarf_look",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "scarf_on_a_branch"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_scarf_look.scarf",
+			"target": "act1_scarf"
+		},
+		{
+			"action": "act1_marsh_back",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "witch_turns_back"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_marsh_back.to_street",
+			"target": "act1_marsh_back"
+		},
+		{
+			"action": "core_go_door_street_shop",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_street_shop.move",
+			"target": "door_street_shop"
+		},
+		{
+			"action": "act1_end_day",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "key_left_on_the_hook"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_end_day.night4",
+			"target": "act1_bed"
+		},
+		{
+			"action": "act1_look_hook",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "key_on_hook_seen"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_look_hook.key",
+			"target": "act1_hook"
+		},
+		{
+			"action": "act1_think_replaced",
+			"camera": [
+				"stay"
+			],
+			"observed": {
+				"outcome": "witch_reads_the_loss"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_think_replaced.reading",
+			"target": "witch"
+		},
+		{
+			"action": "act1_end_day",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "magic_fails"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act1_end_day.exit",
+			"target": "act1_bed"
+		},
+		{
+			"action": "act2_cast_hearth",
+			"camera": [
+				"magic_reveal",
+				"consequence"
+			],
+			"observed": {
+				"outcome": "fizzle"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_cast_hearth.fizzle",
+			"target": "act2_hearth"
+		},
+		{
+			"action": "act2_wait_counter",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "elian_comes"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_wait_counter.elian_comes",
+			"target": "act2_counter"
+		},
+		{
+			"action": "act2_show_elian_tea",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "sits"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_show_elian_tea.sits",
+			"target": "elian"
+		},
+		{
+			"action": "act2_wait_elian",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "company"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_wait_elian.company",
+			"target": "elian"
+		},
+		{
+			"action": "act2_take_candle",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "taken"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_take_candle.taken",
+			"target": "act2_candle_box"
+		},
+		{
+			"action": "act2_look_ladder",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "raccoon_up"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_look_ladder.raccoon_up",
+			"target": "ladder_shop_attic"
+		},
+		{
+			"action": "core_go_ladder_shop_attic",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_ladder_shop_attic.move",
+			"target": "ladder_shop_attic"
+		},
+		{
+			"action": "act2_look_cloth",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "flash"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_look_cloth.flash",
+			"target": "act2_cloth"
+		},
+		{
+			"action": "act2_look_workshop",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "projects"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_look_workshop.projects",
+			"target": "act2_workshop"
+		},
+		{
+			"action": "act2_ask_commission",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "refused"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_ask_commission.refused",
+			"target": "raccoon"
+		},
+		{
+			"action": "act2_cast_workshop",
+			"camera": [
+				"magic_reveal",
+				"consequence"
+			],
+			"observed": {
+				"outcome": "fizzle"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_cast_workshop.fizzle",
+			"target": "act2_workshop"
+		},
+		{
+			"action": "core_go_ladder_attic_shop",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_ladder_attic_shop.move",
+			"target": "ladder_attic_shop"
+		},
+		{
+			"action": "core_go_door_shop_street",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_shop_street.move",
+			"target": "door_shop_street"
+		},
+		{
+			"action": "act2_look_lamp",
+			"camera": [
+				"conversation",
+				"inspect"
+			],
+			"observed": {
+				"outcome": "janitor"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_look_lamp.janitor",
+			"target": "act2_street_lamp"
+		},
+		{
+			"action": "act2_cast_lamp",
+			"camera": [
+				"magic_reveal",
+				"consequence"
+			],
+			"observed": {
+				"outcome": "fizzle"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_cast_lamp.fizzle",
+			"target": "act2_street_lamp"
+		},
+		{
+			"action": "act2_help_oven",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "not_now"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_help_oven.not_now",
+			"target": "act2_oven"
+		},
+		{
+			"action": "act2_wait_oven",
+			"camera": [
+				"wide",
+				"conversation"
+			],
+			"observed": {
+				"outcome": "solved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_wait_oven.solved",
+			"target": "act2_oven"
+		},
+		{
+			"action": "act2_catch_sign",
+			"camera": [
+				"inspect",
+				"conversation"
+			],
+			"observed": {
+				"outcome": "caught"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_catch_sign.caught",
+			"target": "act2_sign"
+		},
+		{
+			"action": "act2_wait_corner",
+			"camera": [
+				"wide",
+				"conversation"
+			],
+			"observed": {
+				"outcome": "passes"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_wait_corner.passes",
+			"target": "act2_corner"
+		},
+		{
+			"action": "act2_sell_candle",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "paid"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_sell_candle.paid",
+			"target": "shadow"
+		},
+		{
+			"action": "core_go_door_street_observatory",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_street_observatory.move",
+			"target": "door_street_observatory"
+		},
+		{
+			"action": "act2_look_clock",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "shown"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_look_clock.shown",
+			"target": "act2_clock"
+		},
+		{
+			"action": "core_go_door_observatory_street",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_observatory_street.move",
+			"target": "door_observatory_street"
+		},
+		{
+			"action": "core_go_door_street_archive",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_street_archive.move",
+			"target": "door_street_archive"
+		},
+		{
+			"action": "look_tomas",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"outcome": "observed_braced"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "look_tomas.braced",
+			"target": "tomas"
+		},
+		{
+			"action": "look_bell",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "observed_bell_tilted"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"ask_tomas_what",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "look_bell.tilted",
+			"target": "bell"
+		},
+		{
+			"action": "ask_tomas_what",
+			"camera": [
+				"conversation"
+			],
+			"observed": {
+				"motive": "guarded",
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "incomplete_explanation"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_informed",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "ask_tomas_what.partial",
+			"target": "tomas"
+		},
+		{
+			"action": "look_machine_informed",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "observed_gap"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_solution",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "look_machine_informed.gap",
+			"target": "machine"
+		},
+		{
+			"action": "wait_watch",
+			"camera": [
+				"wide",
+				"conversation"
+			],
+			"observed": {
+				"cue": "bell",
+				"expectation_violated": true,
+				"npc_expected": "EXPECT_MAGIC",
+				"outcome": "invited"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"go_assist",
+					"cast_repair"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [
+				"OUTCOME"
+			],
+			"response": "wait_watch.bell_invites",
+			"target": "tomas"
+		},
+		{
+			"action": "go_assist",
+			"camera": [
+				"inspect",
+				"consequence"
+			],
+			"observed": {
+				"motive": "shared_work",
+				"npc_expected": "EXPECT_RECIPROCITY",
+				"outcome": "repaired_together",
+				"relationship_signature": "EXPECT_RECIPROCITY"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "go_assist.component",
+			"target": "machine"
+		},
+		{
+			"action": "core_go_door_archive_street",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_archive_street.move",
+			"target": "door_archive_street"
+		},
+		{
+			"action": "core_go_door_street_shop",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "moved"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "core_go_door_street_shop.move",
+			"target": "door_street_shop"
+		},
+		{
+			"action": "act2_trapdoor_op",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "down"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act2_trapdoor.down",
+			"target": "trapdoor"
+		},
+		{
+			"action": "act3_look_toolbox",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "seen"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_look_toolbox.seen",
+			"target": "act3_toolbox"
+		},
+		{
+			"action": "act3_go_basement_hotel",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "arrive_shadow"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_go_basement_hotel.arrive_shadow",
+			"target": "act3_door_basement_hotel"
+		},
+		{
+			"action": "act3_ask_rooms",
+			"camera": [],
+			"observed": {
+				"outcome": "rules"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_ask_rooms.rules",
+			"target": "concierge"
+		},
+		{
+			"action": "act3_room_garden",
+			"camera": [],
+			"observed": {
+				"outcome": "key"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_room_garden.key",
+			"target": "concierge"
+		},
+		{
+			"action": "act3_ask_shadow",
+			"camera": [],
+			"observed": {
+				"outcome": "refuses"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_ask_shadow.refuses",
+			"target": "shadow"
+		},
+		{
+			"action": "act3_wait_shadow",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "leaves"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_wait_shadow.leaves",
+			"target": "shadow"
+		},
+		{
+			"action": "act3_go_hotel_clocktower",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "move"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_go_hotel_clocktower.move",
+			"target": "act3_stairs_hotel_clocktower"
+		},
+		{
+			"action": "act3_climb",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "first"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_climb.first",
+			"target": "act3_stairs_up"
+		},
+		{
+			"action": "act3_climb",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "second"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_climb.second",
+			"target": "act3_stairs_up"
+		},
+		{
+			"action": "act3_climb",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "third"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_climb.third",
+			"target": "act3_stairs_up"
+		},
+		{
+			"action": "act3_read_clock_backwards",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "read"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_read_clock_backwards.read",
+			"target": "act3_clock"
+		},
+		{
+			"action": "act3_go_clocktower_garden",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "move"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_go_clocktower_garden.move",
+			"target": "act3_stairs_clocktower_garden"
+		},
+		{
+			"action": "act3_look_bench",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "straight"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_look_bench.straight",
+			"target": "act3_bench"
+		},
+		{
+			"action": "act3_look_bed",
+			"camera": [
+				"inspect"
+			],
+			"observed": {
+				"outcome": "none"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_look_bed.none",
+			"target": "act3_sunflower_bed"
+		},
+		{
+			"action": "act3_look_garden",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "bench_sunflowers"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_look_garden.bench_sunflowers",
+			"target": "act3_garden_whole"
+		},
+		{
+			"action": "act3_sit_bench",
+			"camera": [
+				"wide"
+			],
+			"observed": {
+				"outcome": "act4"
+			},
+			"ok": true,
+			"options_after": {
+				"bell": [
+					"look_bell"
+				],
+				"machine": [
+					"look_machine_running",
+					"cast_flourish"
+				],
+				"path_out": [
+					"go_path_out"
+				],
+				"tomas": [
+					"look_tomas",
+					"show_tomas_wand",
+					"wait_watch"
+				]
+			},
+			"prediction_missed": [],
+			"response": "act3_sit_bench.act4",
+			"target": "act3_bench"
+		}
+	]
+}

@@ -1,0 +1,8 @@
+{
+	"world": {
+		"bell": {
+			"rung": false
+		}
+	},
+	"npc_state": {}
+}

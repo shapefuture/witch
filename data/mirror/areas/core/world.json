@@ -1,0 +1,21 @@
+{
+	"_about": "The whole game's shared state (docs/design/GAME_SPEC.md section 3). World effects replace a whole top-level key, so each entity holds one field, or a pair that always changes together. Owned by the integrator; areas change these only through action effects.",
+	"world": {
+		"witch": {"place": "shop", "from": ""},
+		"story": {"act": "prologue"},
+		"wand": {"fate": "held"},
+		"magic": {"state": "full"},
+		"verdigris": {"known": false},
+		"gold": {"known": false}
+	},
+	"npc_state": {
+		"raccoon": {"place": "shop", "stance": "busy"},
+		"miron": {"place": "garden", "stance": "warm"},
+		"shadow": {"place": "", "stance": "passing"},
+		"elian": {"place": "", "stance": "needs", "address": "vy"},
+		"vera": {"place": "street", "stance": "busy"},
+		"ilya": {"place": "observatory", "stance": "delighted"},
+		"janitor": {"place": "", "stance": "working"},
+		"concierge": {"place": "hotel", "stance": "officious"}
+	}
+}

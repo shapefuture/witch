@@ -1,0 +1,18 @@
+[
+	{
+		"id": "prologue_morning",
+		"priority": 3,
+		"once_key": "prologue_morning",
+		"preconditions": {"story.act": "prologue", "witch.place": "shop"},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.prologue.morning_bell"},
+			{"kind": "line", "speaker": "witch", "key": "line.prologue.morning_denial"},
+			{"kind": "line", "speaker": "raccoon", "key": "line.prologue.morning_raccoon"},
+			{"kind": "line", "speaker": "witch", "key": "line.prologue.morning_witch"},
+			{"kind": "line", "speaker": "witch", "key": "line.prologue.morning_how_slept"},
+			{"kind": "line", "speaker": "raccoon", "key": "line.prologue.morning_sleep"},
+			{"kind": "line", "speaker": "narrator", "key": "line.prologue.morning_board"}
+		]
+	}
+]

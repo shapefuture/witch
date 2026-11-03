@@ -1,0 +1,65 @@
+[
+	{
+		"place": "shop",
+		"target": "act6_tap",
+		"at": [
+			1120,
+			520
+		],
+		"radius": 60
+	},
+	{
+		"place": "shop",
+		"target": "act6_jars",
+		"at": [
+			1080,
+			330
+		],
+		"radius": 80
+	},
+	{
+		"place": "shop",
+		"target": "act6_ledger",
+		"at": [
+			240,
+			405
+		],
+		"radius": 50
+	},
+	{
+		"place": "street",
+		"target": "act6_step",
+		"at": [
+			905,
+			548
+		],
+		"radius": 60
+	},
+	{
+		"place": "street",
+		"target": "act6_cart",
+		"at": [
+			720,
+			560
+		],
+		"radius": 60
+	},
+	{
+		"place": "street",
+		"target": "act6_customer",
+		"at": [
+			1060,
+			540
+		],
+		"radius": 50
+	},
+	{
+		"place": "attic",
+		"target": "act6_lamp",
+		"at": [
+			900,
+			400
+		],
+		"radius": 70
+	}
+]

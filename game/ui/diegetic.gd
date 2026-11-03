@@ -76,13 +76,14 @@ static func slab_material(tint: Color, tile: String, priority: int) -> ShaderMat
 	material.render_priority = priority
 	return material
 
-# `scale` = ui_scale(): the glyphs are rasterised at the real pixel size, then drawn UIKit.FONT_SIZE
-# UI pixels tall, so text stays crisp at 540 rows and keeps its physical size.
+# `scale` = ui_scale(): the glyphs are rasterised at the real pixel size, then drawn UIKit.text_size()
+# UI pixels tall (the player's text size), so text stays crisp at 540 rows and keeps its physical size.
 static func label(text: String, color: Color, priority: int, scale: float = 1.0) -> Label3D:
 	var node := Label3D.new()
+	var size := UIKit.text_size()
 	node.font = UIKit.font()
-	node.font_size = roundi(UIKit.FONT_SIZE * scale)
-	node.pixel_size = float(UIKit.FONT_SIZE) / float(node.font_size)
+	node.font_size = roundi(size * scale)
+	node.pixel_size = float(size) / float(node.font_size)
 	node.text = text
 	node.modulate = color
 	node.outline_size = 0

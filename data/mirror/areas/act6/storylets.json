@@ -1,0 +1,22 @@
+[
+	{
+		"id": "act6_dusk",
+		"priority": 1,
+		"once_key": "act6_dusk",
+		"preconditions": {
+			"story.act": "act6",
+			"witch.place": "street"
+		},
+		"presentation": [
+			{
+				"kind": "camera",
+				"mode": "wide"
+			},
+			{
+				"kind": "line",
+				"speaker": "narrator",
+				"key": "line.act6.dusk.1"
+			}
+		]
+	}
+]

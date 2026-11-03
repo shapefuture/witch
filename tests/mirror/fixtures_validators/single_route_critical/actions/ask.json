@@ -1,0 +1,38 @@
+[
+	{
+		"id": "ask_d",
+		"action_type": "ASK",
+		"valid_targets": [
+			"bell"
+		],
+		"preconditions": {},
+		"requires_claims": [
+			{
+				"id": "rare_fact"
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "ask_d.told",
+				"observed": {
+					"outcome": "done"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"key": "line.ask_d_told"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "bell_explained",
+						"status": "SUPPORTED",
+						"proposition": {
+							"fixture": "bell_explained"
+						}
+					}
+				]
+			}
+		]
+	}
+]

@@ -1,0 +1,22 @@
+{
+	"_about": "Act I's notebook entries (docs/design/GAME_SPEC.md section 4). The kind is authored: seen, heard, shown, inferred, predicted, altered or untestable. The note is in her voice and never an instruction. Owned by workcell A.",
+	"act1_fogdew": {"kind": "seen", "text": "note.act1.fogdew"},
+	"act1_where_quiet": {"kind": "heard", "text": "note.act1.where_quiet"},
+	"act1_asked_where": {"kind": "heard", "text": "note.act1.asked_where"},
+	"act1_dew_answer": {"kind": "heard", "text": "note.act1.dew_answer"},
+	"act1_silver_moss": {"kind": "seen", "text": "note.act1.silver_moss"},
+	"act1_said_mill": {"kind": "heard", "text": "note.act1.said_mill"},
+	"act1_not_at_mill": {"kind": "inferred", "text": "note.act1.not_at_mill"},
+	"act1_bloom_admired": {"kind": "altered", "text": "note.act1.bloom"},
+	"act1_chore_turned": {"kind": "seen", "text": "note.act1.chore"},
+	"act1_he_lingers": {"kind": "seen", "text": "note.act1.lingers"},
+	"act1_predicts_he_goes": {"kind": "predicted", "text": "note.act1.predicts"},
+	"act1_miron_left": {"kind": "seen", "text": "note.act1.left"},
+	"act1_visits_unwatched": {"kind": "predicted", "text": "note.act1.visits"},
+	"act1_key_on_hook": {"kind": "seen", "text": "note.act1.key"},
+	"act1_scarf_on_branch": {"kind": "seen", "text": "note.act1.scarf"},
+	"act1_fog_is_quiet": {"kind": "heard", "text": "note.act1.fog_quiet"},
+	"act1_why_quiet": {"kind": "untestable", "text": "note.act1.why_quiet"},
+	"act1_replaced": {"kind": "inferred", "text": "note.act1.replaced"},
+	"act1_he_will_try": {"kind": "heard", "text": "note.act1.dream"}
+}

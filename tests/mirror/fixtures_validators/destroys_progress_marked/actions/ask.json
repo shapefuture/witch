@@ -1,0 +1,38 @@
+[
+	{
+		"id": "ask_gate",
+		"action_type": "ASK",
+		"valid_targets": [
+			"tomas"
+		],
+		"preconditions": {
+			"$neq": {
+				"npc.tomas.stance": "quiet"
+			},
+			"clearing.departed": false
+		},
+		"response_contracts": [
+			{
+				"id": "ask_gate.answer",
+				"observed": {
+					"outcome": "done"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"key": "line.ask_gate_answer"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "gate_fact",
+						"status": "SUPPORTED",
+						"proposition": {
+							"fixture": "gate_fact"
+						}
+					}
+				]
+			}
+		]
+	}
+]

@@ -1,0 +1,2012 @@
+[
+	{
+		"id": "act2_cast_hearth",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act2.cast_hearth",
+		"valid_targets": [
+			"act2_hearth"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"magic.state": "failing"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_cast_hearth.fizzle",
+				"observed": {
+					"outcome": "fizzle"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act2_hearth"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "fizzle",
+						"target": "act2_hearth"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.cast_hearth.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.cast_hearth.2"
+					},
+					{
+						"kind": "camera",
+						"mode": "consequence",
+						"focus": [
+							"act2_hearth"
+						]
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act2_magic_failing",
+						"proposition": {
+							"act2": "act2_magic_failing"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_wait_counter",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act2.wait_counter",
+		"valid_targets": [
+			"act2_counter"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"npc.elian.place": ""
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_wait_counter.elian_comes",
+				"observed": {
+					"outcome": "elian_comes"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.wait_counter.1"
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"elian": {
+							"place": "shop",
+							"stance": "needs"
+						}
+					}
+				}
+			}
+		],
+		"time_cost": 4
+	},
+	{
+		"id": "act2_ask_elian",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act2.ask_elian",
+		"valid_targets": [
+			"elian"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"npc.elian.place": "shop",
+			"npc.elian.stance": "needs"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_PERMISSION"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_ask_elian.nothing",
+				"observed": {
+					"outcome": "nothing"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"elian"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_elian_ask",
+						"npc": "elian"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_show_elian_tea",
+		"action_type": "SHOW",
+		"affordance_group": "social",
+		"label_key": "opt.act2.show_elian_tea",
+		"valid_targets": [
+			"elian"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"npc.elian.place": "shop",
+			"npc.elian.stance": "needs",
+			"npc.elian.address": "vy"
+		},
+		"prediction_signature": [
+			"SHOW",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_show_elian_tea.sits",
+				"observed": {
+					"outcome": "sits"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"elian"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_elian_tea",
+						"npc": "elian"
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"elian": {
+							"stance": "sitting"
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act2_wait_elian",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act2.wait_elian",
+		"valid_targets": [
+			"elian"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"npc.elian.place": "shop",
+			"npc.elian.stance": "sitting",
+			"npc.elian.address": "vy"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_wait_elian.company",
+				"observed": {
+					"outcome": "company"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"elian"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_elian_company",
+						"npc": "elian"
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"elian": {
+							"address": "ty",
+							"stance": "warm"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_elian_company",
+						"proposition": {
+							"act2": "act2_elian_company"
+						},
+						"status": "SUPPORTED",
+						"scope": "act2"
+					}
+				]
+			}
+		],
+		"time_cost": 4
+	},
+	{
+		"id": "act2_look_candles",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act2.look_candles",
+		"valid_targets": [
+			"act2_candle_box"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"act2_candle.state": "shelf"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_look_candles.see",
+				"observed": {
+					"outcome": "see"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act2_candle_box"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.look_candles.1"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_take_candle",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act2.take_candle",
+		"valid_targets": [
+			"act2_candle_box"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"act2_candle.state": "shelf"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_take_candle.taken",
+				"observed": {
+					"outcome": "taken"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act2_candle_box"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.take_candle.1"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_candle": {
+							"state": "carried"
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act2_look_ladder",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act2.look_ladder",
+		"valid_targets": [
+			"ladder_shop_attic"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"$neq": {
+				"npc.raccoon.place": "attic"
+			}
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_look_ladder.raccoon_up",
+				"observed": {
+					"outcome": "raccoon_up"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"ladder_shop_attic"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.look_ladder.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.look_ladder.2"
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"raccoon": {
+							"place": "attic"
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act2_trapdoor_op",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act2.trapdoor_op",
+		"valid_targets": [
+			"trapdoor"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"$any": [
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				}
+			]
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_trapdoor.down",
+				"observed": {
+					"outcome": "down"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.trapdoor.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.trapdoor.2"
+					}
+				],
+				"effects": {
+					"world": {
+						"story": {
+							"act": "act3"
+						},
+						"magic": {
+							"state": "below"
+						},
+						"witch": {
+							"place": "basement",
+							"from": "shop"
+						}
+					},
+					"npc_state": {
+						"raccoon": {
+							"place": "with_witch"
+						},
+						"elian": {
+							"place": ""
+						}
+					}
+				}
+			}
+		],
+		"requires_operators": [
+			{
+				"id": "op.ask_before_acting"
+			}
+		]
+	},
+	{
+		"id": "act2_trapdoor_quiet",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act2.trapdoor_quiet",
+		"valid_targets": [
+			"trapdoor"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"story.act": "act2",
+			"npc.tomas.stance": "quiet",
+			"$any": [
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"act2_lamp.state": "lit_by_janitor"
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"npc.elian.address": "ty"
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				},
+				{
+					"$all": [
+						{
+							"$all": [
+								{
+									"act2_vera_oven.state": "solved"
+								},
+								{
+									"act2_vera_sign.state": "caught"
+								}
+							]
+						},
+						{
+							"$in": {
+								"act2_clock.state": [
+									"shown",
+									"fixed"
+								]
+							}
+						},
+						{
+							"act2_raccoon_commission.state": "refused"
+						}
+					]
+				}
+			]
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_trapdoor_quiet.down",
+				"observed": {
+					"outcome": "down"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.trapdoor.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.trapdoor.2"
+					}
+				],
+				"effects": {
+					"world": {
+						"story": {
+							"act": "act3"
+						},
+						"magic": {
+							"state": "below"
+						},
+						"witch": {
+							"place": "basement",
+							"from": "shop"
+						}
+					},
+					"npc_state": {
+						"raccoon": {
+							"place": "with_witch"
+						},
+						"elian": {
+							"place": ""
+						}
+					}
+				}
+			}
+		]
+	},
+	{
+		"id": "act2_cast_lamp",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act2.cast_lamp",
+		"valid_targets": [
+			"act2_street_lamp"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"magic.state": "failing"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_cast_lamp.fizzle",
+				"observed": {
+					"outcome": "fizzle"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act2_street_lamp"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "fizzle",
+						"target": "act2_street_lamp"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.cast_lamp.2"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.cast_lamp.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "consequence",
+						"focus": [
+							"act2_street_lamp"
+						]
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act2_magic_failing",
+						"proposition": {
+							"act2": "act2_magic_failing"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_look_lamp",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act2.look_lamp",
+		"valid_targets": [
+			"act2_street_lamp"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"act2_lamp.state": "unlit"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_look_lamp.janitor",
+				"observed": {
+					"outcome": "janitor"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"janitor"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_janitor_lamps",
+						"npc": "janitor"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act2_street_lamp"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.look_lamp.1"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_lamp": {
+							"state": "lit_by_janitor"
+						}
+					},
+					"npc_state": {
+						"janitor": {
+							"place": "street",
+							"stance": "working"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_lamps_without_me",
+						"proposition": {
+							"act2": "act2_lamps_without_me"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_help_oven",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act2.help_oven",
+		"valid_targets": [
+			"act2_oven"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"act2_vera_oven.state": "arguing"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_help_oven.not_now",
+				"observed": {
+					"outcome": "not_now"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"vera"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_vera_not_now",
+						"npc": "vera"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act2_vera_not_now",
+						"proposition": {
+							"act2": "act2_vera_not_now"
+						},
+						"status": "SUPPORTED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_wait_oven",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act2.wait_oven",
+		"valid_targets": [
+			"act2_oven"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"act2_vera_oven.state": "arguing"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_wait_oven.solved",
+				"observed": {
+					"outcome": "solved"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.wait_oven.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"vera"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_vera_oven_taste",
+						"npc": "vera"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_vera_oven": {
+							"state": "solved"
+						}
+					},
+					"npc_state": {
+						"vera": {
+							"stance": "generous"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_vera_wait_helped",
+						"proposition": {
+							"act2": "act2_vera_wait_helped"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		],
+		"time_cost": 4
+	},
+	{
+		"id": "act2_wait_sign",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act2.wait_sign",
+		"valid_targets": [
+			"act2_sign"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"act2_vera_sign.state": "swinging"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_wait_sign.fell",
+				"observed": {
+					"outcome": "fell"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.wait_sign.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"vera"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_vera_sign_fell",
+						"npc": "vera"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_vera_sign": {
+							"state": "fell"
+						}
+					},
+					"npc_state": {
+						"vera": {
+							"stance": "upset"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_vera_sign_fell",
+						"proposition": {
+							"act2": "act2_vera_sign_fell"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		],
+		"time_cost": 2
+	},
+	{
+		"id": "act2_catch_sign",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act2.catch_sign",
+		"valid_targets": [
+			"act2_sign"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"act2_vera_sign.state": "swinging"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_catch_sign.caught",
+				"observed": {
+					"outcome": "caught"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act2_sign"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.catch_sign.1"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.catch_sign.2"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"vera"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_vera_sign_caught",
+						"npc": "vera"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_vera_sign": {
+							"state": "caught"
+						}
+					},
+					"npc_state": {
+						"vera": {
+							"stance": "grateful"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_vera_direct_helped",
+						"proposition": {
+							"act2": "act2_vera_direct_helped"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_wait_corner",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act2.wait_corner",
+		"valid_targets": [
+			"act2_corner"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"act2_candle.state": "carried",
+			"npc.shadow.place": "",
+			"act2_shadow_coin.left": false
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_wait_corner.passes",
+				"observed": {
+					"outcome": "passes"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.wait_corner.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"shadow"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_shadow_asks",
+						"npc": "shadow"
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"shadow": {
+							"place": "street",
+							"stance": "buying"
+						}
+					}
+				}
+			}
+		],
+		"time_cost": 3
+	},
+	{
+		"id": "act2_wait_corner_idle",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act2.wait_corner_idle",
+		"valid_targets": [
+			"act2_corner"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"$neq": {
+				"act2_candle.state": "carried"
+			}
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_wait_corner_idle.quiet",
+				"observed": {
+					"outcome": "quiet"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.wait_corner_idle.1"
+					}
+				]
+			}
+		],
+		"time_cost": 3
+	},
+	{
+		"id": "act2_sell_candle",
+		"action_type": "SHOW",
+		"affordance_group": "social",
+		"label_key": "opt.act2.sell_candle",
+		"valid_targets": [
+			"shadow"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"story.act": "act2",
+			"act2_candle.state": "carried",
+			"npc.shadow.place": "street"
+		},
+		"prediction_signature": [
+			"SHOW",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_sell_candle.paid",
+				"observed": {
+					"outcome": "paid"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"shadow"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.sell_candle.1"
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_shadow_paid",
+						"npc": "shadow"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_candle": {
+							"state": "sold"
+						},
+						"act2_shadow_coin": {
+							"left": true
+						}
+					},
+					"npc_state": {
+						"shadow": {
+							"place": "",
+							"stance": "passing"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_shadow_coin",
+						"proposition": {
+							"act2": "act2_shadow_coin"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_look_clock",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act2.look_clock",
+		"valid_targets": [
+			"act2_clock"
+		],
+		"preconditions": {
+			"witch.place": "observatory",
+			"story.act": "act2",
+			"act2_clock.state": "backwards"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_look_clock.shown",
+				"observed": {
+					"outcome": "shown"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"ilya"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_ilya_clock",
+						"npc": "ilya"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_clock": {
+							"state": "shown"
+						}
+					},
+					"npc_state": {
+						"ilya": {
+							"stance": "showing"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_ilya_backwards",
+						"proposition": {
+							"act2": "act2_ilya_backwards"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_fix_clock",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act2.fix_clock",
+		"valid_targets": [
+			"act2_clock"
+		],
+		"preconditions": {
+			"witch.place": "observatory",
+			"story.act": "act2",
+			"act2_clock.state": "shown"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_fix_clock.fixed",
+				"observed": {
+					"outcome": "fixed"
+				},
+				"presentation": [
+					{
+						"kind": "anim",
+						"actor": "player",
+						"name": "interact"
+					},
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act2_clock"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.fix_clock.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"ilya"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_ilya_fixed",
+						"npc": "ilya"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_clock": {
+							"state": "fixed"
+						}
+					},
+					"npc_state": {
+						"ilya": {
+							"stance": "disappointed"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_clock_fixed",
+						"proposition": {
+							"act2": "act2_clock_fixed"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_cast_clock",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act2.cast_clock",
+		"valid_targets": [
+			"act2_clock"
+		],
+		"preconditions": {
+			"witch.place": "observatory",
+			"story.act": "act2",
+			"magic.state": "failing",
+			"$in": {
+				"act2_clock.state": [
+					"backwards",
+					"shown"
+				]
+			}
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_cast_clock.fizzle",
+				"observed": {
+					"outcome": "fizzle"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act2_clock"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "fizzle",
+						"target": "act2_clock"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.cast_clock.2"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.cast_clock.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "consequence",
+						"focus": [
+							"act2_clock"
+						]
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act2_magic_failing",
+						"proposition": {
+							"act2": "act2_magic_failing"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_look_cloth",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act2.look_cloth",
+		"valid_targets": [
+			"act2_cloth"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act2",
+			"act2_spoon.state": "hidden",
+			"npc.raccoon.place": "attic"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_look_cloth.flash",
+				"observed": {
+					"outcome": "flash"
+				},
+				"presentation": [
+					{
+						"kind": "flash",
+						"image": "attic",
+						"sensation": "note.act2.solder_flash"
+					},
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"raccoon"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_raccoon_spoon",
+						"npc": "raccoon"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act2_raccoon_hid_it",
+						"proposition": {
+							"act2": "act2_raccoon_hid_it"
+						},
+						"status": "POSSIBLE",
+						"scope": "act2"
+					}
+				]
+			}
+		],
+		"once_key": "act2_look_cloth"
+	},
+	{
+		"id": "act2_look_workshop",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act2.look_workshop",
+		"valid_targets": [
+			"act2_workshop"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act2",
+			"npc.raccoon.place": "attic"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_look_workshop.projects",
+				"observed": {
+					"outcome": "projects"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"raccoon"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_raccoon_workshop",
+						"npc": "raccoon"
+					}
+				]
+			}
+		],
+		"once_key": "act2_look_workshop"
+	},
+	{
+		"id": "act2_ask_commission",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act2.ask_commission",
+		"valid_targets": [
+			"raccoon"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act2",
+			"npc.raccoon.place": "attic",
+			"act2_raccoon_commission.state": "open"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_PERMISSION"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_ask_commission.refused",
+				"observed": {
+					"outcome": "refused"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "conversation",
+						"focus": [
+							"player",
+							"raccoon"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_raccoon_refuses",
+						"npc": "raccoon"
+					}
+				],
+				"effects": {
+					"world": {
+						"act2_raccoon_commission": {
+							"state": "refused"
+						}
+					}
+				},
+				"knowledge_effects": [
+					{
+						"id": "act2_raccoon_refused",
+						"proposition": {
+							"act2": "act2_raccoon_refused"
+						},
+						"status": "SUPPORTED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act2_cast_workshop",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act2.cast_workshop",
+		"valid_targets": [
+			"act2_workshop"
+		],
+		"preconditions": {
+			"witch.place": "attic",
+			"story.act": "act2",
+			"magic.state": "failing",
+			"npc.raccoon.place": "attic"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act2_cast_workshop.fizzle",
+				"observed": {
+					"outcome": "fizzle"
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act2_workshop"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "fizzle",
+						"target": "act2_workshop"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act2.cast_workshop.2"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act2.cast_workshop.1"
+					},
+					{
+						"kind": "camera",
+						"mode": "consequence",
+						"focus": [
+							"act2_workshop"
+						]
+					},
+					{
+						"kind": "dialogue",
+						"title": "act2_raccoon_unasked",
+						"npc": "raccoon"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act2_magic_failing",
+						"proposition": {
+							"act2": "act2_magic_failing"
+						},
+						"status": "ESTABLISHED",
+						"scope": "act2"
+					}
+				]
+			}
+		]
+	}
+]

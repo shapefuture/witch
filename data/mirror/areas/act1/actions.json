@@ -1,0 +1,561 @@
+[
+	{
+		"id": "act1_look_hook",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act1.look_hook",
+		"valid_targets": ["act1_hook"],
+		"preconditions": {"story.act": "act1", "witch.place": "shop", "act1_key.on": "hook"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act1_look_hook.key",
+				"observed": {"outcome": "key_on_hook_seen"},
+				"knowledge_effects": [
+					{"id": "act1_key_on_hook", "proposition": {"item": "his_key_on_the_hook_by_the_door"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act1_hook"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.hook_look"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_end_day",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act1.end_day",
+		"valid_targets": ["act1_bed"],
+		"preconditions": {"story.act": "act1", "witch.place": "shop"},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "act1_end_day.night1",
+				"when": {"act1_day.n": 1},
+				"observed": {"outcome": "night_passes"},
+				"effects": {"world": {"act1_day": {"n": 2}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.night_1"}
+				]
+			},
+			{
+				"id": "act1_end_day.night2",
+				"when": {"act1_day.n": 2},
+				"observed": {"outcome": "night_passes"},
+				"effects": {"world": {"act1_day": {"n": 3}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.night_2"}
+				]
+			},
+			{
+				"id": "act1_end_day.night3",
+				"when": {"act1_day.n": 3},
+				"observed": {"outcome": "miron_gone_for_good"},
+				"effects": {
+					"world": {"act1_day": {"n": 4}},
+					"npc_state": {"miron": {"place": "fog", "stance": "far"}}
+				},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.night_3"}
+				]
+			},
+			{
+				"id": "act1_end_day.night4",
+				"when": {"act1_day.n": 4},
+				"observed": {"outcome": "key_left_on_the_hook"},
+				"effects": {
+					"world": {"act1_day": {"n": 5}, "act1_key": {"on": "hook"}}
+				},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.night_4"}
+				]
+			},
+			{
+				"id": "act1_end_day.exit",
+				"when": {"act1_day.n": 5},
+				"observed": {"outcome": "magic_fails"},
+				"effects": {
+					"world": {"story": {"act": "act2"}, "magic": {"state": "failing"}}
+				},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.exit"},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.exit_witch"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_window_sit",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act1.window_sit",
+		"valid_targets": ["window_seat"],
+		"preconditions": {"story.act": "act1", "witch.place": "shop"},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "act1_window_sit.miron_passes",
+				"when": {"act1_day.n": 3},
+				"priority": 1,
+				"observed": {"outcome": "miron_passes_the_window"},
+				"effects": {
+					"world": {"witch": {"place": "window", "from": "shop"}},
+					"npc_state": {"miron": {"place": "window"}}
+				},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.window_sit_miron"}
+				]
+			},
+			{
+				"id": "act1_window_sit.empty",
+				"observed": {"outcome": "street_empty"},
+				"effects": {"world": {"witch": {"place": "window", "from": "shop"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.window_sit_empty"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_window_look",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act1.window_look",
+		"valid_targets": ["miron"],
+		"preconditions": {"story.act": "act1", "witch.place": "window", "npc.miron.place": "window"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act1_window_look.lingers",
+				"observed": {"outcome": "miron_lingers_watched"},
+				"knowledge_effects": [
+					{"id": "act1_he_lingers", "proposition": {"miron": "stands_in_the_street_facing_the_window"}, "status": "ESTABLISHED", "scope": "act1"},
+					{"id": "act1_predicts_he_goes", "proposition": {"miron": "goes_when_turned_away"}, "status": "POSSIBLE", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["miron"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.window_look_caption"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.window_look_miron"},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.window_look_witch"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_window_turn_away",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act1.turn_away",
+		"valid_targets": ["miron"],
+		"preconditions": {"story.act": "act1", "witch.place": "window", "npc.miron.place": "window"},
+		"prediction_signature": ["WAIT", "EXPECT_PATIENCE"],
+		"response_contracts": [
+			{
+				"id": "act1_window_turn_away.goes",
+				"observed": {"outcome": "miron_goes_when_unwatched"},
+				"effects": {"npc_state": {"miron": {"place": "fog", "stance": "far"}}},
+				"knowledge_effects": [
+					{"id": "act1_miron_left", "proposition": {"miron": "left_for_the_marsh"}, "status": "ESTABLISHED", "scope": "act1"},
+					{"id": "act1_visits_unwatched", "proposition": {"miron": "goes_when_the_witch_is_not_watching"}, "status": "SUPPORTED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.turn_away_caption"},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.turn_away_witch"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_look_miron",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act1.look_miron",
+		"valid_targets": ["miron"],
+		"preconditions": {"story.act": "act1", "witch.place": "garden", "npc.miron.place": "garden"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act1_look_miron.fog_dew",
+				"when": {"act1_day.n": 1},
+				"priority": 2,
+				"observed": {"outcome": "coat_wet_with_fog_dew"},
+				"knowledge_effects": [
+					{"id": "act1_fogdew", "proposition": {"coat": "wet_with_fog_dew"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["miron"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.look_miron_dew"}
+				]
+			},
+			{
+				"id": "act1_look_miron.silver_moss",
+				"when": {"act1_day.n": 2},
+				"priority": 2,
+				"observed": {"outcome": "boots_carry_silver_moss"},
+				"knowledge_effects": [
+					{"id": "act1_silver_moss", "proposition": {"boots": "silver_moss_from_the_fog_edge"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["miron"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.look_miron_moss"}
+				]
+			},
+			{
+				"id": "act1_look_miron.busy",
+				"observed": {"outcome": "miron_busy"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["miron"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.look_miron_busy"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_ask_where",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act1.ask_where",
+		"valid_targets": ["miron"],
+		"once_key": "act1_ask_where",
+		"preconditions": {"story.act": "act1", "witch.place": "garden", "npc.miron.place": "garden", "act1_day.n": 1},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "act1_ask_where.quiet",
+				"observed": {"outcome": "miron_answers_about_the_quiet"},
+				"knowledge_effects": [
+					{"id": "act1_where_quiet", "proposition": {"miron_said": "it_is_quiet_there_back_for_supper"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.ask_where_witch"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.ask_where_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_ask_mill",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act1.ask_mill",
+		"valid_targets": ["miron"],
+		"once_key": "act1_ask_mill",
+		"preconditions": {"story.act": "act1", "witch.place": "garden", "npc.miron.place": "garden", "act1_day.n": 2},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "act1_ask_mill.doubt",
+				"priority": 1,
+				"requires_claims": [{"id": "act1_silver_moss", "holder_id": "player", "min_status": "ESTABLISHED"}],
+				"observed": {"outcome": "mill_claim_against_boots"},
+				"knowledge_effects": [
+					{"id": "act1_said_mill", "proposition": {"miron_said": "he_was_at_the_mill"}, "status": "ESTABLISHED", "scope": "act1"},
+					{"id": "act1_not_at_mill", "proposition": {"miron": "was_not_at_the_mill"}, "status": "SUPPORTED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.ask_mill_witch"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.ask_mill_miron"}
+				]
+			},
+			{
+				"id": "act1_ask_mill.plain",
+				"observed": {"outcome": "miron_says_the_mill"},
+				"knowledge_effects": [
+					{"id": "act1_said_mill", "proposition": {"miron_said": "he_was_at_the_mill"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.ask_mill_plain_witch"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.ask_mill_plain_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_ask_dream",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act1.ask_dream",
+		"valid_targets": ["miron"],
+		"once_key": "act1_ask_dream",
+		"preconditions": {"story.act": "act1", "witch.place": "garden", "npc.miron.place": "garden"},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "act1_ask_dream.will_try",
+				"observed": {"outcome": "miron_will_try_no_promise"},
+				"knowledge_effects": [
+					{"id": "act1_he_will_try", "proposition": {"miron_said": "will_try_to_come_in_a_dream"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.dream_witch"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.dream_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_hound_where",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act1.hound_where",
+		"valid_targets": ["miron"],
+		"once_key": "act1_hound_where",
+		"preconditions": {"story.act": "act1", "witch.place": "garden", "npc.miron.place": "garden", "act1_day.n": 1},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "act1_hound_where.guarded",
+				"observed": {"outcome": "miron_guards_himself"},
+				"effects": {"npc_state": {"miron": {"stance": "guarded"}}},
+				"knowledge_effects": [
+					{"id": "act1_asked_where", "proposition": {"miron_said": "the_place_where_it_is_quiet"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.hound_where_witch"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.hound_where_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_hound_dew",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act1.hound_dew",
+		"valid_targets": ["miron"],
+		"once_key": "act1_hound_dew",
+		"preconditions": {"story.act": "act1", "witch.place": "garden", "npc.miron.place": "garden"},
+		"requires_claims": [
+			{"id": "act1_asked_where", "holder_id": "player", "min_status": "ESTABLISHED"},
+			{"id": "act1_fogdew", "holder_id": "player", "min_status": "ESTABLISHED"}
+		],
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "act1_hound_dew.answer",
+				"observed": {"outcome": "miron_answers_about_the_dew"},
+				"effects": {"npc_state": {"miron": {"stance": "guarded"}}},
+				"knowledge_effects": [
+					{"id": "act1_dew_answer", "proposition": {"miron_said": "the_dew_is_morning_dew"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "conversation", "focus": ["player", "miron"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.hound_dew_witch"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.hound_dew_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_prove_bloom",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act1.prove_bloom",
+		"valid_targets": ["prologue_lilies"],
+		"once_key": "act1_prove_bloom",
+		"preconditions": {"story.act": "act1", "witch.place": "garden"},
+		"prediction_signature": ["CAST", "EXPECT_MAGIC"],
+		"response_contracts": [
+			{
+				"id": "act1_prove_bloom.for_miron",
+				"when": {"npc.miron.place": "garden"},
+				"priority": 1,
+				"observed": {"outcome": "garden_blooms_at_night_for_miron"},
+				"knowledge_effects": [
+					{"id": "act1_bloom_admired", "proposition": {"garden": "bloomed_at_night", "miron_said": "beautiful"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.act1.prove_witch"},
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["prologue_lilies"]},
+					{"kind": "magic", "effect": "flourish", "target": "prologue_lilies", "mode": "violet"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.prove_caption"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.prove_miron"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			},
+			{
+				"id": "act1_prove_bloom.empty_garden",
+				"observed": {"outcome": "garden_blooms_at_night"},
+				"presentation": [
+					{"kind": "line", "speaker": "witch", "key": "line.act1.prove_witch"},
+					{"kind": "camera", "mode": "magic_reveal", "focus": ["prologue_lilies"]},
+					{"kind": "magic", "effect": "flourish", "target": "prologue_lilies", "mode": "violet"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.prove_empty_caption"},
+					{"kind": "camera", "mode": "wide"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_fine_chore",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act1.fine_chore",
+		"valid_targets": ["miron"],
+		"preconditions": {"story.act": "act1", "witch.place": "garden", "npc.miron.place": "garden"},
+		"prediction_signature": ["WAIT", "EXPECT_PATIENCE"],
+		"response_contracts": [
+			{
+				"id": "act1_fine_chore.braced",
+				"observed": {"outcome": "witch_turns_to_a_chore"},
+				"effects": {"npc_state": {"miron": {"stance": "braced"}}},
+				"knowledge_effects": [
+					{"id": "act1_chore_turned", "proposition": {"witch": "turned_to_the_shelves"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.fine_witch"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.fine_caption"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_think_replaced",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act1.think_replaced",
+		"valid_targets": ["witch"],
+		"once_key": "act1_think_replaced",
+		"preconditions": {"story.act": "act1"},
+		"requires_claims": [
+			{"id": "act1_fog_is_quiet", "holder_id": "player", "min_status": "SUPPORTED"},
+			{"id": "act1_miron_left", "holder_id": "player", "min_status": "ESTABLISHED"}
+		],
+		"prediction_signature": ["WAIT", "EXPECT_PATIENCE"],
+		"response_contracts": [
+			{
+				"id": "act1_think_replaced.reading",
+				"observed": {"outcome": "witch_reads_the_loss"},
+				"knowledge_effects": [
+					{"id": "act1_replaced", "proposition": {"reading": "the_fog_replaced_me"}, "status": "SUPPORTED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "stay"},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.think_witch"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_marsh_road",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act1.marsh_road",
+		"valid_targets": ["act1_marsh_road"],
+		"preconditions": {"story.act": "act1", "witch.place": "street", "$gte": {"act1_day.n": 4}},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "act1_marsh_road.to_fog_edge",
+				"observed": {"outcome": "witch_follows_to_the_marsh"},
+				"effects": {"world": {"witch": {"place": "fog_edge", "from": "street"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.marsh_road_caption"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_marsh_back",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act1.marsh_back",
+		"valid_targets": ["act1_marsh_back"],
+		"preconditions": {"story.act": "act1", "witch.place": "fog_edge"},
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "act1_marsh_back.to_street",
+				"observed": {"outcome": "witch_turns_back"},
+				"effects": {"world": {"witch": {"place": "street", "from": "fog_edge"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.marsh_back_caption"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_fog_call",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act1.fog_call",
+		"valid_targets": ["act1_fog"],
+		"once_key": "act1_fog_call",
+		"preconditions": {"story.act": "act1", "witch.place": "fog_edge"},
+		"prediction_signature": ["ASK", "EXPECT_ANSWER"],
+		"response_contracts": [
+			{
+				"id": "act1_fog_call.quiet",
+				"observed": {"outcome": "voice_from_the_fog"},
+				"knowledge_effects": [
+					{"id": "act1_fog_is_quiet", "proposition": {"fog": "heard_quiet_from_miron"}, "status": "SUPPORTED", "scope": "act1"},
+					{"id": "act1_why_quiet", "proposition": {"question": "is_it_really_quiet_there"}, "status": "UNRESOLVED_BY_DESIGN", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act1_fog"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.fog_call_witch"},
+					{"kind": "line", "speaker": "miron", "key": "line.act1.fog_call_miron"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_fog_look",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act1.fog_look",
+		"valid_targets": ["act1_fog"],
+		"preconditions": {"story.act": "act1", "witch.place": "fog_edge"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act1_fog_look.wall",
+				"observed": {"outcome": "fog_wall_still"},
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act1_fog"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.fog_look_caption"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act1_scarf_look",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act1.scarf_look",
+		"valid_targets": ["act1_scarf"],
+		"preconditions": {"story.act": "act1", "witch.place": "fog_edge"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act1_scarf_look.scarf",
+				"observed": {"outcome": "scarf_on_a_branch"},
+				"knowledge_effects": [
+					{"id": "act1_scarf_on_branch", "proposition": {"scarf": "on_a_branch_at_the_fog_edge"}, "status": "ESTABLISHED", "scope": "act1"}
+				],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act1_scarf"]},
+					{"kind": "line", "speaker": "narrator", "key": "line.act1.scarf_caption"},
+					{"kind": "line", "speaker": "witch", "key": "line.act1.scarf_witch"}
+				]
+			}
+		]
+	}
+]

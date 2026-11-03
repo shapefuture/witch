@@ -1,0 +1,62 @@
+{
+	"act5_key_given": {
+		"kind": "shown",
+		"text": "note.act5.key_given"
+	},
+	"act5_spell_moves_things": {
+		"kind": "altered",
+		"text": "note.act5.spell_moves_things"
+	},
+	"act5_raccoon_volunteered": {
+		"kind": "heard",
+		"text": "note.act5.raccoon_volunteered"
+	},
+	"act5_pull_proves_nothing": {
+		"kind": "inferred",
+		"text": "note.act5.pull_proves_nothing"
+	},
+	"act5_he_stood_here": {
+		"kind": "altered",
+		"text": "note.act5.he_stood_here"
+	},
+	"act5_he_went_back": {
+		"kind": "seen",
+		"text": "note.act5.he_went_back"
+	},
+	"act5_miron_said_hello": {
+		"kind": "heard",
+		"text": "note.act5.miron_said_hello"
+	},
+	"act5_miron_said_tired": {
+		"kind": "heard",
+		"text": "note.act5.miron_said_tired"
+	},
+	"act5_miron_said_fine": {
+		"kind": "heard",
+		"text": "note.act5.miron_said_fine"
+	},
+	"act5_would_he_come": {
+		"kind": "untestable",
+		"text": "note.act5.would_he_come"
+	},
+	"act5_hand_lifted": {
+		"kind": "seen",
+		"text": "note.act5.hand_lifted"
+	},
+	"act5_what_the_wave_meant": {
+		"kind": "untestable",
+		"text": "note.act5.what_the_wave_meant"
+	},
+	"act5_show_touched_glass": {
+		"kind": "seen",
+		"text": "note.act5.show_touched_glass"
+	},
+	"act5_stain": {
+		"kind": "seen",
+		"text": "note.act5.stain"
+	},
+	"act5_cannot_be_restored": {
+		"kind": "inferred",
+		"text": "note.act5.cannot_be_restored"
+	}
+}

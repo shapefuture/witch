@@ -1,0 +1,7 @@
+{
+	"_about": "The systems cell's words (docs/design/GAME_SPEC.md section 4; docs/design/VOICES.md): the witch's own options and the notebook's controls, in her voice. Owned by the systems cell.",
+	"opt.systems.open_notebook": "Что я записала?",
+	"opt.systems.listen_sight": "Прислушаться к чуйке",
+	"ui.systems.notebook_close": "Закрыть",
+	"ui.systems.notebook_empty": "Пока пусто."
+}

@@ -2,9 +2,13 @@
  "id": "fog_edge",
  "kind": "threshold",
  "title": "The edge of the fog",
- "prompt": "The edge of town where a dirt path leaves the last fence and runs into thick pale fog. Beside the path, a single dead flower on a bent stem, its head closed and grey. The far end of the path vanishes in white. A little low light that is not quite where the sun should be.",
+ "prompt": "A night marsh at the edge of a towering bank of pale luminous fog. From a mossy bank a crooked path of wooden planks and bright yellow square tiles zigzags over still black water and vanishes into the glowing fog. Eyeball flowers on tall green stalks, white eyeballs with red irises and magenta leaves; beside the path one has died, its stalk bent and its eye closed and grey. A dead twisted tree dripping moss holds a round clock face with a smiling face and plain tick marks; round lanterns like small moons hang from crooked branches and poles; a carved wooden signpost carries only an eye and an arrow. Lily pads, hot pink cattails, violet heather, mossy stumps, a deep violet night sky with purple clouds. The mossy bank in the foreground opens into a clear patch of bare ground.",
+ "palette": "Saturated jewel night: deep violet and indigo, magenta and hot pink, moss green, gold-yellow tiles, peach lantern light, pale lilac fog.",
+ "horizon": 0.46,
+ "actors": {"witch": [0.5, 0.6], "raccoon": [0.6, 0.64]},
  "story": "The ending: at the edge of the ordinary world a dead flower opens (variant 'open', in a third colour, gold) and someone calls 'Come on'.",
  "variants": {
-  "open": "the dead flower has opened: a single bloom with petals of warm gold light, the fog around it slightly parted, the light bending the wrong way; nothing else changed"
- }
+  "open": "the dead eyeball flower beside the path has opened: a single bloom with petals of warm gold light, the fog around it slightly parted, the light bending the wrong way; nothing else changed"
+ },
+ "_plate": "The look follows docs/art/references/13_marsh_clocks_night.jpg. The built plate was made on a free Hugging Face ZeroGPU Space (tools/hfspaces/plate.py, Qwen-Image-2512, then the clock's numerals painted out): provenance in assets/painted/fog_edge/job_room.json. Its horizon is 0.46 (measured on the picture), not the threshold kind's 0.58."
 }

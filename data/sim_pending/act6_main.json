@@ -1,0 +1,40 @@
+{
+	"name": "Act VI end to end: the tap, the ladder, the lamp that is covered and uncovered, the step, the cart and the customer, the clock, the ledger, and the jars",
+	"scope": "game",
+	"after": "res://data/sim/act5_main.json",
+	"steps": [
+		{"action": "act6_wait_counter", "target": "act2_counter"},
+		{"action": "act6_look_tap", "target": "act6_tap"},
+		{"action": "act6_look_ladder", "target": "ladder_shop_attic"},
+		{"action": "core_go_ladder_shop_attic", "target": "ladder_shop_attic"},
+		{"action": "act6_look_lamp", "target": "act6_lamp"},
+		{"action": "act6_suggest_lamp", "target": "act6_lamp"},
+		{"action": "act6_uncover_lamp", "target": "act6_lamp"},
+		{"action": "act6_wait_lamp", "target": "act6_lamp"},
+		{"action": "core_go_ladder_attic_shop", "target": "ladder_attic_shop"},
+		{"action": "core_go_door_shop_street", "target": "door_shop_street"},
+		{"action": "act6_wait_step", "target": "act6_step"},
+		{"action": "act6_wait_step_leave", "target": "act6_step"},
+		{"action": "act6_customer_wait", "target": "act6_customer"},
+		{"action": "core_go_door_street_observatory", "target": "door_street_observatory"},
+		{"action": "act6_wait_clock", "target": "act2_clock"},
+		{"action": "core_go_door_observatory_street", "target": "door_observatory_street"},
+		{"action": "core_go_door_street_shop", "target": "door_street_shop"},
+		{"action": "act6_look_ledger", "target": "act6_ledger"},
+		{"action": "act6_look_jars", "target": "act6_jars"}
+	],
+	"expect": {
+		"state": {
+			"story.act": "act7",
+			"witch.place": "shop",
+			"magic.state": "gone"
+		},
+		"knows": [
+			"act6_elian_ty",
+			"act6_half_light",
+			"act6_vera_customer",
+			"act6_ilya_together",
+			"act6_shadow_flower"
+		]
+	}
+}

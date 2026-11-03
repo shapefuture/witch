@@ -1,0 +1,32 @@
+{
+	"name": "Prologue, the forced route: the kettle cast first (thunder), refilled and then learned honestly; the rest still reachable",
+	"scope": "game",
+	"steps": [
+		{"action": "prologue_cast_kettle", "target": "prologue_kettle"},
+		{"action": "prologue_look_kettle", "target": "prologue_kettle"},
+		{"action": "prologue_refill_kettle", "target": "prologue_kettle"},
+		{"action": "prologue_look_kettle", "target": "prologue_kettle"},
+		{"action": "prologue_wait_kettle", "target": "prologue_kettle"},
+		{"action": "core_go_door_shop_garden", "target": "door_shop_garden"},
+		{"action": "prologue_look_lilies", "target": "prologue_lilies"},
+		{"action": "prologue_look_sunflowers", "target": "prologue_sunflowers"},
+		{"action": "prologue_look_lilies", "target": "prologue_lilies"},
+		{"action": "prologue_look_swing", "target": "prologue_swing"},
+		{"action": "prologue_look_bench", "target": "prologue_bench"},
+		{"action": "prologue_ask_miron_light", "target": "miron"},
+		{"action": "core_go_door_garden_shop", "target": "door_garden_shop"},
+		{"action": "prologue_look_drawing", "target": "prologue_drawing"},
+		{"action": "prologue_look_board", "target": "prologue_board"},
+		{"action": "prologue_sight_self", "target": "witch"},
+		{"action": "prologue_end_day", "target": "prologue_bed"}
+	],
+	"expect": {
+		"state": {"story.act": "act1", "magic.state": "full"},
+		"knows": [
+			"prologue_kettle_thunder", "prologue_kettle_still", "prologue_kettle_rule",
+			"prologue_garden_two_tastes", "prologue_knot", "prologue_bench_crooked", "prologue_sunflowers",
+			"prologue_fog_mentioned", "prologue_father_drawing"
+		],
+		"operators": ["op.prologue_unwatched"]
+	}
+}

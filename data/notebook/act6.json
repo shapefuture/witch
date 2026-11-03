@@ -1,0 +1,30 @@
+{
+	"act6_tomas_finished_it": {
+		"kind": "seen",
+		"text": "note.act6.tomas_finished_it"
+	},
+	"act6_elian_ty": {
+		"kind": "heard",
+		"text": "note.act6.elian_ty"
+	},
+	"act6_vera_cart": {
+		"kind": "seen",
+		"text": "note.act6.vera_cart"
+	},
+	"act6_vera_customer": {
+		"kind": "seen",
+		"text": "note.act6.vera_customer"
+	},
+	"act6_ilya_together": {
+		"kind": "shown",
+		"text": "note.act6.ilya_together"
+	},
+	"act6_half_light": {
+		"kind": "seen",
+		"text": "note.act6.half_light"
+	},
+	"act6_shadow_flower": {
+		"kind": "seen",
+		"text": "note.act6.shadow_flower"
+	}
+}

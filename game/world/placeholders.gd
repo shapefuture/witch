@@ -219,6 +219,14 @@ static func ground(radius: float, path_angle_deg: float, path_gap_deg: float) ->
 		stones.add_child(stone)
 	return root
 
+# A crude standing figure for a person whose model is not made yet: a body and a head.
+static func person(color: Color) -> Node3D:
+	var figure := Node3D.new()
+	figure.name = "Person"
+	figure.add_child(cylinder(0.22, 1.0, color, Vector3(0.0, 0.5, 0.0), 0.16, true))
+	figure.add_child(sphere(0.17, Color(0.92, 0.78, 0.66), Vector3(0.0, 1.22, 0.0), true))
+	return figure
+
 static func lantern_post() -> Node3D:
 	var root := Node3D.new()
 	root.name = "LanternPost"

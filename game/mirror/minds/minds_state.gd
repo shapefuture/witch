@@ -2,7 +2,7 @@ class_name MindsState
 extends RefCounted
 
 # Everything the Minds layer keeps between events: who is where, the deferred-effects queue, the folklore
-# book, and whether the starting beliefs have been written. ALL of it is derived from the Mirror event log:
+# book, how far each ambient routine has run (routine id -> last occurrence index), and whether the starting beliefs have been written. ALL of it is derived from the Mirror event log:
 # `apply()` is the only way it changes, it reads nothing but a committed event's payload, and a rebuild is
 # `reset()` followed by `apply()` over the whole log. Live play uses the same path, so a loaded save, a
 # replay and a run that never stopped cannot disagree.
@@ -11,6 +11,7 @@ var seeded := false
 var presence: Dictionary = {}
 var queue := ConsequenceQueue.new()
 var conventions := ConventionBook.new()
+var routines: Dictionary = {}
 
 func reset(data: Dictionary) -> void:
 	seeded = false
@@ -19,6 +20,7 @@ func reset(data: Dictionary) -> void:
 		presence[holder] = str(data["holders"][holder].get("place", ""))
 	queue.reset()
 	conventions.reset()
+	routines = {}
 
 func apply(event: MirrorEvent) -> void:
 	if event.event_type != "WorldEventHappened":
@@ -36,3 +38,7 @@ func apply(event: MirrorEvent) -> void:
 	for entry in payload.get("scheduled", []):
 		queue.add(entry)
 	conventions.apply_updates(payload.get("convention_updates", []))
+	var origin: Dictionary = payload.get("origin", {})
+	if origin.has("routine"):
+		var routine_id := str(origin["routine"])
+		routines[routine_id] = maxi(int(routines.get(routine_id, -1)), int(origin.get("n", 0)))

@@ -3,7 +3,12 @@ extends RefCounted
 
 signal events_appended(events: Array)
 
-var max_events: int = 100000
+# Reconciled with the save limit (MirrorPersistence.max_save_bytes, 64 MiB): a save costs about 3.5 KB per event
+# (measured on data/sim/hall_rules.json), so 16,000 events fit with room to spare. About four hours of play at the
+# REQ-34 rate. The old 100,000 let a long game store events it could no longer save. See docs/engine/HARDENING.md.
+const DEFAULT_MAX_EVENTS := 16000
+
+var max_events: int = DEFAULT_MAX_EVENTS
 var _events: Array[MirrorEvent] = []
 var _head_hash := "GENESIS"
 var _next_sequence := 1
@@ -16,7 +21,7 @@ var _by_transaction: Dictionary = {}
 var suppress_signal := false
 var last_error := ""
 
-func _init(p_max_events: int = 100000): max_events = maxi(1, p_max_events)
+func _init(p_max_events: int = DEFAULT_MAX_EVENTS): max_events = maxi(1, p_max_events)
 func size() -> int: return _events.size()
 func head_hash() -> String: return _head_hash
 func next_sequence() -> int: return _next_sequence
@@ -179,7 +184,28 @@ func restore_from_dict(data: Dictionary) -> bool:
     _next_sequence = expected_sequence
     return true
 
+# Local patch (save recovery): the longest run of serialised events, from the first, that passes
+# every check restore_from_dict() makes per event (shape, unique id, sequence, prev_hash link,
+# recomputed hash). Stops at the first event that fails and reports why. Nothing is adopted here.
+# Returns {"events": Array[MirrorEvent], "error": String ("" when every event passed)}.
+static func valid_prefix(incoming: Array) -> Dictionary:
+    var out: Array[MirrorEvent] = []
+    var previous := "GENESIS"; var expected_sequence := 1; var seen: Dictionary = {}
+    for raw in incoming:
+        if not raw is Dictionary or not MirrorEvent.validate_dict(raw).is_empty(): return {"events": out, "error": "invalid_event_payload"}
+        var event := MirrorEvent.from_dict(raw)
+        if event == null: return {"events": out, "error": "invalid_event_payload"}
+        if event.event_id.is_empty() or seen.has(event.event_id): return {"events": out, "error": "duplicate_event_id"}
+        if event.sequence != expected_sequence: return {"events": out, "error": "invalid_sequence"}
+        if event.prev_hash != previous: return {"events": out, "error": "prev_hash_mismatch"}
+        var provided_hash := event.hash
+        if provided_hash.is_empty(): return {"events": out, "error": "missing_hash"}
+        event.finalize()
+        if event.hash != provided_hash: return {"events": out, "error": "hash_mismatch"}
+        seen[event.event_id] = true; previous = event.hash; expected_sequence += 1; out.append(event)
+    return {"events": out, "error": ""}
+
 static func from_dict(data: Dictionary) -> MirrorEventStore:
-    var store := MirrorEventStore.new(int(data.get("max_events", 100000)))
-    if not store.restore_from_dict(data): return MirrorEventStore.new(int(data.get("max_events", 100000)))
+    var store := MirrorEventStore.new(int(data.get("max_events", DEFAULT_MAX_EVENTS)))
+    if not store.restore_from_dict(data): return MirrorEventStore.new(int(data.get("max_events", DEFAULT_MAX_EVENTS)))
     return store

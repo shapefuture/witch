@@ -1,0 +1,33 @@
+[
+	{
+		"id": "act3_shadow_steps_back",
+		"npc": "shadow",
+		"when": {
+			"witch.place": "hotel",
+			"npc.shadow.place": "hotel"
+		},
+		"ghost": "step_back",
+		"source": "npc",
+		"note": "note.act3.ghost_shadow"
+	},
+	{
+		"id": "act3_raccoon_flinch_projection",
+		"npc": "raccoon",
+		"when": {
+			"witch.place": "basement"
+		},
+		"ghost": "flinch",
+		"source": "projection",
+		"note": "note.act3.ghost_raccoon"
+	},
+	{
+		"id": "act3_concierge_looks_at_keys",
+		"npc": "concierge",
+		"when": {
+			"witch.place": "hotel"
+		},
+		"ghost": "look_at:act3_key_rack",
+		"source": "npc",
+		"note": "note.act3.ghost_concierge"
+	}
+]

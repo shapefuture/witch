@@ -1,0 +1,10 @@
+{
+	"_about": "The postgame's own state (docs/design/GAME_SPEC.md section 6). The five clue flags are set when she sees each piece of evidence; the notebook's think actions read them. Only the postgame reads these.",
+	"world": {
+		"postgame_clue_knot": {"seen": false},
+		"postgame_clue_coin": {"seen": false},
+		"postgame_clue_key": {"seen": false},
+		"postgame_clue_petal": {"seen": false},
+		"postgame_clue_hook": {"seen": false}
+	}
+}

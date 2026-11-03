@@ -120,10 +120,15 @@ func test_determinism_same_sequence_same_head_hash() -> void:
 	var heads: Array[String] = []
 	for i in 2:
 		var e := MirrorFixtures.engine()
-		e.resolve_action(MirrorFixtures.act("look_door", "door", T.LOOK))
-		e.resolve_action(MirrorFixtures.act("ask_tomas", "tomas", T.ASK))
-		e.resolve_action(MirrorFixtures.act("wait", "", T.WAIT))
-		e.resolve_action(MirrorFixtures.act("cast_light", "lamp", T.CAST))
+		var steps: Array = [
+			e.resolve_action(MirrorFixtures.act("look_door", "door", T.LOOK)),
+			e.resolve_action(MirrorFixtures.act("ask_tomas", "tomas", T.ASK)),
+			e.resolve_action(MirrorFixtures.act("wait", "", T.WAIT)),
+			e.resolve_action(MirrorFixtures.act("cast_light", "lamp", T.CAST)),
+		]
+		for step in steps:
+			ok(step["ok"], "every step of run %d succeeds" % i)
+		ok(e.event_store.size() > 0, "run %d wrote events (equal empty heads would prove nothing)" % i)
 		heads.append(e.event_store.head_hash())
 	eq(heads[0], heads[1], "two runs produce an identical hash chain")
 

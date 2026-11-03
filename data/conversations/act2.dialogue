@@ -1,0 +1,95 @@
+# Act II conversations: linear exchanges only (no response lines). Every spoken line is a key
+# (data/text/ru/act2.json). Titles start with the area id (docs/engine/CONTENT_PACKAGES.md).
+
+~ act2_elian_ask
+witch: dlg.act2.elian_ask.1
+elian: dlg.act2.elian_ask.2
+=> END
+
+~ act2_elian_tea
+witch: dlg.act2.elian_tea.1
+elian: dlg.act2.elian_tea.2
+witch: dlg.act2.elian_tea.3
+elian: dlg.act2.elian_tea.4
+=> END
+
+~ act2_elian_company
+elian: dlg.act2.elian_company.1
+witch: dlg.act2.elian_company.2
+=> END
+
+~ act2_janitor_lamps
+janitor: dlg.act2.janitor_lamps.1
+witch: dlg.act2.janitor_lamps.2
+janitor: dlg.act2.janitor_lamps.3
+=> END
+
+~ act2_vera_oven_taste
+vera: dlg.act2.vera_oven_taste.1
+vera: dlg.act2.vera_oven_taste.2
+witch: dlg.act2.vera_oven_taste.3
+=> END
+
+~ act2_vera_not_now
+witch: dlg.act2.vera_not_now.1
+vera: dlg.act2.vera_not_now.2
+witch: dlg.act2.vera_not_now.3
+vera: dlg.act2.vera_not_now.4
+=> END
+
+~ act2_vera_sign_fell
+vera: dlg.act2.vera_sign_fell.1
+vera: dlg.act2.vera_sign_fell.2
+=> END
+
+~ act2_vera_sign_caught
+vera: dlg.act2.vera_sign_caught.1
+witch: dlg.act2.vera_sign_caught.2
+=> END
+
+~ act2_shadow_asks
+shadow: dlg.act2.shadow_asks.1
+=> END
+
+~ act2_shadow_paid
+witch: dlg.act2.shadow_paid.1
+shadow: dlg.act2.shadow_paid.2
+=> END
+
+~ act2_ilya_clock
+ilya: dlg.act2.ilya_clock.1
+witch: dlg.act2.ilya_clock.2
+ilya: dlg.act2.ilya_clock.3
+witch: dlg.act2.ilya_clock.4
+=> END
+
+~ act2_ilya_fixed
+witch: dlg.act2.ilya_fixed.1
+ilya: dlg.act2.ilya_fixed.2
+ilya: dlg.act2.ilya_fixed.3
+=> END
+
+~ act2_raccoon_spoon
+witch: dlg.act2.raccoon_spoon.1
+raccoon: dlg.act2.raccoon_spoon.2
+witch: dlg.act2.raccoon_spoon.3
+=> END
+
+~ act2_raccoon_workshop
+raccoon: dlg.act2.raccoon_workshop.1
+witch: dlg.act2.raccoon_workshop.2
+raccoon: dlg.act2.raccoon_workshop.3
+witch: dlg.act2.raccoon_workshop.4
+raccoon: dlg.act2.raccoon_workshop.5
+=> END
+
+~ act2_raccoon_unasked
+raccoon: dlg.act2.raccoon_unasked.1
+witch: dlg.act2.raccoon_unasked.2
+=> END
+
+~ act2_raccoon_refuses
+witch: dlg.act2.raccoon_refuses.1
+raccoon: dlg.act2.raccoon_refuses.2
+witch: dlg.act2.raccoon_refuses.3
+=> END

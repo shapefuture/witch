@@ -1,0 +1,9 @@
+{
+	"_about": "The prologue's own state (docs/design/GAME_SPEC.md sections 3 and 6). Entities only this area uses, prefixed with its id. World effects replace a whole key, so each entity holds the fields that change together.",
+	"world": {
+		"prologue_kettle": {"state": "simmering"},
+		"prologue_lamp": {"lit": false},
+		"prologue_oven": {"lit": false},
+		"prologue_bench": {"state": "crooked"}
+	}
+}

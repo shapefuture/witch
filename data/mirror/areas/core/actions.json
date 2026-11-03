@@ -1,0 +1,442 @@
+[
+	{
+		"id": "core_go_door_shop_street",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.door_shop_street",
+		"valid_targets": [
+			"door_shop_street"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"$neq": {
+				"story.act": "postgame"
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_door_shop_street.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "street",
+							"from": "shop"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_door_street_shop",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.door_street_shop",
+		"valid_targets": [
+			"door_street_shop"
+		],
+		"preconditions": {
+			"witch.place": "street"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_door_street_shop.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "shop",
+							"from": "street"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_door_shop_garden",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.door_shop_garden",
+		"valid_targets": [
+			"door_shop_garden"
+		],
+		"preconditions": {
+			"witch.place": "shop"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_door_shop_garden.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "garden",
+							"from": "shop"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_door_garden_shop",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.door_garden_shop",
+		"valid_targets": [
+			"door_garden_shop"
+		],
+		"preconditions": {
+			"witch.place": "garden"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_door_garden_shop.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "shop",
+							"from": "garden"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_window_back",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.window_back",
+		"valid_targets": [
+			"window_back"
+		],
+		"preconditions": {
+			"witch.place": "window"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_window_back.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "shop",
+							"from": "window"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_door_street_archive",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.door_street_archive",
+		"valid_targets": [
+			"door_street_archive"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"$in": {
+				"story.act": [
+					"act2",
+					"act6",
+					"act7"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_door_street_archive.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clearing",
+							"from": "street"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_door_archive_street",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.door_archive_street",
+		"valid_targets": [
+			"door_archive_street"
+		],
+		"preconditions": {
+			"witch.place": "clearing"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_door_archive_street.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "street",
+							"from": "clearing"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_door_street_observatory",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.door_street_observatory",
+		"valid_targets": [
+			"door_street_observatory"
+		],
+		"preconditions": {
+			"witch.place": "street",
+			"$in": {
+				"story.act": [
+					"act2",
+					"act6"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_door_street_observatory.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "observatory",
+							"from": "street"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_door_observatory_street",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.door_observatory_street",
+		"valid_targets": [
+			"door_observatory_street"
+		],
+		"preconditions": {
+			"witch.place": "observatory"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_door_observatory_street.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "street",
+							"from": "observatory"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_ladder_shop_attic",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.ladder_shop_attic",
+		"valid_targets": [
+			"ladder_shop_attic"
+		],
+		"preconditions": {
+			"witch.place": "shop",
+			"$nin": {
+				"story.act": [
+					"prologue",
+					"act1"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_ladder_shop_attic.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "attic",
+							"from": "shop"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "core_go_ladder_attic_shop",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.core.ladder_attic_shop",
+		"valid_targets": [
+			"ladder_attic_shop"
+		],
+		"preconditions": {
+			"witch.place": "attic"
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "core_go_ladder_attic_shop.move",
+				"observed": {
+					"outcome": "moved"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "shop",
+							"from": "attic"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	}
+]

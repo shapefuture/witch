@@ -1,0 +1,91 @@
+[
+	{
+		"id": "act8_look_flower",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act8.look_flower",
+		"valid_targets": ["act8_flower"],
+		"preconditions": {"story.act": "act8", "witch.place": "street"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act8_look_flower.seen",
+				"observed": {"outcome": "flower_seen"},
+				"effects": {"world": {"gold": {"known": true}}},
+				"knowledge_effects": [{"id": "act8_flower", "proposition": {"flower": "met_on_the_step"}, "status": "ESTABLISHED", "scope": "street"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "ordinary_flower_growing_through_a_crack_in_the_step"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act8_flower"]},
+					{"kind": "line", "speaker": "witch", "key": "line.act8.flower_look"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act8_touch_flower",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act8.touch_flower",
+		"valid_targets": ["act8_flower"],
+		"preconditions": {"story.act": "act8", "witch.place": "street"},
+		"prediction_signature": ["LOOK", "EXPECT_CURIOSITY"],
+		"response_contracts": [
+			{
+				"id": "act8_touch_flower.petal",
+				"observed": {"outcome": "petal_touched"},
+				"effects": {"world": {"gold": {"known": true}}},
+				"knowledge_effects": [{"id": "act8_flower", "proposition": {"flower": "met_on_the_step"}, "status": "ESTABLISHED", "scope": "street"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "petal_touched_and_left_on_the_stem"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "inspect", "focus": ["act8_flower"]},
+					{"kind": "magic", "effect": "flourish", "mode": "gold", "target": "act8_flower"},
+					{"kind": "line", "speaker": "witch", "key": "line.act8.flower_touch"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act8_leave_flower",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act8.leave_flower",
+		"valid_targets": ["act8_flower"],
+		"time_cost": 3,
+		"preconditions": {"story.act": "act8", "witch.place": "street"},
+		"prediction_signature": ["WAIT", "EXPECT_DISTANCE"],
+		"response_contracts": [
+			{
+				"id": "act8_leave_flower.stays",
+				"observed": {"outcome": "left_as_it_was"},
+				"effects": {"world": {"gold": {"known": true}}},
+				"knowledge_effects": [{"id": "act8_flower", "proposition": {"flower": "met_on_the_step"}, "status": "ESTABLISHED", "scope": "street"}],
+				"evidence": [{"type": "DIRECT", "payload": {"saw": "flower_stayed_on_the_step_while_she_stood_by"}}],
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act8.flower_leave"}
+				]
+			}
+		]
+	},
+	{
+		"id": "act8_go_evening",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act8.go_evening",
+		"valid_targets": ["door_street_shop"],
+		"preconditions": {"story.act": "act8", "witch.place": "street"},
+		"requires_claims": [{"id": "act8_flower", "holder_id": "player"}],
+		"prediction_signature": ["GO", "EXPECT_INDEPENDENCE"],
+		"response_contracts": [
+			{
+				"id": "act8_go_evening.home",
+				"observed": {"outcome": "evening_comes"},
+				"effects": {"world": {"witch": {"place": "shop", "from": "street"}, "story": {"act": "act9"}}},
+				"presentation": [
+					{"kind": "camera", "mode": "wide"},
+					{"kind": "line", "speaker": "narrator", "key": "line.act8.evening"}
+				]
+			}
+		]
+	}
+]

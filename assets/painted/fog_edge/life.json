@@ -1,0 +1,37 @@
+{
+ "_about": "Hand-tuned from the draft tools/painted/new_scene.py made (it took eyeball flowers, yellow tiles, the water lily and the sign's eye for lamps, and found two of the five lanterns): the five paper lanterns flicker as candles, the fog bank breathes, the moon's glint on the water shimmers. Pixels are plate.png's (see docs/art/painted_room.md, Light and life).",
+ "fps": 8,
+ "glow": {
+  "levels": 6,
+  "depth": 0.97,
+  "spare": 6
+ },
+ "lights": [
+  {"id": "lantern_high_left", "pixel": [202, 100], "radius": 52, "core": 0.25, "color": [1.0, 0.78, 0.55], "strength": 0.32,
+   "flicker": {"kind": "candle", "amount": 0.3, "seed": 3, "shift": 0.4}},
+  {"id": "lantern_high_right", "pixel": [435, 111], "radius": 54, "core": 0.25, "color": [1.0, 0.78, 0.55], "strength": 0.32,
+   "flicker": {"kind": "candle", "amount": 0.3, "seed": 14, "shift": 0.4}},
+  {"id": "lantern_far_left", "pixel": [55, 275], "radius": 54, "core": 0.25, "color": [1.0, 0.76, 0.55], "strength": 0.32,
+   "flicker": {"kind": "candle", "amount": 0.3, "seed": 25, "shift": 0.4}},
+  {"id": "lantern_mid", "pixel": [297, 259], "radius": 54, "core": 0.25, "color": [1.0, 0.76, 0.55], "strength": 0.32,
+   "flicker": {"kind": "candle", "amount": 0.3, "seed": 36, "shift": 0.4}},
+  {"id": "lantern_low", "pixel": [410, 294], "radius": 54, "core": 0.25, "color": [1.0, 0.76, 0.55], "strength": 0.32,
+   "flicker": {"kind": "candle", "amount": 0.3, "seed": 47, "shift": 0.4}},
+  {"id": "fog", "pixel": [782, 194], "radius": 170, "core": 0.14, "color": [0.82, 0.86, 1.0], "strength": 0.22,
+   "flicker": {"kind": "breath", "amount": 0.18, "seed": 58, "shift": 0.0}},
+  {"id": "glint", "pixel": [786, 367], "radius": 40, "core": 0.2, "color": [0.85, 0.9, 1.0], "strength": 0.25,
+   "flicker": {"kind": "magic", "amount": 0.3, "seed": 69, "shift": 0.0}}
+ ],
+ "frame": {
+  "strength": 0.0,
+  "breath": 0.5,
+  "tint": [0.34, 0.24, 0.4]
+ },
+ "occluders": {
+  "witch": {"radius": 0.26, "height": 1.2},
+  "raccoon": {"radius": 0.2, "height": 0.5}
+ },
+ "actors": {
+  "follow": 1.0
+ }
+}

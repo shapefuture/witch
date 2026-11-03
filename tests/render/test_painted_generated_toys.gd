@@ -108,7 +108,7 @@ func test_a_second_poke_answers_differently() -> void:
 			var first := prop.last_reaction
 			prop.rest()
 			room.press(centre)
-			ok(prop.last_reaction != first or str(names[0]) == str(names[1]), "%s: the second poke is the second answer" % prop.prop_id)
+			eq(prop.last_reaction, str(names[1]), "%s: the second poke plays the second answer" % prop.prop_id)
 			prop.rest()
 		room.queue_free()
 

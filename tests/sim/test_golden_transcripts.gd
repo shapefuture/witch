@@ -14,7 +14,7 @@ const GOLDEN_DIR := "res://tests/golden"
 const TARGETS := ["tomas", "machine", "bell", "path_out"]
 
 func _transcript(script: Dictionary) -> Dictionary:
-	var r := GameFixtures.runtime()
+	var r := GameFixtures.runtime(SimulationRunner.wants_areas(script))
 	r.next_story()
 	var steps: Array = []
 	var uses_minds := false

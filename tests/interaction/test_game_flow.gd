@@ -3,6 +3,9 @@ extends TestCase
 # End-to-end through the REAL scene: synthetic mouse / touch input -> intent -> walk -> options
 # -> Mirror commit -> presentation -> state. Headless, so physics and picking run but nothing
 # is rendered.
+#
+# The hall class is not named in this file: a typed GameRoot beside a named ArchiveHall keeps the script graph alive at
+# exit under Godot 4.6.3 (see docs/progress/fw.md). The room is reached through the room's own methods.
 
 func _tree() -> SceneTree:
 	return Engine.get_main_loop() as SceneTree
@@ -10,9 +13,11 @@ func _tree() -> SceneTree:
 func _boot() -> GameRoot:
 	GameFixtures.ensure_localization()
 	var game := GameRoot.new()
+	game.demo = true   # the archive hall demo: the root catalog and the hall, no main menu (the places are tested apart)
 	game.runtime = track(MirrorRuntime.new())
 	game.auto_advance = 0.0
 	game.magic_time_scale = 0.01
+	game.run_clock = false   # the live hall keeps Mirror time only in play; a test's chain must not depend on wall time
 	_tree().root.add_child(game)
 	track(game)
 	for i in 3:
@@ -74,7 +79,7 @@ func test_boot_builds_the_scene_and_plays_the_arrival_beat_from_mirror() -> void
 	ok(await _until(func() -> bool: return game.input.enabled and _settled(game)), "the arrival beat finished and input is live")
 	var events := game.runtime.engine.event_store.get_all()
 	ok(events.any(func(e): return e.event_type == "ContentConsumed" and e.payload["storylet_id"] == "story.arrival"), "the arrival was consumed from the log, not hard-coded")
-	eq(game.room.tomas.pose, "braced", "Tomas is posed from Mirror state")
+	eq(game.room.npc_node("tomas").get("pose"), "braced", "Tomas is posed from Mirror state")
 	ok(game.camera.current, "the authored camera is the active camera")
 
 func test_clicking_tomas_walks_there_and_opens_russian_options() -> void:
@@ -111,7 +116,7 @@ func test_a_tap_that_misses_but_lands_near_an_object_still_selects_it() -> void:
 func test_clicking_empty_ground_walks_there_and_closes_the_surface() -> void:
 	var game := await _boot()
 	await _until(func() -> bool: return game.input.enabled)
-	await _open_surface(game, "tomas")
+	ok(await _open_surface(game, "tomas"), "the surface opened")
 	# any floor spot the option plaques are not hanging over (a tap on a plaque chooses it instead)
 	var ground := Vector3.ZERO
 	var size := game.get_viewport().get_visible_rect().size
@@ -125,9 +130,10 @@ func test_clicking_empty_ground_walks_there_and_closes_the_surface() -> void:
 			var candidate := Vector3(xi * 0.5, 0, zi * 0.5)
 			var at := game.camera.unproject_position(candidate)
 			var clear := busy.all(func(b: Vector3) -> bool: return b.distance_to(candidate) > 1.8)
-			if ground == Vector3.ZERO and clear and ArchiveHall.stage_allows(candidate.x, candidate.z) and not game.camera.is_position_behind(candidate) and Rect2(Vector2.ZERO, size).grow(-10).has_point(at) and game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
+			if ground == Vector3.ZERO and clear and game.room.is_walkable(candidate) and not game.camera.is_position_behind(candidate) and Rect2(Vector2.ZERO, size).grow(-10).has_point(at) and game.surface.plaque_rects().all(func(r: Rect2) -> bool: return not r.grow(8.0).has_point(at)):
 				ground = candidate
 	ok(ground != Vector3.ZERO, "found floor the plaques do not cover")
+	ok(game.surface.is_open(), "the surface is open before the click")
 	_click(game, game.camera.unproject_position(ground))
 	ok(not game.surface.is_open(), "surface closed")
 	ok(await _until(func() -> bool: return not game.witch.is_walking()), "she arrived")
@@ -150,10 +156,32 @@ func test_input_is_ignored_while_an_action_is_presenting() -> void:
 	await _open_surface(game, "tomas")
 	_choose(game, "show_tomas_wand")
 	ok(await _until(func() -> bool: return game.subtitles.is_active()), "dialogue is on screen, waiting for the player")
+	ok(await _until(func() -> bool: return not game.witch.is_walking()), "she is standing still before the click")
+	ok(not game.input.enabled, "input is switched off while presenting")
+	ok(game.runtime.is_busy(), "the action is still presenting")
 	var before := game.runtime.engine.event_store.size()
-	_click(game, _screen_point(game, "machine"))
-	await _tree().physics_frame
-	ok(not game.surface.is_open(), "no new surface while presenting")
+	var at := _screen_point(game, "machine")
+	var down := InputEventMouseButton.new()
+	down.button_index = MOUSE_BUTTON_LEFT
+	down.pressed = true
+	down.position = at
+	game.input.handle_event(down)
+	var up := InputEventMouseButton.new()
+	up.button_index = MOUSE_BUTTON_LEFT
+	up.pressed = false
+	up.position = at
+	ok(game.input.handle_event(up) == null, "a click while presenting yields no intent")
+	# The flow's own busy guard, reached through the same signal the input emits.
+	game.input.intent_emitted.emit(PlayerIntent.inspect("machine"))
+	game.input.intent_emitted.emit(PlayerIntent.move_to(game.room.get_interactable("machine").approach_point))
+	eq(game.flow.focused_target, "", "nothing was focused")
+	for i in 30:
+		await _tree().physics_frame
+		ok(not game.witch.is_walking(), "she does not set off (frame %d)" % i)
+		if game.witch.is_walking():
+			break
+	ok(not await _until(func() -> bool: return game.surface.is_open(), 300), "no new surface while presenting")
+	eq(game.flow.focused_target, "", "still nothing focused")
 	eq(game.runtime.engine.event_store.size(), before, "nothing else committed")
 	game.subtitles.auto_advance_delay = 0.0
 	game.subtitles.advance()
@@ -185,12 +213,16 @@ func test_taking_the_path_out_freezes_the_camera_and_removes_the_witch() -> void
 	ok(await _until(func() -> bool: return not game.witch.visible, 2400), "the witch walked out of the frame")
 	eq(game.camera.current_pose()["look_at"], frozen_pose["look_at"], "and the camera never followed her")
 	eq(game.runtime.engine.get_world("clearing")["departed"], true, "Mirror recorded the departure")
+	# The departure's presentation ends the turn; a test that stops earlier leaves it suspended at exit.
+	ok(await _until(func() -> bool: return _settled(game) and game.input.enabled, 3000), "the departure finished presenting")
 
 func test_a_loaded_game_in_which_the_witch_has_left_has_no_witch() -> void:
 	var played := GameFixtures.runtime()
 	GameFixtures.do(played, "go_path_out", "path_out")
 	var text := SaveCodec.encode(played.engine)
 	var game := GameRoot.new()
+	game.demo = true
+	game.run_clock = false
 	game.runtime = track(MirrorRuntime.new())
 	game.runtime.setup()
 	ok(SaveGame.load_text(game.runtime.engine, text)["ok"], "save loads")

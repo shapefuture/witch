@@ -1,0 +1,62 @@
+[
+	{
+		"id": "act1_morning_1",
+		"priority": 1,
+		"once_key": "act1_morning_1",
+		"preconditions": {"story.act": "act1", "witch.place": "shop", "act1_day.n": 1},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act1.morning_1"},
+			{"kind": "line", "speaker": "miron", "key": "line.act1.morning_1_miron"}
+		]
+	},
+	{
+		"id": "act1_morning_2",
+		"priority": 1,
+		"once_key": "act1_morning_2",
+		"preconditions": {"story.act": "act1", "witch.place": "shop", "act1_day.n": 2},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act1.morning_2"}
+		]
+	},
+	{
+		"id": "act1_morning_3",
+		"priority": 1,
+		"once_key": "act1_morning_3",
+		"preconditions": {"story.act": "act1", "witch.place": "shop", "act1_day.n": 3},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act1.morning_3"}
+		]
+	},
+	{
+		"id": "act1_flash_coat",
+		"priority": 2,
+		"once_key": "act1_flash_coat",
+		"preconditions": {"story.act": "act1", "witch.place": "shop", "act1_day.n": 4},
+		"presentation": [
+			{"kind": "flash", "image": "fog_edge", "sensation": "note.act1.flash_coat"}
+		]
+	},
+	{
+		"id": "act1_morning_4",
+		"priority": 1,
+		"once_key": "act1_morning_4",
+		"preconditions": {"story.act": "act1", "witch.place": "shop", "act1_day.n": 4},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act1.morning_4"}
+		]
+	},
+	{
+		"id": "act1_morning_5",
+		"priority": 1,
+		"once_key": "act1_morning_5",
+		"preconditions": {"story.act": "act1", "witch.place": "shop", "act1_day.n": 5},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act1.morning_5"}
+		]
+	}
+]

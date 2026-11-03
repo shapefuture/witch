@@ -1,33 +1,86 @@
 class_name SaveGame
 extends RefCounted
 
+# Slot files: slot_N.json is the current save, slot_N.json.bak the one before it. A write goes to
+# slot_N.json.tmp first, is read back and compared, and only then replaces the slot. The .bak is a
+# copy made before the replace, so a failed write never leaves the slot without a complete save.
+
 const DIR := "user://saves"
+# The slot the game saves to and loads from. game_root.gd, pause_menu_ui.gd and main_menu.gd read it from here.
+const DEFAULT_SLOT := 1
 
 static func path_for(slot: int) -> String:
 	return "%s/slot_%d.json" % [DIR, slot]
+
+static func backup_path_for(slot: int) -> String:
+	return path_for(slot) + ".bak"
 
 static func exists(slot: int) -> bool:
 	return FileAccess.file_exists(path_for(slot))
 
 static func save(engine: MirrorEngine, slot: int, meta: Dictionary = {}) -> Error:
 	DirAccess.make_dir_recursive_absolute(DIR)
-	# Write to a temp file and rename, so a crash mid-write can never leave a half-written save
-	# in the slot.
 	var final_path := path_for(slot)
 	var temp_path := final_path + ".tmp"
+	var text := SaveCodec.encode(engine, meta)
+	# A save over the size limit could never be loaded, so refuse it here instead of writing it.
+	if MirrorPersistence.is_oversized(text):
+		return ERR_INVALID_DATA
 	var file := FileAccess.open(temp_path, FileAccess.WRITE)
 	if file == null:
 		return FileAccess.get_open_error()
-	file.store_string(SaveCodec.encode(engine, meta))
+	file.store_string(text)
 	file.close()
-	return DirAccess.rename_absolute(temp_path, final_path)
+	if FileAccess.get_file_as_string(temp_path) != text:
+		DirAccess.remove_absolute(temp_path)
+		return ERR_FILE_CORRUPT
+	if FileAccess.file_exists(final_path):
+		var backup_error := DirAccess.copy_absolute(final_path, backup_path_for(slot))
+		if backup_error != OK:
+			DirAccess.remove_absolute(temp_path)
+			return backup_error
+	var rename_error := DirAccess.rename_absolute(temp_path, final_path)
+	if rename_error != OK:
+		DirAccess.remove_absolute(temp_path)
+	return rename_error
 
 # Loads into an engine that already has the catalog registered. Atomic: a rejected save leaves
 # the engine exactly as it was (MirrorPersistence.load_json restores its own pre-load snapshot).
-static func load_into(engine: MirrorEngine, slot: int) -> Dictionary:
+static func load_into(engine: MirrorEngine, slot: int, strict: bool = false) -> Dictionary:
 	if not exists(slot):
 		return {"ok": false, "error": "no_save"}
-	return load_text(engine, FileAccess.get_file_as_string(path_for(slot)))
+	var file := FileAccess.open(path_for(slot), FileAccess.READ)
+	if file == null:
+		return {"ok": false, "error": "unreadable"}
+	# Checked before the file is read into memory, not after.
+	if file.get_length() > MirrorPersistence.max_save_bytes:
+		file.close()
+		return {"ok": false, "error": "oversized"}
+	var text := file.get_as_text()
+	file.close()
+	var result := load_text(engine, text)
+	if result.get("ok", false) or strict:
+		return result
+	# Damaged, and not strict: recover the longest run of the event log that still verifies, and say so. The .bak is
+	# never loaded whole (no silent rollback); its log is tried only when the slot gives nothing at all.
+	var recovered := MirrorPersistence.recover_events(engine, text)
+	if recovered.get("ok", false):
+		recovered["source"] = "slot"
+	elif FileAccess.file_exists(backup_path_for(slot)):
+		recovered = _recover_backup(engine, slot)
+	if not recovered.get("ok", false):
+		return result
+	return {"ok": true, "recovered": recovered, "meta": {}, "legacy": false}
+
+static func _recover_backup(engine: MirrorEngine, slot: int) -> Dictionary:
+	var file := FileAccess.open(backup_path_for(slot), FileAccess.READ)
+	if file == null or file.get_length() > MirrorPersistence.max_save_bytes:
+		return {"ok": false, "error": "unreadable"}
+	var text := file.get_as_text()
+	file.close()
+	var recovered := MirrorPersistence.recover_events(engine, text)
+	recovered["source"] = "backup"
+	return recovered
 
 static func load_text(engine: MirrorEngine, text: String) -> Dictionary:
 	var decoded := SaveCodec.decode(text)
@@ -36,4 +89,5 @@ static func load_text(engine: MirrorEngine, text: String) -> Dictionary:
 	var result := engine.load_json(decoded["mirror_json"])
 	if result.get("ok", false):
 		result["meta"] = decoded["meta"]
+		result["legacy"] = bool(result.get("legacy", false)) or bool(decoded.get("legacy", false))
 	return result

@@ -1,0 +1,9 @@
+{
+	"_about": "Beyond (GAME_SPEC section 2): the hotel beyond, a checkerboard lobby with a bird at the desk. Stand-in stage until the plate exists.",
+	"id": "hotel",
+	"room": {"kind": "painted", "dir": "res://assets/painted/hotel"},
+	"variants": {},
+	"spots": {"default": [640, 600], "concierge": [480, 420]},
+	"arrive": {"basement": [640, 600], "clocktower": [800, 600], "threshold": [640, 600], "default": [640, 600]},
+	"stage": {"palette": ["#1d1a22", "#f0e8d8", "#b8312f", "#d9b860", "#0c0a10"]}
+}

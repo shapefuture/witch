@@ -1,0 +1,4 @@
+{
+	"id": "stage_room",
+	"room": {"kind": "stage", "palette": ["#2b2233", "#5b4a6e"]}
+}

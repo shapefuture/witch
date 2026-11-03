@@ -1,0 +1,6 @@
+[
+	{"id": "e.raccoon_flinch", "npc": "raccoon", "when": {"witch.place": "shop"}, "ghost": "flinch", "source": "npc", "note": "note.fixture.flinch"},
+	{"id": "e.raccoon_reach_projection", "npc": "raccoon", "when": {"witch.place": "shop"}, "ghost": "reach", "source": "projection", "note": "note.fixture.reach"},
+	{"id": "e.miron_look", "npc": "miron", "when": {"witch.place": "shop"}, "ghost": "look_at:witch", "source": "npc", "note": "note.fixture.look"},
+	{"id": "e.raccoon_street", "npc": "raccoon", "when": {"witch.place": "street"}, "ghost": "step_back", "source": "npc", "note": "note.fixture.street"}
+]

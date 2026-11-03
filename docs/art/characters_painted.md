@@ -15,7 +15,7 @@ artwork and are not in the repository.
 
 **What the sheet says, and what the model does with it.** A purple hooded cloak with gold stars and moons whose
 peak is folded back into a tip below the top of the hood; a ring of pink flowers on the hood's edge; a young face
-with big blue eyes; very long golden-orange hair, a bulb behind her that ends in tentacle-like tails with spiral
+with big blue eyes; very long ash-blond hair, a bulb behind her that ends in tentacle-like tails with spiral
 tips, and big spiral curls sticking out to both sides; a brown vest with two big pockets and a crescent pendant;
 a pink star wand in one hand, a small grey bird on the other; a flared skirt of twelve flat panels covered in gold
 stars and crescents. The game's camera sees her from behind, above, at about 100 px, so the model was judged back
@@ -104,7 +104,7 @@ face its own anchor so the kit's outward test cannot flip a face whose winding i
 
 **Checked.** `tests/render/test_character_models.gd`: the clips, the height and the floor, the budgets, the bone names
 (plus `hat_tip`), and `test_the_witch_has_the_new_references_proportions_and_palette` (0.9-1.15 m across the curls, a
-skirt at least 0.7 m wide, at most 4,500 triangles, one atlas of at most 256 px with golden-orange, purple and pink
+skirt at least 0.7 m wide, at most 4,500 triangles, one atlas of at most 256 px with ash-blond, purple and pink
 texels). `painted_walk_check.sh` passes (0 failures; occlusion unchanged). Frames: the turnaround strip
 (reference | studio | room), the room at game resolution with PSX on, and the three sizes (100 %, 50 %, 25 % of the
 row height; the game sees her at about 100 px). No image generation was used: the sheet already is a turnaround.

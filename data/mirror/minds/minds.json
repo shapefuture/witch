@@ -1,6 +1,10 @@
 {
 	"_about": "The Minds layer's world: who can perceive what, where. Ids and text keys only. The hall's Mirror room id is still 'clearing'. Tuning lives here (limits, perception); everything a rule decides is written into the event log when it happens, so retuning never invalidates a save.",
 	"limits": {"max_pending": 32, "max_fired_per_pump": 16, "max_chain_depth": 3, "max_active_conventions": 12, "max_origin_events": 5},
+	"clocks": {
+		"_about": "Convention clocks (TONE_MAPPING section 4). A cadence names how fast a custom goes quiet: sprint customs in Mirror ticks of days, bell customs of months. dormancy is ticks nobody feeds it before it fades; revivals is how many times it may come back, unexplained. GUESSES until DESIGN-FREEZE (X13 to X20).",
+		"cadences": {"sprint": {"dormancy": 600, "revivals": 1}, "bell": {"dormancy": 6000, "revivals": 1}}
+	},
 	"perception": {"overheard_clarity": 35, "min_clarity": 10},
 	"reaction_ops": ["PROP_REACT", "LOOK_AT", "FOLLOW", "APPROACH", "COMMENT"],
 	"default_place": "clearing",

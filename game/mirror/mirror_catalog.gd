@@ -12,16 +12,30 @@ const DEFAULT_DIR := "res://data/mirror"
 
 # Builds a fresh engine with the full catalog registered (but NOT locked: locking happens on
 # the first committed transaction). Returns {"engine", "report"}.
-static func build_engine(dir: String = DEFAULT_DIR) -> Dictionary:
+#
+# `areas` is the content scope (docs/engine/CONTENT_PACKAGES.md): false reads the root files only (the archive hall
+# as it was built, which the hall's tests and goldens pin); true adds every area package (the whole game).
+static func build_engine(dir: String = DEFAULT_DIR, areas: bool = false) -> Dictionary:
 	var engine := MirrorEngine.new()
-	var report := load_into(engine, dir)
+	var report := load_into(engine, dir, areas)
 	return {"engine": engine, "report": report}
 
-static func load_into(engine: MirrorEngine, dir: String = DEFAULT_DIR) -> Dictionary:
+static func load_into(engine: MirrorEngine, dir: String = DEFAULT_DIR, areas: bool = false) -> Dictionary:
 	var errors: Array = []
 	var warnings: Array = []
+	var areas_dir := dir.path_join(ContentFiles.AREAS) if areas else ""
 
 	var world: Dictionary = _read_object(dir.path_join("world.json"), errors)
+	for path in ContentFiles.area_paths(areas_dir, "world"):
+		var fragment := _read_object(path, errors)
+		for section in fragment.keys():
+			if section != "world" and section != "npc_state":
+				errors.append("%s: unknown section '%s' (world, npc_state)" % [path, section])
+				continue
+			if not world.has(section):
+				world[section] = {}
+			var label := "world entity" if section == "world" else "npc state"
+			ContentFiles.merge_unique(world[section], fragment[section], label, path, errors)
 	for key in world.get("world", {}).keys():
 		if not engine.set_world(str(key), world["world"][key]):
 			errors.append("world: could not set '%s' (catalog locked or events exist)" % key)
@@ -29,8 +43,13 @@ static func load_into(engine: MirrorEngine, dir: String = DEFAULT_DIR) -> Dictio
 		if not engine.set_npc_state(str(npc_id), world["npc_state"][npc_id]):
 			errors.append("world: could not set npc state '%s'" % npc_id)
 
+	var action_files: Array[String] = []
 	for file_name in _list_json(dir.path_join("actions")):
-		for definition in _read_array(dir.path_join("actions").path_join(file_name), errors):
+		action_files.append(dir.path_join("actions").path_join(file_name))
+	action_files.append_array(ContentFiles.area_paths(areas_dir, "actions"))
+	for path in action_files:
+		var file_name := path.trim_prefix(dir + "/")
+		for definition in _read_array(path, errors):
 			if not definition is Dictionary:
 				errors.append("%s: entry is not an object" % file_name)
 				continue
@@ -38,19 +57,22 @@ static func load_into(engine: MirrorEngine, dir: String = DEFAULT_DIR) -> Dictio
 			if not engine.register_action(definition):
 				errors.append("%s: could not register action '%s'" % [file_name, definition.get("id", "?")])
 
-	for definition in _read_array(dir.path_join("operators.json"), errors):
-		if not engine.register_operator(definition):
-			errors.append("operators.json: could not register '%s'" % definition.get("id", "?"))
-	for definition in _read_array(dir.path_join("storylets.json"), errors):
-		_normalize_requirements(definition, errors, str(definition.get("id", "?")))
-		if not engine.register_storylet(definition):
-			errors.append("storylets.json: could not register '%s'" % definition.get("id", "?"))
-	for definition in _read_array(dir.path_join("hypotheses.json"), errors):
-		_normalize_requirements(definition, errors, str(definition.get("id", "?")))
-		for requirement in definition.get("requires_evidence", []):
-			_normalize_claim_requirement(requirement, errors, str(definition.get("id", "?")))
-		if not engine.register_causal_hypothesis(definition):
-			errors.append("hypotheses.json: could not register '%s'" % definition.get("id", "?"))
+	for path in _root_and_areas(dir, "operators", areas_dir):
+		for definition in _read_array(path, errors):
+			if not engine.register_operator(definition):
+				errors.append("%s: could not register '%s'" % [path.trim_prefix(dir + "/"), definition.get("id", "?")])
+	for path in _root_and_areas(dir, "storylets", areas_dir):
+		for definition in _read_array(path, errors):
+			_normalize_requirements(definition, errors, str(definition.get("id", "?")))
+			if not engine.register_storylet(definition):
+				errors.append("%s: could not register '%s'" % [path.trim_prefix(dir + "/"), definition.get("id", "?")])
+	for path in _root_and_areas(dir, "hypotheses", areas_dir):
+		for definition in _read_array(path, errors):
+			_normalize_requirements(definition, errors, str(definition.get("id", "?")))
+			for requirement in definition.get("requires_evidence", []):
+				_normalize_claim_requirement(requirement, errors, str(definition.get("id", "?")))
+			if not engine.register_causal_hypothesis(definition):
+				errors.append("%s: could not register '%s'" % [path.trim_prefix(dir + "/"), definition.get("id", "?")])
 
 	var validation := engine.validate_catalog()
 	errors.append_array(validation.get("errors", []))
@@ -72,7 +94,11 @@ static func _normalize_action(definition: Dictionary, errors: Array, warnings: A
 		definition["action_type"] = _enum(MirrorDomain.ActionType, definition["action_type"], errors, id)
 	_normalize_requirements(definition, errors, id)
 	var repeatable := str(definition.get("once_key", "")).is_empty()
-	for response in definition.get("response_contracts", []):
+	var contracts: Variant = definition.get("response_contracts", [])
+	if typeof(contracts) != TYPE_ARRAY:
+		errors.append("%s: response_contracts must be a list" % id)
+		contracts = []
+	for response in contracts:
 		var where := "%s/%s" % [id, response.get("id", "?")]
 		_normalize_requirements(response, errors, where)
 		_normalize_effects(response, errors, where)
@@ -116,6 +142,12 @@ static func _enum(table: Dictionary, value: Variant, errors: Array, where: Strin
 		return int(table[key])
 	errors.append("%s: unknown enum name '%s'" % [where, key])
 	return 0
+
+# The root file (required, as before) followed by each area's fragment of it ("" for `areas_dir`: none).
+static func _root_and_areas(dir: String, name: String, areas_dir: String) -> Array[String]:
+	var out: Array[String] = [dir.path_join(name + ".json")]
+	out.append_array(ContentFiles.area_paths(areas_dir, name))
+	return out
 
 static func _list_json(dir: String) -> Array[String]:
 	var out: Array[String] = []

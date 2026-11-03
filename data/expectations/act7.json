@@ -1,0 +1,4 @@
+[
+	{"id": "act7_tomas_reaches_for_the_cams", "npc": "tomas", "when": {"story.act": "act7", "magic.state": "returned"}, "ghost": "reach", "source": "npc", "note": "note.act7.ghost_tomas_reach"},
+	{"id": "act7_witch_expects_vera_takes_red", "npc": "vera", "when": {"story.act": "act7", "witch.place": "street"}, "ghost": "look_at:act7_lanterns", "source": "projection", "note": "note.act7.ghost_vera_projection"}
+]

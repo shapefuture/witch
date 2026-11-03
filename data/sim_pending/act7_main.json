@@ -1,0 +1,23 @@
+{
+	"name": "Act VII: the jars give magic back (the wand kept), the frame and the lanterns, violet still works, the morning",
+	"scope": "game",
+	"after": "res://data/sim/act6_main.json",
+	"steps": [
+		{"action": "act7_return_jars", "target": "act7_jars"},
+		{"action": "core_go_door_shop_street", "target": "door_shop_street"},
+		{"action": "act7_lanterns", "target": "act7_lanterns"},
+		{"action": "core_go_door_street_archive", "target": "door_street_archive"},
+		{"action": "act7_hold_frame", "target": "machine"},
+		{"action": "act7_cast_violet", "target": "machine"},
+		{"action": "core_go_door_archive_street", "target": "door_archive_street"},
+		{"action": "core_go_door_street_shop", "target": "door_street_shop"},
+		{"action": "core_go_ladder_shop_attic", "target": "ladder_shop_attic"},
+		{"action": "act7_attic_bench", "target": "act7_bench"},
+		{"action": "core_go_ladder_attic_shop", "target": "ladder_attic_shop"},
+		{"action": "act7_morning", "target": "act7_lamp"}
+	],
+	"expect": {
+		"state": {"story.act": "act8", "magic.state": "returned", "verdigris.known": true, "npc.miron.place": "fog"},
+		"knows": ["act7_magic_returned", "act7_enabled_tomas", "act7_violet_works", "act7_town_chose", "act7_lamp_went_out"]
+	}
+}

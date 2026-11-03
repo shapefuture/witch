@@ -43,6 +43,7 @@ PALETTE = {
 	'white': (1., 1., 1.),
 }
 FACET_TONE = .05          # +- value jitter per facet: the crystalline mosaic of the hall
+DETAIL = 1.0             # scales every ring and side count (tomas_crude.py builds the low-poly trial); 1.0 is the model
 
 # ------------------------------------------------------------------------------------ skeleton
 # name: (parent, rest head position). Rest rotations are identity, so every animation rotation is
@@ -85,6 +86,10 @@ def unit(v):
 
 def signed_pow(x, p):
 	return math.copysign(abs(x) ** p, x)
+
+
+def sides(n):
+	return max(4, int(round(n * DETAIL)))
 
 
 def ring(y, rx, rz, cz=0., cx=0., n=12, e=2., phase=.5):
@@ -339,10 +344,14 @@ def relief(x, y):
 	return h
 
 
+# the plate's grid: heights of its rows and fractions of the head's half width for its columns (tomas_crude.py thins it)
+FACE_ROWS = [1.122, 1.134, 1.148, 1.162, 1.176, 1.190, 1.204, 1.218, 1.230, 1.242, 1.256, 1.272,
+	1.288, 1.304, 1.322, 1.342, 1.362, 1.385, 1.410]
+FACE_COLS = [-.92, -.74, -.56, -.40, -.26, -.14, -.05, .05, .14, .26, .40, .56, .74, .92]
+
+
 def build_face_plate(b, cx):
-	ys = [1.122, 1.134, 1.148, 1.162, 1.176, 1.190, 1.204, 1.218, 1.230, 1.242, 1.256, 1.272,
-		1.288, 1.304, 1.322, 1.342, 1.362, 1.385, 1.410]
-	fs = [-.92, -.74, -.56, -.40, -.26, -.14, -.05, .05, .14, .26, .40, .56, .74, .92]
+	ys, fs = FACE_ROWS, FACE_COLS
 	verts, uvs, faces = [], [], []
 	ncol = len(fs)
 	for j, y in enumerate(ys):
@@ -361,11 +370,11 @@ def build_face_plate(b, cx):
 
 
 def build_head(b, cx):
-	rings = [ring(y, rx, rz, cz, n=16, e=HEAD_E, phase=0.) for y, rx, rz, cz in
+	rings = [ring(y, rx, rz, cz, n=sides(16), e=HEAD_E, phase=0.) for y, rx, rz, cz in
 		((h[0],) + head_dims(h[0]) for h in HEAD)]
 	b.add(loft(rings, (.006, .004)), 'skin', 'head')
-	neck = loft([ring(1.05, .080, .066, -.014, n=10), ring(1.10, .078, .064, -.008, n=10),
-		ring(1.17, .074, .064, .006, n=10)], (0, 0))
+	neck = loft([ring(1.05, .080, .066, -.014, n=sides(10)), ring(1.10, .078, .064, -.008, n=sides(10)),
+		ring(1.17, .074, .064, .006, n=sides(10))], (0, 0))
 	b.add(neck, 'neck', blend(neck['V'][:, 1], [(1.07, 'chest'), (1.10, 'neck'), (1.14, 'head')]))
 	for s in (1, -1):
 		ear = blob((s * .163, 1.286, .010), (.029, .052, .036), unit((s * .25, 1, -.12)), 6, 3)
@@ -422,7 +431,7 @@ def build_hair(b):
 	"""A helmet of chunky facets whose rings start ON the hairline (so the edge is a real curve),
 	tucked to the skull at the lip, then out to the measured silhouette."""
 	rng = Rng(11)
-	m = 18
+	m = sides(18)
 	levels = [-1, 0., .14, .32, .52, .72, .88, 1.]       # -1: the lip tucked onto the skull
 	top = 1.531
 	rings = []
@@ -477,7 +486,7 @@ def torso_skin(v):
 
 
 def build_torso(b):
-	rings = [ring(y, *torso_dims(y), n=14, e=TORSO_E) for y in _TY]
+	rings = [ring(y, *torso_dims(y), n=sides(14), e=TORSO_E) for y in _TY]
 	g = loft(rings, (.0, .01))
 	b.add(g, 'shirt', torso_skin(g['V']))
 
@@ -492,7 +501,7 @@ def super_point(t, rx, rz, cz, e):
 
 
 def build_vest(b):
-	m = 17
+	m = sides(17)
 	outer, inner = [], []
 	for y, xo in zip(VEST_Y, VEST_OPEN):
 		rx, rz, cz = torso_dims(y)
@@ -531,12 +540,12 @@ def build_arms(b):
 	for s, d in ((1, '_l'), (-1, '_r')):
 		sh, el, wr = bone_pos('upper_arm' + d), bone_pos('forearm' + d), bone_pos('hand' + d)
 		sleeve = tube([(s * .12, 1.045, -.012), sh + (0, .005, 0), (sh + el) / 2, el + (s * -.008, .04, 0)],
-			[.064, .074, .075, .070], 8, 1., X_AXIS, caps=(0, .01))
+			[.064, .074, .075, .070], sides(8), 1., X_AXIS, caps=(0, .01))
 		b.add(sleeve, 'shirt', arm_skin(sleeve['V'], d))
 		cuff = tube([el + (s * -.006, .045, 0), el + (s * .001, .002, 0), el + (s * .006, -.03, 0)],
-			[.080, .082, .074], 8, 1., X_AXIS, caps=(.0, .012), phase=.5)
+			[.080, .082, .074], sides(8), 1., X_AXIS, caps=(.0, .012), phase=.5)
 		b.add(cuff, lambda c, n: 'shirt_d' if n[1] < -.35 else 'shirt', arm_skin(cuff['V'], d))
-		fore = tube([el + (s * .003, -.01, 0), (el + wr) / 2, wr + (0, .01, 0)], [.055, .049, .043], 6, 1., X_AXIS, caps=(0, .005))
+		fore = tube([el + (s * .003, -.01, 0), (el + wr) / 2, wr + (0, .01, 0)], [.055, .049, .043], sides(6), 1., X_AXIS, caps=(0, .005))
 		b.add(fore, 'skin', arm_skin(fore['V'], d))
 		build_hand(b, s, d, wr)
 
@@ -586,17 +595,17 @@ def leg_skin(v, d):
 
 
 def build_legs(b):
-	rings = [ring(y, rx, (zf - zb) / 2, (zf + zb) / 2, n=14, e=2.3) for y, rx, zf, zb in PELVIS]
+	rings = [ring(y, rx, (zf - zb) / 2, (zf + zb) / 2, n=sides(14), e=2.3) for y, rx, zf, zb in PELVIS]
 	b.add(loft(rings, (0, .01)), 'trousers', 'hips')
 	for s, d in ((1, '_l'), (-1, '_r')):
 		legs = [(.605, .088, .105, .000), (.505, .088, .108, .004), (.425, .082, .111, .008),
 			(.360, .080, .113, .013), (.300, .077, .115, .008), (.250, .079, .117, .002)]
-		g = loft([ring(y, r, r * 1.02, z, cx=s * x, n=10, e=2.2) for y, r, x, z in legs], (0, 0))
+		g = loft([ring(y, r, r * 1.02, z, cx=s * x, n=sides(10), e=2.2) for y, r, x, z in legs], (0, 0))
 
 		def trouser_colour(c, n):
 			return 'trousers_d' if (.33 < c[1] < .40 and hash01(c * 3.1) < .5) or n[1] < -.5 else 'trousers'
 		b.add(g, trouser_colour, leg_skin(g['V'], d))
-		cuff = loft([ring(y, r, r, z, cx=s * .118, n=10, e=2.2) for y, r, z in    # the boots' turned-down tops
+		cuff = loft([ring(y, r, r, z, cx=s * .118, n=sides(10), e=2.2) for y, r, z in    # the boots' turned-down tops
 			((.262, .080, .002), (.252, .093, .0), (.176, .095, -.004), (.166, .081, -.006))], (0, 0))
 		b.add(cuff, lambda c, n: 'boot' if n[1] > .4 else 'boot_d', leg_skin(cuff['V'], d))
 		build_boot(b, s, d)
@@ -604,25 +613,26 @@ def build_legs(b):
 
 def build_boot(b, s, d):
 	bx, bone = s * .118, 'foot' + d
-	shaft = loft([ring(y, .070, .072, -.012, cx=bx, n=10, e=2.4) for y in (.185, .14, .105)], (0, 0))
+	m = sides(10)
+	shaft = loft([ring(y, .070, .072, -.012, cx=bx, n=sides(10), e=2.4) for y in (.185, .14, .105)], (0, 0))
 	b.add(shaft, 'boot', leg_skin(shaft['V'], d))
 	foot = [  # z,     rx,   ry,   y centre
 		(-.090, .050, .042, .062), (-.060, .062, .060, .070), (.000, .066, .060, .068),
 		(.060, .064, .050, .058), (.120, .060, .041, .050), (.165, .052, .033, .043), (.190, .036, .022, .040)]
-	rings = [A([(bx + rx * math.cos(2 * math.pi * (k + .5) / 10), yc + ry * math.sin(2 * math.pi * (k + .5) / 10), z)
-		for k in range(10)]) for z, rx, ry, yc in foot]
+	rings = [A([(bx + rx * math.cos(2 * math.pi * (k + .5) / m), yc + ry * math.sin(2 * math.pi * (k + .5) / m), z)
+		for k in range(m)]) for z, rx, ry, yc in foot]
 	g = loft(rings, (.012, .014))
 	b.add(rot_y(g, s * 6, (bx, 0, -.01)), lambda c, n: 'boot_d' if n[1] < -.3 else 'boot', bone)
 	sole = [(-.096, .052), (-.06, .064), (.0, .068), (.06, .066), (.12, .062), (.17, .052), (.198, .034)]
-	rings = [A([(bx + rx * math.cos(2 * math.pi * (k + .5) / 10), .011 + .011 * math.sin(2 * math.pi * (k + .5) / 10), z)
-		for k in range(10)]) for z, rx in sole]
+	rings = [A([(bx + rx * math.cos(2 * math.pi * (k + .5) / m), .011 + .011 * math.sin(2 * math.pi * (k + .5) / m), z)
+		for k in range(m)]) for z, rx in sole]
 	g = loft(rings, (.004, .006))
 	b.add(rot_y(g, s * 6, (bx, 0, -.01)), 'sole', bone)
 
 
 # ------------------------------------------------------------------------- belt, pouches, tools
 def build_belt(b):
-	m = 18
+	m = sides(18)
 	rows = []
 	for y, off in ((.640, .004), (.647, .016), (.706, .016), (.714, .004)):
 		rx, rz, cz = .158, .100, -.003
@@ -1061,7 +1071,7 @@ def export_glb(surfaces, face_png, path):
 		ibm[i] = m.flatten('F')
 	skin = {'name': 'TomasSkin', 'joints': list(range(nb)), 'skeleton': 0, 'inverseBindMatrices': accessor(ibm, 5126, 'MAT4')}
 
-	png = open(face_png, 'rb').read()
+	png = face_png if isinstance(face_png, bytes) else open(face_png, 'rb').read()
 	while len(buf) % 4:
 		buf.append(0)
 	views.append({'buffer': 0, 'byteOffset': len(buf), 'byteLength': len(png)})

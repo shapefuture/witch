@@ -2,7 +2,7 @@ class_name ArchiveProps
 extends RefCounted
 
 # The archive hall's LIVE props: the things that move, so they cannot be in the pre-rendered plates.
-#   machine  its named parts turn (MachineView: BigGear, SmallGear and any Gear*)
+#   machine  its named parts move (MachineView: GearBig/GearSmall turn, any other Gear* too, Indicator lights)
 #   bell     the brass bell (swings when it comes from its own prop file)
 # Sources, in order: assets/archive/props/machine.glb and bell.glb (authored in world space, like the
 # set), else the Machine and Bell of the old vertex-colour set, assets/archive/archive_set.glb.

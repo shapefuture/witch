@@ -1,0 +1,9 @@
+{
+	"_about": "Our garden (GAME_SPEC section 2): the painted garden with Miron's crooked bench and her star-lilies.",
+	"id": "garden",
+	"room": {"kind": "painted", "dir": "res://assets/painted/garden"},
+	"variants": {},
+	"spots": {"default": [563, 639], "miron": [678, 662], "raccoon": [678, 662]},
+	"arrive": {"shop": [814, 548], "default": [563, 639]},
+	"stage": {"palette": ["#8a8a3a", "#6e8f7a", "#c8a0c8", "#e0a070", "#2a2a18"]}
+}

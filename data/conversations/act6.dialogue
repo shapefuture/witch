@@ -1,0 +1,81 @@
+# Act VI conversations: linear exchanges only (no response lines). Every spoken line is a key
+# (data/text/ru/act6.json). Titles start with the area id (docs/engine/CONTENT_PACKAGES.md).
+
+~ act6_elian_tap_vy
+elian: dlg.act6.elian_tap_vy.1
+witch: dlg.act6.elian_tap_vy.2
+elian: dlg.act6.elian_tap_vy.3
+=> END
+
+~ act6_elian_tap_ty
+elian: dlg.act6.elian_tap_ty.1
+=> END
+
+~ act6_shadow_hello
+shadow: dlg.act6.shadow_hello.1
+=> END
+
+~ act6_vera_cart
+vera: dlg.act6.vera_cart.1
+witch: dlg.act6.vera_cart.2
+vera: dlg.act6.vera_cart.3
+=> END
+
+~ act6_vera_cart_crash
+vera: dlg.act6.vera_cart_crash.1
+=> END
+
+~ act6_vera_customer
+vera: dlg.act6.vera_customer.1
+witch: dlg.act6.vera_customer.2
+=> END
+
+~ act6_vera_spoiled
+witch: dlg.act6.vera_spoiled.1
+vera: dlg.act6.vera_spoiled.2
+=> END
+
+~ act6_ilya_together
+ilya: dlg.act6.ilya_together.1
+witch: dlg.act6.ilya_together.2
+ilya: dlg.act6.ilya_together.3
+=> END
+
+~ act6_ilya_turned_back
+ilya: dlg.act6.ilya_turned_back.1
+=> END
+
+~ act6_raccoon_lamp
+raccoon: dlg.act6.raccoon_lamp.1
+witch: dlg.act6.raccoon_lamp.2
+=> END
+
+~ act6_half_light
+witch: dlg.act6.half_light.1
+raccoon: dlg.act6.half_light.2
+=> END
+
+~ act6_raccoon_covers
+raccoon: dlg.act6.raccoon_covers.1
+=> END
+
+~ act6_raccoon_ask
+witch: dlg.act6.raccoon_ask.1
+raccoon: dlg.act6.raccoon_ask.2
+witch: dlg.act6.raccoon_ask.3
+=> END
+
+~ act6_tomas_ask
+witch: dlg.act6.tomas_ask.1
+tomas: dlg.act6.tomas_ask.2
+=> END
+
+~ act6_tomas_finishes
+witch: dlg.act6.tomas_finishes.1
+tomas: dlg.act6.tomas_finishes.2
+=> END
+
+~ act6_tomas_taken
+witch: dlg.act6.tomas_taken.1
+tomas: dlg.act6.tomas_taken.2
+=> END

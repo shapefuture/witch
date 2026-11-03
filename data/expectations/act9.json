@@ -1,0 +1,3 @@
+[
+	{"id": "act9_witch_expects_shadow_steps_back", "npc": "shadow", "when": {"story.act": "act9", "witch.place": "shop"}, "ghost": "step_back", "source": "projection", "note": "note.act9.ghost_shadow_projection"}
+]

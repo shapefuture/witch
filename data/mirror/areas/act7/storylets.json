@@ -1,0 +1,25 @@
+[
+	{
+		"id": "act7_night_jars",
+		"priority": 10,
+		"once_key": "act7_night_jars",
+		"preconditions": {"story.act": "act7", "magic.state": "gone"},
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act7.night_1"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act7.night_2"}
+		]
+	},
+	{
+		"id": "act7_half_lamp_public",
+		"priority": 5,
+		"once_key": "act7_half_lamp_public",
+		"preconditions": {"story.act": "act7", "witch.place": "street"},
+		"requires_claims": [{"id": "act6_half_light", "holder_id": "player"}],
+		"presentation": [
+			{"kind": "camera", "mode": "wide"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act7.lamp_1"},
+			{"kind": "line", "speaker": "narrator", "key": "line.act7.lamp_2"}
+		]
+	}
+]

@@ -88,6 +88,10 @@ func test_the_painted_characters_keep_their_bone_names() -> void:
 # A character added later (hand-built or from tools/characters/template_rig.py) is gated the day it ships: every
 # assets/characters/*.glb that MODELS does not list yet must meet the rules that do not depend on who it is.
 func test_a_character_added_later_meets_the_same_rules() -> void:
+	# Asserted first: once every shipped model is listed in MODELS, the loop below has nothing to check and
+	# the test would pass without a single assertion. The listed models must exist for it to mean anything.
+	for id in MODELS:
+		ok(FileAccess.file_exists("res://assets/characters/%s.glb" % id), "%s.glb is in assets/characters" % id)
 	for file in DirAccess.get_files_at("res://assets/characters"):
 		if not file.ends_with(".glb") or MODELS.has(file.get_basename()):
 			continue
@@ -123,8 +127,8 @@ func _spawn(id: String) -> Node3D:
 		(Engine.get_main_loop() as SceneTree).root.add_child(visual)
 	return visual
 
-# The witch is the one of the user's new references (docs/art/characters_painted.md): a purple star hood, golden-orange
-# hair whose spiral curls stick out to both sides, a flared star skirt, pink flowers, the wand and the bird. The camera
+# The witch is the one of the user's new references (docs/art/characters_painted.md), with X23's changes: a violet pointed
+# hat, copper-ginger hair whose spiral curls stick out to both sides, a flared star skirt, pink flowers, the wand and the bird. The camera
 # sees her from behind at about 100 px, so the width and the palette are the checks that matter.
 func test_the_witch_has_the_new_references_proportions_and_palette() -> void:
 	var visual := _spawn("witch")
@@ -150,19 +154,20 @@ func test_the_witch_has_the_new_references_proportions_and_palette() -> void:
 		var image := texture.get_image()
 		if image.is_compressed():
 			image.decompress()
-		var orange := 0
+		var copper := 0
 		var purple := 0
 		var pink := 0
 		for y in image.get_height():
 			for x in image.get_width():
 				var c := image.get_pixel(x, y)
-				if c.r > 0.8 and c.g > 0.45 and c.g < 0.85 and c.b < 0.4:
-					orange += 1
+				if c.r >= 0.55 and c.r <= 1.0 and c.g > 0.28 and c.g < 0.62 and c.b > 0.1 and c.b < 0.34 and c.r > c.g and c.g > c.b and c.r - c.b > 0.3 and c.r - c.b < 0.75:
+					copper += 1
 				elif c.b > 0.5 and c.r > 0.3 and c.r < 0.7 and c.g < 0.4:
 					purple += 1
 				elif c.r > 0.85 and c.g > 0.3 and c.g < 0.6 and c.b > 0.5:
 					pink += 1
-		ok(orange > 100, "the atlas holds golden-orange hair (%d texels)" % orange)
+		# X23's copper band holds only the hair (about 490 texels); the old ash-blond band also took the face's shadows (~3,900 in the old atlas), so the floor moved with it
+		ok(copper > 300, "the atlas holds copper-ginger hair (X23; %d texels, the brows and skin fall outside the band)" % copper)
 		ok(purple > 1000, "the atlas holds the purple cloak and skirt (%d texels)" % purple)
 		ok(pink > 8, "the atlas holds the pink flowers (%d texels)" % pink)
 	var skeleton := visual.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D

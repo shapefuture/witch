@@ -1,8 +1,9 @@
 # Tomas (character model)
 
-Tomas is the young mechanic who fixes the brass machine. This model replaces the primitive
-`Placeholders.tomas()` once it is wired in (it is not wired in yet). The source is the concept
-sheet's bottom-right three views, which are **not** in the repo:
+Tomas is the young mechanic who fixes the brass machine. This model is his visual in the game:
+`npc.gd` loads it through `CharacterModels`, and `Placeholders.tomas()` is only the fallback when the
+GLB is missing. The source is the concept sheet's bottom-right three views, which are **not** in the
+repo:
 - brown hair and a grumpy face;
 - a white shirt with rolled sleeves and a purple vest;
 - a leather tool belt with pouches, and olive trousers;
@@ -98,17 +99,14 @@ use it when retuning the keys.
 - `_subresources` sets `settings/loop_mode=1` on each animation. Godot expands this into about 8,000
   lines of empty slice settings; that is its normal output.
 
-## Wiring it in (not done here)
+## Wiring
 
-1. Instance the GLB as the NPC's visual.
-2. Give the `tomas_body` surface `PSXMaterials.actor(Color.WHITE)`.
-3. Give `tomas_face` the same material with `use_texture = true` and `albedoTex` set to the face
-   texture.
-4. Drive the `AnimationPlayer` from the NPC's pose: `working`/`partnered` → `work`, moves → `walk`,
-   speech → `talk`, otherwise `idle`.
-
-`NPC._reset_limbs`/`_process` currently animate the placeholder's `ArmL`/`ArmR`/`Body` nodes; those do
-not exist on this model.
+Done. `archive_hall.gd` sets `actor_id = "tomas"`, and `npc.gd` instantiates the GLB through
+`CharacterModels`, which applies the PSX actor shader to every surface (textured ones sample their
+texture) and plays the clips. `NPC._play_pose_clip` maps the pose to a clip: `working` and `partnered`
+play `work`, `inviting` plays `talk`, and the rest play `idle`. NPCs do not play `walk` yet, and speech
+does not switch to `talk`, so Tomas keeps his pose clip while he moves. `NPC._reset_limbs` and `_process`
+animate `ArmL`/`ArmR`/`Body` only for the placeholder fallback; this model has none of those nodes.
 
 ## Still off
 

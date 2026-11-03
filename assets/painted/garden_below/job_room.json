@@ -1,0 +1,67 @@
+{
+ "tool": "tools/hfspaces/plate.py",
+ "ok": true,
+ "mode": "edit",
+ "space": "black-forest-labs/FLUX.1-Kontext-Dev",
+ "space_key": "kontext",
+ "space_sha": "3392c5cc07b7dd3bfa901635c589e769191f46d4",
+ "hardware": "zero-a10g",
+ "licence": "FLUX.1 [dev] Non-Commercial License; its Outputs clause allows any use of the outputs",
+ "prompt": "Keep the exact same camera, framing, walls, house, pear tree, stone post, gate, path, sundial and lantern, in the same places and sizes. Make it a cool night: the sky becomes a deep blue-violet dusk with a thin band of pale gold light low behind the house, and no sun. The stone walls and the path turn grey-blue and moss-green. The pear tree keeps dark green leaves and its pears. The lantern and the lit house window glow warm gold. Replace the pink flowers in the raised beds with tall violet star-lilies, one kind only, in neat straight rows. The stone bench under the tree becomes straight, clean and upright, with no stain. Hang a plain wooden garden swing from a low branch of the pear tree, its ropes tied together with a neat bow. Remove the wheelbarrow and the watering can. Everything perfectly still and tidy: no wind, no fallen leaves, no people, no animals, no text or letters anywhere.",
+ "seed": 1306,
+ "size_asked": null,
+ "date": "2026-11-02T22:27:19Z",
+ "input_image": {
+  "file": "assets/painted/garden/plate.png",
+  "sha256": "62b41991b2b1d5eb031861f85bccd8d824af0fcaf5d68a9697ac66afdc349436"
+ },
+ "zerogpu": {
+  "asks_seconds": 60,
+  "rate": 1,
+  "before": {
+   "seconds": 262.02024900000004,
+   "of": 300.0,
+   "runs": 4,
+   "runs_of": 8,
+   "resets_at": "2026-11-03T00:35:35.146Z"
+  },
+  "after": {
+   "seconds": 229.692657,
+   "of": 300.0,
+   "runs": 3,
+   "runs_of": 8,
+   "resets_at": "2026-11-03T00:35:34.972Z"
+  },
+  "used_seconds": 32.3,
+  "used_runs": 1
+ },
+ "calls": [
+  {
+   "endpoint": "/infer",
+   "arguments": {
+    "input_image": {
+     "file": "plate.png"
+    },
+    "prompt": "Keep the exact same camera, framing, walls, house, pear tree, stone post, gate, path, sundial and lantern, in the same places and sizes. Make it a cool night: the sky becomes a deep blue-violet dusk with a thin band of pale gold light low behind the house, and no sun. The stone walls and the path turn grey-blue and moss-green. The pear tree keeps dark green leaves and its pears. The lantern and the lit house window glow warm gold. Replace the pink flowers in the raised beds with tall violet star-lilies, one kind only, in neat straight rows. The stone bench under the tree becomes straight, clean and upright, with no stain. Hang a plain wooden garden swing from a low branch of the pear tree, its ropes tied together with a neat bow. Remove the wheelbarrow and the watering can. Everything perfectly still and tidy: no wind, no fallen leaves, no people, no animals, no text or letters anywhere.",
+    "seed": 1306,
+    "randomize_seed": false,
+    "guidance_scale": 2.5,
+    "steps": 28
+   }
+  }
+ ],
+ "returned_format": "webp",
+ "size": [
+  1360,
+  768
+ ],
+ "latency_s": 36.6,
+ "png": "a2.png",
+ "sha256": "c755a47e8f68cd0ae54a4284a0e84c937910116a51e14a92805eb6a89622f92a",
+ "attempts": [
+  {
+   "space": "black-forest-labs/FLUX.1-Kontext-Dev",
+   "outcome": "ok"
+  }
+ ]
+}

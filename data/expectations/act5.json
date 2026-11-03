@@ -1,0 +1,23 @@
+[
+	{
+		"id": "act5_miron_turns_away",
+		"npc": "miron",
+		"when": {
+			"witch.place": "threshold",
+			"act5_hold.held": false
+		},
+		"ghost": "turn_away",
+		"source": "npc",
+		"note": "note.act5.ghost_miron"
+	},
+	{
+		"id": "act5_raccoon_holds_breath",
+		"npc": "raccoon",
+		"when": {
+			"witch.place": "threshold"
+		},
+		"ghost": "hold_breath",
+		"source": "npc",
+		"note": "note.act5.ghost_raccoon"
+	}
+]

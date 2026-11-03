@@ -1,0 +1,2275 @@
+[
+	{
+		"id": "act3_go_basement_hotel",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act3.open_crooked_door",
+		"valid_targets": [
+			"act3_door_basement_hotel"
+		],
+		"preconditions": {
+			"witch.place": "basement",
+			"$in": {
+				"story.act": [
+					"act3",
+					"act4",
+					"act5"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_go_basement_hotel.arrive_shadow",
+				"observed": {
+					"outcome": "arrive_shadow"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "hotel",
+							"from": "basement"
+						}
+					},
+					"npc_state": {
+						"shadow": {
+							"place": "hotel",
+							"stance": "sitting"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				],
+				"when": {
+					"act3_shadow_key.left": false
+				},
+				"priority": 10
+			},
+			{
+				"id": "act3_go_basement_hotel.move",
+				"observed": {
+					"outcome": "move"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "hotel",
+							"from": "basement"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_go_hotel_basement",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act3.back_to_basement",
+		"valid_targets": [
+			"act3_door_hotel_basement"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"$in": {
+				"story.act": [
+					"act3",
+					"act4",
+					"act5"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_go_hotel_basement.move",
+				"observed": {
+					"outcome": "move"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "basement",
+							"from": "hotel"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_go_hotel_clocktower",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act3.up_to_tower",
+		"valid_targets": [
+			"act3_stairs_hotel_clocktower"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"$in": {
+				"story.act": [
+					"act3",
+					"act4",
+					"act5"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_go_hotel_clocktower.down_and_up",
+				"observed": {
+					"outcome": "down_and_up"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clocktower",
+							"from": "hotel"
+						},
+						"act3_clock": {
+							"face": "counted"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.down_up"
+					}
+				],
+				"when": {
+					"$gte": {
+						"act3_loop.n": 1
+					},
+					"$neq": {
+						"act3_clock.face": "counted"
+					}
+				},
+				"priority": 10,
+				"knowledge_effects": [
+					{
+						"id": "act3_tower_counts_down",
+						"proposition": {
+							"act3_tower_counts_down": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act3"
+					}
+				],
+				"operator_effects": [
+					{
+						"type": "acquire",
+						"operator_id": "op.act3_revise_before_repeating"
+					}
+				]
+			},
+			{
+				"id": "act3_go_hotel_clocktower.move",
+				"observed": {
+					"outcome": "move"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clocktower",
+							"from": "hotel"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_go_clocktower_hotel",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act3.down_to_hotel",
+		"valid_targets": [
+			"act3_stairs_clocktower_hotel"
+		],
+		"preconditions": {
+			"witch.place": "clocktower",
+			"$in": {
+				"story.act": [
+					"act3",
+					"act4",
+					"act5"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_go_clocktower_hotel.move",
+				"observed": {
+					"outcome": "move"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "hotel",
+							"from": "clocktower"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_go_clocktower_garden",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act3.down_to_garden",
+		"valid_targets": [
+			"act3_stairs_clocktower_garden"
+		],
+		"preconditions": {
+			"witch.place": "clocktower",
+			"$in": {
+				"story.act": [
+					"act3",
+					"act4",
+					"act5"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_go_clocktower_garden.fading",
+				"observed": {
+					"outcome": "fading"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "garden_below",
+							"from": "clocktower"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "room_variant",
+						"variant": "fading"
+					}
+				],
+				"when": {
+					"garden_below.state": "fading"
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_go_clocktower_garden.dust",
+				"observed": {
+					"outcome": "dust"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "garden_below",
+							"from": "clocktower"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "room_variant",
+						"variant": "dust"
+					}
+				],
+				"when": {
+					"garden_below.state": "dust"
+				},
+				"priority": 10
+			},
+			{
+				"id": "act3_go_clocktower_garden.move",
+				"observed": {
+					"outcome": "move"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "garden_below",
+							"from": "clocktower"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_go_garden_clocktower",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act3.up_to_tower_from_garden",
+		"valid_targets": [
+			"act3_stairs_garden_clocktower"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"$in": {
+				"story.act": [
+					"act3",
+					"act4",
+					"act5"
+				]
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_go_garden_clocktower.fading_leaves",
+				"observed": {
+					"outcome": "fading_leaves"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clocktower",
+							"from": "garden_below"
+						},
+						"garden_below": {
+							"state": "dust"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "room_variant",
+						"variant": "dust"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act5.wait_garden"
+					}
+				],
+				"when": {
+					"garden_below.state": "fading"
+				},
+				"priority": 20,
+				"knowledge_effects": [
+					{
+						"id": "act5_cannot_be_restored",
+						"proposition": {
+							"act5_cannot_be_restored": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act5"
+					}
+				]
+			},
+			{
+				"id": "act3_go_garden_clocktower.move",
+				"observed": {
+					"outcome": "move"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clocktower",
+							"from": "garden_below"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_look_toolbox",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act3.open_box",
+		"valid_targets": [
+			"act3_toolbox"
+		],
+		"preconditions": {
+			"witch.place": "basement",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_look_toolbox.seen",
+				"observed": {
+					"outcome": "seen"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_toolbox"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.toolbox"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_father_toolbox",
+						"proposition": {
+							"act3_father_toolbox": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_ask_rooms",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act3.ask_room",
+		"valid_targets": [
+			"concierge"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_ask_rooms.rules",
+				"observed": {
+					"outcome": "rules"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "concierge",
+						"key": "line.act3.rules"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_rooms_by_memory",
+						"proposition": {
+							"act3_rooms_by_memory": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_room_garden",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act3.room_garden",
+		"valid_targets": [
+			"concierge"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_room_garden.key",
+				"observed": {
+					"outcome": "key"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "concierge",
+						"key": "line.act3.room_garden"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_key_garden_number",
+						"proposition": {
+							"act3_key_garden_number": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"prologue_garden_two_tastes"
+		]
+	},
+	{
+		"id": "act3_room_shop",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act3.room_shop",
+		"valid_targets": [
+			"concierge"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_room_shop.key",
+				"observed": {
+					"outcome": "key"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "concierge",
+						"key": "line.act3.room_shop"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_key_shop_number",
+						"proposition": {
+							"act3_key_shop_number": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"prologue_father_drawing"
+		]
+	},
+	{
+		"id": "act3_room_fog",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act3.room_fog",
+		"valid_targets": [
+			"concierge"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_room_fog.key",
+				"observed": {
+					"outcome": "key"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "concierge",
+						"key": "line.act3.room_fog"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_key_fog_number",
+						"proposition": {
+							"act3_key_fog_number": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"prologue_fog_mentioned"
+		]
+	},
+	{
+		"id": "act3_room_tower",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act3.room_tower",
+		"valid_targets": [
+			"concierge"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_room_tower.key",
+				"observed": {
+					"outcome": "key"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "concierge",
+						"key": "line.act3.room_tower"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_key_tower_number",
+						"proposition": {
+							"act3_key_tower_number": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"act2_ilya_backwards"
+		]
+	},
+	{
+		"id": "act3_look_keys",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act3.look_keys",
+		"valid_targets": [
+			"act3_key_rack"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_look_keys.watch",
+				"observed": {
+					"outcome": "watch"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_key_rack"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.keys_watch"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_keys_watch",
+						"proposition": {
+							"act3_keys_watch": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_ask_shadow",
+		"action_type": "ASK",
+		"affordance_group": "social",
+		"label_key": "opt.act3.ask_shadow",
+		"valid_targets": [
+			"shadow"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"npc.shadow.place": "hotel",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"ASK",
+			"EXPECT_RECIPROCITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_ask_shadow.refuses",
+				"observed": {
+					"outcome": "refuses"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "line",
+						"speaker": "shadow",
+						"key": "line.act3.shadow_refuses"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_shadow_not_staying",
+						"proposition": {
+							"act3_shadow_not_staying": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_wait_shadow",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act3.wait_shadow",
+		"valid_targets": [
+			"shadow"
+		],
+		"preconditions": {
+			"witch.place": "hotel",
+			"npc.shadow.place": "hotel",
+			"story.act": "act3",
+			"act3_shadow_key.left": false
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_wait_shadow.leaves",
+				"observed": {
+					"outcome": "leaves"
+				},
+				"effects": {
+					"world": {
+						"act3_shadow_key": {
+							"left": true
+						}
+					},
+					"npc_state": {
+						"shadow": {
+							"place": ""
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act3.shadow_leaves"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_shadow_key",
+						"proposition": {
+							"act3_shadow_key": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_climb",
+		"action_type": "GO",
+		"affordance_group": "act",
+		"label_key": "opt.act3.climb",
+		"valid_targets": [
+			"act3_stairs_up"
+		],
+		"preconditions": {
+			"witch.place": "clocktower",
+			"story.act": "act3",
+			"$neq": {
+				"act3_clock.face": "counted"
+			}
+		},
+		"prediction_signature": [
+			"GO",
+			"EXPECT_INDEPENDENCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_climb.first",
+				"observed": {
+					"outcome": "first"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clocktower",
+							"from": "clocktower"
+						},
+						"act3_loop": {
+							"n": 1
+						},
+						"act3_clock": {
+							"face": "bored"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.climb_bored"
+					}
+				],
+				"when": {
+					"act3_loop.n": 0
+				},
+				"priority": 30
+			},
+			{
+				"id": "act3_climb.second",
+				"observed": {
+					"outcome": "second"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clocktower",
+							"from": "clocktower"
+						},
+						"act3_loop": {
+							"n": 2
+						},
+						"act3_clock": {
+							"face": "asleep"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act3.climb_asleep"
+					}
+				],
+				"when": {
+					"act3_loop.n": 1
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_climb.third",
+				"observed": {
+					"outcome": "third"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clocktower",
+							"from": "clocktower"
+						},
+						"act3_loop": {
+							"n": 3
+						},
+						"act3_clock": {
+							"face": "backwards"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.climb_yawn"
+					}
+				],
+				"when": {
+					"act3_loop.n": 2
+				},
+				"priority": 10
+			},
+			{
+				"id": "act3_climb.again",
+				"observed": {
+					"outcome": "again"
+				},
+				"effects": {
+					"world": {
+						"witch": {
+							"place": "clocktower",
+							"from": "clocktower"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.climb_again"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_read_clock_known",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act3.read_clock",
+		"valid_targets": [
+			"act3_clock"
+		],
+		"preconditions": {
+			"witch.place": "clocktower",
+			"story.act": "act3",
+			"$neq": {
+				"act3_clock.face": "counted"
+			}
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_read_clock_known.read",
+				"observed": {
+					"outcome": "read"
+				},
+				"effects": {
+					"world": {
+						"act3_clock": {
+							"face": "counted"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_clock"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.read_clock_known"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_tower_counts_down",
+						"proposition": {
+							"act3_tower_counts_down": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act3"
+					}
+				],
+				"operator_effects": [
+					{
+						"type": "acquire",
+						"operator_id": "op.act3_revise_before_repeating"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			"act2_ilya_backwards"
+		]
+	},
+	{
+		"id": "act3_read_clock_backwards",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act3.read_clock_backwards",
+		"valid_targets": [
+			"act3_clock"
+		],
+		"preconditions": {
+			"witch.place": "clocktower",
+			"story.act": "act3",
+			"act3_clock.face": "backwards"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_read_clock_backwards.read",
+				"observed": {
+					"outcome": "read"
+				},
+				"effects": {
+					"world": {
+						"act3_clock": {
+							"face": "counted"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_clock"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.read_clock_backwards"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "act3_tower_counts_down",
+						"proposition": {
+							"act3_tower_counts_down": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act3"
+					}
+				],
+				"operator_effects": [
+					{
+						"type": "acquire",
+						"operator_id": "op.act3_revise_before_repeating"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_look_bench",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act3.look_bench",
+		"valid_targets": [
+			"act3_bench"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_look_bench.straight",
+				"observed": {
+					"outcome": "straight"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_bench"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.bench_straight"
+					}
+				],
+				"priority": 10,
+				"knowledge_effects": [
+					{
+						"id": "act3_bench_straight",
+						"proposition": {
+							"act3_bench_straight": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				],
+				"requires_claims": [
+					{
+						"id": "prologue_bench_crooked",
+						"holder_id": "player"
+					}
+				]
+			},
+			{
+				"id": "act3_look_bench.plain",
+				"observed": {
+					"outcome": "plain"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_bench"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.bench_plain"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_look_swing",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act3.look_swing",
+		"valid_targets": [
+			"act3_swing"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_look_swing.no_knot",
+				"observed": {
+					"outcome": "no_knot"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_swing"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.knot_no"
+					}
+				],
+				"priority": 10,
+				"knowledge_effects": [
+					{
+						"id": "act3_no_knot",
+						"proposition": {
+							"act3_no_knot": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				],
+				"requires_claims": [
+					{
+						"id": "prologue_knot",
+						"holder_id": "player"
+					}
+				]
+			},
+			{
+				"id": "act3_look_swing.plain",
+				"observed": {
+					"outcome": "plain"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_swing"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.knot_plain"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_look_bed",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act3.look_bed",
+		"valid_targets": [
+			"act3_sunflower_bed"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_look_bed.none",
+				"observed": {
+					"outcome": "none"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_sunflower_bed"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.bed_none"
+					}
+				],
+				"priority": 10,
+				"knowledge_effects": [
+					{
+						"id": "act3_no_sunflowers",
+						"proposition": {
+							"act3_no_sunflowers": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				],
+				"requires_claims": [
+					{
+						"id": "prologue_sunflowers",
+						"holder_id": "player"
+					}
+				]
+			},
+			{
+				"id": "act3_look_bed.plain",
+				"observed": {
+					"outcome": "plain"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "inspect",
+						"focus": [
+							"act3_sunflower_bed"
+						]
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.bed_plain"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_look_garden",
+		"action_type": "LOOK",
+		"affordance_group": "observe",
+		"label_key": "opt.act3.look_garden",
+		"valid_targets": [
+			"act3_garden_whole"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"LOOK",
+			"EXPECT_CURIOSITY"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_look_garden.bench_sunflowers",
+				"observed": {
+					"outcome": "bench_sunflowers"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.whole_only_mine"
+					}
+				],
+				"priority": 40,
+				"knowledge_effects": [
+					{
+						"id": "act3_only_mine",
+						"proposition": {
+							"act3_only_mine": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act3"
+					}
+				],
+				"requires_claims": [
+					{
+						"id": "act3_bench_straight",
+						"holder_id": "player"
+					},
+					{
+						"id": "act3_no_sunflowers",
+						"holder_id": "player"
+					}
+				]
+			},
+			{
+				"id": "act3_look_garden.bench_knot",
+				"observed": {
+					"outcome": "bench_knot"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.whole_only_mine"
+					}
+				],
+				"priority": 39,
+				"knowledge_effects": [
+					{
+						"id": "act3_only_mine",
+						"proposition": {
+							"act3_only_mine": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act3"
+					}
+				],
+				"requires_claims": [
+					{
+						"id": "act3_bench_straight",
+						"holder_id": "player"
+					},
+					{
+						"id": "act3_no_knot",
+						"holder_id": "player"
+					}
+				]
+			},
+			{
+				"id": "act3_look_garden.sunflowers_knot",
+				"observed": {
+					"outcome": "sunflowers_knot"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.whole_only_mine"
+					}
+				],
+				"priority": 38,
+				"knowledge_effects": [
+					{
+						"id": "act3_only_mine",
+						"proposition": {
+							"act3_only_mine": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act3"
+					}
+				],
+				"requires_claims": [
+					{
+						"id": "act3_no_sunflowers",
+						"holder_id": "player"
+					},
+					{
+						"id": "act3_no_knot",
+						"holder_id": "player"
+					}
+				]
+			},
+			{
+				"id": "act3_look_garden.still",
+				"observed": {
+					"outcome": "still"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.whole_only_mine"
+					}
+				],
+				"when": {
+					"$gte": {
+						"act3_garden.stillness": 3
+					}
+				},
+				"priority": 30,
+				"knowledge_effects": [
+					{
+						"id": "act3_only_mine",
+						"proposition": {
+							"act3_only_mine": true
+						},
+						"status": "SUPPORTED",
+						"scope": "act3"
+					}
+				]
+			},
+			{
+				"id": "act3_look_garden.plain",
+				"observed": {
+					"outcome": "plain"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.whole_plain"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_cast_lilies",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act3.cast_lilies",
+		"valid_targets": [
+			"act3_lilies"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3",
+			"magic.state": "below"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_cast_lilies.s0",
+				"observed": {
+					"outcome": "s0"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 1
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_lilies"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_lilies",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.lilies_0"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 0
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_lilies.s1",
+				"observed": {
+					"outcome": "s1"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 2
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_lilies"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_lilies",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act3.bees_stop"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.lilies_1"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 1
+				},
+				"priority": 20,
+				"knowledge_effects": [
+					{
+						"id": "act3_bees_stopped",
+						"proposition": {
+							"act3_bees_stopped": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			},
+			{
+				"id": "act3_cast_lilies.s2",
+				"observed": {
+					"outcome": "s2"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 3
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_lilies"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_lilies",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.lilies_2"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 2
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_lilies.s3",
+				"observed": {
+					"outcome": "s3"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 4
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_lilies"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_lilies",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.lilies_3"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 3
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_lilies.still",
+				"observed": {
+					"outcome": "still"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_lilies"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_lilies",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.still"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_cast_bench",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act3.cast_bench",
+		"valid_targets": [
+			"act3_bench"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3",
+			"magic.state": "below"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_cast_bench.s0",
+				"observed": {
+					"outcome": "s0"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 1
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_bench"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_bench",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.bench_0"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 0
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_bench.s1",
+				"observed": {
+					"outcome": "s1"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 2
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_bench"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_bench",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act3.bees_stop"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.bench_1"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 1
+				},
+				"priority": 20,
+				"knowledge_effects": [
+					{
+						"id": "act3_bees_stopped",
+						"proposition": {
+							"act3_bees_stopped": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			},
+			{
+				"id": "act3_cast_bench.s2",
+				"observed": {
+					"outcome": "s2"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 3
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_bench"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_bench",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.bench_2"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 2
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_bench.s3",
+				"observed": {
+					"outcome": "s3"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 4
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_bench"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_bench",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.bench_3"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 3
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_bench.still",
+				"observed": {
+					"outcome": "still"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_bench"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_bench",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.still"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_cast_swing",
+		"action_type": "CAST",
+		"affordance_group": "magic",
+		"label_key": "opt.act3.cast_swing",
+		"valid_targets": [
+			"act3_swing"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3",
+			"magic.state": "below"
+		},
+		"prediction_signature": [
+			"CAST",
+			"EXPECT_MAGIC"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_cast_swing.s0",
+				"observed": {
+					"outcome": "s0"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 1
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_swing"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_swing",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.swing_0"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 0
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_swing.s1",
+				"observed": {
+					"outcome": "s1"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 2
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_swing"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_swing",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "narrator",
+						"key": "line.act3.bees_stop"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.swing_1"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 1
+				},
+				"priority": 20,
+				"knowledge_effects": [
+					{
+						"id": "act3_bees_stopped",
+						"proposition": {
+							"act3_bees_stopped": true
+						},
+						"status": "ESTABLISHED",
+						"scope": "act3"
+					}
+				]
+			},
+			{
+				"id": "act3_cast_swing.s2",
+				"observed": {
+					"outcome": "s2"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 3
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_swing"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_swing",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.swing_2"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 2
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_swing.s3",
+				"observed": {
+					"outcome": "s3"
+				},
+				"effects": {
+					"world": {
+						"act3_garden": {
+							"stillness": 4
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_swing"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_swing",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.swing_3"
+					}
+				],
+				"when": {
+					"act3_garden.stillness": 3
+				},
+				"priority": 20
+			},
+			{
+				"id": "act3_cast_swing.still",
+				"observed": {
+					"outcome": "still"
+				},
+				"effects": {},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "magic_reveal",
+						"focus": [
+							"act3_swing"
+						]
+					},
+					{
+						"kind": "magic",
+						"effect": "flourish",
+						"target": "act3_swing",
+						"mode": "violet"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.still"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "act3_sit_bench",
+		"action_type": "WAIT",
+		"affordance_group": "wait",
+		"label_key": "opt.act3.sit_bench",
+		"valid_targets": [
+			"act3_bench"
+		],
+		"preconditions": {
+			"witch.place": "garden_below",
+			"story.act": "act3"
+		},
+		"prediction_signature": [
+			"WAIT",
+			"EXPECT_DISTANCE"
+		],
+		"response_contracts": [
+			{
+				"id": "act3_sit_bench.act4",
+				"observed": {
+					"outcome": "act4"
+				},
+				"effects": {
+					"world": {
+						"story": {
+							"act": "act4"
+						}
+					}
+				},
+				"presentation": [
+					{
+						"kind": "camera",
+						"mode": "wide"
+					},
+					{
+						"kind": "line",
+						"speaker": "witch",
+						"key": "line.act3.sit_bench"
+					}
+				]
+			}
+		],
+		"requires_claims": [
+			{
+				"id": "act3_only_mine",
+				"min_status": "SUPPORTED"
+			}
+		],
+		"requires_operators": [
+			"op.act3_revise_before_repeating"
+		]
+	}
+]

@@ -6,12 +6,14 @@ extends TestCase
 
 const TILE_DIR := "res://assets/archive/textures/"
 const MAX_TILE_SIZE := 256
+const MACHINE_PARTS := ["Base_001", "GearBig_001", "GearSmall_001", "GearTiny_001", "Pipe_001", "Lever_001", "Cam_001", "Indicator_001"]
 
 func test_the_live_props_load_with_every_part_the_game_drives() -> void:
 	var props := ArchiveProps.new()
 	ok(props.load_props(), "machine and bell (props/*.glb, else the old set's)")
-	for part in ["Base", "BigGear", "SmallGear", "Pipe", "Lever", "Cam", "Indicator"]:
-		ok(props.machine.get_node_or_null(part) != null or props.machine.find_children("Gear*").size() > 0, "the machine has %s or Gear* parts (MachineView and the outline depend on the names)" % part)
+	# the names the shipped prop (assets/archive/props/machine.glb) imports with, each checked on its own
+	for part in MACHINE_PARTS:
+		ok(props.machine.get_node_or_null(part) is MeshInstance3D, "the machine has its part %s" % part)
 	for node: Node3D in [props.machine, props.bell]:
 		var meshes: Array = node.find_children("*", "MeshInstance3D", true, false)
 		if node is MeshInstance3D:
@@ -23,6 +25,36 @@ func test_the_live_props_load_with_every_part_the_game_drives() -> void:
 				ok(instance.get_surface_override_material(surface) is ShaderMaterial, "%s surface %d wears a PSX material" % [instance.name, surface])
 	track(props.machine)
 	track(props.bell)
+
+func test_the_machine_shows_mirror_state_lamp_and_gears() -> void:
+	var r := GameFixtures.runtime()
+	var room := ArchiveHall.new()
+	Engine.get_main_loop().root.add_child(room)
+	await Engine.get_main_loop().process_frame
+	var machine := room.machine_view
+	var lamp := machine.get_node_or_null("Indicator_001") as Node3D
+	var big := machine.get_node_or_null("GearBig_001") as Node3D
+	var small := machine.get_node_or_null("GearSmall_001") as Node3D
+	var tiny := machine.get_node_or_null("GearTiny_001") as Node3D
+	ok(lamp != null and big != null and small != null and tiny != null, "the hall's machine is the shipped prop")
+	if lamp == null or big == null or small == null or tiny == null:
+		room.free()
+		return
+	room.apply_mirror_state(r.engine)
+	eq(GameFixtures.machine_state(r), "jammed", "the machine starts jammed")
+	ok(not lamp.visible, "the indicator lamp is dark while the machine is jammed")
+	var rest: Array[Basis] = [big.basis, small.basis, tiny.basis]
+	machine._process(0.5)
+	ok(big.basis.is_equal_approx(rest[0]) and small.basis.is_equal_approx(rest[1]) and tiny.basis.is_equal_approx(rest[2]), "a jammed machine's gears stand still")
+	ok(GameFixtures.do(r, "cast_repair", "machine")["ok"], "the repair resolves")
+	eq(r.engine.knowledge.get_claim("machine_runs")["status"], MirrorDomain.EpistemicStatus.ESTABLISHED, "machine_runs is established")
+	room.apply_mirror_state(r.engine)
+	ok(lamp.visible, "once Mirror says the machine runs, the indicator lamp lights")
+	machine._process(0.5)
+	ok(not big.basis.is_equal_approx(rest[0]), "the big gear turns")
+	ok(not small.basis.is_equal_approx(rest[1]), "the small gear turns")
+	ok(not tiny.basis.is_equal_approx(rest[2]), "the tiny gear turns")
+	room.free()
 
 func test_painted_tiles_are_small_and_unique() -> void:
 	var dir := DirAccess.open(TILE_DIR)

@@ -1,0 +1,50 @@
+{
+	"act2_magic_failing": {
+		"kind": "seen",
+		"text": "note.act2.magic_failing"
+	},
+	"act2_lamps_without_me": {
+		"kind": "seen",
+		"text": "note.act2.lamps_without_me"
+	},
+	"act2_elian_company": {
+		"kind": "heard",
+		"text": "note.act2.elian_company"
+	},
+	"act2_vera_wait_helped": {
+		"kind": "seen",
+		"text": "note.act2.vera_wait_helped"
+	},
+	"act2_vera_direct_helped": {
+		"kind": "seen",
+		"text": "note.act2.vera_direct_helped"
+	},
+	"act2_vera_not_now": {
+		"kind": "heard",
+		"text": "note.act2.vera_not_now"
+	},
+	"act2_vera_sign_fell": {
+		"kind": "seen",
+		"text": "note.act2.vera_sign_fell"
+	},
+	"act2_ilya_backwards": {
+		"kind": "shown",
+		"text": "note.act2.ilya_backwards"
+	},
+	"act2_clock_fixed": {
+		"kind": "altered",
+		"text": "note.act2.clock_fixed"
+	},
+	"act2_raccoon_hid_it": {
+		"kind": "inferred",
+		"text": "note.act2.raccoon_hid_it"
+	},
+	"act2_raccoon_refused": {
+		"kind": "heard",
+		"text": "note.act2.raccoon_refused"
+	},
+	"act2_shadow_coin": {
+		"kind": "seen",
+		"text": "note.act2.shadow_coin"
+	}
+}

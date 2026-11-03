@@ -19,6 +19,7 @@ uniform float col_depth = 31.0;
 uniform float magic_col_depth = 127.0;
 uniform float glow_amount = 0.4;
 uniform float vignette = 0.5;
+uniform float grain_amount = 0.016;
 uniform vec3 shadow_tint : source_color = vec3(0.90, 0.89, 0.95);
 uniform vec3 light_tint : source_color = vec3(0.97, 1.0, 0.96);
 
@@ -45,7 +46,7 @@ void fragment() {
 	float edge = dot(q * vec2(0.9, 1.0), q * vec2(0.9, 1.0));
 	c *= 1.0 - vignette * smoothstep(0.35, 1.9, edge);
 	float grain = fract(sin(dot(floor(SCREEN_UV * vec2(textureSize(screen_texture, 0))), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
-	c += grain * 0.016 * (1.0 - magic_amount);
+	c += grain * grain_amount * (1.0 - magic_amount);
 	vec2 dith_size = vec2(textureSize(dither_tex, 0));
 	vec2 buf_size = vec2(textureSize(screen_texture, 0));
 	vec3 dith = texture(dither_tex, SCREEN_UV * (buf_size / dith_size)).rgb - 0.5;

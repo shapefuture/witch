@@ -1,0 +1,53 @@
+[
+	{
+		"id": "act6_elian_holds_cap",
+		"npc": "elian",
+		"when": {
+			"npc.elian.place": "shop",
+			"npc.elian.address": "vy"
+		},
+		"ghost": "hold_breath",
+		"source": "npc",
+		"note": "note.act6.ghost_elian_cap"
+	},
+	{
+		"id": "act6_vera_turns_away",
+		"npc": "vera",
+		"when": {
+			"act6_customer.state": "haggling"
+		},
+		"ghost": "turn_away",
+		"source": "npc",
+		"note": "note.act6.ghost_vera_turn"
+	},
+	{
+		"id": "act6_tomas_flinches",
+		"npc": "tomas",
+		"when": {
+			"act6_second_machine.state": "asked"
+		},
+		"ghost": "flinch",
+		"source": "npc",
+		"note": "note.act6.ghost_tomas_flinch"
+	},
+	{
+		"id": "act6_raccoon_no_projection",
+		"npc": "raccoon",
+		"when": {
+			"act6_lamp.state": "shown"
+		},
+		"ghost": "flinch",
+		"source": "projection",
+		"note": "note.act6.ghost_raccoon_no"
+	},
+	{
+		"id": "act6_shadow_steps_back",
+		"npc": "shadow",
+		"when": {
+			"npc.shadow.place": "street"
+		},
+		"ghost": "step_back",
+		"source": "npc",
+		"note": "note.act6.ghost_shadow_step"
+	}
+]

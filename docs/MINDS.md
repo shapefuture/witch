@@ -147,7 +147,7 @@ bridge.set_attention("raccoon", "away")                 # perception hint the sc
 It reads who is on stage and how far each actor is from the thing touched off the room (`actors`), passes that
 as hints, and holds no truth. `walked` is throttled (`walk_min_distance`) and `WALKED` is a quiet kind: written
 only when somebody reacts. Tested against a stub emitter (`tests/mirror/test_prop_events.gd`); `PaintedRoom`
-itself is untouched. The room does not yet emit `walked`; the adapter connects to it when it appears.
+itself is untouched. `PaintedRoom` emits `walked` (forwarded from `PaintedWalk`); no scene attaches the adapter yet.
 
 ## Adding a rule
 

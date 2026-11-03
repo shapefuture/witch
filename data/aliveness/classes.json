@@ -1,0 +1,42 @@
+{
+	"_about": "Discovery classes for the authored hypotheses and reveals (claims the witch can learn, revised models, customs). Outside the Mirror catalog: nothing here is loaded into the engine or hashed into the catalog fingerprint, so reclassifying never touches saves or goldens. Read by AlivenessLint (per-room report) and DiscoveryClasses (round-robin order for the notebook). An entry may name a room; the default is the minds layer's default_place. A '$' in an id is a template (one entry covers every subject). The assignments are a first pass for design review.",
+	"classes": ["humour", "curiosity", "relationship", "contradiction", "evolution", "memory", "lore", "emergence", "echo"],
+	"entries": {
+		"h.authorship_not_trust": {"class": "relationship"},
+
+		"bell_tilted_into_wind": {"class": "curiosity"},
+		"machine_is_jammed": {"class": "curiosity"},
+		"machine_needs_second_component": {"class": "curiosity"},
+		"tomas_glances_toward_tree": {"class": "curiosity"},
+		"tomas_explained_alignment": {"class": "lore"},
+		"tomas_times_work_to_the_bell": {"class": "lore"},
+		"tomas_invited_help": {"class": "relationship"},
+		"tomas_paused_at_wand": {"class": "relationship"},
+		"tomas_relaxes_when_left_alone": {"class": "relationship"},
+		"tomas_returns_when_left_alone": {"class": "relationship"},
+		"tomas_wanted_the_last_turn": {"class": "relationship"},
+		"help_respected_authorship": {"class": "relationship"},
+		"why_tomas_withdrew": {"class": "contradiction"},
+		"why_tomas_went_quiet": {"class": "memory"},
+		"machine_runs": {"class": "evolution"},
+		"machine_sings": {"class": "emergence"},
+		"m.help_needs_authorship": {"class": "relationship"},
+
+		"hall_answers.$data_answers.$subject": {"class": "echo"},
+		"raccoon_repeats.$subject": {"class": "humour"},
+		"echo_forgotten": {"class": "contradiction"},
+		"raccoon_looks_at.$subject": {"class": "humour"},
+		"statue_leans_in.$subject": {"class": "curiosity"},
+		"tomas_watches_the_witch": {"class": "relationship"},
+		"poke_unremarked.$subject": {"class": "contradiction"},
+		"globe_answers_as_a_toy": {"class": "emergence"},
+		"raccoon_plays_alone": {"class": "humour"},
+		"hall_custom.globe_is_a_toy": {"class": "emergence"},
+		"custom_needs_two": {"class": "contradiction"},
+		"m.hall.latest_poke_answered": {"class": "evolution"},
+		"m.hall.seen_motion_is_watched": {"class": "evolution"},
+		"m.hall.shared_reading_makes_custom": {"class": "emergence"},
+		"conv.hall.globe_is_a_toy": {"class": "emergence"},
+		"conv.hall.statue_is_a_toy": {"class": "contradiction"}
+	}
+}

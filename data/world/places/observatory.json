@@ -1,0 +1,9 @@
+{
+	"_about": "Ilya's observatory (GAME_SPEC section 2): the backwards clock, at night.",
+	"id": "observatory",
+	"room": {"kind": "painted", "dir": "res://assets/painted/observatory"},
+	"variants": {},
+	"spots": {"default": [640, 643], "ilya": [700, 600]},
+	"arrive": {"street": [640, 640], "default": [640, 643]},
+	"stage": {"palette": ["#1f2a4a", "#3b3a6b", "#c8a04a", "#7d6ab0", "#0b0d1c"]}
+}

@@ -1,0 +1,77 @@
+[
+	{
+		"id": "use_gate",
+		"action_type": "CAST",
+		"valid_targets": [
+			"machine"
+		],
+		"preconditions": {},
+		"requires_claims": [
+			{
+				"id": "gate_fact",
+				"min_status": "SUPPORTED"
+			}
+		],
+		"response_contracts": [
+			{
+				"id": "use_gate.runs",
+				"observed": {
+					"outcome": "done"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"key": "line.use_gate_runs"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "goal_fact",
+						"status": "SUPPORTED",
+						"proposition": {
+							"fixture": "goal_fact"
+						}
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "hush",
+		"action_type": "CAST",
+		"valid_targets": [
+			"tomas"
+		],
+		"preconditions": {},
+		"response_contracts": [
+			{
+				"id": "hush.quiet",
+				"observed": {
+					"outcome": "hushed"
+				},
+				"presentation": [
+					{
+						"kind": "line",
+						"key": "line.hush_quiet"
+					}
+				],
+				"knowledge_effects": [
+					{
+						"id": "why_tomas_went_quiet",
+						"status": "UNRESOLVED_BY_DESIGN",
+						"proposition": {
+							"fixture": "why_tomas_went_quiet"
+						}
+					}
+				],
+				"effects": {
+					"npc_state": {
+						"tomas": {
+							"stance": "quiet"
+						}
+					}
+				}
+			}
+		]
+	}
+]
