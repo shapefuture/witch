@@ -14,8 +14,12 @@ signal focus_changed(target_id: String)
 
 var room: Room
 var witch: Witch
+# The witch as a target ("witch"): her own pick volume, a child of her.
+var witch_hotspot: Interactable
 var runtime: MirrorRuntime
 var surface: InteractionPresenter
+# The postgame has no avatar to walk: a tap opens the options at once (GAME_SPEC section 6, postgame).
+var postgame := false
 var focused_target := ""
 var _token := 0
 
@@ -41,22 +45,33 @@ func _inspect(target_id: String) -> void:
 	_token += 1
 	var mine := _token
 	surface.close()
-	var interactable := room.get_interactable(target_id)
+	var interactable := hotspot_for(target_id)
 	if interactable == null:
 		return
 	_focus(target_id)
-	# A room with no floor to walk on (the window's close shot) takes the tap where she stands.
-	var arrived: bool = true
-	if witch.navigator != null:
-		arrived = await witch.walk_to(interactable.approach_point)
-	if mine != _token or not arrived:
-		return
-	witch.face_toward(interactable.focus_point())
+	if not postgame:
+		# A room with no floor to walk on (the window's close shot) takes the tap where she stands.
+		var arrived: bool = true
+		if witch.navigator != null:
+			arrived = await witch.walk_to(approach_for(target_id, interactable))
+		if mine != _token or not arrived:
+			return
+		witch.face_toward(interactable.focus_point())
 	var options := runtime.options_for(target_id)
 	if options.is_empty():
 		_focus("")
 		return
 	surface.show_options(interactable.display_name(), options, interactable.focus_point())
+
+func hotspot_for(target_id: String) -> Interactable:
+	if target_id == "witch":
+		return witch_hotspot
+	return room.get_interactable(target_id) if room != null else null
+
+func approach_for(target_id: String, interactable: Interactable) -> Vector3:
+	if target_id == "witch":
+		return witch.global_position
+	return interactable.approach_point
 
 func choose_option_id(option_id: String) -> void:
 	for option in surface.current_options():
